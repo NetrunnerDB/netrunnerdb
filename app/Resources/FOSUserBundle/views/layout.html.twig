@@ -1,0 +1,61 @@
+{% extends 'NetrunnerdbBuilderBundle::layout.html.twig' %}
+
+{% block head %}
+<script>
+$(function() {
+	var form = $('#main>form');
+	if(!form.length && $('.fos_user_user_show').length) {
+		prepare_reset_success();
+		return;
+	}
+	else if(form.hasClass('fos_user_registration_register')) prepare_registration_form(form);
+	else if(form.hasClass('fos_user_resetting_request')) prepare_resetting_form(form);
+	else if(form.hasClass('fos_user_resetting_reset')) prepare_resetting_reset(form);
+	
+	$('#main>div').addClass('alert alert-danger');
+	$('#main ul').addClass('text-danger');
+});
+function prepare_reset_success() {
+	$('#title').text('Success. You are logged in.');
+}
+function prepare_registration_form(form) {
+	$('#title').text('Registration');
+	var div = $('#fos_user_registration_form');
+	div.children().addClass('form-group');
+	div.find('input').addClass('form-control');
+	form.find('input[type=submit]').addClass('btn btn-success');
+}
+function prepare_resetting_form(form) {
+	$('#title').text('Reset password');
+	form.children().addClass('form-group');
+	form.find('input[type=text]').addClass('form-control');
+	form.find('input[type=submit]').addClass('btn btn-success');
+}
+function prepare_resetting_reset(form) {
+	$('#title').text('Reset password');
+	var div = $('#fos_user_resetting_form');
+	div.children().addClass('form-group');
+	div.find('input').addClass('form-control');
+	form.find('input[type=submit]').addClass('btn btn-success');
+}
+</script>
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+<div class="row">
+<div class="col-md-4 col-md-offset-4">
+<div class="panel panel-default">
+<div class="panel-heading">
+<h3 class="panel-title" id="title"></h3>
+</div>
+<div class="panel-body" id="main">
+{% block fos_user_content %}{% endblock %}
+</div>
+</div>
+</div>
+</div>
+</div> <!-- .container -->
+
+{% endblock %}

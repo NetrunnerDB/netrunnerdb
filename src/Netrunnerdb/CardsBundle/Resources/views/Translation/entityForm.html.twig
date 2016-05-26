@@ -1,0 +1,20 @@
+{% extends 'NetrunnerdbBuilderBundle::layout.html.twig' %}
+
+{% block body -%}
+<div class="container">
+
+<h1><img src="{{ asset('/bundles/netrunnerdbbuilder/images/flags/32px/flag_' ~ localeCode ~ '.png') }}"> Translating {{ entityName }} Records</h1>
+
+<ol class="breadcrumb">
+  <li><a href="{{ path('translation_index') }}">Translation Home</a></li>
+  <li><a href="{{ path('translation_overview', {localeCode:localeCode}) }}">{{ localeCode|upper }}</a></li>
+  <li><a href="{{ path('translation_entity_index',{localeCode:localeCode,entityName:entityName}) }}">{{ entityName }} Records</a></li>
+  <li class="active">Translate One Record</li>
+</ol>
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+
+</div>
+{% endblock %}

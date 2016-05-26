@@ -1,0 +1,440 @@
+{% extends 'NetrunnerdbBuilderBundle::layout.html.twig' %}
+
+{% block hexagon %}{{ decklist.faction_code }}{% endblock %}
+{% block head %}
+<script src="{{ asset('/bundles/netrunnerdbbuilder/js/nrdb.draw_simulator.js') }}"></script>
+<script src="{{ asset('/bundles/netrunnerdbbuilder/js/nrdb.card_modal.js') }}"></script>
+<script src="{{ asset('/bundles/netrunnerdbbuilder/js/decklist.js') }}"></script>
+<script type="text/javascript">
+
+var Identity = null,
+	Decklist = {{ decklist|json_encode|raw }},
+	Commenters = {{ commenters|json_encode|raw }},
+	DeckDB = TAFFY([Decklist]),
+	SelectedDeck = DeckDB().first(),
+	MWL = {{ mwl|json_encode|raw }},
+	DisplaySort = 'type';
+
+NRDB.user.params.decklist_id = Decklist.id;
+	
+</script>
+{% endblock %}
+{% block body %}
+
+<div class="container decklist">
+
+<div class="row">
+    <div class="col-xs-12">
+        <h1 class="decklist-name">
+            <span class="icon icon-{{ decklist.faction_code }} {{ decklist.faction_code }}"></span>
+            {{ decklist.name }}
+        </h1>
+        <div class="social">
+            <div class="pull-right" id="social-icons">
+                <span>published: <time datetime="{{ decklist.date_creation|date('c') }}">{{ decklist.date_creation|date('M d, Y') }}</time></span>
+                |
+                <a id="social-icon-like" href="#" class="social-icon-like" data-toggle="tooltip" data-placement="bottom" title="Like">
+                	<span class="glyphicon glyphicon-heart"></span> <span class="num">{{ decklist.nbvotes }}</span>
+                </a>
+                |
+                <a id="social-icon-favorite" href="#" class="social-icon-favorite" data-toggle="tooltip" data-placement="bottom" title="Favorite">
+                	<span class="glyphicon glyphicon-star"></span> <span class="num">{{ decklist.nbfavorites }}</span>
+                </a>
+                |
+                <a id="social-icon-comment" href="#comment-form" class="social-icon-comment" data-toggle="tooltip" data-placement="bottom" title="Comment">
+                	<span class="glyphicon glyphicon-comment"></span> <span class="num">{{ decklist.nbcomments }}</span>
+                </a>
+            </div>
+            {% if duplicate %}
+            <small>Duplicate of <a href="{{ path('decklist_detail', { 'decklist_id': duplicate.id, 'decklist_name': duplicate.prettyname|e('url') }) }}">{{ duplicate.name }}</a></small>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+<!-- Left-side Column -->
+<div class="col-md-6">
+
+<div id="deck">
+	
+<!-- Identity and Stats -->
+<div class="row">
+	<div class="col-sm-3">
+		<img id="img_identity" src="#empty" alt="Identity" class="img-responsive  hidden-xs">
+	</div><!-- /.col-md-3 -->
+	<div class="col-sm-9">
+		<h3 id="identity">Identity</h3>
+		<div id="btn-group-decklist">
+		    <form action="{{ path('deck_copy', {decklist_id:decklist.id}) }}" method="POST" style="display:inline">
+			     <button type="submit" id="btn-copy" class="btn btn-default  btn-xs"><span class="glyphicon glyphicon-save"></span> Copy</button>
+			</form>
+			<div class="btn-group">
+				<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
+					<span class="glyphicon glyphicon-download"></span> Download <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#" id="btn-download-text">Text file</a></li>
+					<li><a href="#" id="btn-download-octgn">Octgn file</a></li>
+				</ul>
+			</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
+					<span class="glyphicon glyphicon-export"></span> Export <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="#" id="btn-export-bbcode">bbCode</a></li>
+					<li><a href="#" id="btn-export-markdown">Markdown (Reddit)</a></li>
+					<li><a href="#" id="btn-export-plaintext">plain text</a></li>
+					<li><a href="#" id="btn-export-jintekinet">Jinteki.net format</a></li>
+				</ul>
+			</div>
+			<div class="btn-group">
+				<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
+					<span class="glyphicon glyphicon-sort"></span> Sort <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu" id="menu-sort">
+					<li><a href="#" id="btn-sort-type">by Type</a></li>
+					<li><a href="#" id="btn-sort-number">by Set</a></li>
+					<li><a href="#" id="btn-sort-faction">by Faction</a></li>
+					<li><a href="#" id="btn-sort-title">by Name</a></li>
+				</ul>
+			</div>
+			<button type="button" id="btn-compare" class="btn btn-default btn-xs">Compare</button>
+		</div>
+		<div id="influence"></div>
+		<div id="agendapoints"></div>
+		<div id="cardcount"></div>
+		<div id="latestpack"></div>
+		{% if decklist.tournament %}
+        <a class="btn btn-ghost btn-success btn-sm" href="{{ path('decklists_list', {type:'tournament'}) }}">
+            <span class="glyphicon glyphicon-certificate"></span> {{ decklist.tournament }}
+        </a>
+        {% endif %}
+	</div><!-- /.col-md-9 -->
+</div><!-- /.row -->
+<!-- Identity and Stats -->
+
+<!-- Deck Content -->
+<div class="row" id="deck-content" style="margin-bottom:10px">
+</div><!-- /#deck-content -->
+<!-- Deck Content -->
+
+
+<!-- MWL -->
+<table class="table table-condensed" id="table-mwl">
+<thead>
+<tr><th colspan="1"><span class="glyphicon glyphicon-bell"></span> Legality</th></tr>
+</thead>
+<tbody>
+<tr>
+	{% for legality in legalities %}
+    <td>
+    	{% if legality.is_legal %}<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
+    	{% else %}<span class="glyphicon glyphicon-thumbs-down" style="color:red"></span>{% endif %}
+    	<a href="#" class="change_mwl" data-id="{{ legality.id }}">{{ legality.name }}</a>
+    </td>
+    {% endfor %}
+</tr>
+<tr>
+    <td>
+    	<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
+    	<a href="#" class="change_mwl" data-id="0">Casual Play</a>
+    </td>
+</tr>
+</tbody>
+</table>
+
+
+{% include 'NetrunnerdbBuilderBundle:Builder:draw-simulator.html.twig' %}
+
+<!-- Graphs -->
+<table class="table table-condensed" id="table-graph-costs">
+<thead>
+<tr><th colspan="1"><span class="glyphicon glyphicon-stats"></span> Repartition by Cost</th></tr>
+</thead>
+<tbody>
+<tr>
+    <td><div id="costChart"><button type="button" class="btn btn-link" onclick="make_cost_graph()">Display graph</button></div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="table table-condensed" id="table-graph-strengths">
+<thead>
+<tr><th colspan="1"><span class="glyphicon glyphicon-stats"></span> Repartition by Strength</th></tr>
+</thead>
+<tbody>
+<tr>
+    <td><div id="strengthChart"><button type="button" class="btn btn-link" onclick="make_strength_graph()">Display graph</button></div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="table table-condensed" id="table-predecessor">
+<thead>
+<tr><th colspan="{% if precedent_decklists|length %}4{% else %}1{% endif %}"><span class="glyphicon glyphicon-backward"></span> Derived from</th></tr>
+</thead>
+<tbody>
+{% if precedent_decklists|length %}
+{% for decklist in precedent_decklists %}
+<tr>
+	<td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+	<td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
+	<td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
+	<td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
+</tr>
+{% endfor %}
+{% else %}
+<tr><td>None. Self-made deck here.</td></tr>
+{% endif %}
+</tbody>
+</table>
+
+
+<table class="table table-condensed" id="table-successor">
+<thead>
+<tr><th colspan="{% if successor_decklists|length %}4{% else %}1{% endif %}"><span class="glyphicon glyphicon-forward"></span> Inspiration for</th></tr>
+</thead>
+<tbody>
+{% if successor_decklists|length %}
+{% for decklist in successor_decklists %}
+<tr>
+	<td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+	<td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
+	<td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
+	<td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
+</tr>
+{% endfor %}
+{% else %}
+<tr><td>None yet</td></tr>
+{% endif %}
+</tbody>
+</table>
+
+</div><!-- /#deck -->
+
+{% include 'NetrunnerdbBuilderBundle:Default:google_adaptable_ad.html.twig' %}
+	
+</div>
+<!-- Left-side Column -->
+
+
+<!-- Right-side Column -->
+<div class="col-md-6">
+
+<h3 class="username">
+    <a href="{{ path('user_profile_view', {_locale:app.request.locale,user_id:decklist.user_id,user_name:decklist.username|e('url')}) }}" class="{{ decklist.usercolor }}">{{ decklist.username }}</a>
+    {% if decklist.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
+    <small title="User Reputation">{{ decklist.reputation }}</small>
+</h3>
+<div id="deck-description">{{ decklist.description|raw }}</div>
+
+<table class="table">
+<thead>
+<tr><th><span class="glyphicon glyphicon-comment"></span> {{ decklist.nbcomments }} comments</th></tr>
+</thead>
+<tbody>
+{% for comment in decklist.comments %}
+<tr><td id="comment-{{ comment.id }}">
+    <div class="small comment-toggler" style="{% if not comment.hidden %}display:none{% endif %}">
+        <a href="#div-comment-{{ comment.id }}" data-toggle="collapse" class="text-muted pull-right" style="margin-left:.5em"><span class="glyphicon glyphicon-eye-open"></span></a>
+    </div>
+    <div class="collapse{% if not comment.hidden %} in{% endif %}" id="div-comment-{{ comment.id }}">
+        <span class="comment-date" title="{{ comment.date_creation|date('r') }}">{{ comment.date_creation|date('M d, Y') }}</span>
+        <a href="{{ path('user_profile_view', {_locale:app.request.locale,user_id:comment.user_id,user_name:comment.author|e('url')}) }}" class="comment-author username {{ comment.authorcolor }}">{{ comment.author }}</a>
+        {% if comment.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
+        <div class="comment-text">{{ comment.text|raw }}</div>
+    </div>
+</td></tr>
+{% endfor %}
+</tbody>
+</table>
+<a id="comment-form"></a>
+</div>
+
+</div>
+<!-- Right-side Column -->
+
+
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="modal-title" id="exportModalLabel">Export decklist</h3>
+			</div>
+		    <div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<textarea class="form-control" id="export-deck" rows="20"></textarea>
+						</div>
+					</div><!-- /#modal-info -->
+				</div><!-- /.row -->
+			</div><!-- /.modal-body -->
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- Modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="modal-title" id="editModalLabel">Edit decklist</h3>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<form action="{{ path('decklist_edit', {decklist_id:decklist.id}) }}" method="POST" enctype="application/x-www-form-urlencoded" id="edit-decklistform">
+							<input type="hidden" name="decklist_id" id="edit-decklist-id" value="{{ decklist.id }}">
+							<div class="form-group">
+								<label for="edit-decklist-name">Name</label>
+								<input type="text" class="form-control decklist-name" name="name" id="edit-decklist-name" maxlength="60" value="{{ decklist.name }}" placeholder="Enter a name for this decklist">
+							</div>
+							<div class="form-group">
+								<label for="edit-decklist-derived">Derived from</label>
+								<input type="text" class="form-control" name="derived" id="edit-decklist-derived" maxlength="80" value="{% if precedent_decklists|length %}{{ precedent_decklists[0].id }}{% endif %}" placeholder="Enter the id or url of a decklist">
+							</div>
+							<div class="form-group">
+								<label for="edit-decklist-description">Description</label>
+								<textarea class="form-control" name="description" id="edit-decklist-description" maxlength="40000" rows="5" placeholder="Enter a brief explanation of the deck strategy and your significant choices">{{ decklist.rawdescription }}</textarea>
+							</div>
+							<div class="form-group">
+								<label for="edit-decklist-tournament">Placed high in a tournament (Store Championship and better)</label>
+								<select class="form-control" name="tournament" id="edit-decklist-tournament">
+								<option value="">No</option>
+								{% for tournament in tournaments %}
+								<option value="{{ tournament.id }}"{% if tournament.id == decklist.tournament_id %} selected{% endif %}>{{ tournament.description }}</option>
+								{% endfor %}
+								</select>
+							</div>
+							<div class="pull-right">
+								<button type="submit" id="btn-publish-submit" class="btn btn-success">Go</button>
+								<button type="button" class="btn btn-default" onclick="$('#editModal').modal('hide')">Cancel</button>
+							</div>
+						</form>
+					</div><!-- /#modal-info -->
+				</div><!-- /.row -->
+			</div><!-- /.modal-body -->
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- Modal -->
+
+<!-- DeleteModal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="modal-title" id="deleteModalLabel">Delete decklist</h3>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<form action="{{ path('decklist_delete', {decklist_id:decklist.id}) }}" method="POST" enctype="application/x-www-form-urlencoded" id="delete-decklistform">
+							<input type="hidden" name="decklist_id" id="delete-decklist-id" value="{{ decklist.id }}">
+							<p>Are you sure you want to delete this decklist?</p>
+							<div class="pull-right">
+								<button type="submit" id="btn-delete-submit" class="btn btn-danger">Yes, delete</button>
+								<button type="button" class="btn btn-default" onclick="$('#deleteModal').modal('hide')">Cancel</button>
+							</div>
+						</form>
+					</div><!-- /#modal-info -->
+				</div><!-- /.row -->
+			</div><!-- /.modal-body -->
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- Modal -->
+
+<!-- Modal -->
+<div class="modal" id="oddsModal" tabindex="-1" role="dialog" aria-labelledby="oddsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title" id="oddsModalLabel">Odds Calculator</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+						<form class="form-horizontal" role="form">
+						    <div class="form-group">
+						        <label for="odds-calculator-N" class="col-xs-7 control-label">Number of cards in deck</label>
+						        <div class="col-xs-2">
+						            <input type="number" class="form-control" id="odds-calculator-N" value="0">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="odds-calculator-K" class="col-xs-7 control-label">Number of <em>desired</em> cards in deck</label>
+								<div class="col-xs-2">
+									<input type="number" class="form-control" id="odds-calculator-K" value="0">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="odds-calculator-n" class="col-xs-7 control-label">Number of cards drawn</label>
+								<div class="col-xs-2">
+									<input type="number" class="form-control" id="odds-calculator-n" value="0">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="odds-calculator-k" class="col-xs-7 control-label">Number of <em>desired</em> cards in draw (at least)</label>
+								<div class="col-xs-2">
+									<input type="number" class="form-control" id="odds-calculator-k" value="0">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-xs-7 control-label">Probability of such an outcome</label>
+								<div class="col-xs-2">
+									 <p class="form-control-static"><span id="odds-calculator-p"></span>%</p>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="compareModal" tabindex="-1" role="dialog" aria-labelledby="compareModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="modal-title" id="compareModalLabel">Compare with another decklist</h3>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<input type="hidden" name="decklist1_id" id="compare-decklist-id" value="{{ decklist.id }}">
+						<div class="form-group">
+							<label for="decklist2_url">Link or ID of the other decklist</label>
+							<input type="text" class="form-control" name="decklist2_url" id="decklist2_url" maxlength="250" placeholder="Copy the URL link of a decklist">
+						</div>
+						<div class="pull-right">
+							<button type="submit" id="btn-compare-submit" class="btn btn-success">Go</button>
+							<button type="button" class="btn btn-default" onclick="$('#compareModal').modal('hide')">Cancel</button>
+						</div>
+					</div><!-- /#modal-info -->
+				</div><!-- /.row -->
+			</div><!-- /.modal-body -->
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- Modal -->
+
+{% endblock %}

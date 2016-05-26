@@ -1,0 +1,39 @@
+Netrunnerdb\BuilderBundle\Entity\Comment:
+    type: entity
+    table: comment
+    repositoryClass: Netrunnerdb\BuilderBundle\Entity\CommentRepository
+    manyToOne:
+        author:
+            targetEntity: Netrunnerdb\UserBundle\Entity\User
+            nullable: false
+            inversedBy: comments
+            joinColumn:
+                name: user_id
+                referencedColumnName: id
+        decklist:
+            targetEntity: Netrunnerdb\BuilderBundle\Entity\Decklist
+            nullable: false
+            inversedBy: comments
+            joinColumn:
+                name: decklist_id
+                referencedColumnName: id
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        text:
+            type: text
+        dateCreation:
+            type: datetime
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on:  create
+        hidden:
+            type: boolean
+            column: hidden
+            options:
+                default: false
+    lifecycleCallbacks: {  }

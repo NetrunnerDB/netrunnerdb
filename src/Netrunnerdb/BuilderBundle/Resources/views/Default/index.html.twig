@@ -1,0 +1,45 @@
+{% extends 'NetrunnerdbBuilderBundle::layout.html.twig' %}
+
+{% block head %}
+<script src="{{ asset('/bundles/netrunnerdbbuilder/js/nrdb.smart_filter.js') }}"></script>
+<script src="{{ asset('/bundles/netrunnerdbbuilder/js/index.js') }}"></script>
+
+<script type="text/javascript">
+
+var Identity = null,
+	Decklist = {{ decklist|json_encode|raw }},
+	DeckDB = TAFFY([Decklist]),
+	SelectedDeck = DeckDB().first(),
+        MWL = null,
+	DisplaySort = 'type';
+
+</script>
+<script type="application/ld+json">
+{
+   "@context": "http://schema.org",
+   "@type": "WebSite",
+   "url": "https://netrunnerdb.com/",
+   "potentialAction": {
+     "@type": "SearchAction",
+     "target": "https://netrunnerdb.com/find/?q={search_term_string}",
+     "query-input": "required name=search_term_string"
+   }
+}
+</script>
+{% endblock %}
+{% block body %}
+
+<div class="container" id="index_page">
+	{% include 'NetrunnerdbBuilderBundle:Default:navbar-factions.html.twig' %}
+    <div class="row">
+        <div class="col-md-8">
+            {% include 'NetrunnerdbBuilderBundle:Default:decklist_of_the_week.html.twig' %}
+        </div>
+        <div class="col-md-4">
+			{% include 'NetrunnerdbBuilderBundle:Default:recent_decklists.html.twig' %}
+	        {% include 'NetrunnerdbBuilderBundle:Default:google_adaptable_ad.html.twig' %}
+        </div>
+    </div>
+</div> <!-- .container -->
+
+{% endblock %}

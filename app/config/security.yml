@@ -1,0 +1,59 @@
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: sha512
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+
+    firewalls:
+        api:
+            pattern:    ^/api_oauth2
+            fos_oauth:  true
+            stateless:  true
+        api_20:
+            pattern:    ^/api/\d+.\d+/private
+            fos_oauth:  true
+            stateless:  true
+        oauth_token:
+            pattern:    ^/oauth/v2/token
+            security:   false
+        oauth_authorize:
+            pattern:    ^/oauth/v2/auth
+            form_login:
+                provider: fos_userbundle
+                check_path: oauth_server_auth_login_check
+                login_path: oauth_server_auth_login
+            anonymous: true
+        main:
+            remember_me:
+                secret:      "%secret%"
+                lifetime: 31536000
+                path:     /
+                domain:   ~
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                csrf_token_generator: security.csrf.token_manager
+                default_target_path: netrunnerdb_index
+                use_referer: true
+            anonymous: ~
+            logout:
+                invalidate_session: false
+
+    access_control:
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/ffg, role: ROLE_ADMIN }
+        - { path: ^/deck/, role: ROLE_USER }
+        - { path: ^/.*/deck/view/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/.*/deck/, role: ROLE_USER }
+        - { path: ^/.*/decks, role: ROLE_USER }
+        - { path: ^/.*/user/, role: ROLE_USER }
+        - { path: ^/api_oauth2, roles: IS_AUTHENTICATED_FULLY }

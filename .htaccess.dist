@@ -1,0 +1,29 @@
+DirectoryIndex app.php
+
+RewriteEngine On
+
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^app\.php(/(.*)|$) %{CONTEXT_PREFIX}/$2 [R=301,L]
+
+
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule .? - [L]
+
+#RewriteRule assets/(.+) /src/Alsciende/NetrunnerBundle/Resources/public/$1 [L]
+RewriteRule assets/(.+) /web/bundles/netrunnerdbcards/$1 [L]
+
+
+RewriteRule ^(.*)$ /web/app_dev.php [QSA,L]
+
+ExpiresActive On
+ExpiresByType image/png "access plus 1 month"
+ExpiresByType text/css "access plus 1 month"
+ExpiresByType text/javascript "access plus 1 month"
+ExpiresByType application/javascript "access plus 1 month"
+ExpiresByType application/json "access plus 1 month"
+ExpiresByType application/x-font-woff "access plus 1 month"
+ExpiresByType application/vnd.ms-fontobject "access plus 1 month"
+ExpiresByType application/x-font-ttf "access plus 1 month"
+ExpiresByType image/svg+xml "access plus 1 month"
+
+

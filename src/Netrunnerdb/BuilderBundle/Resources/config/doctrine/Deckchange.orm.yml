@@ -1,0 +1,32 @@
+Netrunnerdb\BuilderBundle\Entity\Deckchange:
+    type: entity
+    table: deckchange
+    indexes:
+        deck_saved_index:
+            columns: [ deck_id, saved ]
+    manyToOne:
+        deck:
+            targetEntity: Deck
+            nullable: false
+            inversedBy: changes
+            joinColumn:
+                name: deck_id
+                referencedColumnName: id
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        dateCreation:
+            type: datetime
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on:  create
+        variation:
+            type: string
+            length: 1024
+        saved:
+            type: boolean
+    lifecycleCallbacks: {  }

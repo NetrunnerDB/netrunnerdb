@@ -1,0 +1,30 @@
+Netrunnerdb\CardsBundle\Entity\Type:
+    type: entity
+    table: type
+    repositoryClass: Netrunnerdb\CardsBundle\Repository\TypeRepository
+    gedmo:
+        translation:
+            locale: locale
+    indexes:
+        name_index:
+            columns: [ name ]
+    oneToMany:
+        cards:
+            targetEntity: Card
+            mappedBy: type
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        code:
+            type: string
+            unique: true
+            length: 10
+        name:
+            type: string
+            length: 255
+            gedmo:
+                - translatable
+    lifecycleCallbacks: {  }

@@ -1,0 +1,107 @@
+Netrunnerdb\BuilderBundle\Entity\Deck:
+    type: entity
+    table: deck
+    repositoryClass: Netrunnerdb\BuilderBundle\Entity\DeckRepository
+    indexes:
+        date_update_index:
+            columns: [ date_update ]
+    manyToOne:
+        user:
+            targetEntity: Netrunnerdb\UserBundle\Entity\User
+            nullable: false
+            inversedBy: decks
+            joinColumn:
+                name: user_id
+                referencedColumnName: id
+        mwl:
+            targetEntity: Mwl
+            nullable: true
+            inversedBy: decks
+            joinColumn:
+                name: mwl_id
+                referencedColumnName: id
+        side:
+            targetEntity: Netrunnerdb\CardsBundle\Entity\Side
+            nullable: false
+            inversedBy: decks
+            joinColumn:
+                name: side_id
+                referencedColumnName: id
+        identity:
+            targetEntity: Netrunnerdb\CardsBundle\Entity\Card
+            nullable: false
+            joinColumn:
+                name: identity_id
+                referencedColumnName: id
+        lastPack:
+            targetEntity: Netrunnerdb\CardsBundle\Entity\Pack
+            nullable: false
+            joinColumn:
+                name: last_pack_id
+                referencedColumnName: id
+        parent:
+            targetEntity: Decklist
+            nullable: true
+            inversedBy: children
+            joinColumn:
+                name: parent_decklist_id
+                referencedColumnName: id
+    oneToMany:
+        slots:
+            targetEntity: Deckslot
+            mappedBy: deck
+            cascade: ["persist","remove"]
+        children:
+            orderBy: { 'dateCreation': 'DESC' }
+            targetEntity: Decklist
+            mappedBy: parent
+        changes:
+            targetEntity: Deckchange
+            orderBy: {'dateCreation':'DESC'}
+            mappedBy: deck
+            cascade: ["persist","remove"]
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        name:
+            type: string
+            length: 255
+        dateCreation:
+            type: datetime
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on:  create
+        dateUpdate:
+            type: datetime
+            column: date_update
+            gedmo:
+                timestampable:
+                    on:  update
+        description:
+            type: text
+            nullable: true
+        problem:
+            type: string
+            length: 20
+            nullable: true
+        deckSize:
+            type: smallint
+            column: deck_size
+            nullable: true
+        influenceSpent:
+            type: smallint
+            column: influence_spent
+            nullable: true
+        agendaPoints:
+            type: smallint
+            column: agenda_points
+            nullable: true
+        tags:
+            type: string
+            length: 4000
+            nullable: true
+    lifecycleCallbacks: {  }

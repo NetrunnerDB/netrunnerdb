@@ -1,0 +1,12 @@
+Netrunnerdb\UserBundle\Entity\Client:
+    type: entity
+    table: client
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        name:
+            type: string
+            

@@ -1,0 +1,35 @@
+services:
+    card_manager:
+        class: Netrunnerdb\CardsBundle\Manager\CardManager
+        calls:
+            - [setRepositoryLocale, ['@service_container']]
+        arguments: [ "@doctrine.orm.entity_manager", 'Netrunnerdb\CardsBundle\Entity\Card' ]
+    side_manager:
+        class: Netrunnerdb\CardsBundle\Manager\SideManager
+        calls:
+            - [setRepositoryLocale, ['@service_container']]
+        arguments: [ "@doctrine.orm.entity_manager" , 'Netrunnerdb\CardsBundle\Entity\Side' ]
+    faction_manager:
+        class: Netrunnerdb\CardsBundle\Manager\FactionManager
+        calls:
+            - [setRepositoryLocale, ['@service_container']]
+        arguments: [ "@doctrine.orm.entity_manager" , 'Netrunnerdb\CardsBundle\Entity\Faction' ]
+    type_manager:
+        class: Netrunnerdb\CardsBundle\Manager\TypeManager
+        calls:
+            - [setRepositoryLocale, ['@service_container']]
+        arguments: [ "@doctrine.orm.entity_manager" , 'Netrunnerdb\CardsBundle\Entity\Type' ]
+    cycle_manager:
+        class: Netrunnerdb\CardsBundle\Manager\CycleManager
+        calls:
+            - [setRepositoryLocale, ['@service_container']]
+        arguments: [ "@doctrine.orm.entity_manager" , 'Netrunnerdb\CardsBundle\Entity\Cycle' ]
+    pack_manager:
+        class: Netrunnerdb\CardsBundle\Manager\PackManager
+        calls:
+            - [setRepositoryLocale, ['@service_container']]
+        arguments: [ "@doctrine.orm.entity_manager" , 'Netrunnerdb\CardsBundle\Entity\Pack' ]
+    cards_data:
+        class: 'Netrunnerdb\CardsBundle\Services\CardsData'
+        arguments: ["@doctrine", "@request_stack", "@router", "%cardimages_dir%"]
+

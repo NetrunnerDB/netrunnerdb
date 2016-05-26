@@ -1,0 +1,56 @@
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+    
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+    
+fos_user_registration_confirm_override:
+    path: /register/confirm/{token}
+    defaults:
+        _controller: NetrunnerdbUserBundle:Registration:confirm
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile
+    
+alsciende_user:
+    resource: "@NetrunnerdbUserBundle/Resources/config/routing.yml"
+    prefix:   /
+
+alsciende_builder:
+    resource: "@NetrunnerdbBuilderBundle/Resources/config/routing.yml"
+    prefix:   /
+
+alsciende_cards:
+    resource: "@NetrunnerdbCardsBundle/Resources/config/routing.yml"
+    prefix:   /
+
+fos_oauth_server_token:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
+
+fos_oauth_server_authorize:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/authorize.xml"
+
+oauth_server_auth_login:
+    path:  /oauth/v2/auth_login
+    defaults: { _controller: NetrunnerdbUserBundle:Security:login }
+
+oauth_server_auth_login_check:
+    path:  /oauth/v2/auth_login_check
+    defaults: { _controller: NetrunnerdbUserBundle:Security:loginCheck }
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc

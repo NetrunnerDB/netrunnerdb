@@ -1,0 +1,43 @@
+{% extends 'NetrunnerdbBuilderBundle::layout.html.twig' %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block body %}
+
+<div class="container">
+<div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title" id="title">Login</h3>
+                </div>
+                <div class="panel-body" id="main">
+                {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+                <form action="{{ path("fos_user_security_check") }}" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+                            <label for="username">{{ 'security.login.username'|trans }}</label>
+                            <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">{{ 'security.login.password'|trans }}</label>
+                            <input type="password" id="password" name="_password" required="required" class="form-control">
+                        </div>
+                        <div class="checkbox">
+                            <label for="remember_me">
+                                <input type="checkbox" id="remember_me" name="_remember_me" value="on">
+                                {{ 'security.login.remember_me'|trans }}
+                            </label>
+                        </div>
+                        <input type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" class="btn btn-success">
+                        <a href="{{ path('fos_user_registration_register') }}" class="btn btn-link">Register</button>
+                        <a href="{{ path('fos_user_resetting_request') }}" class="btn btn-link">Forgot your password?</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+<a href="{{ path('cards_zoom',{card_code:item.reviewcomment.review.card.code}) }}#review-{{ item.reviewcomment.review.id }}" class="list-group-item no-popup{% if item.unchecked %} list-group-item-warning{% endif %}">
+	<span class="glyphicon glyphicon-comment" style="margin-right:1em"></span>
+	{% if item.reviewcomment.author.id != app.user.id %}
+	<span class="username {{ item.reviewcomment.author.faction }}">{{ item.reviewcomment.author.username }}</span>
+	{% else %}
+	You
+	{% endif %}
+	commented on a review of
+	<b><span class="card-name">{{ item.reviewcomment.review.card.title }}</span></b>
+</a>

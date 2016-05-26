@@ -1,0 +1,27 @@
+Netrunnerdb\BuilderBundle\Entity\Mwlslot:
+    type: entity
+    table: mwlslot
+    manyToOne:
+        mwl:
+            targetEntity: Mwl
+            nullable: false
+            inversedBy: slots
+            joinColumn:
+                name: mwl_id
+                referencedColumnName: id
+        card:
+            targetEntity: Netrunnerdb\CardsBundle\Entity\Card
+            nullable: false
+            joinColumn:
+                name: card_id
+                referencedColumnName: id
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        penalty:
+            type: integer
+    lifecycleCallbacks: {  }
