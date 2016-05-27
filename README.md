@@ -6,16 +6,16 @@
 # How to install
 
 - Go into the directory where your server will reside
-- Fork the repo and clone it: `git clone https://yourname@bitbucket.org/yourname/nrdb.git`
-- This creates a directory named nrdb. This has to be your apache DocumentRoot. 
-- Go into it.
-- Install Composer: `curl -s http://getcomposer.org/installer | php`
-- Install the vendor libs: `php composer.phar install`
-- Install the assets:  `php app/console assets:install --symlink`
+- Clone the repository (or your own fork)
+- This creates a directory named `netrunnerdb`. This has to be your apache DocumentRoot.
+- Also, clone  the data repository (or your own fork) at https://github.com/zaroth/netrunner-cards-json
+- Go into it the directory `netrunnerdb`.
+- Install Composer (see https://getcomposer.org/download/)
+- Install the vendor libs: `composer install`
 - Create the database: `php app/console doctrine:database:create`
 - If the above command fails, edit app/config/parameters.yml and try again
 - Create the tables: `php app/console doctrine:schema:update --force`
-- Import the data: `mysql -u root -p netrunnerdb < netrunnerdb-cards.sql`
+- Import all the data from the data repository: `php app/console nrdb:import:json ../netrunner-cards-json`
 - [Configure your web server with the correct DocumentRoot](http://symfony.com/doc/current/cookbook/configuration/web_server_configuration.html). Alternatively, [use PHP's built-in Web Server](http://symfony.com/doc/current/cookbook/web_server/built_in.html).
 - Point your browser to `/web/app_dev.php`
 
@@ -28,8 +28,8 @@
 
 When you update your repository, run the following commands:
 
-- `php composer.phar self-update`
-- `php composer.phar update`
+- `composer self-update`
+- `composer update`
 - `php app/console doctrine:schema:update --force`
 - `php app/console cache:clear --env=dev`
 
@@ -45,16 +45,7 @@ To update the deck of the week on the front page:
 - make sure your account is enabled
 - run `php app/console fos:user:promote --super <username>`
 
-## Add cards
+## Add or edit cards
 
-- login with admin-level account
-- go to `/admin/card`, `/admin/pack`, `/admin/cycle`, etc.
-
-## Add cards with Excel on existing pack
-
-- note the code of the pack (wla for What Lies Ahead, etc.). let's say it's xxx
-- login with admin-level account
-- go to /api/set/xxx.xlsx
-- open the downloaded file and add your cards
-- go to /admin/excel/form and upload your file, click 'Validate' on confirmation screen
-- actually the excel file can be the one from another pack, just replace the 2nd column
+- update the json data
+- run `php app/console nrdb:import:json ../netrunner-cards-json`
