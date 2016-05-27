@@ -29,6 +29,7 @@ class TranslatableRepository extends EntityRepository
 	public function setDefaultLocale($locale)
 	{
 		$this->defaultLocale = $locale;
+		return $this;
 	}
 
 	/**
