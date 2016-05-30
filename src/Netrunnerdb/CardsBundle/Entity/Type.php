@@ -13,6 +13,17 @@ class Type implements Translatable
     public function toString() {
 		return $this->name;
 	}
+
+	public function serialize() {
+		return [
+				'code' => $this->code,
+				'name' => $this->name
+		];
+	}
+	
+	public function unserialize($serialized) {
+		throw new \Exception("unserialize() method unsupported");
+	}
 	
     /**
      * @var integer

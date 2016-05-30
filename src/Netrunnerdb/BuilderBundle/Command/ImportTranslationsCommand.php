@@ -7,13 +7,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Filesystem\Filesystem;
 use Doctrine\ORM\EntityManager;
 use Netrunnerdb\CardsBundle\Entity\Cycle;
 use Netrunnerdb\CardsBundle\Entity\Pack;
 use Netrunnerdb\CardsBundle\Entity\Card;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class ImportTranslationsCommand extends ContainerAwareCommand
 {
@@ -22,25 +22,23 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
 	/* @var $output OutputInterface */
 	private $output;
-	
-	private $locale;
-	
+		
 	protected function configure()
 	{
 		$this
 		->setName('nrdb:translations:import')
-		->setDescription('Import cards data file in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
-		->addArgument(
+		->setDescription('Import translation data in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
+		->addOption(
 				'locale',
-				InputArgument::REQUIRED,
-				'Locale to import'
-				)
+				'l',
+				InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+				"Locale to import"
+		)
 		->addArgument(
 				'path',
 				InputArgument::REQUIRED,
 				'Path to the repository'
-				)
-		
+		)
 		;
 	}
 
@@ -49,68 +47,69 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 		$this->em = $this->getContainer()->get('doctrine')->getEntityManager();
 		$this->output = $output;
 		
-		$this->locale = $locale = $input->getArgument('locale');
+		$supported_locales = $this->getContainer()->getParameter('supported_locales');
+		$default_locale = $this->getContainer()->getParameter('locale');
+		$locales = $input->getOption('locale');
+		if(empty($locales)) $locales = $supported_locales;
+				
 		$path = $input->getArgument('path');
 
 		if(substr($path, -1) === '/') {
 			$path = substr($path, 0, strlen($path) - 1);
 		}
 		
-		/* @var $helper \Symfony\Component\Console\Helper\QuestionHelper */
-		$helper = $this->getHelper('question');
-		
 		$things = ['side', 'faction', 'type', 'cycle', 'pack'];
 		
-		foreach($things as $thing) {
-			$fileInfo = $this->getFileInfo("${path}/translations/${locale}", "${thing}s.${locale}.json");
-			$this->importThingsJsonFile($fileInfo, $thing);
+		foreach($locales as $locale) 
+		{
+			if($locale === $default_locale) continue;
+			$output->writeln("Importing translations for <info>${locale}</info>");
+			foreach($things as $thing) 
+			{
+				$output->writeln("Importing translations for <info>${thing}s</info> in <info>${locale}</info>");
+				$fileInfo = $this->getFileInfo("${path}/translations/${locale}", "${thing}s.${locale}.json");
+				$this->importThingsJsonFile($fileInfo, $locale, $thing);
+			}
+			$this->em->flush();
+			
+			$fileSystemIterator = $this->getFileSystemIterator("${path}/translations/${locale}");
+			
+			$output->writeln("Importing translations for <info>cards</info> in <info>${locale}</info>:");
+			foreach ($fileSystemIterator as $fileInfo) 
+			{
+				$output->writeln("Importing translations for <info>cards</info> from <info>".$fileInfo->getFilename()."</info>:");
+				$this->importCardsJsonFile($fileInfo, $locale);
+			}
+			
+			$this->em->flush();
 		}
-		
-		$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-		if(!$helper->ask($input, $output, $question)) {
-			die();
-		}
-		$this->em->flush();
-		
-		// third, cards
-		
-		/* only if cards.$locale.json exists (first version)
-		$fileInfo = $this->getFileInfo("${path}/translations/${locale}", "cards.${locale}.json");
-		$this->importCardsJsonFile($fileInfo);
-		*/
-		
-		$fileSystemIterator = $this->getFileSystemIterator("${path}/translations/${locale}");
-		
-		foreach ($fileSystemIterator as $fileInfo) {
-			$this->importCardsJsonFile($fileInfo);
-		}
-		
-		$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-		if(!$helper->ask($input, $output, $question)) {
-			die();
-		}
-		$this->em->flush();
+
 	}
 	
-	protected function importThingsJsonFile(\SplFileInfo $fileinfo, $thing)
+	protected function importThingsJsonFile(\SplFileInfo $fileinfo, $locale, $thing)
 	{
 		$list = $this->getDataFromFile($fileinfo);
 		foreach($list as $data)
 		{
-			$entity = $this->getEntityFromData('Netrunnerdb\\CardsBundle\\Entity\\'.ucfirst($thing), $data, [
+			$this->updateEntityFromData($locale, 'Netrunnerdb\\CardsBundle\\Entity\\'.ucfirst($thing), $data, [
 					'code',
 					'name'
 			], []);
-		
-			$this->em->persist($entity);
 		}
 	}
 
-	protected function importCardsJsonFile(\SplFileInfo $fileinfo)
+	protected function importCardsJsonFile(\SplFileInfo $fileinfo, $locale)
 	{
 		$cardsData = $this->getDataFromFile($fileinfo);
-		foreach($cardsData as $cardData) {
-			$card = $this->getEntityFromData('Netrunnerdb\CardsBundle\Entity\Card', $cardData, [
+		
+		$progress = new ProgressBar($this->output, count($cardsData));
+		$progress->start();
+				
+		foreach($cardsData as $cardData) 
+		{
+			$progress->advance();
+			
+			$this->updateEntityFromData($locale, 'Netrunnerdb\CardsBundle\Entity\Card', $cardData, [
 					'code',
 					'title'
 			], [
@@ -118,9 +117,11 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 					'keywords',
 					'text'
 			]);
-			
-			$this->em->persist($card);
 		}
+		
+		$progress->finish();
+		$progress->clear();
+		$this->output->writeln("");
 	}
 
 	protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
@@ -155,10 +156,6 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 	
 		$different = ($currentJsonValue !== $newJsonValue);
 		if($different) {
-			$this->output->writeln("Changing the <info>$fieldName</info> of <info>".$entity->toString()."</info>");
-			$this->output->writeln("    from: ".$currentJsonValue);
-			$this->output->writeln("     to : ".$newJsonValue);
-				
 			$setter = 'set'.ucfirst($fieldName);
 			$entity->$setter($newTypedValue);
 		}
@@ -185,7 +182,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 		$this->copyFieldValueToEntity($entity, $entityName, $fieldName, $value);
 	}
 	
-	protected function getEntityFromData($entityName, $data, $mandatoryKeys, $optionalKeys)
+	protected function updateEntityFromData($locale, $entityName, $data, $mandatoryKeys, $optionalKeys)
 	{
 		if(!key_exists('code', $data)) {
 			throw new \Exception("Missing key [code] in ".json_encode($data));
@@ -195,9 +192,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 		if(!$entity) {
 			throw new \Exception("Cannot find entity [code]");
 		}
-		$entity->setTranslatableLocale($this->locale);
+		$entity->setTranslatableLocale($locale);
 		$this->em->refresh($entity);
-		$entity->setTranslatableLocale($this->locale);
 		
 		foreach($mandatoryKeys as $key) {
 			$this->copyKeyToEntity($entity, $entityName, $data, $key, TRUE);
@@ -206,8 +202,6 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 		foreach($optionalKeys as $key) {
 			$this->copyKeyToEntity($entity, $entityName, $data, $key, FALSE);
 		}
-		
-		return $entity;
 	}
 	
 	protected function getDataFromFile(\SplFileInfo $fileinfo)
@@ -231,6 +225,9 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 		return $data;
 	}
 	
+	/**
+	 * @return \SplFileInfo
+	 */
 	protected function getFileInfo($path, $filename)
 	{
 		$fs = new Filesystem();
@@ -248,6 +245,12 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 		return new \SplFileInfo($filepath);
 	}
 	
+	/**
+	 * 
+	 * @param unknown $path
+	 * @throws \Exception
+	 * @return \GlobIterator
+	 */
 	protected function getFileSystemIterator($path)
 	{
 		$fs = new Filesystem();

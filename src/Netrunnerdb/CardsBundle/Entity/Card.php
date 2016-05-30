@@ -11,63 +11,100 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
 		return $this->code . ' ' . $this->title;
 	}
 
+	private function snakeToCamel($snake) {
+		$parts = explode('_', $snake);
+		return implode('', array_map('ucfirst', $parts));
+	}
+	
 	public function serialize() {
-		$serialized = [
-				'code' => $this->code,
-				'pack_code' => $this->pack->getCode(),
-				'faction_code' => $this->faction->getCode(),
-				'type_code' => $this->type->getCode(),
-				'side_code' => $this->side->getCode(),
-				'title' => $this->title,
-				'position' => $this->position,
-				'text' => $this->text,
-				'keywords' => $this->keywords,
-				'flavor' => $this->flavor,
-				'illustrator' => $this->illustrator,
-				'uniqueness' => $this->uniqueness,
-				'deck_limit' => $this->deckLimit,
-				'quantity' => $this->quantity
+		$serialized = [];
+		
+		$mandatoryFields = [
+				'code',
+				'title',
+				'position',
+				'uniqueness',
+				'deck_limit',
+				'quantity'
+		];
+		if($this->faction->getCode() === 'neutral') {
+			$mandatoryFields[] = 'faction_cost';
+		}
+
+		$optionalFields = [
+				'illustrator',
+				'flavor',
+				'keywords',
+				'text',
+				'cost',
+				'faction_cost',
+				'trash_cost'
+		];
+
+		$externalFields = [
+				'faction',
+				'pack',
+				'side',
+				'type'
 		];
 		
 		switch($this->type->getCode()) {
 			case 'identity':
-				$serialized['base_link'] = $this->baseLink;
-				$serialized['influence_limit'] = $this->influenceLimit;
-				$serialized['minimum_deck_size'] = $this->minimumDeckSize;
+				$mandatoryFields[] = 'influence_limit';
+				$mandatoryFields[] = 'minimum_deck_size';
+				if($this->side->getCode() === 'runner') {
+					$mandatoryFields[] = 'base_link';
+				}
 				break;
 			case 'agenda':
-				$serialized['advancement_cost'] = $this->advancementCost;
-				$serialized['agenda_points'] = $this->agendaPoints;
+				$mandatoryFields[] = 'advancement_cost';
+				$mandatoryFields[] = 'agenda_points';
 				break;
 			case 'asset':
 			case 'upgrade':
-			case 'operation':
-				$serialized['cost'] = $this->cost;
-				$serialized['faction_cost'] = $this->factionCost;
-				$serialized['trash_cost'] = $this->trashCost;
+				$mandatoryFields[] = 'cost';
+				$mandatoryFields[] = 'faction_cost';
+				$mandatoryFields[] = 'trash_cost';
 				break;
 			case 'ice':
-				$serialized['cost'] = $this->cost;
-				$serialized['faction_cost'] = $this->factionCost;
-				$serialized['strength'] = $this->strength;
-				$serialized['trash_cost'] = $this->trashCost;
+				$mandatoryFields[] = 'cost';
+				$mandatoryFields[] = 'faction_cost';
+				$mandatoryFields[] = 'strength';
 				break;
+			case 'operation':
 			case 'event':
 			case 'hardware':
 			case 'resource':
-				$serialized['cost'] = $this->cost;
-				$serialized['faction_cost'] = $this->factionCost;
+				$mandatoryFields[] = 'cost';
+				$mandatoryFields[] = 'faction_cost';
 				break;
 			case 'program':
-				$serialized['cost'] = $this->cost;
-				$serialized['faction_cost'] = $this->factionCost;
-				$serialized['memory_cost'] = $this->memoryCost;
+				$mandatoryFields[] = 'cost';
+				$mandatoryFields[] = 'faction_cost';
+				$mandatoryFields[] = 'memory_cost';
 				if(strstr($this->keywords, 'Icebreaker') !== FALSE) {
-					$serialized['strength'] = $this->strength;
+					$mandatoryFields[] = 'strength';
 				}
 				break;
 		}
 		
+		foreach($mandatoryFields as $mandatoryField) {
+			$getter = 'get' . $this->snakeToCamel($mandatoryField);
+			$serialized[$mandatoryField] = $this->$getter();
+		}
+
+		foreach($optionalFields as $optionalField) {
+			$getter = 'get' . $this->snakeToCamel($optionalField);
+			$serialized[$optionalField] = $this->$getter();
+			if(!isset($serialized[$optionalField]) || $serialized[$optionalField] === '') unset($serialized[$optionalField]);
+		}
+		
+		foreach($externalFields as $externalField) {
+			$getter = 'get' . $this->snakeToCamel($externalField);
+			$serialized[$externalField.'_code'] = $this->$getter()->getCode();
+		}
+		
+		ksort($serialized);
 		return $serialized;
 	}
 	

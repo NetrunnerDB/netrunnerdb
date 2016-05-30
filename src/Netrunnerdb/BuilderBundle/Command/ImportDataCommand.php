@@ -15,7 +15,7 @@ use Netrunnerdb\CardsBundle\Entity\Cycle;
 use Netrunnerdb\CardsBundle\Entity\Pack;
 use Netrunnerdb\CardsBundle\Entity\Card;
 
-class ImportJsonCommand extends ContainerAwareCommand
+class ImportDataCommand extends ContainerAwareCommand
 {
 	/* @var $em EntityManager */
 	private $em;
@@ -28,7 +28,7 @@ class ImportJsonCommand extends ContainerAwareCommand
 	protected function configure()
 	{
 		$this
-		->setName('nrdb:import:json')
+		->setName('nrdb:data:import')
 		->setDescription('Import cards data file in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
 		->addArgument(
 				'path',
