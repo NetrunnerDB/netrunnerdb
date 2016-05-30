@@ -452,6 +452,7 @@ class CardsData
 		
 		switch($sortorder) {
 			case 'set': $qb->orderBy('c.code'); break;
+			case 'name': $qb->orderBy('c.title'); break;
 			case 'faction': $qb->orderBy('c.side', 'DESC')->addOrderBy('c.faction')->addOrderBy('c.type'); break;
 			case 'type': $qb->orderBy('c.side', 'DESC')->addOrderBy('c.type')->addOrderBy('c.faction'); break;
 			case 'cost': $qb->orderBy('c.type')->addOrderBy('c.cost')->addOrderBy('c.advancementCost'); break;
