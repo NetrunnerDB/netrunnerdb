@@ -558,7 +558,10 @@ class CardsData
 		{
 			$cardinfo['imagesrc'] = "/bundles/netrunnerdbcards/images/cards/$locale/". $card->getCode() . ".png";
 		}
-
+		
+		// replacing <trace>
+		$cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1<sup>\2</sup></strong>–', $cardinfo['text']);
+		
 		if($api) {
 			unset($cardinfo['id']);
 			unset($cardinfo['id_set']);
