@@ -457,8 +457,6 @@ class CardsData
 			case 'cost': $qb->orderBy('c.type')->addOrderBy('c.cost')->addOrderBy('c.advancementCost'); break;
 			case 'strength': $qb->orderBy('c.type')->addOrderBy('c.strength')->addOrderBy('c.agendaPoints')->addOrderBy('c.trashCost'); break;
 		}
-		$qb->addOrderBy('c.title');
-		$qb->addOrderBy('c.code');
 		$query = $qb->getQuery();
 		
 		$query->setHint(
