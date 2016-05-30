@@ -17,8 +17,13 @@ class DumpCardTranslationsCommand extends ContainerAwareCommand
 	protected function configure()
 	{
 		$this
-		->setName('nrdb:dump:translations:cards')
-		->setDescription('Dump card translations for a locale')
+		->setName('nrdb:translations:dump:cards')
+		->setDescription('Dump Translations of Cards from a Pack for a Locale')
+		->addArgument(
+				'pack_code',
+				InputArgument::REQUIRED,
+				"Pack Code"
+		)
 		->addArgument(
 				'locale',
 				InputArgument::REQUIRED,
@@ -29,28 +34,41 @@ class DumpCardTranslationsCommand extends ContainerAwareCommand
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$pack_code = $input->getArgument('pack_code');
 		$locale = $input->getArgument('locale');
+		
+		$pack = $this->getContainer()->get('doctrine')->getManager()->getRepository('NetrunnerdbCardsBundle:Pack')->findOneBy(['code' => $pack_code]);
+		
+		if(!$pack) {
+			throw new \Exception("Pack [$pack_code] cannot be found.");
+		}
 		
 		/* @var $repository \Netrunnerdb\CardsBundle\Repository\CardRepository */
 		$repository = $this->getContainer()->get('doctrine')->getManager()->getRepository('NetrunnerdbCardsBundle:Card');
 		
-		$qb = $repository->setDefaultLocale($locale)->createQueryBuilder('c')->orderBy('c.code');
+		$qb = $repository->setDefaultLocale($locale)->createQueryBuilder('c')->where('c.pack = :pack')->setParameter('pack', $pack)->orderBy('c.code');
 		
 		$cards = $repository->getResult($qb);
 		
-		$output = [];
+		$arr = [];
 		
 		foreach($cards as $card) {
-			/* @var $card \Netrunnerdb\CardsBundle\Entity\Card */
-			$output[] = [
+			$data = [
 					"code" => $card->getCode(),
 					"title" => $card->getTitle(),
-					"keywords" => $card->getKeywords(),
-					"text" => $card->getText(),
-					"flavor" => $card->getFlavor()
 			];
+			if($keywords = $card->getKeywords()) {
+				$data['keywords'] = $keywords;
+			}
+			if($text = $card->getText()) {
+				$data['text'] = $text;
+			}
+			if($flavor = $card->getFlavor()) {
+				$data['flavor'] = $flavor;
+			}
+			$arr[] = $data;
 		}
 		
-		echo json_encode($output, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
+		$output->write(json_encode($arr, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT ));
 	}
 }
