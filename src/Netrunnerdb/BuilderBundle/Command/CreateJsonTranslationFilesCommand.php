@@ -57,7 +57,7 @@ class CreateJsonTranslationFilesCommand extends ContainerAwareCommand
 		
 		foreach($things as $thing) {
 			foreach($locales as $locale) {
-				$filepath = "${path}/${locale}/${thing}s.{$locale}.json";
+				$filepath = "${path}/translations/${locale}/${thing}s.{$locale}.json";
 				$output->writeln("Writing translation files for <info>$thing</info> in locale <info>$locale</info> to <info>$filepath</info>");
 				
 				$command = $this->getApplication()->find('nrdb:translations:dump:things');
@@ -79,7 +79,7 @@ class CreateJsonTranslationFilesCommand extends ContainerAwareCommand
 		foreach($packs as $pack) {
 			$pack_code = $pack->getCode();
 			foreach($locales as $locale) {
-				$filepath = "${path}/${locale}/pack/${pack_code}.{$locale}.json";
+				$filepath = "${path}/translations/${locale}/pack/${pack_code}.{$locale}.json";
 				$output->writeln("Writing translation files for Cards from <info>${pack_code}</info> in locale <info>$locale</info> to <info>$filepath</info>");
 		
 				$command = $this->getApplication()->find('nrdb:translations:dump:cards');
