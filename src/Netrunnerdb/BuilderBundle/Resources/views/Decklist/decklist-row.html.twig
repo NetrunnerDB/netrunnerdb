@@ -19,7 +19,7 @@
 			</div>
 			<div class="row h5">
 				<div class="col-sm-5">
-					<span class="glyphicon glyphicon-user"></span>
+					<span class="glyphicon glyphicon-user {{ decklist.usercolor }}"></span>
 		    		<a href="{{ path('user_profile_view', {user_id:decklist.user_id,user_name:decklist.username|e('url')}) }}" class="{{ decklist.usercolor }}">{{ decklist.username }}</a>
 		    		{% if decklist.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
 		    		<small class="reputation">{{ decklist.reputation }}</small>
