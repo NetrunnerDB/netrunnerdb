@@ -14,6 +14,7 @@ class PublicApi20Controller extends FOSRestController
 	private function prepareResponse(array $entities)
 	{
 		$response = new JsonResponse();
+		$response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 		$response->setPublic();
 		$response->headers->add(array('Access-Control-Allow-Origin' => '*'));
 		
