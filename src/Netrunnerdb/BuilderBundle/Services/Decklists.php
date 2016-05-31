@@ -42,12 +42,14 @@ class Decklists
                 u.donation,
                 c.code,
                 c.title identity,
+                p.name lastpack,
                 d.nbvotes,
                 d.nbfavorites,
                 d.nbcomments
                 from decklist d
                 join user u on d.user_id=u.id
                 join card c on d.identity_id=c.id
+                join pack p on d.last_pack_id=p.id
                 join favorite f on f.decklist_id=d.id
                 left join tournament t on d.tournament_id=t.id
                 where f.user_id=?
@@ -92,12 +94,14 @@ class Decklists
                 u.donation,
                 c.code,
                 c.title identity,
+                p.name lastpack,
                 d.nbvotes,
                 d.nbfavorites,
                 d.nbcomments
                 from decklist d
                 join user u on d.user_id=u.id
                 join card c on d.identity_id=c.id
+                join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
                 where d.user_id=?
                 order by date_creation desc
@@ -139,6 +143,7 @@ class Decklists
                 u.donation,
                 c.code,
                 c.title identity,
+                p.name lastpack,
                 d.nbvotes,
                 d.nbfavorites,
                 d.nbcomments,
@@ -146,6 +151,7 @@ class Decklists
                 from decklist d
                 join user u on d.user_id=u.id
                 join card c on d.identity_id=c.id
+                join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
                 where d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
                 order by 2*nbvotes/(1+nbjours*nbjours) DESC, nbvotes desc, nbcomments desc
@@ -185,13 +191,15 @@ class Decklists
     			u.donation,
     			c.code,
     			c.title identity,
+                p.name lastpack,
     			d.nbvotes,
     			d.nbfavorites,
     			d.nbcomments
     			from decklist d
     			join user u on d.user_id=u.id
     			join card c on d.identity_id=c.id
-    			left join tournament t on d.tournament_id=t.id
+    			join pack p on d.last_pack_id=p.id
+                left join tournament t on d.tournament_id=t.id
     			where dotw > 0
     			order by dotw desc
     			limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
@@ -230,12 +238,14 @@ class Decklists
                 u.donation,
                 c.code,
                 c.title identity,
+                p.name lastpack,
                 d.nbvotes,
                 d.nbfavorites,
                 d.nbcomments
                 from decklist d
                 join user u on d.user_id=u.id
                 join card c on d.identity_id=c.id
+                join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
                 where nbvotes > 10
                 order by nbvotes desc, date_creation desc
@@ -275,6 +285,7 @@ class Decklists
                 u.donation,
                 c.code,
                 c.title identity,
+                p.name lastpack,
                 d.nbvotes,
                 d.nbfavorites,
                 d.nbcomments,
@@ -282,6 +293,7 @@ class Decklists
                 from decklist d
                 join user u on d.user_id=u.id
                 join card c on d.identity_id=c.id
+                join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
                 where d.nbcomments > 1
                 order by nbrecentcomments desc, date_creation desc
@@ -321,12 +333,14 @@ class Decklists
                 u.donation,
                 c.code,
                 c.title identity,
+                p.name lastpack,
                 d.nbvotes,
                 d.nbfavorites,
                 d.nbcomments
                 from decklist d
                 join user u on d.user_id=u.id
                 join card c on d.identity_id=c.id
+                join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
                 where d.tournament_id is not null
                 order by date_creation desc
@@ -366,12 +380,14 @@ class Decklists
                 u.donation,
                 c.code,
                 c.title identity,
+                p.name lastpack,
                 d.nbvotes,
                 d.nbfavorites,
                 d.nbcomments
                 from decklist d
                 join user u on d.user_id=u.id
                 join card c on d.identity_id=c.id
+                join pack p on d.last_pack_id=p.id
                 join faction f on d.faction_id=f.id
                 left join tournament t on d.tournament_id=t.id
                 where f.code=?
@@ -414,6 +430,7 @@ class Decklists
                 u.donation,
                 c.code,
                 c.title identity,
+                p.name lastpack,
                 d.nbvotes,
                 d.nbfavorites,
                 d.nbcomments
@@ -612,6 +629,7 @@ class Decklists
                 u.donation,
                 c.code,
                 c.title identity,
+                p.name lastpack,
                 d.nbvotes,
                 d.nbfavorites,
                 d.nbcomments
