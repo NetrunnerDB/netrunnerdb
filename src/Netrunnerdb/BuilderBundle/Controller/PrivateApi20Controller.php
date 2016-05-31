@@ -15,6 +15,7 @@ class PrivateApi20Controller extends FOSRestController
 	private function prepareResponse(array $data, $doSerialize = TRUE)
 	{
 		$response = new JsonResponse();
+		$response->headers->set('Content-Type', 'application/json; charset=UTF-8');
 		$response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 		$response->setPrivate();
 		

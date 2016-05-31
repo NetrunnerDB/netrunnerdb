@@ -11,15 +11,19 @@ use FOS\RestBundle\Controller\FOSRestController;
 
 class PublicApi20Controller extends FOSRestController
 {
-	private function prepareResponse(array $entities)
+	private function prepareResponse(array $entities, Request $request = null)
 	{
 		$response = new JsonResponse();
+		$response->headers->set('Access-Control-Allow-Origin', '*');
+		$response->headers->set('Content-Type', 'application/json; charset=UTF-8');
 		$response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 		$response->setPublic();
-		$response->headers->add(array('Access-Control-Allow-Origin' => '*'));
 		
 		$content = [ 'version_number' => '2.0' ];
 		
+		$locale = $request ? $request->query->get('_locale') : null;
+		$translationRepository = $this->getDoctrine()->getManager()->getRepository('Gedmo\Translatable\Entity\Translation');
+			
 		$dateUpdate = array_reduce($entities, function($carry, $item) {
 			if($carry || $item->getDateUpdate() > $carry) return $item->getDateUpdate();
 			else return $carry;
@@ -30,8 +34,20 @@ class PublicApi20Controller extends FOSRestController
 			return $response;
 		}
 		
-		$content['data'] = array_map(function ($entity) {
-			return $entity->serialize();
+		$content['data'] = array_map(function ($entity) use ($locale, $translationRepository) {
+			$data = $entity->serialize();
+				
+			if(isset($locale))
+			{
+				$translations = $translationRepository->findTranslations($entity);
+				if(isset($translations[$locale])) {
+					$translation = $translations[$locale];
+					$translation = array_filter($translation, function ($var) { return isset($var); });
+					$data['_locale'] = [ $locale => $translation ];
+				}
+			}
+			
+			return $data;
 		}, $entities);
 		
 		$content['total'] = count($content['data']);
@@ -54,7 +70,7 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function cycleAction($cycle_code)
+	public function cycleAction($cycle_code, Request $request)
 	{
 		$cycle = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Cycle')->findOneBy(['code' => $cycle_code]);
 	
@@ -62,7 +78,7 @@ class PublicApi20Controller extends FOSRestController
 			throw $this->createNotFoundException("Cycle not found");
 		}
 		
-		return $this->prepareResponse([$cycle]);
+		return $this->prepareResponse([$cycle], $request);
 	}
 	
 	/**
@@ -76,11 +92,11 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function cyclesAction()
+	public function cyclesAction(Request $request)
 	{
 		$data = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Cycle')->findAll();
 		
-		return $this->prepareResponse($data);
+		return $this->prepareResponse($data, $request);
 	}
 
 	/**
@@ -94,7 +110,7 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function packAction($pack_code)
+	public function packAction($pack_code, Request $request)
 	{
 		$pack = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Pack')->findOneBy(['code' => $pack_code]);
 	
@@ -102,7 +118,7 @@ class PublicApi20Controller extends FOSRestController
 			throw $this->createNotFoundException("Pack not found");
 		}
 		
-		return $this->prepareResponse([$pack]);
+		return $this->prepareResponse([$pack], $request);
 	}
 	
 	/**
@@ -116,11 +132,11 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function packsAction()
+	public function packsAction(Request $request)
 	{
 		$data = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Pack')->findAll();
 	
-		return $this->prepareResponse($data);
+		return $this->prepareResponse($data, $request);
 	}
 
 	/**
@@ -134,15 +150,15 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function cardAction($card_code)
+	public function cardAction($card_code, Request $request)
 	{
 		$card = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Card')->findOneBy(['code' => $card_code]);
-	
+
 		if(!$card) {
 			throw $this->createNotFoundException("Card not found");
 		}
 		
-		return $this->prepareResponse([$card]);
+		return $this->prepareResponse([$card], $request);
 	}
 	
 	/**
@@ -156,11 +172,11 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function cardsAction()
+	public function cardsAction(Request $request)
 	{
 		$data = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Card')->findAll();
 		
-		return $this->prepareResponse($data);
+		return $this->prepareResponse($data, $request);
 	}
 
 	/**
