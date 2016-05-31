@@ -2,31 +2,6 @@
 
 {% block head %}
 <script src="{{ asset('/bundles/netrunnerdbbuilder/js/search.js') }}"></script>
-<script type="text/javascript">
-$(function () {
-	var type = {{ type|json_encode|raw }};
-	$('time').each(function (index, element) {
-		var datetime = moment($(element).attr('datetime'));
-		var formatted;
-		switch(type) {
-		case 'popular':
-		case 'recent':
-		case 'hottopics':
-			 formatted = datetime.fromNow();
-			 break;
-		case 'halloffame':
-		case 'favorites':
-		case 'mine':
-		case 'search':
-		default:
-			formatted = datetime.format('ll');
-			 break;
-		}
-		$(element).html(formatted);
-		$(element).attr('title', datetime.format('LLLL'));
-	});
-});
-</script>
 {% endblock %}
 
 {% block body %}

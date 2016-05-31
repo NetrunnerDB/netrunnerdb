@@ -202,8 +202,8 @@ ga('send', 'pageview');
 
     </div>
     </footer>
-
+{% if app.environment == 'prod' %}
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-
+{% endif %}
     </body>
 </html>

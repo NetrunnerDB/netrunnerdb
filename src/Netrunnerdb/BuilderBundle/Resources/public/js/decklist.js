@@ -244,11 +244,6 @@ $(function() {
 		}
 	}, 'a');
 	
-	$('time').each(function (index, element) {
-		var datetime = moment($(element).attr('datetime'));
-		$(element).html(datetime.calendar());
-		$(element).attr('title', datetime.format('LLLL'));
-	});
 });
 
 function compare_submit() {

@@ -4,12 +4,6 @@ $(function () {
 	$(window.document).on('click', '.social-icon-like', like_review);
 	$(window.document).on('click', '.btn-write-comment', write_comment);
 	$(window.document).on('submit', 'form.form-comment', form_comment_submit);
-	
-	$('time').each(function (index, element) {
-		var datetime = moment($(element).attr('datetime'));
-		$(element).html(datetime.calendar());
-		$(element).attr('title', datetime.format('LLLL'));
-	});
 });
 
 $.when(NRDB.user.deferred).then(function() {
