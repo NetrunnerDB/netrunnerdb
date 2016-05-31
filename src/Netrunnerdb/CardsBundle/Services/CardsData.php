@@ -35,6 +35,21 @@ class CardsData
         $this->dir = $dir;
 	}
 
+	private function backwardCompatibilitySymbols($text)
+	{
+		$map = array(
+				'[subroutine]' => '[Subroutine]',
+				'[credit]' => '[Credits]',
+				'[trash]' => '[Trash]',
+				'[click]' => '[Click]',
+				'[recurring-credit]' => '[Recurring Credits]',
+				'[mu]' => '[Memory Unit]',
+				'[link]' =>  '[Link]'
+		);
+		
+		return str_replace(array_keys($map), array_values($map), $text);
+	}
+	
 	/**
 	 * Searches for and replaces symbol tokens with markup in a given text.
 	 * @param string $text
@@ -43,13 +58,13 @@ class CardsData
 	public function replaceSymbols($text)
 	{
 		$map = array(
-			'[Subroutine]' =>'<span class="icon icon-subroutine"></span>',
-			'[Credits]' => '<span class="icon icon-credit"></span>',
-			'[Trash]' => '<span class="icon icon-trash"></span>',
-			'[Click]' => '<span class="icon icon-click"></span>',
-			'[Recurring Credits]' => '<span class="icon icon-recurring-credit"></span>',
-			'[Memory Unit]' => '<span class="icon icon-mu"></span>',
-			'[Link]' =>  '<span class="icon icon-link"></span>',
+			'[subroutine]' =>'<span class="icon icon-subroutine"></span>',
+			'[credit]' => '<span class="icon icon-credit"></span>',
+			'[trash]' => '<span class="icon icon-trash"></span>',
+			'[click]' => '<span class="icon icon-click"></span>',
+			'[recurring-credit]' => '<span class="icon icon-recurring-credit"></span>',
+			'[mu]' => '<span class="icon icon-mu"></span>',
+			'[link]' =>  '<span class="icon icon-link"></span>',
 			'[anarch]' =>  '<span class="icon icon-anarch"></span>',
 			'[criminal]' =>  '<span class="icon icon-criminal"></span>',
 			'[shaper]' =>  '<span class="icon icon-shaper"></span>',
@@ -563,12 +578,12 @@ class CardsData
 		$cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1<sup>\2</sup></strong>–', $cardinfo['text']);
 		
 		if($api) {
+			$cardinfo['text'] = $this->backwardCompatibilitySymbols($cardinfo['text']);
 			unset($cardinfo['id']);
 			unset($cardinfo['id_set']);
 			$cardinfo = array_filter($cardinfo, function ($var) { return isset($var); });
 			$cacheApi[$card->getId()][$locale] = $cardinfo;
 		} else {
-
 			$cardinfo['text'] = $this->replaceSymbols($cardinfo['text']);
 			$cardinfo['text'] = str_replace('&', '&amp;', $cardinfo['text']);
 			$cardinfo['text'] = implode(array_map(function ($l) { return "<p>$l</p>"; }, explode("\n", $cardinfo['text'])));
