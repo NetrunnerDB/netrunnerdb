@@ -74,10 +74,10 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 			
 			$fileSystemIterator = $this->getFileSystemIterator("${path}/translations/${locale}");
 			
-			$output->writeln("Importing translations for <info>cards</info> in <info>${locale}</info>:");
+			$output->writeln("Importing translations for <info>cards</info> in <info>${locale}</info>");
 			foreach ($fileSystemIterator as $fileInfo) 
 			{
-				$output->writeln("Importing translations for <info>cards</info> from <info>".$fileInfo->getFilename()."</info>:");
+				$output->writeln("Importing translations for <info>cards</info> from <info>".$fileInfo->getFilename()."</info>");
 				$this->importCardsJsonFile($fileInfo, $locale);
 			}
 			
@@ -121,7 +121,6 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 		
 		$progress->finish();
 		$progress->clear();
-		$this->output->writeln("");
 	}
 
 	protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
