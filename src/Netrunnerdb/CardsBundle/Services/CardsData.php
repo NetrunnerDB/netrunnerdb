@@ -14,19 +14,19 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class CardsData
 {
 
-	private static $faction_letters = array(
-		"haas-bioroid" => 'h',
-		"weyland-consortium" => 'w',
-		"anarch" => 'a',
-		"shaper" => 's',
-		"criminal" => 'c',
-		"jinteki" => 'j',
-		"nbn" => 'n',
-		"neutral" => '-',
-		"apex" => 'p',
-		"adam" => 'd',
-		"sunny-lebeau" => 'u',
-	);
+	private static $faction_letters = [
+			'haas-bioroid' => 'h',
+			'weyland-consortium' => 'w',
+			'anarch' => 'a',
+			'shaper' => 's',
+			'criminal' => 'c',
+			'jinteki' => 'j',
+			'nbn' => 'n',
+			'neutral' => '-',
+			'apex' => 'p',
+			'adam' => 'd',
+			'sunny-lebeau' => 'u',
+	];
 
 	public function __construct(Registry $doctrine, RequestStack $request_stack, Router $router, $dir) {
 		$this->doctrine = $doctrine;
@@ -259,13 +259,11 @@ class CardsData
 				case 'f': // faction
 					$or = array();
 					foreach($condition as $arg) {
-						if(in_array($arg, self::$faction_letters)) {
-							switch($operator) {
-								case ':': $or[] = "(f.code = ?$i)"; break;
-								case '!': $or[] = "(f.code != ?$i)"; break;
-							}
-							$parameters[$i++] = array_search($arg, self::$faction_letters);
+						switch($operator) {
+							case ':': $or[] = "(f.code = ?$i)"; break;
+							case '!': $or[] = "(f.code != ?$i)"; break;
 						}
+						$parameters[$i++] = $arg;
 					}
 					$clauses[] = implode($operator == '!' ? " and " : " or ", $or);
 					break;
@@ -674,7 +672,15 @@ class CardsData
 		foreach($conditions as $i => $l)
 		{
 			if(in_array($l[1], $numeric) && !in_array($l[0], $canDoNumeric)) unset($conditions[$i]);
-			if($l[0] == 'f' && !in_array($l[2], self::$faction_letters)) unset($conditions[$i]);
+			if($l[0] == 'f') {
+				if(strlen($l[2]) === 1 && in_array($l[2], self::$faction_letters)) {
+ 					$conditions[$i][2] = array_search($l[2], self::$faction_letters, TRUE);
+				} else {
+					if(!key_exists($l[2], self::$faction_letters)) {
+						unset($conditions[$i]);
+					}
+				}
+			}
 		}
 	}
 
