@@ -55,19 +55,18 @@ class DumpCardTranslationsCommand extends ContainerAwareCommand
 		$arr = [];
 		
 		foreach($cards as $card) {
-			$data = [
-					"code" => $card->getCode(),
-					"title" => $card->getTitle(),
-			];
+			$data = [];
+			$data['code'] = $card->getCode();
+			if($flavor = $card->getFlavor()) {
+				$data['flavor'] = $flavor;
+			}
 			if($keywords = $card->getKeywords()) {
 				$data['keywords'] = $keywords;
 			}
 			if($text = $card->getText()) {
 				$data['text'] = $text;
 			}
-			if($flavor = $card->getFlavor()) {
-				$data['flavor'] = $flavor;
-			}
+			$data['title'] = $card->getTitle();
 			$arr[] = $data;
 		}
 		

@@ -187,6 +187,9 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 			throw new \Exception("Missing key [code] in ".json_encode($data));
 		}
 	
+		# skip empty translations
+		if(!isset($data['title'])) return;
+		
 		$entity = $this->em->getRepository($entityName)->findOneBy(['code' => $data['code']]);
 		if(!$entity) {
 			throw new \Exception("Cannot find entity [code]");
