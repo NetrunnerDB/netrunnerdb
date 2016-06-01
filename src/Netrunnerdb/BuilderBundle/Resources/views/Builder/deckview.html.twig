@@ -31,6 +31,7 @@ DisplaySort = 'type',
 <div class="row">
     <div class="col-md-12">
         <h1 style="border-bottom:1px solid lightgray"><span class="icon icon-{{ deck.faction_code }} {{ deck.faction_code }}"></span> {{ deck.name }}</h1>
+        <div class="pull-right text-muted">Last updated <time datetime="{{ deck.date_update|date('c') }}" title="{{ deck.date_update|date('Y-m-d H:i:s P') }}">{{ deck.date_update|date('j M Y') }}</time></div>
         {% if deck.problem %}
         <div class="alert alert-danger" role="alert">{{ deck.message }}</div>
         {% endif %}

@@ -714,6 +714,7 @@ class BuilderController extends Controller
 				d.description,
 				d.mwl_id,
                 d.problem,
+        		d.date_update,
                 u.id user_id,
                 u.share_decks shared,
 				s.name side_name,

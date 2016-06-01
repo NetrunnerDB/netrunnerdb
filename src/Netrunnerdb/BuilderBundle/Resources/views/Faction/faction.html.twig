@@ -36,7 +36,7 @@
 			<a class="decklist-name" href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a>
 		</h4>
 		<h5>
-			<time class="pull-right" datetime="{{ decklist.dateCreation|date('c') }}">{{ decklist.dateCreation|date('M d, Y') }}</time>
+			<time class="pull-right" datetime="{{ decklist.dateCreation|date('c') }}">{{ decklist.dateCreation|date('j M Y') }}</time>
 			<i>{{ decklist.lastPack.name }}</i>
 			{% if decklist.tournament %}
 			<span class="text-success" style="margin-left:1em">

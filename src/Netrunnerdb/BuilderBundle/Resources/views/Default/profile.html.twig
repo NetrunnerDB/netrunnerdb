@@ -15,7 +15,7 @@ var UserId = {{ user.id }};
   {% if user.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
     <small>{{ user.reputation }}</small></h1>
 	<p>
-        Member since {{ user.creation|date('M d, Y') }}
+        Member since {{ user.creation|date('j M Y') }}
         <div>
         {% if nbdecklists > 1 %}
             <a href="{{ path('decklists_list',{type:'find',page:1,author:user.username}) }}">{{ nbdecklists }} published decklists</a>

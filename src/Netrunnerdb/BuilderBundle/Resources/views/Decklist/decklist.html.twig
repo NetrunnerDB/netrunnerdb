@@ -31,7 +31,7 @@ NRDB.user.params.decklist_id = Decklist.id;
         </h1>
         <div class="social">
             <div class="pull-right" id="social-icons">
-                <span><span class="glyphicon glyphicon-calendar"></span> <time datetime="{{ decklist.date_creation|date('c') }}">{{ decklist.date_creation|date('M d, Y') }}</time></span>
+                <span><span class="glyphicon glyphicon-calendar"></span> <time datetime="{{ decklist.date_creation|date('c') }}">{{ decklist.date_creation|date('j M Y') }}</time></span>
                 |
                 <a id="social-icon-like" href="#" class="social-icon-like" data-toggle="tooltip" data-placement="bottom" title="Like">
                 	<span class="glyphicon glyphicon-heart"></span> <span class="num">{{ decklist.nbvotes }}</span>
@@ -243,7 +243,7 @@ NRDB.user.params.decklist_id = Decklist.id;
         <a href="#div-comment-{{ comment.id }}" data-toggle="collapse" class="text-muted pull-right" style="margin-left:.5em"><span class="glyphicon glyphicon-eye-open"></span></a>
     </div>
     <div class="collapse{% if not comment.hidden %} in{% endif %}" id="div-comment-{{ comment.id }}">
-        <span class="comment-date" title="{{ comment.date_creation|date('r') }}">{{ comment.date_creation|date('M d, Y') }}</span>
+        <span class="comment-date">{{ comment.date_creation|date('j M Y') }}</span>
         <a href="{{ path('user_profile_view', {_locale:app.request.locale,user_id:comment.user_id,user_name:comment.author|e('url')}) }}" class="comment-author username {{ comment.authorcolor }}">{{ comment.author }}</a>
         {% if comment.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
         <div class="comment-text">{{ comment.text|raw }}</div>
