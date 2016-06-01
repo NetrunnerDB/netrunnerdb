@@ -21,67 +21,80 @@ class FactionController extends Controller
     	$em = $this->getDoctrine()->getManager();
         
         /* @var $faction Faction */
-        $faction = $em->getRepository('NetrunnerdbCardsBundle:Faction')->findOneBy(array('code' => $faction_code));
+    	if($faction_code === 'mini-factions') {
+    		$factions = $em->getRepository('NetrunnerdbCardsBundle:Faction')->findBy(['isMini' => true], ['code' => 'ASC']);
+    	} else {
+    		$factions = $em->getRepository('NetrunnerdbCardsBundle:Faction')->findBy(['code' => $faction_code]);
+    	}
         
-        if(!$faction) {
+        if(!count($factions)) {
             throw new NotFoundHttpException("Faction $faction_code not found.");
         }
 
-        // build the list of identites for the faction
+        $result = [];
         
-        /* @var $qb \Doctrine\ORM\QueryBuilder */
-        $qb = $em->createQueryBuilder();
-        $qb->select('c')
-        ->from('NetrunnerdbCardsBundle:Card', 'c')
-        ->join('c.pack', 'p')
-        ->where('c.faction=:faction')
-        ->setParameter('faction', $faction)
-        ->andWhere('c.type=:type')
-        ->andWhere('p.dateRelease is not null')
-        ->setParameter('type', $em->getRepository('NetrunnerdbCardsBundle:Type')->findOneBy(array('name' => 'Identity')));
-        
-        $identities = $qb->getQuery()->getResult();
-        
-        $nb_decklists_per_id = 3;
-        
-        // build the list of the top $nb_decklists_per_id decklists per id
-        // also, compute the total points of those decks per id
-        
-        $decklists = array();
-        foreach($identities as $identity) {
-        	
-        	$qb = $em->createQueryBuilder();
-        	$qb->select('d, (d.nbvotes/(1+DATE_DIFF(CURRENT_TIMESTAMP(),d.dateCreation)/10)) as points')
-        	->from('NetrunnerdbBuilderBundle:Decklist', 'd')
-        	->where('d.identity=:identity')
-        	->setParameter('identity', $identity)
-        	->orderBy('points', 'DESC')
-        	->setMaxResults($nb_decklists_per_id);
-        	$results = $qb->getQuery()->getResult();
-
-        	$points = 0;
-        	$list = array();
-        	foreach($results as $row) {
-        		$list[] = $row[0];
-        		$points += intval($row['points']);
-        	}
-
-        	$decklists[] = array(
-        			'identity' => $identity,
-        			'points' => $points,
-        			'decklists' => $list
-        	);
+        foreach($factions as $faction) {
+	        
+	        // build the list of identites for the faction
+	        
+	        /* @var $qb \Doctrine\ORM\QueryBuilder */
+	        $qb = $em->createQueryBuilder();
+	        $qb->select('c')
+	        ->from('NetrunnerdbCardsBundle:Card', 'c')
+	        ->join('c.pack', 'p')
+	        ->where('c.faction=:faction')
+	        ->setParameter('faction', $faction)
+	        ->andWhere('c.type=:type')
+	        ->andWhere('p.dateRelease is not null')
+	        ->setParameter('type', $em->getRepository('NetrunnerdbCardsBundle:Type')->findOneBy(array('name' => 'Identity')));
+	        
+	        $identities = $qb->getQuery()->getResult();
+	        
+	        $nb_decklists_per_id = 3;
+	        
+	        // build the list of the top $nb_decklists_per_id decklists per id
+	        // also, compute the total points of those decks per id
+	        
+	        $decklists = array();
+	        foreach($identities as $identity) {
+	        	
+	        	$qb = $em->createQueryBuilder();
+	        	$qb->select('d, (d.nbvotes/(1+DATE_DIFF(CURRENT_TIMESTAMP(),d.dateCreation)/10)) as points')
+	        	->from('NetrunnerdbBuilderBundle:Decklist', 'd')
+	        	->where('d.identity=:identity')
+	        	->setParameter('identity', $identity)
+	        	->orderBy('points', 'DESC')
+	        	->setMaxResults($nb_decklists_per_id);
+	        	$results = $qb->getQuery()->getResult();
+	
+	        	$points = 0;
+	        	$list = array();
+	        	foreach($results as $row) {
+	        		$list[] = $row[0];
+	        		$points += intval($row['points']);
+	        	}
+	
+	        	$decklists[] = array(
+	        			'identity' => $identity,
+	        			'points' => $points,
+	        			'decklists' => $list
+	        	);
+	        }
+	        
+	        // sort the identities from most points to least
+	        usort($decklists, function ($a, $b) {
+	        	return $b['points'] - $a['points'];
+	        });
+	        
+	        $result[] = [
+	        		'faction' => $faction,
+	        		'decklists' => $decklists
+	        ];
         }
         
-        // sort the identities from most points to least
-        usort($decklists, function ($a, $b) {
-        	return $b['points'] - $a['points'];
-        });
-        
         return $this->render('NetrunnerdbBuilderBundle:Faction:faction.html.twig', array(
-                "pagetitle" => $faction->getName(),
-                "faction" => $faction,
-                "decklists" => $decklists
+                "pagetitle" => "Faction Page",
+                "results" => $result
         ), $response);
     }
 }
