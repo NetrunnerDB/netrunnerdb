@@ -130,7 +130,7 @@ class User extends BaseUser
      *
      * @return \DateTime
      */
-    public function getDateCreation()
+    public function getCreation()
     {
         return $this->creation;
     }
