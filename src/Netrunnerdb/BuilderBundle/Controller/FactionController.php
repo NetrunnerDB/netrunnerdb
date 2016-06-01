@@ -20,17 +20,18 @@ class FactionController extends Controller
     	
     	$em = $this->getDoctrine()->getManager();
         
-        /* @var $faction Faction */
     	if($faction_code === 'mini-factions') {
     		$factions = $em->getRepository('NetrunnerdbCardsBundle:Faction')->findBy(['isMini' => true], ['code' => 'ASC']);
+    		$faction_name = "Mini-factions";
     	} else {
     		$factions = $em->getRepository('NetrunnerdbCardsBundle:Faction')->findBy(['code' => $faction_code]);
+    		if(!count($factions)) {
+    			throw new NotFoundHttpException("Faction $faction_code not found.");
+    		}
+    		$faction_name = $factions[0]->getName();
     	}
         
-        if(!count($factions)) {
-            throw new NotFoundHttpException("Faction $faction_code not found.");
-        }
-
+        
         $result = [];
         
         foreach($factions as $faction) {
@@ -93,7 +94,7 @@ class FactionController extends Controller
         }
         
         return $this->render('NetrunnerdbBuilderBundle:Faction:faction.html.twig', array(
-                "pagetitle" => "Faction Page",
+                "pagetitle" => "Faction Page: $faction_name",
                 "results" => $result
         ), $response);
     }
