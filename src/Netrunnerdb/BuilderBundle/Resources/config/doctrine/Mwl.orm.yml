@@ -37,6 +37,7 @@ Netrunnerdb\BuilderBundle\Entity\Mwl:
                     on:  update
         dateStart:
             type: date
+            nullable: true
             column: date_start
         active:
             type: boolean

@@ -95,7 +95,7 @@ var Filters = {},
 			<option value="">Casual Play</option>
 			{% for mwl in list_mwl %}
 			<option value="{{ mwl.id }}"{% if mwl.id == deck.mwl_id %} selected="selected"{% endif %}>
-				{{ mwl.name }}{% if not mwl.active %} (after {{ mwl.dateStart|date('Y-m-d') }}){% else %} (active){% endif %}
+				{{ mwl.name }}{% if not mwl.active %}{% if mwl.dateStart %} (after {{ mwl.dateStart|date('Y-m-d') }}){% endif %}{% else %} (active){% endif %}
 			</option>
 		{% endfor %}
 		</select>
