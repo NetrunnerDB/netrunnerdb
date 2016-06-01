@@ -27,7 +27,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
 				'deck_limit',
 				'quantity'
 		];
-		if($this->faction->getCode() === 'neutral') {
+		if($this->faction->getCode() === 'neutral' && $this->type->getCode() !== 'identity') {
 			$mandatoryFields[] = 'faction_cost';
 		}
 
@@ -87,11 +87,6 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
 				}
 				break;
 		}
-		
-		foreach($mandatoryFields as $mandatoryField) {
-			$getter = 'get' . $this->snakeToCamel($mandatoryField);
-			$serialized[$mandatoryField] = $this->$getter();
-		}
 
 		foreach($optionalFields as $optionalField) {
 			$getter = 'get' . $this->snakeToCamel($optionalField);
@@ -99,6 +94,11 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
 			if(!isset($serialized[$optionalField]) || $serialized[$optionalField] === '') unset($serialized[$optionalField]);
 		}
 		
+		foreach($mandatoryFields as $mandatoryField) {
+			$getter = 'get' . $this->snakeToCamel($mandatoryField);
+			$serialized[$mandatoryField] = $this->$getter();
+		}
+
 		foreach($externalFields as $externalField) {
 			$getter = 'get' . $this->snakeToCamel($externalField);
 			$serialized[$externalField.'_code'] = $this->$getter()->getCode();
