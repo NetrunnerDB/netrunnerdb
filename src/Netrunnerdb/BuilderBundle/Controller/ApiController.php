@@ -43,7 +43,7 @@ class ApiController extends Controller
             $data[] = array(
                 'id' => $mwl->getId(),
                 'name' => $mwl->getName(),
-                'start' => $mwl->getDateStart()->format('Y-m-d'),
+                'start' => $mwl->getDateStart() ? $mwl->getDateStart()->format('Y-m-d') : null,
                 'cards' => $cards,
             );
         }
