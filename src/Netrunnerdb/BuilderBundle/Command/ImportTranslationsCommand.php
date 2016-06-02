@@ -121,6 +121,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 		
 		$progress->finish();
 		$progress->clear();
+		$this->output->write("\n");
 	}
 
 	protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
