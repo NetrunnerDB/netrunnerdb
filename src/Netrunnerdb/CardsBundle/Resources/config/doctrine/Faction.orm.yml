@@ -40,4 +40,18 @@ Netrunnerdb\CardsBundle\Entity\Faction:
             type: boolean
             nullable: true
             column: is_mini
+        dateCreation:
+            type: datetime
+            nullable: false
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on: create
+        dateUpdate:
+            type: datetime
+            nullable: false
+            column: date_update
+            gedmo:
+                timestampable:
+                    on: update
     lifecycleCallbacks: {  }

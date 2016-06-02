@@ -60,6 +60,126 @@ class PublicApi20Controller extends FOSRestController
 	}
 
 	/**
+	 * Get a type
+	 *
+	 * @ApiDoc(
+	 *  section="Type",
+	 *  resource=true,
+	 *  description="Get one type",
+	 *  parameters={
+	 *  },
+	 * )
+	 */
+	public function typeAction($type_code, Request $request)
+	{
+		$type = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Type')->findOneBy(['code' => $type_code]);
+	
+		if(!$type) {
+			throw $this->createNotFoundException("Type not found");
+		}
+	
+		return $this->prepareResponse([$type], $request);
+	}
+	
+	/**
+	 * Get all the types
+	 *
+	 * @ApiDoc(
+	 *  section="Type",
+	 *  resource=true,
+	 *  description="Get all the types",
+	 *  parameters={
+	 *  },
+	 * )
+	 */
+	public function typesAction(Request $request)
+	{
+		$data = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Type')->findAll();
+	
+		return $this->prepareResponse($data, $request);
+	}
+	
+	/**
+	 * Get a side
+	 *
+	 * @ApiDoc(
+	 *  section="Side",
+	 *  resource=true,
+	 *  description="Get one side",
+	 *  parameters={
+	 *  },
+	 * )
+	 */
+	public function sideAction($side_code, Request $request)
+	{
+		$side = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Side')->findOneBy(['code' => $side_code]);
+	
+		if(!$side) {
+			throw $this->createNotFoundException("Side not found");
+		}
+	
+		return $this->prepareResponse([$side], $request);
+	}
+	
+	/**
+	 * Get all the sides
+	 *
+	 * @ApiDoc(
+	 *  section="Side",
+	 *  resource=true,
+	 *  description="Get all the sides",
+	 *  parameters={
+	 *  },
+	 * )
+	 */
+	public function sidesAction(Request $request)
+	{
+		$data = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Side')->findAll();
+	
+		return $this->prepareResponse($data, $request);
+	}
+	
+	/**
+	 * Get a faction
+	 *
+	 * @ApiDoc(
+	 *  section="Faction",
+	 *  resource=true,
+	 *  description="Get one faction",
+	 *  parameters={
+	 *  },
+	 * )
+	 */
+	public function factionAction($faction_code, Request $request)
+	{
+		$faction = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Faction')->findOneBy(['code' => $faction_code]);
+	
+		if(!$faction) {
+			throw $this->createNotFoundException("Faction not found");
+		}
+	
+		return $this->prepareResponse([$faction], $request);
+	}
+	
+	/**
+	 * Get all the factions
+	 *
+	 * @ApiDoc(
+	 *  section="Faction",
+	 *  resource=true,
+	 *  description="Get all the factions",
+	 *  parameters={
+	 *  },
+	 * )
+	 */
+	public function factionsAction(Request $request)
+	{
+		$data = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Faction')->findAll();
+	
+		return $this->prepareResponse($data, $request);
+	}
+	
+	/**
 	 * Get a cycle
 	 *
 	 * @ApiDoc(

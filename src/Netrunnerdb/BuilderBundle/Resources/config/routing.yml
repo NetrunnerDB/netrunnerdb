@@ -604,6 +604,48 @@ api_public_cycles:
     defaults:
         _controller: NetrunnerdbBuilderBundle:PublicApi20:cycles
 
+api_public_faction:
+    path: /api/2.0/public/faction/{faction_code}
+    methods: [GET]
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:PublicApi20:faction
+    requirements:
+        faction_code: "[\\w-]+"
+        
+api_public_factions:
+    path: /api/2.0/public/factions
+    methods: [GET]
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:PublicApi20:factions
+
+api_public_side:
+    path: /api/2.0/public/side/{side_code}
+    methods: [GET]
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:PublicApi20:side
+    requirements:
+        side_code: "[\\w-]+"
+        
+api_public_sides:
+    path: /api/2.0/public/sides
+    methods: [GET]
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:PublicApi20:sides
+
+api_public_type:
+    path: /api/2.0/public/type/{type_code}
+    methods: [GET]
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:PublicApi20:type
+    requirements:
+        type_code: "[\\w-]+"
+        
+api_public_types:
+    path: /api/2.0/public/types
+    methods: [GET]
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:PublicApi20:types
+
 api_public_decklist:
     path: /api/2.0/public/decklist/{decklist_id}
     methods: [GET]
