@@ -15,6 +15,7 @@ class Mwl implements \Serializable
 	
 		return  [
 				'id' => $this->id,
+				'active' => $this->active,
 				'date_creation' => $this->dateCreation->format('Y-m-d'),
 				'date_update' => $this->dateUpdate->format('Y-m-d'),
 				'name' => $this->name,
