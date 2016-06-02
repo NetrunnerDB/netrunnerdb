@@ -18,7 +18,7 @@ class Mwl implements \Serializable
 				'date_creation' => $this->dateCreation->format('Y-m-d'),
 				'date_update' => $this->dateUpdate->format('Y-m-d'),
 				'name' => $this->name,
-				'start' => $this->dateStart->format('Y-m-d'),
+				'start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
 				'cards' => $cards
 		];
 	}
