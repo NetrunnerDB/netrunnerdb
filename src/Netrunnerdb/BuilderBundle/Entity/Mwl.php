@@ -15,11 +15,11 @@ class Mwl implements \Serializable
 	
 		return  [
 				'id' => $this->id,
+				'name' => $this->name,
 				'active' => $this->active,
+				'date_start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
 				'date_creation' => $this->dateCreation->format('Y-m-d'),
 				'date_update' => $this->dateUpdate->format('Y-m-d'),
-				'name' => $this->name,
-				'start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
 				'cards' => $cards
 		];
 	}
