@@ -338,6 +338,7 @@ user_profile_view:
     methods: [GET]
     defaults:
         _controller: NetrunnerdbBuilderBundle:Social:profile
+        user_name: null
         page: 1
         _locale: en
     requirements:
