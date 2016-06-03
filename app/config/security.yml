@@ -50,10 +50,8 @@ security:
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }
-        - { path: ^/ffg, role: ROLE_ADMIN }
-        - { path: ^/deck/, role: ROLE_USER }
-        - { path: ^/.*/deck/view/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/.*/deck/, role: ROLE_USER }
-        - { path: ^/.*/decks, role: ROLE_USER }
-        - { path: ^/.*/user/, role: ROLE_USER }
+        - { path: ^/../deck/view/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/../deck/, role: ROLE_USER }
+        - { path: ^/../decks, role: ROLE_USER }
+        - { path: ^/../user/, role: ROLE_USER }
         - { path: ^/api_oauth2, roles: IS_AUTHENTICATED_FULLY }
