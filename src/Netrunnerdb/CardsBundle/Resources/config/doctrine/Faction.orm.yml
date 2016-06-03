@@ -36,6 +36,9 @@ Netrunnerdb\CardsBundle\Entity\Faction:
             length: 255
             gedmo:
                 - translatable
+        color:
+            type: string
+            length: 6
         isMini:
             type: boolean
             nullable: true

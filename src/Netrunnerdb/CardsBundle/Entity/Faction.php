@@ -18,6 +18,7 @@ class Faction implements Translatable
 		return [
 				'code' => $this->code,
 				'name' => $this->name,
+				'color' => $this->color,
 				'is_mini' => $this->isMini
 		];
 	}
@@ -330,5 +331,34 @@ class Faction implements Translatable
     public function getDateUpdate()
     {
         return $this->dateUpdate;
+    }
+    /**
+     * @var string
+     */
+    private $color;
+
+
+    /**
+     * Set color
+     *
+     * @param string $color
+     *
+     * @return Faction
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * Get color
+     *
+     * @return string
+     */
+    public function getColor()
+    {
+        return $this->color;
     }
 }
