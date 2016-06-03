@@ -96,8 +96,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     }
     return html;
   }
+  function renderCardQuantity(card, quantity) {
+	if(card.type_code === 'identity') {
+		return '';
+	}
+	else {
+		return '<span class="nrdb-ext-decklist-quantity">'+quantity+'x</span> ';
+	}
+  }
   function renderCardLine(card, quantity) {
-    return '<div class="nrdb-ext-decklist-card"><span class="nrdb-ext-decklist-quantity">'+quantity+'x</span> '+renderCardLink(card)+renderCardInfluenceCost(card, quantity)+'</div>';
+    return '<div class="nrdb-ext-decklist-card">'+renderCardQuantity(card, quantity)+renderCardLink(card)+renderCardInfluenceCost(card, quantity)+'</div>';
   }
   function renderTypeSection(type_code) {
     var type = db.types[type_code], lines = [];
@@ -116,7 +124,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       lines.push(renderCardLine(card, quantity));
     });
     if(lines.length) {
-      var header = (type.position ? '<h4>'+type.name+'</h4>' : '');
+      var header = (type_code === 'identity' ? '<h4>'+type.name+'</h4>' : '');
       return '<section class="nrdb-ext-decklist-section" data-type="'+type.code+'">' + header + lines.join('') + '</section>';
     }
     else {
