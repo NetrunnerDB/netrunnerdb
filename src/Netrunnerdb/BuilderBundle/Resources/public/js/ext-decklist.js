@@ -124,7 +124,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       lines.push(renderCardLine(card, quantity));
     });
     if(lines.length) {
-      var header = (type_code === 'identity' ? '<h4>'+type.name+'</h4>' : '');
+      var header = (type_code !== 'identity' ? '<h4>'+type.name+'</h4>' : '');
       return '<section class="nrdb-ext-decklist-section" data-type="'+type.code+'">' + header + lines.join('') + '</section>';
     }
     else {
