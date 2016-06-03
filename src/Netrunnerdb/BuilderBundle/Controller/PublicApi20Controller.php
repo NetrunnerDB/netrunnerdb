@@ -18,6 +18,7 @@ class PublicApi20Controller extends FOSRestController
 		$response->headers->set('Content-Type', 'application/json; charset=UTF-8');
 		$response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 		$response->setPublic();
+		$response->setMaxAge($this->container->getParameter('short_cache'));
 		
 		$content = [ 'version_number' => '2.0' ];
 		
