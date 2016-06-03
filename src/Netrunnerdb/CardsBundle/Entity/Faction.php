@@ -17,7 +17,8 @@ class Faction implements Translatable
 	public function serialize() {
 		return [
 				'code' => $this->code,
-				'name' => $this->name
+				'name' => $this->name,
+				'is_mini' => $this->isMini
 		];
 	}
 	

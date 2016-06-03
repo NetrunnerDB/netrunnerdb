@@ -17,7 +17,9 @@ class Type implements Translatable
 	public function serialize() {
 		return [
 				'code' => $this->code,
-				'name' => $this->name
+				'name' => $this->name,
+				'position' => $this->position,
+				'is_subtype' => $this->isSubtype
 		];
 	}
 	
@@ -234,5 +236,63 @@ class Type implements Translatable
     public function getDateUpdate()
     {
         return $this->dateUpdate;
+    }
+    /**
+     * @var boolean
+     */
+    private $isSubtype;
+
+
+    /**
+     * Set isSubtype
+     *
+     * @param boolean $isSubtype
+     *
+     * @return Type
+     */
+    public function setIsSubtype($isSubtype)
+    {
+        $this->isSubtype = $isSubtype;
+
+        return $this;
+    }
+
+    /**
+     * Get isSubtype
+     *
+     * @return boolean
+     */
+    public function getIsSubtype()
+    {
+        return $this->isSubtype;
+    }
+    /**
+     * @var integer
+     */
+    private $position;
+
+
+    /**
+     * Set position
+     *
+     * @param integer $position
+     *
+     * @return Type
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * Get position
+     *
+     * @return integer
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 }

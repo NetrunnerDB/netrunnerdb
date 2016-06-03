@@ -27,6 +27,13 @@ Netrunnerdb\CardsBundle\Entity\Type:
             length: 255
             gedmo:
                 - translatable
+        position:
+            type: integer
+            nullable: false
+        isSubtype:
+            type: boolean
+            nullable: true
+            column: is_subtype
         dateCreation:
             type: datetime
             nullable: false
