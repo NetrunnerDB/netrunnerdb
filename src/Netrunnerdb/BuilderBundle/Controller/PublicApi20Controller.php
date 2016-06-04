@@ -11,7 +11,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 
 class PublicApi20Controller extends FOSRestController
 {
-	private function prepareResponse(array $entities, Request $request = null)
+	private function prepareResponse(array $entities, Request $request, array $additionalTopLevelProperties = [])
 	{
 		$response = new JsonResponse();
 		$response->headers->set('Access-Control-Allow-Origin', '*');
@@ -19,11 +19,6 @@ class PublicApi20Controller extends FOSRestController
 		$response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 		$response->setPublic();
 		$response->setMaxAge($this->container->getParameter('short_cache'));
-		
-		$content = [ 'version_number' => '2.0' ];
-		
-		$locale = $request ? $request->query->get('_locale') : null;
-		$translationRepository = $this->getDoctrine()->getManager()->getRepository('Gedmo\Translatable\Entity\Translation');
 			
 		$dateUpdate = array_reduce($entities, function($carry, $item) {
 			if($carry || $item->getDateUpdate() > $carry) return $item->getDateUpdate();
@@ -34,7 +29,12 @@ class PublicApi20Controller extends FOSRestController
 		if($response->isNotModified($this->getRequest())) {
 			return $response;
 		}
+
+		$locale = $request->query->get('_locale');
+		$translationRepository = $this->getDoctrine()->getManager()->getRepository('Gedmo\Translatable\Entity\Translation');
 		
+		$content = $additionalTopLevelProperties;
+
 		$content['data'] = array_map(function ($entity) use ($locale, $translationRepository) {
 			$data = $entity->serialize();
 				
@@ -52,8 +52,8 @@ class PublicApi20Controller extends FOSRestController
 		}, $entities);
 		
 		$content['total'] = count($content['data']);
-		
 		$content['success'] = TRUE;
+		$content['version_number'] = '2.0';
 		
 		$response->setData($content);
 		
@@ -279,7 +279,7 @@ class PublicApi20Controller extends FOSRestController
 			throw $this->createNotFoundException("Card not found");
 		}
 		
-		return $this->prepareResponse([$card], $request);
+		return $this->prepareResponse([$card], $request, ['imageUrlTemplate' => 'https://netrunnerdb.com/bundles/netrunnerdbcards/images/cards/{locale}/{code}.png']);
 	}
 	
 	/**
@@ -297,7 +297,7 @@ class PublicApi20Controller extends FOSRestController
 	{
 		$data = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbCardsBundle:Card')->findAll();
 		
-		return $this->prepareResponse($data, $request);
+		return $this->prepareResponse($data, $request, ['imageUrlTemplate' => 'https://netrunnerdb.com/bundles/netrunnerdbcards/images/cards/{locale}/{code}.png']);
 	}
 
 	/**
@@ -311,7 +311,7 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function decklistAction($decklist_id)
+	public function decklistAction($decklist_id, Request $request)
 	{
 		$decklist = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbBuilderBundle:Decklist')->find($decklist_id);
 	
@@ -319,7 +319,7 @@ class PublicApi20Controller extends FOSRestController
 			throw $this->createNotFoundException("Decklist not found");
 		}
 		
-		return $this->prepareResponse([$decklist]);
+		return $this->prepareResponse([$decklist], $request);
 	}
 
 	/**
@@ -333,7 +333,7 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function decklistsByDateAction($date)
+	public function decklistsByDateAction($date, Request $request)
 	{
 		$date_from = new \DateTime($date);
 		$date_to = clone($date_from);
@@ -346,7 +346,7 @@ class PublicApi20Controller extends FOSRestController
 		
 		$data = $qb->getQuery()->execute();
 	
-		return $this->prepareResponse($data);
+		return $this->prepareResponse($data, $request);
 	}
 
 	/**
@@ -360,7 +360,7 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function deckAction($deck_id)
+	public function deckAction($deck_id, Request $request)
 	{
 		/* @var $deck \Netrunnerdb\BuilderBundle\Entity\Deck */
 		$deck = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbBuilderBundle:Deck')->find($deck_id);
@@ -373,7 +373,7 @@ class PublicApi20Controller extends FOSRestController
 			throw $this->createAccessDeniedException("Deck not shared");
 		}
 		
-		return $this->prepareResponse([$deck]);
+		return $this->prepareResponse([$deck], $request);
 	}
 
 	/**
@@ -387,10 +387,10 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function mwlAction()
+	public function mwlAction(Request $request)
 	{
 		$data = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbBuilderBundle:Mwl')->findAll();
 	
-		return $this->prepareResponse($data);
+		return $this->prepareResponse($data, $request);
 	}
 }
