@@ -25,8 +25,8 @@ class Decklist implements \Serializable
 		
 		return  [
 				'id' => $this->id,
-				'date_creation' => $this->dateCreation->format('Y-m-d'),
-				'date_update' => $this->dateUpdate->format('Y-m-d'),
+				'date_creation' => $this->dateCreation->format('c'),
+				'date_update' => $this->dateUpdate->format('c'),
 				'name' => $this->name,
 				'description' => $this->description,
 				'user_id' => $this->user->getId(),
