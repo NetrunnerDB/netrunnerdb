@@ -239,6 +239,12 @@ $(function() {
 		click : function(event) {
 			if ($(this).attr('id').match(/btn-sort-(\w+)/)) {
 				DisplaySort = RegExp.$1;
+				DisplaySortSecondary = null;
+				update_deck();
+			}
+			if ($(this).attr('id').match(/btn-sort-(\w+)-(\w+)/)) {
+				DisplaySort = RegExp.$1;
+				DisplaySortSecondary = RegExp.$2;
 				update_deck();
 			}
 		}

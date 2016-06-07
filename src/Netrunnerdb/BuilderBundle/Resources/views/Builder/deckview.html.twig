@@ -9,18 +9,18 @@
 <script type="text/javascript">
 
 var Identity = null,
-Deck = {{ deck|json_encode|raw }},
-DeckDB = TAFFY([Deck]),
-SelectedDeck = DeckDB().first(),
-DisplaySort = 'type',
+	Deck = {{ deck|json_encode|raw }},
+	DeckDB = TAFFY([Deck]),
+	SelectedDeck = DeckDB().first(),
+	DisplaySort = 'type',
+	DisplaySortSecondary = 'name',
 	Order = 1,
 	Identity = null,
 	InfluenceSpent = 0,
 	InfluenceLimit = 0,
 	MinimumDeckSize = 0,
 	DeckSize = 0,
-	MWL = null,
-	DisplaySort = 'type';
+	MWL = null;
 	
 </script>
 {% endblock %}
@@ -99,6 +99,7 @@ DisplaySort = 'type',
 			<li><a href="#" id="btn-sort-type"><label><input type="radio" name="sort-order" checked="checked">by Type</label></a></li>
 			<li><a href="#" id="btn-sort-number"><label><input type="radio" name="sort-order">by Set</label></a></li>
 			<li><a href="#" id="btn-sort-faction"><label><input type="radio" name="sort-order">by Faction</label></a></li>
+			<li><a href="#" id="btn-sort-faction-type"><label><input type="radio" name="sort-order">by Faction, then Type</label></a></li>
 			<li><a href="#" id="btn-sort-title"><label><input type="radio" name="sort-order">by Name</label></a></li>
     </ul>
   </div>

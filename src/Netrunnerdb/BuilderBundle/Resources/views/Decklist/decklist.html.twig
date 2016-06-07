@@ -13,7 +13,8 @@ var Identity = null,
 	DeckDB = TAFFY([Decklist]),
 	SelectedDeck = DeckDB().first(),
 	MWL = {{ mwl|json_encode|raw }},
-	DisplaySort = 'type';
+	DisplaySort = 'type',
+	DisplaySortSecondary = 'name';
 
 NRDB.user.params.decklist_id = Decklist.id;
 	
@@ -99,6 +100,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 					<li><a href="#" id="btn-sort-type">by Type</a></li>
 					<li><a href="#" id="btn-sort-number">by Set</a></li>
 					<li><a href="#" id="btn-sort-faction">by Faction</a></li>
+					<li><a href="#" id="btn-sort-faction-type">by Faction, then Type</a></li>
 					<li><a href="#" id="btn-sort-title">by Name</a></li>
 				</ul>
 			</div>

@@ -259,7 +259,31 @@ function update_deck(options) {
 	MinimumDeckSize = Identity.minimumdecksize;
 
 	var latestpack = NRDB.data.sets({name:Identity.setname}).first();
-	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).order(DisplaySort === 'number' ? 'code' : 'title').each(function(record) {
+	var order = '';
+	switch(DisplaySort) {
+		case 'type':
+			order = 'type_code';
+			break;
+		case 'faction':
+			order = 'faction_code';
+			break;
+		case 'number':
+			order = 'code';
+			break;
+		case 'title':
+			order = 'title';
+			break;
+	}
+	switch(DisplaySortSecondary) {
+		case 'type':
+			order += ',type_code';
+			break;
+		case 'faction':
+			order += ',faction_code';
+			break;
+	}
+	order += ',title';
+	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).order(order).each(function(record) {
 		var pack = NRDB.data.sets({name:record.setname}).first();
 		if(latestpack.cyclenumber < pack.cyclenumber || (latestpack.cyclenumber == pack.cyclenumber && latestpack.number < pack.number)) latestpack = pack;
 		
