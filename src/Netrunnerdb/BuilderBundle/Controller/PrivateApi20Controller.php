@@ -96,7 +96,15 @@ class PrivateApi20Controller extends FOSRestController
 			
 			foreach($result as $deckchange) {
 				/* @var $deckchange \Netrunnerdb\BuilderBundle\Entity\Deckchange */
-				$history[$deckchange->getDatecreation()->format('c')] = json_decode($deckchange->getVariation(), TRUE);
+				$variation = json_decode($deckchange->getVariation(), TRUE);
+				$changes = [];
+				foreach($variation[0] as $card_code => $addition) {
+					$changes[$card_code] = $addition;
+				}
+				foreach($variation[1] as $card_code => $substraction) {
+					$changes[$card_code] = - $substraction;
+				}
+				$history[$deckchange->getDatecreation()->format('c')] = $changes;
 			}
 		}
 		
