@@ -12,7 +12,7 @@ use Netrunnerdb\BuilderBundle\Entity\Deck;
 
 class PrivateApi20Controller extends FOSRestController
 {
-	private function prepareResponse(array $data, $doSerialize = TRUE)
+	private function prepareResponse(array $data)
 	{
 		$response = new JsonResponse();
 		$response->headers->set('Content-Type', 'application/json; charset=UTF-8');
@@ -21,9 +21,9 @@ class PrivateApi20Controller extends FOSRestController
 		
 		$content = [ 'version_number' => '2.0' ];
 		
-		$content['data'] = $doSerialize ? array_map(function ($entity) {
-			return $entity->serialize();
-		}, $data) : $data;
+		$content['data'] = array_map(function ($entity) {
+			return (is_object($entity) && $entity instanceof \Serializable) ? $entity->serialize() : $entity;
+		}, $data);
 		
 		$content['total'] = count($content['data']);
 		
@@ -56,9 +56,12 @@ class PrivateApi20Controller extends FOSRestController
 	 *  section="Deck",
 	 *  resource=true,
 	 *  description="Get one (private) deck of authenticated user",
+	 *  parameters={
+	 *    {"name"="include_history", "dataType"="boolean", "required"=false, "description"="truthy value (eg '1') to include the deck changes"},
+	 *  }
 	 * )
 	 */
-	public function loadDeckAction($deck_id)
+	public function loadDeckAction($deck_id, Request $request)
 	{
 		/* @var $user \Netrunnerdb\UserBundle\Entity\User */
 		$user = $this->getUser();
@@ -67,13 +70,40 @@ class PrivateApi20Controller extends FOSRestController
 			throw $this->createAccessDeniedException("No user.");
 		}
 		
+		$includeHistory = $request->query->has('include_history') && $request->query->get('include_history');
+		
 		$deck = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbBuilderBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
 		
 		if(!$deck) {
 			throw $this->createNotFoundException("Deck not found");
 		}
 		
-		return $this->prepareResponse([$deck]);
+		$history = [];
+		
+		if($includeHistory) 
+		{
+			$qb = $this->getDoctrine()->getManager()->getRepository('NetrunnerdbBuilderBundle:Deckchange')->createQueryBuilder('h');
+			$qb = $this->getDoctrine()->getEntityManager()->createQueryBuilder();
+			$qb->select('h')
+				->from('NetrunnerdbBuilderBundle:Deckchange', 'h')
+				->where('h.deck = :deck')
+				->andWhere('h.saved = :saved')
+				->orderBy('h.dateCreation', 'DESC')
+				->setParameter('deck', $deck)
+				->setParameter('saved', TRUE);
+			$query = $qb->getQuery();
+			$result = $query->getResult();
+			
+			foreach($result as $deckchange) {
+				/* @var $deckchange \Netrunnerdb\BuilderBundle\Entity\Deckchange */
+				$history[$deckchange->getDatecreation()->format('c')] = json_decode($deckchange->getVariation(), TRUE);
+			}
+		}
+		
+		$data = $deck->serialize();
+		$data['history'] = $history;
+		
+		return $this->prepareResponse([$data]);
 	}
 
 	/**
@@ -263,7 +293,7 @@ class PrivateApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function decksAction()
+	public function decksAction(Request $request)
 	{
 		/* @var $user \Netrunnerdb\UserBundle\Entity\User */
 		$user = $this->getUser();
@@ -288,7 +318,7 @@ class PrivateApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function decklistsAction()
+	public function decklistsAction(Request $request)
 	{
 		/* @var $user \Netrunnerdb\UserBundle\Entity\User */
 		$user = $this->getUser();
@@ -313,7 +343,7 @@ class PrivateApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function accountInfoAction()
+	public function accountInfoAction(Request $request)
 	{
 		/* @var $user \Netrunnerdb\UserBundle\Entity\User */
 		$user = $this->getUser();
@@ -330,6 +360,6 @@ class PrivateApi20Controller extends FOSRestController
 				'sharing' => $user->getShareDecks()
 		];
 	
-		return $this->prepareResponse([$info], FALSE);
+		return $this->prepareResponse([$info]);
 	}
 }
