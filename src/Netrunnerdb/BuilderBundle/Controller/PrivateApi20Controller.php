@@ -46,6 +46,8 @@ class PrivateApi20Controller extends FOSRestController
 		
 		$content['msg'] = $msg;
 		
+		$response->setData($content);
+		
 		return $response;
 	}
 
@@ -166,14 +168,14 @@ class PrivateApi20Controller extends FOSRestController
 		}
 		
 		$name = filter_var($requestContent['name'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-		$decklist_id = filter_var($requestContent['decklist_id'], FILTER_SANITIZE_NUMBER_INT);
-		$description = filter_var($requestContent['description'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-		$tags = filter_var($requestContent['tags'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		$decklist_id = isset($requestContent['decklist_id']) ? filter_var($requestContent['decklist_id'], FILTER_SANITIZE_NUMBER_INT) : null;
+		$description = isset($requestContent['description']) ? filter_var($requestContent['description'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : '';
+		$tags = isset($requestContent['tags']) ? filter_var($requestContent['tags'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : '';
 		$content = $requestContent['content'];
 		
-		if(!$name || $content || !count($content)) {
-			return $this->prepareFailedResponse("Missing parameter.");
-		}
+		if(!$name) return $this->prepareFailedResponse("Missing parameter 'name'.");
+		if(!$content) return $this->prepareFailedResponse("Missing parameter 'content'.");
+		if(!count($content)) return $this->prepareFailedResponse("Empty parameter 'content'.");
 		
 		$deck_id = $this->get('decks')->saveDeck($user, $deck, $decklist_id, $name, $description, $tags, null, $content, $deck_id ? $deck : null);
 		
