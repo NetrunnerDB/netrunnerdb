@@ -62,6 +62,8 @@ NRDB.user.params.card_id = {{ cards[0].id|json_encode|raw }};
         			{% endif %}
         		</div>
         	</div>
+        </div>
+        <div class="row">
         	{% if card.available == true %}
         	<div class="col-md-12" style="margin-top:2em">
         	   <div style="line-height:34px" id="reviews-header">
@@ -100,7 +102,7 @@ NRDB.user.params.card_id = {{ cards[0].id|json_encode|raw }};
             	   &mdash;
             	   <a title="{{ comment.author.reputation }} reputation" href="{{ path('user_profile_view', {user_id:comment.author.id,user_name:comment.author.username|e('url')}) }}" rel="author" class="username {{ comment.author.faction }}">{{ comment.author.username }}</a>
             	       {% if comment.author.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
-               	   <time datetime="{{ comment.date_creation|date('c') }}">{{ comment.date_creation|date('j M Y') }}</time>
+               	   <time datetime="{{ comment.dateCreation|date('c') }}">{{ comment.dateCreation|date('j M Y') }}</time>
                 </div>
             	   {% endfor %}
             	   
