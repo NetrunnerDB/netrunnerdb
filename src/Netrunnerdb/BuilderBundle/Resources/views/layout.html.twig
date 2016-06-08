@@ -122,7 +122,7 @@ ga('send', 'pageview');
             <li class="dropdown hidden-xs hidden-lg">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-search"></span></a>
                 <div class="dropdown-menu">
-                  <form action="{{ path('cards_find') }}" target="_blank">
+                  <form method="get" action="{{ path('cards_find') }}">
                     <input type="text" placeholder="Card Search" class="form-control" name="q">
                   </form>
               </div>

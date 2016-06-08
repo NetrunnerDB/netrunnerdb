@@ -226,6 +226,9 @@ function check_all_inactive() {
 }
 
 $(function() {
+	// while editing a deck, we don't want to leave the page if the deck is unsaved
+	$(window).on('beforeunload', alert_if_unsaved);
+	
 	$('html,body').css('height', '100%');
 
 	$('#filter-text').on('typeahead:selected typeahead:autocompleted',
@@ -631,6 +634,7 @@ function get_deck_content() {
 	return deck_content;
 }
 function handle_submit(event) {
+	Deck_changed_since_last_autosave = false;
 	var deck_json = JSON.stringify(get_deck_content());
 	$('input[name=content]').val(deck_json);
 	$('input[name=description]').val($('textarea[name=description_]').val());
@@ -886,3 +890,10 @@ function update_filtered() {
 					});
 }
 var refresh_collection = debounce(update_filtered, 250);
+
+function alert_if_unsaved(event) {
+	if(Deck_changed_since_last_autosave && !window.confirm("Deck is not saved. Do you really want to leave?")) {
+		event.preventDefault();
+		return false;
+	}
+}
