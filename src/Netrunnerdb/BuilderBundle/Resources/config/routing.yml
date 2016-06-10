@@ -720,3 +720,8 @@ redirect_url:
     defaults:
         _controller: NetrunnerdbBuilderBundle:ApiDoc:redirect
         
+start_oauth:
+    path: /oauth
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:ApiDoc:oauth
+        

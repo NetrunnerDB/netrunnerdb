@@ -37,4 +37,16 @@ class ApiDocController extends Controller
 		
 		return new Response($res->getStatusCode());
 	}
+	
+	public function oauthAction(Request $request)
+	{
+		$url = $this->get('router')->generate('fos_oauth_server_authorize', [
+				'client_id' => $this->getParameter('oauth_test_client_id'),
+				'client_secret' => $this->getParameter('oauth_test_client_secret'),
+				'redirect_uri' => $this->getParameter('oauth_test_redirect_url'),
+				'response_type' => 'code',
+		], UrlGenerator::ABSOLUTE_URL);
+
+		return $this->redirect($url);
+	}
 }
