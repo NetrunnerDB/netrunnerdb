@@ -170,7 +170,9 @@ class ImportStdCommand extends ContainerAwareCommand
 		{
 			$faction = $this->getEntityFromData('Netrunnerdb\\CardsBundle\\Entity\\Faction', $data, [
 					'code',
-					'name'
+					'name',
+					'color',
+					'is_mini'
 			], [], []);
 			if($faction) {
 				$result[] = $faction;

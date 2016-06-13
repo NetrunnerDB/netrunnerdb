@@ -8,7 +8,7 @@ use Gedmo\Translatable\Translatable;
 /**
  * Faction
  */
-class Faction implements Translatable
+class Faction implements \Serializable, Translatable
 {
     public function toString() {
 		return $this->name;
