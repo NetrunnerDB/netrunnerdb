@@ -11,13 +11,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class DumpCardDataCommand extends ContainerAwareCommand
+class DumpStdCardsCommand extends ContainerAwareCommand
 {
 
 	protected function configure()
 	{
 		$this
-		->setName('nrdb:data:dump:cards')
+		->setName('nrdb:dump:std:cards')
 		->setDescription('Dump JSON Data of Cards from a Pack')
 		->addArgument(
 				'pack_code',

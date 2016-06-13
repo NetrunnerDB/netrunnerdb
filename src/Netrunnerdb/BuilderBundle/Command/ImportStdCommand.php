@@ -15,7 +15,7 @@ use Netrunnerdb\CardsBundle\Entity\Cycle;
 use Netrunnerdb\CardsBundle\Entity\Pack;
 use Netrunnerdb\CardsBundle\Entity\Card;
 
-class ImportDataCommand extends ContainerAwareCommand
+class ImportStdCommand extends ContainerAwareCommand
 {
 	/* @var $em EntityManager */
 	private $em;
@@ -28,8 +28,8 @@ class ImportDataCommand extends ContainerAwareCommand
 	protected function configure()
 	{
 		$this
-		->setName('nrdb:data:import')
-		->setDescription('Import cards data file in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
+		->setName('nrdb:import:std')
+		->setDescription('Import std data file in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
 		->addArgument(
 				'path',
 				InputArgument::REQUIRED,
@@ -47,51 +47,164 @@ class ImportDataCommand extends ContainerAwareCommand
 
 		/* @var $helper \Symfony\Component\Console\Helper\QuestionHelper */
 		$helper = $this->getHelper('question');
+
+		// sides
 		
-		$this->loadCollection('Type');
-		$this->loadCollection('Faction');
+		$output->writeln("Importing Sides...");
+		$sidesFileInfo = $this->getFileInfo($path, 'sides.json');
+		$imported = $this->importSidesJsonFile($sidesFileInfo);
+		if(count($imported)) {
+			$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
+			if(!$helper->ask($input, $output, $question)) {
+				die();
+			}
+		}
+		$this->em->flush();
 		$this->loadCollection('Side');
-		$this->loadCollection('Pack');
-		$this->loadCollection('Cycle');
+		$output->writeln("Done.");
 		
-		// first, cycles
+		// factions 
+		
+		$output->writeln("Importing Factions...");
+		$factionsFileInfo = $this->getFileInfo($path, 'factions.json');
+		$imported = $this->importFactionsJsonFile($factionsFileInfo);
+		if(count($imported)) {
+			$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
+			if(!$helper->ask($input, $output, $question)) {
+				die();
+			}
+		}
+		$this->em->flush();
+		$this->loadCollection('Faction');
+		$output->writeln("Done.");
+		
+		// types
+		
+		$output->writeln("Importing Types...");
+		$typesFileInfo = $this->getFileInfo($path, 'types.json');
+		$imported = $this->importTypesJsonFile($typesFileInfo);
+		if(count($imported)) {
+			$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
+			if(!$helper->ask($input, $output, $question)) {
+				die();
+			}
+		}
+		$this->em->flush();
+		$this->loadCollection('Type');
+		$output->writeln("Done.");
+		
+		// cycles
 
+		$output->writeln("Importing Cycles...");
 		$cyclesFileInfo = $this->getFileInfo($path, 'cycles.json');
-		$this->importCyclesJsonFile($cyclesFileInfo);
-		$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-		if(!$helper->ask($input, $output, $question)) {
-			die();
+		$imported = $this->importCyclesJsonFile($cyclesFileInfo);
+		if(count($imported)) {
+			$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
+			if(!$helper->ask($input, $output, $question)) {
+				die();
+			}
 		}
 		$this->em->flush();
 		$this->loadCollection('Cycle');
+		$output->writeln("Done.");
 		
-		// second, packs
+		// packs
 
+		$output->writeln("Importing Packs...");
 		$packsFileInfo = $this->getFileInfo($path, 'packs.json');
-		$this->importPacksJsonFile($packsFileInfo);
-		$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-		if(!$helper->ask($input, $output, $question)) {
-			die();
+		$imported = $this->importPacksJsonFile($packsFileInfo);
+		if(count($imported)) {
+			$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
+			if(!$helper->ask($input, $output, $question)) {
+				die();
+			}
 		}
 		$this->em->flush();
 		$this->loadCollection('Pack');
+		$output->writeln("Done.");
 		
-		// third, cards
+		// cards
 		
+		$output->writeln("Importing Cards...");
 		$fileSystemIterator = $this->getFileSystemIterator($path);
-		
+		$imported = [];
 		foreach ($fileSystemIterator as $fileinfo) {
-			$this->importCardsJsonFile($fileinfo);
+			$imported = array_merge($imported, $this->importCardsJsonFile($fileinfo));
 		}
-		$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-		if(!$helper->ask($input, $output, $question)) {
-			die();
+		if(count($imported)) {
+			$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
+			if(!$helper->ask($input, $output, $question)) {
+				die();
+			}
 		}
 		$this->em->flush();
+		$output->writeln("Done.");
 	}
 
+	protected function importSidesJsonFile(\SplFileInfo $fileinfo)
+	{
+		$result = [];
+		
+		$list = $this->getDataFromFile($fileinfo);
+		foreach($list as $data)
+		{
+			$side = $this->getEntityFromData('Netrunnerdb\\CardsBundle\\Entity\\Side', $data, [
+					'code',
+					'name'
+			], [], []);
+			if($side) {
+				$result[] = $side;
+				$this->em->persist($side);
+			}
+		}
+		
+		return $result;
+	}
+
+	protected function importFactionsJsonFile(\SplFileInfo $fileinfo)
+	{
+		$result = [];
+		
+		$list = $this->getDataFromFile($fileinfo);
+		foreach($list as $data)
+		{
+			$faction = $this->getEntityFromData('Netrunnerdb\\CardsBundle\\Entity\\Faction', $data, [
+					'code',
+					'name'
+			], [], []);
+			if($faction) {
+				$result[] = $faction;
+				$this->em->persist($faction);
+			}
+		}
+		
+		return $result;
+	}
+
+	protected function importTypesJsonFile(\SplFileInfo $fileinfo)
+	{
+		$result = [];
+		
+		$list = $this->getDataFromFile($fileinfo);
+		foreach($list as $data)
+		{
+			$type = $this->getEntityFromData('Netrunnerdb\\CardsBundle\\Entity\\Type', $data, [
+					'code',
+					'name'
+			], [], []);
+			if($type) {
+				$result[] = $type;
+				$this->em->persist($type);
+			}
+		}
+		
+		return $result;
+	}
+	
 	protected function importCyclesJsonFile(\SplFileInfo $fileinfo)
 	{
+		$result = [];
+		
 		$cyclesData = $this->getDataFromFile($fileinfo);
 		foreach($cyclesData as $cycleData) {
 			$cycle = $this->getEntityFromData('Netrunnerdb\CardsBundle\Entity\Cycle', $cycleData, [
@@ -100,12 +213,19 @@ class ImportDataCommand extends ContainerAwareCommand
 					'position', 
 					'size'
 			], [], []);
-			$this->em->persist($cycle);
+			if($cycle) {
+				$result[] = $cycle;
+				$this->em->persist($cycle);
+			}			
 		}
+		
+		return $result;
 	}
 
 	protected function importPacksJsonFile(\SplFileInfo $fileinfo)
 	{
+		$result = [];
+		
 		$packsData = $this->getDataFromFile($fileinfo);
 		foreach($packsData as $packData) {
 			$pack = $this->getEntityFromData('Netrunnerdb\CardsBundle\Entity\Pack', $packData, [
@@ -117,12 +237,19 @@ class ImportDataCommand extends ContainerAwareCommand
 			], [
 					'cycle_code'
 			], []);
-			$this->em->persist($pack);
+			if($pack) {
+				$result[] = $pack;
+				$this->em->persist($pack);
+			}
 		}
+		
+		return $result;
 	}
 	
 	protected function importCardsJsonFile(\SplFileInfo $fileinfo)
 	{
+		$result = [];
+		
 		$code = $fileinfo->getBasename('.json');
 		
 		$pack = $this->em->getRepository('NetrunnerdbCardsBundle:Pack')->findOneBy(['code' => $code]);
@@ -151,8 +278,13 @@ class ImportDataCommand extends ContainerAwareCommand
 					'faction_cost',
 					'trash_cost'
 			]);
-			$this->em->persist($card);
+			if($card) {
+				$result[] = $card;
+				$this->em->persist($card);
+			}
 		}
+		
+		return $result;
 	}
 
 	protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
@@ -217,6 +349,16 @@ class ImportDataCommand extends ContainerAwareCommand
 		$this->copyFieldValueToEntity($entity, $entityName, $fieldName, $value);
 	}
 	
+	/**
+	 * 
+	 * @param string $entityName
+	 * @param array $data
+	 * @param array $mandatoryKeys
+	 * @param array $foreignKeys
+	 * @param array $optionalKeys
+	 * @throws \Exception
+	 * @return object
+	 */
 	protected function getEntityFromData($entityName, $data, $mandatoryKeys, $foreignKeys, $optionalKeys)
 	{
 		if(!key_exists('code', $data)) {
@@ -227,6 +369,7 @@ class ImportDataCommand extends ContainerAwareCommand
 		if(!$entity) {
 			$entity = new $entityName();
 		}
+		$orig = $entity->serialize();
 	
 		foreach($mandatoryKeys as $key) {
 			$this->copyKeyToEntity($entity, $entityName, $data, $key, TRUE);
@@ -267,7 +410,7 @@ class ImportDataCommand extends ContainerAwareCommand
 			$this->$functionName($entity, $data);
 		}
 	
-		return $entity;
+		if($entity->serialize() !== $orig) return $entity;
 	}
 	
 	protected function importAgendaData(Card $card, $data)

@@ -15,7 +15,7 @@ use Netrunnerdb\CardsBundle\Entity\Pack;
 use Netrunnerdb\CardsBundle\Entity\Card;
 use Symfony\Component\Console\Helper\ProgressBar;
 
-class ImportTranslationsCommand extends ContainerAwareCommand
+class ImportTransCommand extends ContainerAwareCommand
 {
 	/* @var $em EntityManager */
 	private $em;
@@ -26,7 +26,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 	protected function configure()
 	{
 		$this
-		->setName('nrdb:translations:import')
+		->setName('nrdb:import:trans')
 		->setDescription('Import translation data in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
 		->addOption(
 				'locale',

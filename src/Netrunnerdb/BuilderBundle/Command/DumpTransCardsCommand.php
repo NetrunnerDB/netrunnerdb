@@ -11,13 +11,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class DumpCardTranslationsCommand extends ContainerAwareCommand
+class DumpTransCardsCommand extends ContainerAwareCommand
 {
 
 	protected function configure()
 	{
 		$this
-		->setName('nrdb:translations:dump:cards')
+		->setName('nrdb:dump:trans:cards')
 		->setDescription('Dump Translations of Cards from a Pack for a Locale')
 		->addArgument(
 				'pack_code',

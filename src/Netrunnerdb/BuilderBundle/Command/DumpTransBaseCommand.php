@@ -11,14 +11,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class DumpThingsTranslationsCommand extends ContainerAwareCommand
+class DumpTransBaseCommand extends ContainerAwareCommand
 {
 
 	protected function configure()
 	{
 		$this
-		->setName('nrdb:translations:dump:things')
-		->setDescription('Dump Translations of Things for a Locale')
+		->setName('nrdb:dump:trans:base')
+		->setDescription('Dump Translations of Base data for a Locale')
 		->addArgument(
 				'entityName',
 				InputArgument::REQUIRED,

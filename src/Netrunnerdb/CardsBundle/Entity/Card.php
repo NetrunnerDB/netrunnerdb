@@ -18,6 +18,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
 	
 	public function serialize() {
 		$serialized = [];
+		if(empty($this->code)) return $serialized;
 		
 		$mandatoryFields = [
 				'code',

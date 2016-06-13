@@ -14,7 +14,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
 	public function serialize() {
 		return [
 				'code' => $this->code,
-				'cycle_code' => $this->cycle->getCode(),
+				'cycle_code' => $this->cycle ? $this->cycle->getCode() : null,
 				'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null, 
 				'name' => $this->name,
 				'position' => $this->position,
