@@ -30,7 +30,7 @@
 When you update your repository, run the following commands:
 
 - `composer self-update`
-- `composer update`
+- `composer install` (do *not* run `composer update`)
 - `php app/console doctrine:schema:update --force`
 - `php app/console nrdb:import:std path_to_json_repository`
 
