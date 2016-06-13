@@ -192,7 +192,9 @@ class ImportStdCommand extends ContainerAwareCommand
 		{
 			$type = $this->getEntityFromData('Netrunnerdb\\CardsBundle\\Entity\\Type', $data, [
 					'code',
-					'name'
+					'name',
+					'position',
+					'is_subtype'
 			], [], []);
 			if($type) {
 				$result[] = $type;
