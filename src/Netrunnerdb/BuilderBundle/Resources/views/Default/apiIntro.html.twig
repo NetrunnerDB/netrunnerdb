@@ -28,13 +28,13 @@ The documentation can be found here: <a href="{{ absolute_url(path('nelmio_api_d
 
 <h3>Encoding</h3>
 
-The response is in ascii encoding. Non-ascii characters are encoded with \uXXXX with XXXX their hexadecimal unicode value.<br>
+The response is encoded in utf-8. The HTTP header is <tt>Content-Type:application/json; charset=UTF-8</tt>.<br>
 
 <h3>Caching</h3>
 
 <ul>
-<li>GET requests use HTTP cache validation (last-modified).</li>
-<li>POST requests do not use a HTTP cache schema.</li>
+<li>Public API responses use HTTP cache validation (last-modified) and HTTP cache expiration (max-age).</li>
+<li>Private API responses use neither.</li>
 </ul>
 <p><b>Please conform to HTTP Caching best practices when building your queries.</b></p>
 
