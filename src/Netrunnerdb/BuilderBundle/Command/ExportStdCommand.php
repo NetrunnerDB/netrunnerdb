@@ -14,13 +14,13 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class ExportDataCommand extends ContainerAwareCommand
+class ExportStdCommand extends ContainerAwareCommand
 {
 
 	protected function configure()
 	{
 		$this
-		->setName('nrdb:data:export')
+		->setName('nrdb:export:std')
 		->setDescription('Create JSON Data Files')
 		->addArgument(
 				'path',
@@ -49,7 +49,7 @@ class ExportDataCommand extends ContainerAwareCommand
 			$filepath = "${path}/${thing}s.json";
 			$output->writeln("Exporting to <info>$filepath</info>");
 			
-			$command = $this->getApplication()->find('nrdb:data:dump:things');
+			$command = $this->getApplication()->find('nrdb:dump:std:base');
 			$arguments = [ 'entityName' => $thing ];
 			$subInput = new ArrayInput($arguments);
 			$subOutput = new BufferedOutput();
@@ -69,7 +69,7 @@ class ExportDataCommand extends ContainerAwareCommand
 			$filepath = "${path}/pack/${pack_code}.json";
 			$output->writeln("Exporting to <info>$filepath</info>");
 	
-			$command = $this->getApplication()->find('nrdb:data:dump:cards');
+			$command = $this->getApplication()->find('nrdb:dump:std:cards');
 			$arguments = [ 'pack_code' => $pack_code ];
 			$subInput = new ArrayInput($arguments);
 			$subOutput = new BufferedOutput();
