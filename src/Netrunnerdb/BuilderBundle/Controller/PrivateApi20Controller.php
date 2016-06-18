@@ -9,6 +9,8 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FOS\RestBundle\Controller\FOSRestController;
 use Netrunnerdb\BuilderBundle\Entity\Deck;
+use Netrunnerdb\BuilderBundle\Entity\Decklist;
+use Netrunnerdb\BuilderBundle\Entity\Decklistslot;
 
 class PrivateApi20Controller extends FOSRestController
 {
@@ -45,6 +47,8 @@ class PrivateApi20Controller extends FOSRestController
 		$content['success'] = FALSE;
 		
 		$content['msg'] = $msg;
+		
+		$response->setData($content);
 		
 		return $response;
 	}
@@ -166,14 +170,14 @@ class PrivateApi20Controller extends FOSRestController
 		}
 		
 		$name = filter_var($requestContent['name'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-		$decklist_id = filter_var($requestContent['decklist_id'], FILTER_SANITIZE_NUMBER_INT);
-		$description = filter_var($requestContent['description'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-		$tags = filter_var($requestContent['tags'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		$decklist_id = isset($requestContent['decklist_id']) ? filter_var($requestContent['decklist_id'], FILTER_SANITIZE_NUMBER_INT) : null;
+		$description = isset($requestContent['description']) ? filter_var($requestContent['description'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : '';
+		$tags = isset($requestContent['tags']) ? filter_var($requestContent['tags'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : '';
 		$content = $requestContent['content'];
 		
-		if(!$name || $content || !count($content)) {
-			return $this->prepareFailedResponse("Missing parameter.");
-		}
+		if(!$name) return $this->prepareFailedResponse("Missing parameter 'name'.");
+		if(!$content) return $this->prepareFailedResponse("Missing parameter 'content'.");
+		if(!count($content)) return $this->prepareFailedResponse("Empty parameter 'content'.");
 		
 		$deck_id = $this->get('decks')->saveDeck($user, $deck, $decklist_id, $name, $description, $tags, null, $content, $deck_id ? $deck : null);
 		
@@ -193,7 +197,8 @@ class PrivateApi20Controller extends FOSRestController
 	 *  description="Publish one (private) deck of authenticated user",
 	 *  parameters={
 	 *    {"name"="deck_id", "dataType"="integer", "required"=true, "description"="ID"},
-	 *    {"name"="name", "dataType"="string", "required"=true, "description"="Name"}
+	 *    {"name"="name", "dataType"="string", "required"=false, "description"="Name. Taken from the deck is absent/empty"},
+	 *    {"name"="description", "dataType"="string", "required"=false, "description"="Description in Markdown. Taken from the deck if absent/empty"}
 	 *  },
 	 * )
 	 */
@@ -241,13 +246,13 @@ class PrivateApi20Controller extends FOSRestController
 			}
 		}
 		
-		$name = filter_var($requestContent['name'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-		$name = substr($name, 0, 60);
+		$name = isset($requestContent['name']) ? filter_var($requestContent['name'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : '';
 		if(empty($name)) {
 			$name = $deck->getName();
 		}
+		$name = substr($name, 0, 60);
 		
-		$rawdescription = trim($requestContent['description']);
+		$rawdescription = isset($requestContent['description']) ? trim($requestContent['description']) : '';
 		if(empty($rawdescription)) {
 			$rawdescription = $deck->getDescription();
 		}
@@ -267,6 +272,7 @@ class PrivateApi20Controller extends FOSRestController
 		$decklist->setNbvotes(0);
 		$decklist->setNbfavorites(0);
 		$decklist->setNbcomments(0);
+		$decklist->setDotw(0);
 		foreach ($deck->getSlots() as $slot) {
 			$card = $slot->getCard();
 			$decklistslot = new Decklistslot();

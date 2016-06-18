@@ -2,13 +2,10 @@
 
 namespace Netrunnerdb\CardsBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Translatable\Translatable;
-
 /**
  * Type
  */
-class Type implements Translatable
+class Type implements \Gedmo\Translatable\Translatable, \Serializable
 {
     public function toString() {
 		return $this->name;

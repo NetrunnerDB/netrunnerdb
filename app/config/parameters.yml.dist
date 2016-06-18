@@ -27,4 +27,7 @@ parameters:
         jp: 日本語
     supported_locales:
         - en
-        
+    oauth_test_client_id: ~
+    oauth_test_client_secret: ~
+    oauth_test_redirect_url: ~
+    

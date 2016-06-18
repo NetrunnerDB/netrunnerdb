@@ -715,3 +715,13 @@ api_private_account_info:
     defaults:
         _controller: NetrunnerdbBuilderBundle:PrivateApi20:accountInfo
 
+redirect_url:
+    path: /redirect
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:ApiDoc:redirect
+        
+start_oauth:
+    path: /oauth
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:ApiDoc:oauth
+        
