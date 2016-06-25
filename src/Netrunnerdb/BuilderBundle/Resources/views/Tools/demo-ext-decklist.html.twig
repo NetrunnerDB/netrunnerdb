@@ -69,7 +69,7 @@
   <body>
       <h1>Decklist Embedding</h1>
       <section>
-          <p>Using a special script, you can embed any decklist from NetrunnerDB into your web pages. Just paste the small piece of code into an HTML document.</p>
+          <p>Using a special script, you can embed any decklist from NetrunnerDB into your web pages. Just paste the small piece of code found on the decklist page, into your HTML document.</p>
           <p>The code looks like this:<br>
               <tt style="color:blue">&lt;div </tt><tt style="color:red">data-id</tt><tt style="color:blue">="{{ id }}" </tt><tt style="color:red">data-columns</tt><tt style="color:blue">="3" </tt><tt style="color:red">data-stats</tt><tt style="color:blue">="no" class="nrdb-ext-decklist"></tt><tt style="color:green">&lt;script src="{{ app.request.getSchemeAndHttpHost() ~ '/ext-decklist.js' }}">&lt;/script></tt><tt style="color:blue">&lt;/div></tt>
           </p>
