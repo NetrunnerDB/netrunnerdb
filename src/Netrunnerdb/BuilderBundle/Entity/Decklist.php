@@ -2,7 +2,6 @@
 
 namespace Netrunnerdb\BuilderBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Netrunnerdb\UserBundle\Entity\User;
 use Netrunnerdb\BuilderBundle\Entity\Decklistslot;

@@ -397,6 +397,12 @@ tools_demo:
     defaults:
         _controller: NetrunnerdbBuilderBundle:Tools:demo
 
+demo_ext_decklist:
+    path: /demo/ext-decklist/{id}
+    methods: [GET]
+    defaults:
+        _controller: NetrunnerdbBuilderBundle:Tools:extdecklist
+        id: 98
 
 api_decklist:
     path: /api/decklist/{decklist_id}.{_format}

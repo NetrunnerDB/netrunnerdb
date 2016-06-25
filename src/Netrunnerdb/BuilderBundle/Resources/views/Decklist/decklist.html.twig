@@ -216,6 +216,19 @@ NRDB.user.params.decklist_id = Decklist.id;
 </tbody>
 </table>
 
+<table class="table table-condensed" id="table-ext">
+<thead>
+<tr><th><span class="glyphicon glyphicon-list"></span> Include in your page (<a href="{{ path('demo_ext_decklist',{id:decklist.id}) }}">help</a>)</th></tr>
+</thead>
+<tbody>
+<tr>
+	<td>
+		<input style="width:100%;font-size:small" value="&lt;div data-id=&quot;{{ decklist.id }}&quot; class=&quot;nrdb-ext-decklist&quot;>&lt;script src=&quot;{{ app.request.getSchemeAndHttpHost() ~ '/ext-decklist.js' }}&quot;>&lt;/script>&lt;/div>">
+	</td>
+</tr>
+</tbody>
+</table>
+
 </div><!-- /#deck -->
 
 {% include 'NetrunnerdbBuilderBundle:Default:google_adaptable_ad.html.twig' %}

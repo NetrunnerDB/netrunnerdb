@@ -7,25 +7,61 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 /* Copyright (c) 2016 Cédric Bertolini -- https://github.com/Alsciende/netrunnerdb */
 (function (container) {
+  var decklist_id, // string
+    dbLoadedPromise, // Promise
+    options = {}, // key => value
+    db = {}, // code => record
+    active_mwl = {}, // card_code => penalty
+    decklist, // object from API
+    decklist_content, // card_code => quantity
+    identity, // record
+    stats = {}, // hash of decklist statistics
+    url; // string
   if(!container) {
-    // no document.currentScript (IE11 ?)
+    // no document.currentScript
     var elements = document.getElementsByClassName('nrdb-ext-decklist');
+    if(!elements.length) return;
     container = elements[elements.length - 1];
   }
-  if(!container || !container.getAttribute || !container.getAttribute('data-id')) return;
-  var decklist_id = container.getAttribute('data-id'), db = {}, active_mwl = {}, decklist, decklist_content, identity, url;
+  function readArguments() {
+    if(!container.hasAttribute || !container.getAttribute) throw Error("Unsupported browser");
+    
+    var default_options = {
+    'id': null, // integer
+    'columns': null, // integer
+    'stats': 'yes' // 'yes'|'no'
+    };
+    
+    Object.keys(default_options).forEach(function(option) {
+      if(container.hasAttribute('data-'+option)) {
+        options[option] = container.getAttribute('data-'+option);
+      }
+      else {
+        options[option] = default_options[option];
+      }
+    });
+    
+    // data-columns="2" => only accepts integers as value, otherwise assume no columns
+    options['columns'] = parseInt(options['columns'], 10);
+    
+    // data-stats="no" => no stats-data ; any other value => stats-data
+    options['stats'] = (options['stats'] !== 'no');
+    
+    if(!options.id) throw Error("Missing data-id on container");
+    return decklist_id = options.id;
+  }
   function getJson(url) {
     return new Promise(function(resolve, reject) {
     var req = new XMLHttpRequest();
     req.open('GET', url);
     req.onload = function() {
       if (req.status == 200) {
-      var response = JSON.parse(req.response);
-      if(!response.success) reject(Error(response.msg));
-      resolve(response.data);
+        var response = JSON.parse(req.response);
+          if(!response.success) reject(Error(response.msg));
+        resolve(response.data);
       }
       else {
-      reject(Error(req.statusText));
+        reject(Error(req.statusText));
       }
     };
     req.onerror = function() {
@@ -48,17 +84,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   function createDatabases(names) {
     return Promise.all(names.map(createDatabase));
   }
-  function loadDecklist(decklist_id) {
+  function loadDecklist() {
     return getJson('https://netrunnerdb.com/api/2.0/public/decklist/' + decklist_id)
     .then(function (data) {
       return decklist = data[0];
     });
-  }
-  function fetchData() {
-    return Promise.all([
-      createDatabases(['types', 'sides', 'factions', 'cycles', 'packs', 'cards', 'mwl']),
-      loadDecklist(decklist_id)
-    ]);
   }
   function findActiveMWL() {
     // wish I could use Array.prototype.find
@@ -82,7 +112,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     var html = '', faction = db.factions[card.faction_code];
     if(card.faction_code !== identity.faction_code && card.faction_cost) {
       html += ' <span class="nrdb-ext-decklist-influence" data-faction="'+faction.code+'" style="color:#'+faction.color+'">';
-      for(var i=0; i<card.faction_cost; i++) {
+      for(var i=0; i<quantity*card.faction_cost; i++) {
         html += '•';
       }
       html += '</span>';
@@ -97,18 +127,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     return html;
   }
   function renderCardQuantity(card, quantity) {
-	if(card.type_code === 'identity') {
-		return '';
-	}
-	else {
-		return '<span class="nrdb-ext-decklist-quantity">'+quantity+'x</span> ';
-	}
+  if(card.type_code === 'identity') {
+    return '';
+  }
+  else {
+    return '<span class="nrdb-ext-decklist-quantity">'+quantity+'x</span> ';
+  }
   }
   function renderCardLine(card, quantity) {
     return '<div class="nrdb-ext-decklist-card">'+renderCardQuantity(card, quantity)+renderCardLink(card)+renderCardInfluenceCost(card, quantity)+'</div>';
   }
   function renderTypeSection(type_code) {
-    var type = db.types[type_code], lines = [];
+    var type = db.types[type_code], lines = [], total = 0;
     decklist_content.filter(function (card) {
       if(card.displayed) return false;
       if(type.is_subtype) {
@@ -122,26 +152,97 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       card.displayed = true;
       var quantity = decklist.cards[card.code];
       lines.push(renderCardLine(card, quantity));
+      total += quantity;
     });
     if(lines.length) {
-      var header = (type_code !== 'identity' ? '<h4>'+type.name+'</h4>' : '');
-      return '<section class="nrdb-ext-decklist-section" data-type="'+type.code+'">' + header + lines.join('') + '</section>';
+      var header = (type_code !== 'identity' ? '<h4>'+type.name+' ('+total+')</h4>' : '');
+      var style = '';
+      if(options.columns) {
+        style = ' style="overflow:hidden;-webkit-column-break-inside:avoid;-moz-column-break-inside:avoid;-o-column-break-inside:avoid;-ms-column-break-inside:avoid;column-break-inside:avoid;"'
+      }
+      return '<section class="nrdb-ext-decklist-section" data-type="'+type.code+'"'+style+'>' + header + lines.join('') + '</section>';
     }
     else {
       return '';
     }
   }
   function findIdentity() {
-    // wish I could use Array.prototype.find
     identity = decklist_content.filter(function (card) { return card.type_code === 'identity' }).pop();
     if(!identity) throw Error("Cannot find the Identity");
+    return identity;
+  }
+  function computeStats() {
+  stats = {
+      nbinfluence: 0,
+      maxinfluence: identity.influence_limit,
+      influencepenalty: 0,
+      nbcards: 0,
+      mincards: identity.minimum_deck_size,
+      lastpack: db.packs[identity.pack_code],
+      nbagendapoints: 0,
+      minagendapoints: null,
+      maxagendapoints: null
+  };
+  decklist_content.forEach(function (card) {
+    card.displayed = false;
+    if(card.type_code === 'identity') return;
+    var quantity = decklist.cards[card.code], pack = db.packs[card.pack_code];
+    stats.nbcards += quantity;
+    if(comparePacks(stats.lastpack, pack) < 0) {
+      stats.lastpack = pack;
+    }
+    if(card.faction_code !== identity.faction_code && card.faction_cost) {
+      stats.nbinfluence += card.faction_cost * quantity;
+    }
+    if(active_mwl[card.code]) {
+      stats.influencepenalty += active_mwl[card.code] * quantity;
+    }
+    if(card.type_code === 'agenda') {
+      stats.nbagendapoints += card.agenda_points * quantity;
+    }
+  });
+  stats.minagendapoints = Math.floor(Math.max(stats.nbcards, stats.mincards) / 5) * 2 + 2;
+  stats.maxagendapoints = stats.minagendapoints + 1;
+  }
+  /**
+   * returns -1, 0 or 1 if pack_a is released before, same or after pack_b
+   * @param pack_a
+   * @param pack_b
+   * @returns {Number}
+   */
+  function comparePacks(pack_a, pack_b) {
+    if(pack_a.code === pack_b.code) return 0;
+    else if(pack_a.cycle_code === pack_b.cycle_code) return (pack_a.position - pack_b.position);
+    else return db.cycles[pack_a.cycle_code].position - db.cycles[pack_b.cycle_code].position;
+  }
+  function createInfo() {
+    var lines = [];
+    if(options.stats) {
+      lines.push(stats.nbinfluence+" influence spent (max "+(stats.influencepenalty ? stats.maxinfluence+"-"+stats.influencepenalty+"☆="+(stats.maxinfluence-stats.influencepenalty) : stats.maxinfluence)+")");
+      if(stats.nbagendapoints) {
+        lines.push(stats.nbagendapoints+" agenda points (between "+stats.minagendapoints+" and "+stats.maxagendapoints+")");
+      }
+      lines.push(stats.nbcards+" cards (min "+stats.mincards+")");
+      lines.push("Cards up to <i>"+stats.lastpack.name+"</i>");
+    }
+    lines = lines.map(function (line) {
+    	return '<div class="nrdb-ext-decklist-stat">'+line+'</div>';
+    });
+    lines.unshift(renderCardLine(identity));
+    return lines.join('');
   }
   function createHeader() {
-    return '<header><h3>'+decklist.name+'</h3></header>';
+    return '<header><h3>'+decklist.name+'</h3>'+createInfo()+'</header>';
   }
   function createBody() {
-    var html = '<div class="nrdb-ext-decklist-content">';
-    Object.keys(db.types).sort(function (type_code_a, type_code_b) {
+    var style = '';
+    if(options.columns) {
+      style = ' style="-moz-column-count:'+options.columns+';-webkit-column-count:'+options.columns+';column-count:'+options.columns+';"';
+    }
+    var html = '<div class="nrdb-ext-decklist-content"'+style+'>';
+    Object.keys(db.types).filter(function (type_code) {
+      return type_code !== 'identity';
+    }).sort(function (type_code_a, type_code_b) {
       return db.types[type_code_a].position - db.types[type_code_b].position;
     }).forEach(function (type_code) {
       html += renderTypeSection(type_code);
@@ -154,21 +255,46 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     return '<footer><p>Decklist published by <a href="https://netrunnerdb.com/en/profile/'+decklist.user_id+'">'+decklist.user_name+'</a> on <time datetime="'+date.toISOString()+'">'+date.toLocaleDateString()+'</time>. View it on <a href="'+url+'">NetrunnerDB</a>.</p></footer>';
   }
   function createHTML() {
-    return '<article>'+createHeader()+createBody()+createFooter()+'</article>';
+    return Promise.all([createHeader(), createBody(), createFooter()])
+    .then(function (parts) {
+      return '<article>' + parts.join('') + '</article>';
+    });
   }
   function createURL() {
-    url = 'https://netrunnerdb.com/en/decklist/'+decklist_id;
-    container.setAttribute('cite', url);
+    return url = 'https://netrunnerdb.com/en/decklist/'+decklist_id;
   }
   function insertHTML(html) {
-    container.insertAdjacentHTML('afterbegin', html);
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+    return container.insertAdjacentHTML('afterbegin', html);
   }
-  fetchData()
-  .then(createURL)
-  .then(findCards)
-  .then(findIdentity)
-  .then(findActiveMWL)
-  .then(createHTML)
-  .then(insertHTML)
-  .catch(console.log.bind(console));
+  function registerMutationObserver() {
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            displayDecklist();
+        });
+    });
+    observer.observe(container, { attributes: true });
+  }
+  function displayDecklist() {
+    return dbLoadedPromise
+    .then(readArguments)
+    .then(loadDecklist)
+    .then(createURL)
+    .then(findCards)
+    .then(findIdentity)
+    .then(findActiveMWL)
+    .then(computeStats)
+    .then(createHTML)
+    .then(insertHTML)
+    .catch(function (reason) {
+      insertHTML(reason);
+    });
+  }
+  
+  registerMutationObserver();
+  dbLoadedPromise = createDatabases(['types', 'sides', 'factions', 'cycles', 'packs', 'cards', 'mwl']);
+  displayDecklist();
+
 })(document && document.currentScript && document.currentScript.parentNode);

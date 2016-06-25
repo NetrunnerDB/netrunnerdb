@@ -2,8 +2,6 @@
 
 namespace Netrunnerdb\CardsBundle\Repository;
 
-use Doctrine\ORM\EntityRepository;
-
 class TypeRepository extends TranslatableRepository
 {
 	function __construct($entityManager)

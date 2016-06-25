@@ -8,7 +8,6 @@ use Netrunnerdb\CardsBundle\Entity\Card;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Netrunnerdb\BuilderBundle\Entity\Comment;
 use Netrunnerdb\BuilderBundle\Entity\Reviewcomment;

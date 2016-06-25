@@ -2,7 +2,6 @@
 
 namespace Netrunnerdb\BuilderBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Netrunnerdb\UserBundle\Entity\User;
 
 /**

@@ -2,8 +2,6 @@
 
 namespace Netrunnerdb\BuilderBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  * Reviewcomment
  */

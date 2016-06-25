@@ -3,7 +3,6 @@
 namespace Netrunnerdb\CardsBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Netrunnerdb\CardsBundle\Entity\Card;
 use Netrunnerdb\CardsBundle\Entity\Pack;

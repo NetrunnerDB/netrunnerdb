@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Netrunnerdb\BuilderBundle\Entity\Deckchange;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BuilderController extends Controller
 {

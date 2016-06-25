@@ -3,10 +3,7 @@
 namespace Netrunnerdb\CardsBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Netrunnerdb\CardsBundle\Controller\DefaultController;
-use \Michelf\Markdown;
 use Netrunnerdb\CardsBundle\NetrunnerdbCardsBundle;
 use Symfony\Component\HttpFoundation\Request;
 

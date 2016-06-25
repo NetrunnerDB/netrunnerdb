@@ -9,7 +9,6 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Netrunnerdb\BuilderBundle\Entity\Deck;
-use Netrunnerdb\BuilderBundle\Entity\Deckslot;
 use Netrunnerdb\BuilderBundle\Entity\Decklist;
 use Netrunnerdb\BuilderBundle\Entity\Decklistslot;
 use Netrunnerdb\BuilderBundle\Entity\Comment;
@@ -18,7 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Netrunnerdb\BuilderBundle\Entity\Legality;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SocialController extends Controller
