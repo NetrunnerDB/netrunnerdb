@@ -1,0 +1,832 @@
+netrunnerdb_index:
+    path: /{_locale}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Index:index
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_buildform:
+    path:  /{_locale}/deck/new/{side_text}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:buildform
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_initbuild:
+    path: /{_locale}/deck/build/{card_code}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:initbuild
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_save:
+    path: /{_locale}/deck/save
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:save
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_edit:
+    path: /{_locale}/deck/edit/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:edit
+        _locale: en
+    requirements:
+        _locale: \w\w
+        deck_id: \d+
+
+deck_view:
+    path: /{_locale}/deck/view/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:view
+        _locale: en
+    requirements:
+        _locale: \w\w
+        deck_id: \d+
+
+deck_duplicate:
+    path: /{_locale}/deck/duplicate/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:duplicate
+        _locale: en
+    requirements:
+        _locale: \w\w
+        deck_id: \d+
+
+decks_list:
+    path: /{_locale}/decks
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:list
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_publish:
+    path: /deck/can_publish/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:publish
+        deck_id: \d+
+
+deck_autosave:
+    path: /deck/autosave/{deck_id}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:autosave
+
+deck_delete:
+    path: /{_locale}/deck/delete
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:delete
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_delete_list:
+    path: /{_locale}/deck/delete_list
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:deleteList
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_import:
+    path: /{_locale}/deck/import
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:import
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_textimport:
+    path: /{_locale}/deck/textimport
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:textimport
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_fileimport:
+    path: /{_locale}/deck/fileimport
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:fileimport
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+deck_meteorimport:
+    path: /{_locale}/deck/meteorimport
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:meteorimport
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+decks_download_all:
+    path: /deck/export/all
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:downloadall
+
+decks_upload_all:
+    path: /deck/import/all
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:uploadall
+
+deck_export_octgn:
+    path: /deck/export/octgn/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:octgnexport
+    requirements:
+        deck_id: \d+
+
+deck_export_text:
+    path: /deck/export/text/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:textexport
+    requirements:
+        deck_id: \d+
+
+deck_export_octgn_list:
+    path: /deck/export/octgn/list
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:octgnexportList
+
+deck_export_text_list:
+    path: /deck/export/text/list
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:textexportList
+
+deck_email:
+    path: /deck/export/email/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:email
+        deck_id: \d+
+
+deck_copy:
+    path: /{_locale}/deck/copy/{decklist_id}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:copy
+        _locale: en
+    requirements:
+        _locale: \w\w
+        decklist_id: \d+
+
+decklist_export_octgn:
+    path: /decklist/export/octgn/{decklist_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:octgnexport
+    requirements:
+        decklist_id: \d+
+
+decklist_export_text:
+    path: /decklist/export/text/{decklist_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:textexport
+    requirements:
+        decklist_id: \d+
+
+decklist_new:
+    path: /{_locale}/deck/publish
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:new
+        _locale: en
+    requirements:
+        _locale: \w\w
+    
+
+decklists_searchform:
+    path: /{_locale}/decklists/search
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:search
+        _locale: en
+    requirements:
+        _locale: \w\w
+    
+decklists_list:
+    path: /{_locale}/decklists/{type}/{page}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:list
+        page: 1
+        _locale: en
+    requirements:
+        _locale: \w\w
+        page: \d+
+
+decklist_detail:
+    path: /{_locale}/decklist/{decklist_id}/{decklist_name}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:view
+        _locale: en
+        decklist_name: null
+    requirements:
+        _locale: \w\w
+        decklist_id: \d+
+
+decklist_detail_no_name:
+    path: /{_locale}/decklist/{decklist_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:view
+        _locale: en
+    requirements:
+        _locale: \w\w
+        decklist_id: \d+
+
+decklist_favorite:
+    path: /user/favorite
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:favorite
+
+decklist_like:
+    path: /user/like
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:vote
+
+decklist_comment:
+    path: /user/comment
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:comment
+
+decklist_comment_hide:
+    path: /user/hidecomment/{comment_id}/{hidden}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:hidecomment
+
+decklist_edit:
+    path: /decklist/edit/{decklist_id}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:edit
+    requirements:
+        decklist_id: \d+
+
+decklist_delete:
+    path: /decklist/delete/{decklist_id}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:delete
+    requirements:
+        decklist_id: \d+
+
+decklists_diff:
+    path: /{_locale}/decklists/diff/{decklist1_id}/{decklist2_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Diff:decklistDiff
+        _locale: en
+    requirements:
+        _locale: \w\w
+        decklist1_id: \d+
+        decklist2_id: \d+
+
+user_profile:
+    path: /{_locale}/user/profile
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Default:profile
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+user_profile_save:
+    path: /{_locale}/user/profile_save
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Default:saveProfile
+        _locale: en
+    requirements:
+        _locale: \w\w
+    
+user_profile_view:
+    path: /{_locale}/profile/{user_id}/{user_name}/{page}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:profile
+        user_name: null
+        page: 1
+        _locale: en
+    requirements:
+        _locale: \w\w
+        user_id: \d+
+        
+user_follow:
+    path: /user/follow/{user_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:follow
+    requirements:
+        user_id: \d+
+
+user_unfollow:
+    path: /user/unfollow/{user_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:unfollow
+    requirements:
+        user_id: \d+
+    
+user_comments:
+    path: /{_locale}/user/comments/{page}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:usercomments
+        page: 1
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+all_comments:
+    path: /{_locale}/deckcomments/{page}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:comments
+        _locale: en
+        page: 1
+    requirements:
+        _locale: \w\w
+
+donators:
+    path: /{_locale}/donators
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:donators
+        _locale: en
+    requirements:
+        _locale: \w\w
+        
+        
+tools_demo:
+    path: /tools/demo
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Tools:demo
+
+demo_ext_decklist:
+    path: /demo/ext-decklist/{id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Tools:extdecklist
+        id: 98
+
+api_decklist:
+    path: /api/decklist/{decklist_id}.{_format}
+    defaults:
+        _controller: AppBundle:Api:decklist
+        _format: json
+    requirements:
+        _format: json
+        decklist_id: \d+
+        
+api_shareddeck:
+    path: /api/shareddeck/{deck_id}.{_format}
+    defaults:
+        _controller: AppBundle:Api:shareddeck
+        _format: json
+    requirements:
+        _format: json
+        deck_id: \d+
+
+api_decklists:
+    path: /api/decklists/by_date/{date}.{_format}
+    defaults:
+        _controller: AppBundle:Api:decklists
+        _format: json
+    requirements:
+        _format: json
+        date: \d\d\d\d-\d\d-\d\d
+
+api_decks:
+    path: /api/decks
+    defaults:
+        _controller: AppBundle:Api:decks
+        
+api_oauth2_decks:
+    path: /api_oauth2/decks
+    defaults:
+        _controller: AppBundle:Api:decks
+            
+api_oauth2_load_deck:
+    path: /api_oauth2/load_deck/{deck_id}
+    defaults:
+        _controller: AppBundle:Api:loadDeck
+    requirements:
+        deck_id: \d+
+
+api_oauth2_save_deck:
+    path: /api_oauth2/save_deck/{deck_id}
+    defaults:
+        _controller: AppBundle:Api:saveDeck
+    requirements:
+        deck_id: \d+
+
+api_oauth2_publish_deck:
+    path: /api_oauth2/publish_deck/{deck_id}
+    defaults:
+        _controller: AppBundle:Api:publish
+    requirements:
+        deck_id: \d+
+
+api_mwl:
+    path: /api/get_mwl/
+    defaults:
+        _controller: AppBundle:Api:getMwl
+
+tag_add:
+    path: /tag/add
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Tag:add
+
+tag_remove:
+    path: /tag/remove
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Tag:remove
+
+tag_clear:
+    path: /tag/clear
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Tag:clear
+
+user_info:
+    path: /user/info
+    defaults:
+        _controller: AppBundle:Default:info
+    
+card_review_post:
+    path: /review/post
+    methods: [POST]
+    defaults: 
+        _controller: AppBundle:Review:post
+
+card_review_edit:
+    path: /review/edit
+    methods: [POST]
+    defaults: 
+        _controller: AppBundle:Review:edit
+
+card_review_like:
+    path: /review/like
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Review:like
+        
+card_review_remove:
+    path: /review/remove/{id}
+    defaults:
+        _controller: AppBundle:Review:remove
+        
+card_reviews_list:
+    path: /{_locale}/reviews/{page}
+    defaults:
+        _controller: AppBundle:Review:list
+        _locale: en
+        page: 1
+    requirements:
+        _locale: \w\w
+        page: \d+
+        
+card_reviews_list_byauthor:
+    path: /{_locale}/reviewsbyauthor/{user_id}/{page}
+    defaults:
+        _controller: AppBundle:Review:byauthor
+        _locale: en
+        page: 1
+    requirements:
+        _locale: \w\w
+        page: \d+
+        user_id: \d+
+
+card_reviewcomment_post:
+    path: /review/comment
+    methods: [POST]
+    defaults: 
+        _controller: AppBundle:Review:comment
+
+faction_page:
+    path: /{_locale}/faction/{faction_code}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Faction:faction
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+activity_feed:
+    path: /{_locale}/activity/{days}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:activity
+        _locale: en
+        days: 7
+    requirements:
+        _locale: \w\w
+        days: \d+
+
+        
+# API 2.0
+
+api_doc:
+    path: /api/2.0/doc
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:ApiDoc:doc
+
+api_public_card:
+    path: /api/2.0/public/card/{card_code}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:card
+    requirements:
+        card_code: "\\d\\d\\d\\d\\d"
+
+api_public_cards:
+    path: /api/2.0/public/cards
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:cards
+
+api_public_pack:
+    path: /api/2.0/public/pack/{pack_code}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:pack
+    requirements:
+        pack_code: "\\w+"
+         
+api_public_packs:
+    path: /api/2.0/public/packs
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:packs
+                
+api_public_cycle:
+    path: /api/2.0/public/cycle/{cycle_code}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:cycle
+    requirements:
+        cycle_code: "[\\w-]+"
+        
+api_public_cycles:
+    path: /api/2.0/public/cycles
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:cycles
+
+api_public_faction:
+    path: /api/2.0/public/faction/{faction_code}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:faction
+    requirements:
+        faction_code: "[\\w-]+"
+        
+api_public_factions:
+    path: /api/2.0/public/factions
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:factions
+
+api_public_side:
+    path: /api/2.0/public/side/{side_code}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:side
+    requirements:
+        side_code: "[\\w-]+"
+        
+api_public_sides:
+    path: /api/2.0/public/sides
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:sides
+
+api_public_type:
+    path: /api/2.0/public/type/{type_code}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:type
+    requirements:
+        type_code: "[\\w-]+"
+        
+api_public_types:
+    path: /api/2.0/public/types
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:types
+
+api_public_decklist:
+    path: /api/2.0/public/decklist/{decklist_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:decklist
+    requirements:
+        decklist_id: "\\d+"
+
+api_public_decklists_by_date:
+    path: /api/2.0/public/decklists/by_date/{date}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:decklistsByDate
+    requirements:
+        date: "\\d\\d\\d\\d-\\d\\d-\\d\\d"
+
+api_public_deck:
+    path: /api/2.0/public/deck/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:deck
+    requirements:
+        deck_id: "\\d+"
+        
+api_public_mwl:
+    path: /api/2.0/public/mwl
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:mwl
+        
+api_private_decks:
+    path: /api/2.0/private/decks
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PrivateApi20:decks
+        
+api_private_deck_load:
+    path: /api/2.0/private/deck/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PrivateApi20:loadDeck
+    requirements:
+        deck_id: "\\d+"
+        
+api_private_deck_save:
+    path: /api/2.0/private/deck/save
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:PrivateApi20:saveDeck
+        
+api_private_deck_publish:
+    path: /api/2.0/private/deck/publish
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:PrivateApi20:publishDeck
+        
+api_private_decklists:
+    path: /api/2.0/private/decklists
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PrivateApi20:decklists
+
+api_private_account_info:
+    path: /api/2.0/private/account/info
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PrivateApi20:accountInfo
+
+redirect_url:
+    path: /redirect
+    defaults:
+        _controller: AppBundle:ApiDoc:redirect
+        
+start_oauth:
+    path: /oauth
+    defaults:
+        _controller: AppBundle:ApiDoc:oauth
+        
+cards_list:
+    path:  /{_locale}/set/{pack_code}/{view}/{sort}/{page}
+    defaults:
+        _controller: AppBundle:Search:list
+        _locale: en
+        view: list
+        sort: set
+        page: 1
+    requirements:
+        _locale: \w\w
+
+cards_zoom:
+    path:  /{_locale}/card/{card_code}
+    defaults:
+        _controller: AppBundle:Search:zoom
+        _locale: en
+    requirements:
+        _locale: \w\w
+        card_code: \d+
+
+cards_cycle:
+    path:  /{_locale}/cycle/{cycle_code}/{view}/{sort}/{page}
+    defaults:
+        _controller: AppBundle:Search:cycle
+        _locale: en
+        view: list
+        sort: faction
+        page: 1
+    requirements:
+        _locale: \w\w
+
+cards_search:
+    path:  /{_locale}/search
+    defaults:
+        _controller: AppBundle:Default:search
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+cards_find:
+    path:  /find/
+    defaults:
+        _controller: AppBundle:Search:find
+
+cards_processSearchForm:
+    path:  /process/
+    defaults:
+        _controller: AppBundle:Search:process
+
+cards_about:
+    path:  /{_locale}/about
+    defaults:
+        _controller: AppBundle:Default:about
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+cards_api:
+    path:  /{_locale}/apidoc
+    defaults:
+        _controller: AppBundle:Default:apidoc
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+cards_rulings:
+    path:  /{_locale}/rules
+    defaults:
+        _controller: AppBundle:Default:rules
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+api_cards:
+    path: /api/cards/
+    defaults:
+        _controller: AppBundle:Api:cards
+
+api_card:
+    path: /api/card/{card_code}.{_format}
+    defaults:
+        _controller: AppBundle:Api:card
+        _format: json
+    requirements:
+        _format: json
+        card_code: \d+
+
+api_sets:
+    path: /api/sets/
+    defaults:
+        _controller: AppBundle:Api:sets
+
+api_set:
+    path: /api/set/{pack_code}.{_format}
+    defaults:
+        _controller: AppBundle:Api:set
+        _format: json
+    requirements:
+        _format: json|xml|xlsx|xls

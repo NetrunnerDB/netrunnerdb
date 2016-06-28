@@ -1,0 +1,29 @@
+AppBundle\Entity\Legality:
+    type: entity
+    table: legality
+    manyToOne:
+        decklist:
+            targetEntity: Decklist
+            nullable: false
+            inversedBy: legalities
+            joinColumn:
+                name: decklist_id
+                referencedColumnName: id
+        mwl:
+            targetEntity: Mwl
+            nullable: false
+            inversedBy: legalities
+            joinColumn:
+                name: mwl_id
+                referencedColumnName: id
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        isLegal:
+            type: boolean
+            column: is_legal
+    lifecycleCallbacks: {  }

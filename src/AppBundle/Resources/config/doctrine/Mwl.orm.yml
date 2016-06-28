@@ -1,0 +1,44 @@
+AppBundle\Entity\Mwl:
+    type: entity
+    table: mwl
+    oneToMany:
+        slots:
+            targetEntity: Mwlslot
+            mappedBy: mwl
+            cascade: ["persist","remove"]
+        decks:
+            targetEntity: Deck
+            mappedBy: mwl
+        legalities:
+            targetEntity: Legality
+            mappedBy: mwl
+            cascade: ["persist","remove"]
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+        dateCreation:
+            type: datetime
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on:  create
+        dateUpdate:
+            type: datetime
+            column: date_update
+            gedmo:
+                timestampable:
+                    on:  update
+        dateStart:
+            type: date
+            nullable: true
+            column: date_start
+        active:
+            type: boolean
+    lifecycleCallbacks: {  }

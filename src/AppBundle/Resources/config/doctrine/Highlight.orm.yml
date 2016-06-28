@@ -1,0 +1,13 @@
+AppBundle\Entity\Highlight:
+    type: entity
+    table: highlight
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        decklist:
+            type: text
+            nullable: true
+    lifecycleCallbacks: {  }

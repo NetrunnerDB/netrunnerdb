@@ -68,8 +68,8 @@ doctrine:
                 auto_mapping: true
                 dql:
                     string_functions:
-                        replace: Netrunnerdb\CardsBundle\DQL\ReplaceFunction
-                        binary: Netrunnerdb\CardsBundle\DQL\BinaryFunction
+                        replace: AppBundle\DQL\ReplaceFunction
+                        binary: AppBundle\DQL\BinaryFunction
                 mappings:
                     gedmo_translatable:
                         type: annotation
@@ -89,7 +89,7 @@ swiftmailer:
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
-    user_class: Netrunnerdb\UserBundle\Entity\User
+    user_class: AppBundle\Entity\User
     from_email:
         address:        alsciende@gmail.com
         sender_name:    Netrunnerdb
@@ -104,10 +104,10 @@ fos_user:
 
 fos_oauth_server:
     db_driver: orm
-    client_class:        Netrunnerdb\UserBundle\Entity\Client
-    access_token_class:  Netrunnerdb\UserBundle\Entity\AccessToken
-    refresh_token_class: Netrunnerdb\UserBundle\Entity\RefreshToken
-    auth_code_class:     Netrunnerdb\UserBundle\Entity\AuthCode
+    client_class:        AppBundle\Entity\Client
+    access_token_class:  AppBundle\Entity\AccessToken
+    refresh_token_class: AppBundle\Entity\RefreshToken
+    auth_code_class:     AppBundle\Entity\AuthCode
     service:
         user_provider: fos_user.user_provider.username
         options:

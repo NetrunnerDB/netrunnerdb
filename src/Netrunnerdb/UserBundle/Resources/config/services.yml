@@ -1,7 +1,0 @@
-parameters:
-#    netrunnerdb_user.example.class: Netrunnerdb\UserBundle\Example
-
-services:
-#    netrunnerdb_user.example:
-#        class: %netrunnerdb_user.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

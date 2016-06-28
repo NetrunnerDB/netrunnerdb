@@ -1,0 +1,27 @@
+AppBundle\Entity\Decklistslot:
+    type: entity
+    table: decklistslot
+    repositoryClass: AppBundle\Entity\DecklistslotRepository
+    manyToOne:
+        decklist:
+            targetEntity: Decklist
+            nullable: false
+            inversedBy: slots
+            joinColumn:
+                name: decklist_id
+                referencedColumnName: id
+        card:
+            targetEntity: AppBundle\Entity\Card
+            nullable: false
+            joinColumn:
+                name: card_id
+                referencedColumnName: id
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        quantity:
+            type: smallint
+    lifecycleCallbacks: {  }

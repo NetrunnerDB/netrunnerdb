@@ -1,0 +1,157 @@
+AppBundle\Entity\Card:
+    type: entity
+    table: card
+    repositoryClass: AppBundle\Repository\CardRepository
+    gedmo:
+        translation:
+            locale: locale
+    indexes:
+        title_index:
+            columns: [ title ]
+        cost_index:
+            columns: [ cost ]
+        advancement_cost_index:
+            columns: [ advancement_cost ]
+        strength_index:
+            columns: [ strength ]
+        agenda_points_index:
+            columns: [ agenda_points ]
+        trash_cost_index:
+            columns: [ trash_cost ]
+    manyToOne:
+        pack:
+            targetEntity: Pack
+            inversedBy: cards
+            joinColumn:
+                name: pack_id
+                referencedColumnName: id
+        type:
+            targetEntity: Type
+            inversedBy: cards
+            joinColumn:
+                name: type_id
+                referencedColumnName: id
+        faction:
+            targetEntity: Faction
+            inversedBy: cards
+            joinColumn:
+                name: faction_id
+                referencedColumnName: id
+        side:
+            targetEntity: Side
+            inversedBy: cards
+            joinColumn:
+                name: side_id
+                referencedColumnName: id
+    oneToMany:
+        decklists:
+            targetEntity: AppBundle\Entity\Decklist
+            orderBy: {'dateCreation':'DESC'}
+            mappedBy: identity
+        reviews:
+            targetEntity: AppBundle\Entity\Review
+            orderBy: {'dateCreation':'DESC'}
+            mappedBy: card
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        dateUpdate:
+            type: datetime
+            nullable: false
+            column: date_update
+            gedmo:
+                timestampable:
+                    on:  update
+        dateCreation:
+            type: datetime
+            nullable: false
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on: create
+        code:
+            type: string
+            unique: true
+            length: 5
+        title:
+            type: string
+            length: 255
+            gedmo:
+                - translatable
+        keywords:
+            type: string
+            length: 255
+            nullable: true
+            gedmo:
+                - translatable
+        text:
+            type: string
+            length: '1024'
+            nullable: true
+            gedmo:
+                - translatable
+        advancementCost:
+            type: smallint
+            column: advancement_cost
+            nullable: true
+        agendaPoints:
+            type: smallint
+            column: agenda_points
+            nullable: true
+        baseLink:
+            type: smallint
+            column: base_link
+            nullable: true
+        cost:
+            type: smallint
+            nullable: true
+        factionCost:
+            type: smallint
+            column: faction_cost
+            nullable: true
+        flavor:
+            type: string
+            length: '1024'
+            nullable: true
+            gedmo:
+                - translatable
+        illustrator:
+            type: string
+            length: 255
+            nullable: true
+        influenceLimit:
+            type: smallint
+            column: influence_limit
+            nullable: true
+        memoryCost:
+            type: smallint
+            column: memory_cost
+            nullable: true
+        minimumDeckSize:
+            type: smallint
+            column: minimum_deck_size
+            nullable: true
+        position:
+            type: smallint
+            nullable: false
+        quantity:
+            type: smallint
+            nullable: false
+        strength:
+            type: smallint
+            nullable: true
+        trashCost:
+            type: smallint
+            column: trash_cost
+            nullable: true
+        uniqueness:
+            type: boolean
+            nullable: false
+        deckLimit:
+            type: smallint
+            column: deck_limit
+            nullable: false
+    lifecycleCallbacks: {  }

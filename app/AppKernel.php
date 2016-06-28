@@ -24,9 +24,7 @@ class AppKernel extends Kernel
        		new JMS\SerializerBundle\JMSSerializerBundle(),
         	new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
         	new FOS\RestBundle\FOSRestBundle(),
-            new Netrunnerdb\BuilderBundle\NetrunnerdbBuilderBundle(),
-            new Netrunnerdb\UserBundle\NetrunnerdbUserBundle(),
-            new Netrunnerdb\CardsBundle\NetrunnerdbCardsBundle(),
+            new AppBundle\AppBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

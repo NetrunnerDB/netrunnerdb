@@ -1,4 +1,5 @@
 web/bundles/
+web/card_image/
 app/bootstrap.php.cache
 app/cache/*
 app/config/parameters.yml
