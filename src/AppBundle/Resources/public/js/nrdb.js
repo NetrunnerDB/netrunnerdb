@@ -281,6 +281,9 @@ function update_deck(options) {
 		case 'faction':
 			order += ',faction_code';
 			break;
+		case 'number':
+			order = 'code';
+			break;
 	}
 	order += ',title';
 	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).order(order).each(function(record) {
