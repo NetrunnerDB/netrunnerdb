@@ -282,7 +282,7 @@ function update_deck(options) {
 			order += ',faction_code';
 			break;
 		case 'number':
-			order = 'code';
+			order = ',code';
 			break;
 	}
 	order += ',title';
