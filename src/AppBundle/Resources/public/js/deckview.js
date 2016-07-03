@@ -39,6 +39,7 @@ function do_action_deck(event) {
 		case 'btn-sort-number': DisplaySort = 'number'; DisplaySortSecondary = null; switch_to_web_view(); break;
 		case 'btn-sort-faction': DisplaySort = 'faction'; DisplaySortSecondary = null; switch_to_web_view(); break;
 		case 'btn-sort-faction-type': DisplaySort = 'faction'; DisplaySortSecondary = 'type'; switch_to_web_view(); break;
+		case 'btn-sort-faction-number': DisplaySort = 'faction'; DisplaySortSecondary = 'number'; switch_to_web_view(); break;
 		case 'btn-sort-title': DisplaySort = 'title'; DisplaySortSecondary = null; switch_to_web_view(); break;
 		case 'btn-display-plain': export_plaintext(); break;
 		case 'btn-display-bbcode': export_bbcode(); break;
