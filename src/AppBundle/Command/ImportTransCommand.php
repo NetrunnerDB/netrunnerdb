@@ -189,7 +189,7 @@ class ImportTransCommand extends ContainerAwareCommand
 		}
 	
 		# skip empty translations
-		if(!isset($data['title'])) return;
+		if(!isset($data['title']) && !isset($data['name'])) return;
 		
 		$entity = $this->em->getRepository($entityName)->findOneBy(['code' => $data['code']]);
 		if(!$entity) {
