@@ -194,7 +194,7 @@ class DefaultController extends Controller
 			);
 		}
 	
-		$list_types = $this->getDoctrine()->getRepository('AppBundle:Type')->findBy(array(), array("name" => "ASC"));
+		$list_types = $this->getDoctrine()->getRepository('AppBundle:Type')->findBy(array("isSubtype" => false), array("name" => "ASC"));
 		$types = array_map(function ($type) {
 			return $type->getName();
 		}, $list_types);

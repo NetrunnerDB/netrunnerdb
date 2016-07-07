@@ -45,7 +45,7 @@ class FactionController extends Controller
 	        ->setParameter('faction', $faction)
 	        ->andWhere('c.type=:type')
 	        ->andWhere('p.dateRelease is not null')
-	        ->setParameter('type', $em->getRepository('AppBundle:Type')->findOneBy(array('name' => 'Identity')));
+	        ->setParameter('type', $em->getRepository('AppBundle:Type')->findOneBy(array('code' => 'identity')));
 	        
 	        $identities = $qb->getQuery()->getResult();
 	        
