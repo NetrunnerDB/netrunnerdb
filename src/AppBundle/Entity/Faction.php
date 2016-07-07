@@ -216,35 +216,7 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
     {
     	return $this->decklists;
     }
-    /**
-     * @var string
-     */
-    private $nameIt;
-
-
-    /**
-     * Set nameIt
-     *
-     * @param string $nameIt
-     * @return Faction
-     */
-    public function setNameIt($nameIt)
-    {
-        $this->nameIt = $nameIt;
-
-        return $this;
-    }
-
-    /**
-     * Get nameIt
-     *
-     * @return string
-     */
-    public function getNameIt()
-    {
-        return $this->nameIt;
-    }
-
+    
     /**
      * Add decklists
      *
