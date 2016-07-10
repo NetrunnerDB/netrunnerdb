@@ -323,11 +323,14 @@ function update_deck(options) {
 			criteria = record.faction_code;
 		} else if(DisplaySort === 'number') {
 			criteria = record.set_code;
+		} else if(DisplaySort === 'title') {
+			criteria = 'cards';
+		}
+
+		if (DisplaySort === 'number' || DisplaySortSecondary === 'number'){
 			var number_of_sets = Math.ceil(record.indeck / record.quantity);
 			var alert_number_of_sets = number_of_sets > 1 ? '<small class="text-warning">'+number_of_sets+' sets needed</small> ' : '';
 			additional_info = '(#' + record.number + ') ' + alert_number_of_sets + influence;
-		} else if(DisplaySort === 'title') {
-			criteria = 'cards';
 		}
 
 		var item = $('<div>'+record.indeck+'x <a href="'+Routing.generate('cards_zoom', {card_code:record.code})+'" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="'+record.code+'">'+record.title+'</a> '+additional_info+'</div>');
