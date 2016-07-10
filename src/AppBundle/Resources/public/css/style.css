@@ -480,3 +480,8 @@ div#deck h3#identity {
 span.label-as-badge {
 	border-radius: 1em;
 }
+
+span.champion {
+	font-style: normal;
+    font-weight: bold;
+}

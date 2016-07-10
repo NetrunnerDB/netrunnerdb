@@ -24,6 +24,7 @@ parameters:
         pl: Polskie
         kr: 한국어
         jp: 日本語
+        zh: 中文
     supported_locales:
         - en
     oauth_test_client_id: ~

@@ -202,35 +202,7 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     {
         return $this->packs;
     }
-    /**
-     * @var string
-     */
-    private $nameIt;
-
-
-    /**
-     * Set nameIt
-     *
-     * @param string $nameIt
-     * @return Cycle
-     */
-    public function setNameIt($nameIt)
-    {
-        $this->nameIt = $nameIt;
-
-        return $this;
-    }
-
-    /**
-     * Get nameIt
-     *
-     * @return string 
-     */
-    public function getNameIt()
-    {
-        return $this->nameIt;
-    }
-
+    
     public function setTranslatableLocale($locale)
     {
     	$this->locale = $locale;
