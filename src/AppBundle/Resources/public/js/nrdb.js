@@ -110,7 +110,16 @@ function getDisplayDescriptions(sort) {
                 }, {
                     id: 'neutral',
                     label: 'Neutral'
-                }, ]
+                }, {
+                    id: 'adam',
+                    label: 'Adam'
+                }, {
+                    id: 'apex',
+                    label: 'Apex'
+                }, {
+                    id: 'sunny-lebeau',
+                    label: 'Sunny Lebeau'
+                } ]
             ],
             'number': [],
             'title': [
