@@ -132,15 +132,15 @@ NRDB.user.params.decklist_id = Decklist.id;
 <tr><th colspan="1"><span class="glyphicon glyphicon-bell"></span> Legality</th></tr>
 </thead>
 <tbody>
+{% for legality in legalities %}
 <tr>
-	{% for legality in legalities %}
     <td>
     	{% if legality.is_legal %}<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
     	{% else %}<span class="glyphicon glyphicon-thumbs-down" style="color:red"></span>{% endif %}
     	<a href="#" class="change_mwl" data-id="{{ legality.id }}">{{ legality.name }}</a>
     </td>
-    {% endfor %}
 </tr>
+{% endfor %}
 <tr>
     <td>
     	<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
