@@ -503,8 +503,6 @@ $(function() {
 function autosave_interval() {
 	if(Autosave_running) return;
 	if(Autosave_timer < 0 && Deck_id) Autosave_timer = Autosave_period;
-	//('#tab-header-history').html('History '+Autosave_timer);
-	$('#history-timer-bar').css('width', (Autosave_timer*100/Autosave_period)+'%').attr('aria-valuenow', Autosave_timer).find('span').text(Autosave_timer+' seconds remaining.');
 	if(Autosave_timer === 0) {
 		deck_autosave();
 	}
