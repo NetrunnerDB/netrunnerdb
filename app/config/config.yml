@@ -4,8 +4,8 @@ imports:
 
 framework:
     #esi:             ~
-    translator:      { fallback: %locale% }
-    secret:          %secret%
+    translator:      { fallback: "%locale%" }
+    secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
@@ -15,7 +15,7 @@ framework:
     templating:
         engines: ['twig']
     assets:
-        version: 'v3.22'
+        version: "v%assets_version%"
     default_locale:  "%locale%"
     trusted_proxies: ~
     session:
@@ -24,18 +24,18 @@ framework:
 
 # Twig Configuration
 twig:
-    debug:            %kernel.debug%
-    strict_variables: %kernel.debug%
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
     globals:
         texts: "@texts"
-        supported_locales: %supported_locales%
+        supported_locales: "%supported_locales%"
     form:
         resources:
             - 'bootstrap_3_layout.html.twig'
 
 # Assetic Configuration
 assetic:
-    debug:          %kernel.debug%
+    debug:          "%kernel.debug%"
     use_controller: false
     bundles:        [ ]
     #java: /usr/bin/java
@@ -49,12 +49,12 @@ assetic:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   %database_driver%
-        host:     %database_host%
-        port:     %database_port%
-        dbname:   %database_name%
-        user:     %database_user%
-        password: %database_password%
+        driver:   "%database_driver%"
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "%database_name%"
+        user:     "%database_user%"
+        password: "%database_password%"
         unix_socket: /Applications/MAMP/tmp/mysql/mysql.sock
         charset:  UTF8
         # if using pdo_sqlite as your database driver, add the path in parameters.yml
@@ -80,10 +80,10 @@ doctrine:
 
 # Swiftmailer Configuration
 swiftmailer:
-    transport: %mailer_transport%
-    host:      %mailer_host%
-    username:  %mailer_user%
-    password:  %mailer_password%
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
     spool:     { type: memory }
 
 fos_user:

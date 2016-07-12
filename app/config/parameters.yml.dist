@@ -15,6 +15,7 @@ parameters:
     secret:            ThisTokenIsNotSoSecretChangeIt
     long_cache: 86400
     short_cache: 600
+    assets_version: 1
     locale_names:
         en: English
         de: Deutsch
