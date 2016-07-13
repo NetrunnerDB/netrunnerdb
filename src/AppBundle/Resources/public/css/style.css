@@ -427,6 +427,7 @@ article.review .review-comment { border-top: 1px solid #ddd; padding: 0.5em; }
 div.ad {
 	display: none;
 	text-align: center;
+	margin: 25px auto;
 }
 div.ad-blocked {
 	background: #eee;
