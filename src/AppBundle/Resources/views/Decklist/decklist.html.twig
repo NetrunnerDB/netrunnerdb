@@ -84,7 +84,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 		</ul>
 	</li>
 </ul>
-<div class="tab-content">
+<div class="tab-content" style="border-bottom:1px solid #ddd;padding-bottom:20px">
 <div role="tabpanel" class="tab-pane active" id="deck">
 	
 <!-- Identity and Stats -->
@@ -108,11 +108,8 @@ NRDB.user.params.decklist_id = Decklist.id;
 <!-- Identity and Stats -->
 
 <!-- Deck Content -->
-<div class="row" id="deck-content" style="margin-bottom:10px"></div>
+<div class="row" id="deck-content"></div>
 <!-- Deck Content -->
-
-{% include 'AppBundle:Default:google_adaptable_ad.html.twig' %}
-
 
 </div><!-- /#deck -->
 <div role="tabpanel" class="tab-pane" id="tools">
@@ -240,7 +237,8 @@ NRDB.user.params.decklist_id = Decklist.id;
 </div><!-- /#tools -->
 </div>
 
-	
+{% include 'AppBundle:Default:google_adaptable_ad.html.twig' %}
+
 </div>
 <!-- Left-side Column -->
 
