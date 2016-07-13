@@ -1,9 +1,17 @@
-# Prerequisite
+This repository holds the source code of [NetrunnerDB](https://netrunnerdb.com).
+
+# This is not where the cards data is
+
+The data used by NetrunnerDB is at https://github.com/zaroth/netrunner-cards-json. If you want to fix a mistake in some card data, or add the data of a new card, you can submit a PR [there](https://github.com/zaroth/netrunner-cards-json/pulls). Also, that's where the localized data is.
+
+# Installing a local copy of NetrunnerDB
+
+## Prerequisite
 
 - you need a recent apache/php/mysql stack
 - your php module must be configured with `mbstring.internal_encoding = UTF-8`
 
-# How to install
+## How to install
 
 - Go into the directory where your server will reside
 - Clone the repository (or your own fork)
@@ -11,7 +19,7 @@
 - Also, clone the data repository (or your own fork) at https://github.com/zaroth/netrunner-cards-json
 - Go into it the directory `netrunnerdb`
 - Install Composer (see https://getcomposer.org/download/)
-- Install the vendor libs: `composer install`
+- Install the vendor libs: `composer install`. You'll be asked to input your database connection parameter.
 - Create the database: `php app/console doctrine:database:create`
 - If the above command fails, edit app/config/parameters.yml and try again
 - Create the tables: `php app/console doctrine:schema:update --force`
@@ -19,15 +27,13 @@
 - [Configure your web server with the correct DocumentRoot](http://symfony.com/doc/current/cookbook/configuration/web_server_configuration.html). Alternatively, [use PHP's built-in Web Server](http://symfony.com/doc/current/cookbook/web_server/built_in.html). Set your DocumentRoot to `netrunnerdb/web`
 - Point your browser to `/app_dev.php`
 
-# How to add card images
+## How to add card images
 
-- Put the card images in `src/Netrunnerdb/CardsBundle/Resources/public/images/cards`
-- Set the `cardimages_dir` value in `app/config/parameters.yml` to the absolute path of the `cards` directory
-- Run `composer install`
+- Put the card images in `web/card_image/` (`web/card_image/01001.png`, etc.)
 
-# How to update
+## How to update
 
-When you update your repository, run the following commands:
+When you update your repository (`git pull`), run the following commands:
 
 - `composer self-update`
 - `composer install` (do *not* run `composer update`)
