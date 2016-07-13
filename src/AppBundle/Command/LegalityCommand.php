@@ -87,7 +87,8 @@ class LegalityCommand extends ContainerAwareCommand
 						SELECT l 
 						FROM AppBundle:Legality l
 						WHERE l.decklist=d AND l.mwl=?1
-    				)";
+    				)
+    				ORDER BY d.id DESC";
     	$countQuery = $entityManager->createQuery($countDql)->setParameter(1, $mwl);
     	$count = $countQuery->getSingleResult()[1];
     	$output->writeln("<comment>Found $count decklists to analyze</comment>");
