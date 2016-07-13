@@ -112,8 +112,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     var html = '', faction = db.factions[card.faction_code];
     if(card.faction_code !== identity.faction_code && card.faction_cost) {
       html += ' <span class="nrdb-ext-decklist-influence" data-faction="'+faction.code+'" style="color:#'+faction.color+'">';
+      var actual_influence = computeInfluenceCost(card, quantity);
       for(var i=0; i<quantity*card.faction_cost; i++) {
-        html += '•';
+        html += i < actual_influence ? "●" : "○";
       }
       html += '</span>';
     }
@@ -171,6 +172,54 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     if(!identity) throw Error("Cannot find the Identity");
     return identity;
   }
+  function countCardCopies(cards) {
+  	var count = 0;
+  	cards.forEach(function (card) {
+  		count += decklist.cards[card.code];
+  	});
+  	return count;
+  }
+  function computeInfluenceCost(card, quantity) {
+  	var inf = quantity * card.faction_cost;
+  	if(inf) {
+  		if(identity.code == "03029" && card.type_code == "program") {
+  			// The Professor: first program is free
+  			inf = (quantity-1) * card.faction_cost;
+  		} else if(card.code === '10018') { 
+  			// Mumba Temple: 15 or fewer ice
+  			if(countCardCopies(decklist_content.filter(function(card) { return card.type_code === 'ice'; })) <= 15) {
+  				inf = 0;
+  			}
+  		} else if(card.code === '10019') {
+  			// Museum of History: 50 or more cards
+  			if(stats.nbcards >= 50) {
+  				inf = 0;
+  			}
+  		} else if(card.code === '10038') {
+  			// PAD Factory: 3 PAD Campaign
+  			if(decklist.cards['01109'] === 3) {
+  				inf = 0;
+  			}
+  		} else if(card.code === '10076') {
+  			// Mumbad Virtual Tour: 7 or more assets
+  			if(countCardCopies(decklist_content.filter(function(card) { return card.type_code === 'asset'; })) >= 7) {
+  				inf = 0;
+  			}
+  		} else if(card.keywords && card.keywords.match(/Alliance/)) {
+  			// 6 or more non-alliance cards of the same faction
+  			var same_faction_cards = decklist_content.filter(function(card) { return card.faction_code === faction_code; });
+  			var alliance_count = 0;
+  			same_faction_cards.forEach(function (same_faction_card) {
+  				if(same_faction_card.keywords && same_faction_card.keywords.match(/Alliance/)) return;
+  				alliance_count += decklist.cards[same_faction_card.card_code];
+  			});
+  			if(alliance_count >= 6) {
+  				inf = 0;
+  			}
+  		}
+  	}
+  	return inf;
+  }
   function computeStats() {
   stats = {
       nbinfluence: 0,
@@ -192,7 +241,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       stats.lastpack = pack;
     }
     if(card.faction_code !== identity.faction_code && card.faction_cost) {
-      stats.nbinfluence += card.faction_cost * quantity;
+      stats.nbinfluence += computeInfluenceCost(card, quantity);
     }
     if(active_mwl[card.code]) {
       stats.influencepenalty += active_mwl[card.code] * quantity;
@@ -201,6 +250,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       stats.nbagendapoints += card.agenda_points * quantity;
     }
   });
+  stats.influencepenalty = Math.min(stats.influencepenalty, stats.maxinfluence - 1);
   stats.minagendapoints = Math.floor(Math.max(stats.nbcards, stats.mincards) / 5) * 2 + 2;
   stats.maxagendapoints = stats.minagendapoints + 1;
   }
