@@ -452,7 +452,7 @@ function check_influence() {
 		displayInfluenceLimit = "&#8734;";
 	}
 	var isOver = remainingInfluence < InfluenceSpent;
-	$('#influence').html(InfluenceSpent+" influence spent (max "+displayInfluenceLimit+") "+graph)[isOver ? 'addClass' : 'removeClass']("text-danger");
+	$('#influence').html(InfluenceSpent+" influence spent (max "+displayInfluenceLimit+") <span class=\"hidden-xs\">"+graph+"</span>")[isOver ? 'addClass' : 'removeClass']("text-danger");
 }
 
 $(function () {

@@ -225,6 +225,7 @@ $(function() {
 	$(document).on('click', '#btn-group-decklist button[id],a[id]', do_action_decklist);
 	$(document).on('click', '#btn-compare', compare_form);
 	$(document).on('click', '#btn-compare-submit', compare_submit);
+	$(document).on('click', '#btn-copy-decklist', copy_decklist);
 	
 	$('div.collapse').each(function (index, element) {
 		$(element).on('show.bs.collapse', function (event) {
@@ -235,7 +236,7 @@ $(function() {
 		});
 	});
 	
-	$('#menu-sort').on({
+	$('#btn-group-decklist').on({
 		click : function(event) {
 			if ($(this).attr('id').match(/btn-sort-(\w+)/)) {
 				DisplaySort = RegExp.$1;
@@ -251,6 +252,19 @@ $(function() {
 	}, 'a');
 	
 });
+
+function copy_decklist() {
+	$.ajax(Routing.generate('deck_copy', {decklist_id:Decklist.id}), {
+		type: 'POST',
+		success: function(data, textStatus, jqXHR) {
+			alert("Decklist copied");
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log('['+moment().format('YYYY-MM-DD HH:mm:ss')+'] Error on '+this.url, textStatus, errorThrown);
+			alert('An error occured while copying this decklist ('+jqXHR.statusText+'). Reload the page and try again.');
+		}
+	});
+}
 
 function compare_submit() {
 	var url = $('#decklist2_url').val();

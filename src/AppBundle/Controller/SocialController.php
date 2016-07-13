@@ -482,10 +482,11 @@ class SocialController extends Controller
 				order by c.code asc", array(
                 $decklist_id
         ))->fetchAll();
-
+				
+        
         $decklist['comments'] = $comments;
         $decklist['cards'] = $cards;
-
+        
         $similar_decklists = array(); // $this->findSimilarDecklists($decklist_id,
                                       // 5);
 
@@ -554,7 +555,19 @@ class SocialController extends Controller
             FROM mwl m
             WHERE m.active=1")->fetch();
         if($mwl) $mwl = $mwl['id'];
-
+        
+        $packs = $dbh->executeQuery("SELECT DISTINCT
+				p.code code,
+				p.name name,
+        		y.code cycle_code,
+        		y.name cycle_name
+				from pack p
+				join cycle y on p.cycle_id=y.id
+        		join card c on c.pack_id=p.id
+        		join decklistslot s on s.card_id=c.id
+				where s.decklist_id=?
+				order by y.position asc, p.position asc", array($decklist_id))->fetchAll();
+        
         return $this->render('AppBundle:Decklist:decklist.html.twig',
                 array(
                         'pagetitle' => $decklist['name'],
@@ -567,6 +580,7 @@ class SocialController extends Controller
                         'tournaments' => $tournaments,
                 		'legalities' => $legalities,
                         'mwl' => $mwl,
+                		'packs' => $packs,
                 ), $response);
 
     }

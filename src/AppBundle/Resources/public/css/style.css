@@ -15,6 +15,11 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
 
 #push{clear:both}
 .type-icon,.faction-icon{vertical-align:text-bottom}
+.icon-fw {
+	width: 20px;
+    display: inline-block;
+    text-align: center;
+}
 .influence {
 	font-size: 90%;
     font-family: Arial;

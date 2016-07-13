@@ -25,13 +25,13 @@ NRDB.user.params.decklist_id = Decklist.id;
 <div class="container decklist">
 
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12 panel-group">
         <h1 class="decklist-name">
-            <span class="icon icon-{{ decklist.faction_code }} {{ decklist.faction_code }}"></span>
+            <span class="hidden-xs icon icon-{{ decklist.faction_code }} {{ decklist.faction_code }}"></span>
             {{ decklist.name }}
         </h1>
         <div class="social">
-            <div class="pull-right" id="social-icons">
+            <div class="" id="social-icons">
                 <span><span class="glyphicon glyphicon-calendar"></span> <time datetime="{{ decklist.date_creation|date('c') }}">{{ decklist.date_creation|date('j M Y') }}</time></span>
                 |
                 <a id="social-icon-like" href="#" class="social-icon-like" data-toggle="tooltip" data-placement="bottom" title="Like">
@@ -42,14 +42,13 @@ NRDB.user.params.decklist_id = Decklist.id;
                 	<span class="glyphicon glyphicon-star"></span> <span class="num">{{ decklist.nbfavorites }}</span>
                 </a>
                 |
-                <a id="social-icon-comment" href="#comment-form" class="social-icon-comment" data-toggle="tooltip" data-placement="bottom" title="Comment">
+                <a id="social-icon-comment" href="#comments" class="social-icon-comment" data-toggle="tooltip" data-placement="bottom" title="Comment">
                 	<span class="glyphicon glyphicon-comment"></span> <span class="num">{{ decklist.nbcomments }}</span>
                 </a>
             </div>
             {% if duplicate %}
-            <small>Duplicate of <a href="{{ path('decklist_detail', { 'decklist_id': duplicate.id, 'decklist_name': duplicate.prettyname|e('url') }) }}">{{ duplicate.name }}</a></small>
+            | <small>Duplicate of <a href="{{ path('decklist_detail', { 'decklist_id': duplicate.id, 'decklist_name': duplicate.prettyname|e('url') }) }}">{{ duplicate.name }}</a></small>
             {% endif %}
-            
         </div>
     </div>
 </div>
@@ -59,7 +58,34 @@ NRDB.user.params.decklist_id = Decklist.id;
 <!-- Left-side Column -->
 <div class="col-md-6">
 
-<div id="deck">
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#deck" aria-controls="home" role="tab" data-toggle="tab">Decklist</a></li>
+    <li role="presentation"><a href="#tools" aria-controls="profile" role="tab" data-toggle="tab">Tools</a></li>
+    <li role="presentation" class="dropdown">
+    	<a href="#" id="actions" class="dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
+    	<ul class="dropdown-menu" id="btn-group-decklist">
+    		<li><a href="#" id="btn-copy-decklist">Copy into my decks</a></li>
+			<li><a href="#" id="btn-compare">Compare with another decklist</a></li>
+    		<li class="dropdown-header"><span class="glyphicon glyphicon-download"></span> Download</li>
+	    		<li><a href="#" id="btn-download-text">Text file</a></li>
+				<li><a href="#" id="btn-download-octgn">Octgn file</a></li>
+    		<li class="dropdown-header"><span class="glyphicon glyphicon-export"></span> Export</li>
+				<li><a href="#" id="btn-export-bbcode">bbCode</a></li>
+				<li><a href="#" id="btn-export-markdown">Markdown (Reddit)</a></li>
+				<li><a href="#" id="btn-export-plaintext">Plain text</a></li>
+				<li><a href="#" id="btn-export-jintekinet">Jinteki.net format</a></li>
+    		<li class="dropdown-header"><span class="glyphicon glyphicon-sort"></span> Sort</li>
+				<li><a href="#" id="btn-sort-type">by Type</a></li>
+				<li><a href="#" id="btn-sort-number">by Set</a></li>
+				<li><a href="#" id="btn-sort-faction">by Faction</a></li>
+				<li><a href="#" id="btn-sort-faction-type">by Faction, then Type</a></li>
+				<li><a href="#" id="btn-sort-faction-number">by Faction, then Set</a></li>
+				<li><a href="#" id="btn-sort-title">by Name</a></li>
+		</ul>
+	</li>
+</ul>
+<div class="tab-content">
+<div role="tabpanel" class="tab-pane active" id="deck">
 	
 <!-- Identity and Stats -->
 <div class="row">
@@ -67,46 +93,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 		<img id="img_identity" src="#empty" alt="Identity" class="img-responsive  hidden-xs">
 	</div><!-- /.col-md-3 -->
 	<div class="col-sm-9">
-		<h3 id="identity">Identity</h3>
-		<div id="btn-group-decklist">
-		    <form action="{{ path('deck_copy', {decklist_id:decklist.id}) }}" method="POST" style="display:inline">
-			     <button type="submit" id="btn-copy" class="btn btn-default  btn-xs"><span class="glyphicon glyphicon-save"></span> Copy</button>
-			</form>
-			<div class="btn-group">
-				<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
-					<span class="glyphicon glyphicon-download"></span> Download <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu" role="menu">
-					<li><a href="#" id="btn-download-text">Text file</a></li>
-					<li><a href="#" id="btn-download-octgn">Octgn file</a></li>
-				</ul>
-			</div>
-			<div class="btn-group">
-				<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
-					<span class="glyphicon glyphicon-export"></span> Export <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu" role="menu">
-					<li><a href="#" id="btn-export-bbcode">bbCode</a></li>
-					<li><a href="#" id="btn-export-markdown">Markdown (Reddit)</a></li>
-					<li><a href="#" id="btn-export-plaintext">plain text</a></li>
-					<li><a href="#" id="btn-export-jintekinet">Jinteki.net format</a></li>
-				</ul>
-			</div>
-			<div class="btn-group">
-				<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
-					<span class="glyphicon glyphicon-sort"></span> Sort <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu" role="menu" id="menu-sort">
-					<li><a href="#" id="btn-sort-type">by Type</a></li>
-					<li><a href="#" id="btn-sort-number">by Set</a></li>
-					<li><a href="#" id="btn-sort-faction">by Faction</a></li>
-					<li><a href="#" id="btn-sort-faction-type">by Faction, then Type</a></li>
-					<li><a href="#" id="btn-sort-faction-number">by Faction, then Set</a></li>
-					<li><a href="#" id="btn-sort-title">by Name</a></li>
-				</ul>
-			</div>
-			<button type="button" id="btn-compare" class="btn btn-default btn-xs">Compare</button>
-		</div>
+		<h3 id="identity"></h3>
 		<div id="influence"></div>
 		<div id="agendapoints"></div>
 		<div id="cardcount"></div>
@@ -121,10 +108,14 @@ NRDB.user.params.decklist_id = Decklist.id;
 <!-- Identity and Stats -->
 
 <!-- Deck Content -->
-<div class="row" id="deck-content" style="margin-bottom:10px">
-</div><!-- /#deck-content -->
+<div class="row" id="deck-content" style="margin-bottom:10px"></div>
 <!-- Deck Content -->
 
+{% include 'AppBundle:Default:google_adaptable_ad.html.twig' %}
+
+
+</div><!-- /#deck -->
+<div role="tabpanel" class="tab-pane" id="tools">
 
 <!-- MWL -->
 <table class="table table-condensed" id="table-mwl">
@@ -147,6 +138,22 @@ NRDB.user.params.decklist_id = Decklist.id;
     	<a href="#" class="change_mwl" data-id="0">Casual Play</a>
     </td>
 </tr>
+</tbody>
+</table>
+
+<!-- Packs -->
+<table class="table table-condensed" id="table-packs">
+<thead>
+<tr><th colspan="1"><span class="glyphicon glyphicon-shopping-cart"></span> Packs</th></tr>
+</thead>
+<tbody>
+{% for pack in packs %}
+<tr>
+    <td>
+    	<span class="small icon icon-fw icon-{{ pack.cycle_code }}" title="{{ pack.cycle_name }}"></span> <a href="{{ path('cards_list',{pack_code:pack.code}) }}">{{ pack.name }}</a>
+    </td>
+</tr>
+{% endfor %}
 </tbody>
 </table>
 
@@ -230,9 +237,9 @@ NRDB.user.params.decklist_id = Decklist.id;
 </tbody>
 </table>
 
-</div><!-- /#deck -->
+</div><!-- /#tools -->
+</div>
 
-{% include 'AppBundle:Default:google_adaptable_ad.html.twig' %}
 	
 </div>
 <!-- Left-side Column -->
@@ -248,7 +255,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 </h3>
 <div id="deck-description">{{ decklist.description|raw }}</div>
 
-<table class="table">
+<table class="table" id="comments">
 <thead>
 <tr><th><span class="glyphicon glyphicon-comment"></span> {{ decklist.nbcomments }} comments</th></tr>
 </thead>
