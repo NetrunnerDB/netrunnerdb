@@ -15,7 +15,11 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
 
 #push{clear:both}
 .type-icon,.faction-icon{vertical-align:text-bottom}
-
+.influence {
+	font-size: 14px;
+    font-family: Arial;
+    vertical-align: top;
+}
 .influence-anarch{color:orangered;border-color:orangered}
 .influence-criminal{color:royalblue;border-color:royalblue}
 .influence-shaper{color:limegreen;border-color:limegreen}

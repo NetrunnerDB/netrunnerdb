@@ -108,7 +108,7 @@ NRDB.suggestions = {};
 		var faction = record.faction_code;
 		var influ = "";
 		for (var i = 0; i < record.factioncost; i++)
-			influ += "&bull;";
+			influ += "●";
 
 		var radios = '';
 		for (var i = 0; i <= record.maxqty; i++) {
@@ -129,7 +129,7 @@ NRDB.suggestions = {};
 					+ '</div></td><td><a class="card" href="'
 					+ Routing.generate('cards_zoom', {card_code:record.code})
 					+ '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
-					+ record.title + '</a></td><td class="influence-' + faction
+					+ record.title + '</a></td><td class="influence influence-' + faction
 					+ '">' + influ + '</td><td class="type" title="' + record.type
 					+ '"><img src="/bundles/app/images/types/'
 					+ record.type_code + '.png" alt="'+record.type+'">'

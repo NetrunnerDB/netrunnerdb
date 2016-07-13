@@ -301,12 +301,14 @@ function update_deck(options) {
 		
 		var influence = '';
 		if(record.faction != Identity.faction) {
-			var infcost = record.factioncost * record.indeck;
-			for(var i=0; i<infcost; i++) {
-				if(i%5 == 0) influence+=" ";
-				influence+="&bull;";
+			var theorical_influence_spent = record.indeck * record.factioncost
+			record.influence_spent = get_influence_cost_of_card_in_deck(record);
+			for(var i=0; i<theorical_influence_spent; i++) {
+				if(i && i%5 == 0) influence += " ";
+				influence += (i < record.influence_spent ? "●" : "○");
 			}
-			influence = ' <span class="influence-'+record.faction_code+'">'+influence+'</span>';
+			
+			influence = ' <span class="influence influence-'+record.faction_code+'">'+influence+'</span>';
 		}
 
 		var criteria = null;
@@ -379,52 +381,56 @@ function count_card_copies(cards) {
 	}
 	return count;
 }
-
+function get_influence_cost_of_card_in_deck(card) {
+	var inf = card.indeck * card.factioncost;
+	if(inf) {
+		if(Identity.code == "03029" && card.type_code == "program") {
+			// The Professor: first program is free
+			inf = (card.indeck-1) * card.factioncost;
+		} else if(card.code === '10018') { 
+			// Mumba Temple: 15 or fewer ice
+			if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},type_code:'ice'}).get()) <= 15) {
+				inf = 0;
+			}
+		} else if(card.code === '10019') {
+			// Museum of History: 50 or more cards
+			if(DeckSize >= 50) {
+				inf = 0;
+			}
+		} else if(card.code === '10038') {
+			// PAD Factory: 3 PAD Campaign
+			if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},code:'01109'}).get()) === 3) {
+				inf = 0;
+			}
+		} else if(card.code === '10076') {
+			// Mumbad Virtual Tour: 7 or more assets
+			if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},type_code:'asset'}).get()) >= 7) {
+				inf = 0;
+			}
+		} else if(card.subtype && card.subtype.match(/Alliance/)) {
+			// 6 or more non-alliance cards of the same faction
+			var same_faction_cards = NRDB.data.cards({indeck:{'gt':0},faction_code:card.faction_code}).get();
+			var alliance_count = 0;
+			same_faction_cards.forEach(function (same_faction_card) {
+				if(same_faction_card.subtype && same_faction_card.subtype.match(/Alliance/)) return;
+				alliance_count += same_faction_card.indeck;
+			});
+			if(alliance_count >= 6) {
+				inf = 0;
+			}
+		}
+	}
+	return inf;
+}
 function check_influence() {
 	InfluenceSpent = 0;
 	var influence_penalty = 0;
 	var repartition_influence = {};
 	NRDB.data.cards({indeck:{'gt':0},faction_code:{'!is':Identity.faction_code}}).each(function(record) {
-		if(record.factioncost) {
-			var inf = record.indeck * record.factioncost, faction = record.faction_code;
-			if(Identity.code == "03029" && record.type_code == "program") { // The Professor
-				inf = (record.indeck-1) * record.factioncost;
-			} else if(record.code === '10018') { 
-				// Mumba Temple: 15 or fewer ice
-				if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},type_code:'ice'}).get()) <= 15) {
-					inf = 0;
-				}
-			} else if(record.code === '10019') {
-				// Museum of History: 50 or more cards
-				if(DeckSize >= 50) {
-					inf = 0;
-				}
-			} else if(record.code === '10038') {
-				// PAD Factory: 3 PAD Campaign
-				if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},code:'01109'}).get()) === 3) {
-					inf = 0;
-				}
-			} else if(record.code === '10076') {
-				// Mumbad Virtual Tour: 7 or more assets
-				if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},type_code:'asset'}).get()) >= 7) {
-					inf = 0;
-				}
-			} else if(record.subtype && record.subtype.match(/Alliance/)) {
-				// 6 or more non-alliance cards of the same faction
-				var same_faction_cards = NRDB.data.cards({indeck:{'gt':0},faction_code:record.faction_code}).get();
-				var alliance_count = 0;
-				same_faction_cards.forEach(function (same_faction_card) {
-					if(same_faction_card.subtype && same_faction_card.subtype.match(/Alliance/)) return;
-					alliance_count += same_faction_card.indeck;
-				});
-				if(alliance_count >= 6) {
-					inf = 0;
-				}
-			}
-			if(inf) {
-				InfluenceSpent += inf;
-				repartition_influence[faction] = (repartition_influence[faction] || 0) + inf;
-			}
+		var inf = record.influence_spent || 0;
+		if(inf) {
+			InfluenceSpent += inf;
+			repartition_influence[record.faction_code] = (repartition_influence[record.faction_code] || 0) + inf;
 		}
 	});
 	NRDB.data.cards({indeck:{'gt':0}}).each(function(record) {
@@ -438,9 +444,9 @@ function check_influence() {
 		$.each(repartition_influence, function (key, value) {
 			var ronds = '';
 			for(var i=0; i<value; i++) {
-				ronds += '&bull;';
+				ronds += '●';
 			}
-			graph += '<span class="influence-'+key+'" title="'+key+': '+value+'">'+ronds+'</span>';
+			graph += '<span class="influence influence-'+key+'" title="'+key+': '+value+'">'+ronds+'</span>';
 		});
 	} else {
 		displayInfluenceLimit = "&#8734;";

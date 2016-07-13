@@ -18,7 +18,7 @@ NRDB.tip = {};
 		var type = '<p class="card-info">' + NRDB.format.type(card) + '</p>';
 		var influence = '';
 		for (var i = 0; i < card.factioncost; i++)
-			influence += "&bull;";
+			influence += "●";
 		if (card.strength != null)
 			type += '<p>Strength <b>' + card.strength + '</b></p>';
 		var image_svg = ''; 
@@ -35,8 +35,8 @@ NRDB.tip = {};
 								+ (card.uniqueness ? "&diams; " : "")
 								+ card.title + '</h4>' + type
 								+ '<div class="card-text border-'+card.faction_code+'">' + NRDB.format.text(card) + '</div>'
-								+ '<p class="card-faction" style="text-align:right;clear:right">' + influence
-								+ ' ' + card.faction + ' &ndash; ' + card.setname + '</p>'
+								+ '<p class="card-faction" style="text-align:right;clear:right"><span class="influence influence-'+card.faction_code+'">' + influence
+								+ '</span> ' + card.faction + ' &ndash; ' + card.setname + '</p>'
 					},
 					style : {
 						classes : 'qtip-bootstrap qtip-nrdb'

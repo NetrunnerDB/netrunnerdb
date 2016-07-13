@@ -750,7 +750,7 @@ function build_div(record) {
 	var faction = record.faction_code;
 	var influ = "";
 	for (var i = 0; i < record.factioncost; i++)
-		influ += "&bull;";
+		influ += "●";
 
 	var radios = '';
 	for (var i = 0; i <= record.maxqty; i++) {
@@ -777,7 +777,7 @@ function build_div(record) {
 				+ '</div></td><td><a class="card" href="'
 				+ Routing.generate('cards_zoom', {card_code:record.code})
 				+ '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
-				+ record.title + '</a> '+get_influence_penalty_icons(record)+'</td><td class="influence-' + faction
+				+ record.title + '</a> '+get_influence_penalty_icons(record)+'</td><td class="influence influence-' + faction
 				+ '">' + influ + '</td><td class="type" title="' + record.type
 				+ '"><img src="/bundles/app/images/types/'
 				+ record.type_code + '.png" alt="'+record.type+'">'
@@ -800,7 +800,7 @@ function build_div(record) {
 				+ '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
 				+ record.title + '</a> '+get_influence_penalty_icons(record)+'</h4>'
 				+ '    <div class="btn-group" data-toggle="buttons">' + radios
-				+ '</div>' + '    <span class="influence-' + faction + '">'
+				+ '</div>' + '    <span class="influence influence-' + faction + '">'
 				+ influ + '</span>' + '</div>' + '</div>' + '</div>');
 		break;
 
@@ -819,7 +819,7 @@ function build_div(record) {
 				+ '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
 				+ record.title + '</a> '+get_influence_penalty_icons(record)+'</h5>'
 				+ '    <div class="btn-group" data-toggle="buttons">' + radios
-				+ '</div>' + '    <span class="influence-' + faction + '">'
+				+ '</div>' + '    <span class="influence influence-' + faction + '">'
 				+ influ + '</span>' + '</div>' + '</div>' + '</div>');
 		break;
 
