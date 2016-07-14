@@ -91,7 +91,7 @@ class SearchController extends Controller
 			$val = $request->query->get($key);
 			if(isset($val) && $val != "") {
 				if(is_array($val)) {
-					if($key == "f" && count($val) == 8) continue;
+					if($key == "f" && count($val) == 11) continue;
 					$params[] = $key.":".implode("|", array_map(function ($s) { return strstr($s, " ") !== FALSE ? "\"$s\"" : $s; }, $val));
 				} else {
 					if(strstr($val, " ") != FALSE) {
