@@ -356,10 +356,10 @@ class CardsData
 					$or = array();
 					foreach($condition as $arg) {
 						switch($operator) {
-							case ':': $or[] = "(c.memoryUnits = ?$i)"; break;
-							case '!': $or[] = "(c.memoryUnits != ?$i)"; break;
-							case '<': $or[] = "(c.memoryUnits < ?$i)"; break;
-							case '>': $or[] = "(c.memoryUnits > ?$i)"; break;
+							case ':': $or[] = "(c.memoryCost = ?$i)"; break;
+							case '!': $or[] = "(c.memoryCost != ?$i)"; break;
+							case '<': $or[] = "(c.memoryCost < ?$i)"; break;
+							case '>': $or[] = "(c.memoryCost > ?$i)"; break;
 						}
 						$parameters[$i++] = $arg;
 					}
