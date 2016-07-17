@@ -424,35 +424,24 @@ function get_influence_cost_of_card_in_deck(card) {
 }
 function check_influence() {
 	InfluenceSpent = 0;
-	var influence_penalty = 0;
-	var repartition_influence = {};
+	var influencePenalty = 0;
 	NRDB.data.cards({indeck:{'gt':0},faction_code:{'!is':Identity.faction_code}}).each(function(record) {
-		var inf = record.influence_spent || 0;
-		if(inf) {
-			InfluenceSpent += inf;
-			repartition_influence[record.faction_code] = (repartition_influence[record.faction_code] || 0) + inf;
-		}
+		InfluenceSpent += record.influence_spent;
 	});
 	NRDB.data.cards({indeck:{'gt':0}}).each(function(record) {
-		influence_penalty += get_influence_penalty(record, record.indeck);
+		influencePenalty += get_influence_penalty(record, record.indeck);
 	});
-	var graph = '', displayInfluenceLimit = InfluenceLimit, remainingInfluence = Math.max(1, InfluenceLimit - influence_penalty);
+	var displayInfluenceLimit = InfluenceLimit, 
+			remainingInfluence = Math.max(1, InfluenceLimit - influencePenalty),
+			availableInfluence = remainingInfluence - InfluenceSpent;
 	if(InfluenceLimit != remainingInfluence) {
-		displayInfluenceLimit = InfluenceLimit+'-'+influence_penalty+'☆='+(InfluenceLimit-influence_penalty);
+		displayInfluenceLimit = InfluenceLimit+'-'+influencePenalty+'☆='+(InfluenceLimit-influencePenalty);
 	}
-	if(InfluenceLimit !== Number.POSITIVE_INFINITY) {
-		$.each(repartition_influence, function (key, value) {
-			var ronds = '';
-			for(var i=0; i<value; i++) {
-				ronds += '●';
-			}
-			graph += '<span class="influence influence-'+key+'" title="'+key+': '+value+'">'+ronds+'</span>';
-		});
-	} else {
+	if(InfluenceLimit === Number.POSITIVE_INFINITY) {
 		displayInfluenceLimit = "&#8734;";
 	}
 	var isOver = remainingInfluence < InfluenceSpent;
-	$('#influence').html(InfluenceSpent+" influence spent (max "+displayInfluenceLimit+") <span class=\"hidden-xs\">"+graph+"</span>")[isOver ? 'addClass' : 'removeClass']("text-danger");
+	$('#influence').html(InfluenceSpent+" influence spent (max "+displayInfluenceLimit+", available "+availableInfluence+")")[isOver ? 'addClass' : 'removeClass']("text-danger");
 }
 
 $(function () {
