@@ -143,7 +143,7 @@ class ApiController extends Controller
 	
 		$format = $request->getRequestFormat();
 	
-		$pack = $this->getDoctrine()->getRepository('NetrunnerdbCardsBundle:Pack')->findOneBy(array('code' => $pack_code));
+		$pack = $this->getDoctrine()->getRepository('AppBundle:Pack')->findOneBy(array('code' => $pack_code));
 		if(!$pack) die();
 	
 		$conditions = $this->get('cards_data')->syntax("e:$pack_code");
@@ -250,7 +250,7 @@ class ApiController extends Controller
 			}
 	
 			$response->headers->set('Content-Type', 'application/xml');
-			$response->setContent($this->renderView('NetrunnerdbCardsBundle::apiset.xml.twig', array(
+			$response->setContent($this->renderView('AppBundle::apiset.xml.twig', array(
 					"name" => $pack->getName(),
 					"cards" => $cardsxml,
 			)));
