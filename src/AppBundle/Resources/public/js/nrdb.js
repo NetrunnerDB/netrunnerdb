@@ -266,7 +266,8 @@ function update_deck(options) {
 	InfluenceLimit = Identity.influencelimit;
 	if(typeof InfluenceLimit === "undefined") InfluenceLimit = Number.POSITIVE_INFINITY;
 	MinimumDeckSize = Identity.minimumdecksize;
-
+	check_decksize();
+	
 	var latestpack = NRDB.data.sets({name:Identity.setname}).first();
 	var order = '';
 	switch(DisplaySort) {
@@ -353,7 +354,6 @@ function update_deck(options) {
 		
 	});
 	$('#latestpack').html('Cards up to <i>'+latestpack.name+'</i>');
-	check_decksize();
 	check_influence();
 	if($('#costChart .highcharts-container').size()) setTimeout(make_cost_graph, 100);
 	if($('#strengthChart .highcharts-container').size()) setTimeout(make_strength_graph, 100);
