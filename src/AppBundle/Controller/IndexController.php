@@ -14,12 +14,12 @@ class IndexController extends Controller
         $response->setMaxAge($this->container->getParameter('short_cache'));
         
         // decklist of the week
-        $decklist = $this->get('highlight')->get();
+        $dbh = $this->getDoctrine()->getConnection();
+        $rows = $dbh->executeQuery("SELECT decklist from highlight where id=?", array(1))->fetchAll();
+        $decklist = count($rows) ? json_decode($rows[0]['decklist']) : null;
         
         // recent decklists
         $decklists_recent = $this->get('decklists')->recent(0, 10, FALSE)['decklists'];
-        
-        
         
         return $this->render('AppBundle:Default:index.html.twig',
                 array(

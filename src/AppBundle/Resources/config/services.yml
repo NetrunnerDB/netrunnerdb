@@ -1,7 +1,6 @@
 parameters:
     judge.class: AppBundle\Service\Judge
     decks.class: AppBundle\Service\Decks
-    highlight.class: AppBundle\Service\Highlight
     decklists.class: AppBundle\Service\Decklists
     reviews.class: AppBundle\Service\Reviews
     texts.class: AppBundle\Service\Texts
@@ -17,9 +16,6 @@ services:
     decks:
         class: "%decks.class%"
         arguments: ["@doctrine.orm.entity_manager", "@judge", "@diff", "@logger"]
-    highlight:
-        class: "%highlight.class%"
-        arguments: ["@doctrine.orm.entity_manager"]
     decklists:
         class: "%decklists.class%"
         arguments: ["@doctrine.orm.entity_manager"]
