@@ -265,7 +265,7 @@ function update_deck(options) {
 	$('#img_identity').prop('src', Identity.imagesrc);
 	InfluenceLimit = Identity.influencelimit;
 	if(typeof InfluenceLimit === "undefined") InfluenceLimit = Number.POSITIVE_INFINITY;
-	MinimumDeckSize = Identity.minimumdecksize;
+	
 	check_decksize();
 	
 	var latestpack = NRDB.data.sets({name:Identity.setname}).first();
