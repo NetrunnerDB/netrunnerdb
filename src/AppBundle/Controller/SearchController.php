@@ -175,17 +175,21 @@ class SearchController extends Controller
 		
 		$pagesizes = array(
 			'list' => 200,
-			'spoiler' => 200,
-			'card' => 20,
-			'scan' => 20,
+			'text' => 200,
+			'full' => 20,
+			'images' => 20,
 			'short' => 1000,
 		    'zoom' => 1,
 		);
 		
-		if(!array_key_exists($view, $pagesizes))
-		{
-			$view = 'list';
-		}
+		$synonyms = [
+				'spoiler' => 'text',
+				'card' => 'full',
+				'scan' => 'images'
+		];
+		
+		if(isset($synonyms[$view])) $view = $synonyms[$view];
+		if(!isset($pagesizes[$view])) $view = 'list';
 		
 		$conditions = $this->get('cards_data')->syntax($q);
 
