@@ -7,7 +7,11 @@ namespace AppBundle\Entity;
  */
 class Mwl implements \Serializable
 {
-	function serialize() {
+	public function toString() {
+		return $this->name;
+	}
+	
+	public function serialize() {
 		$cards = [];
 		foreach($this->slots as $slot) {
 			$cards[$slot->getCard()->getCode()] = $slot->getPenalty();
@@ -15,8 +19,9 @@ class Mwl implements \Serializable
 	
 		return  [
 				'id' => $this->id,
-				'date_creation' => $this->dateCreation->format('c'),
-				'date_update' => $this->dateUpdate->format('c'),
+				'date_creation' => $this->dateCreation ? $this->dateCreation->format('c') : null,
+				'date_update' => $this->dateUpdate ? $this->dateUpdate->format('c') : null,
+				'code' => $this->code,
 				'name' => $this->name,
 				'active' => $this->active,
 				'date_start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
@@ -24,7 +29,7 @@ class Mwl implements \Serializable
 		];
 	}
 	
-	function unserialize($serialized) {
+	public function unserialize($serialized) {
 		throw new \Exception("unserialize() method unsupported");
 	}
 	
@@ -36,8 +41,13 @@ class Mwl implements \Serializable
     /**
      * @var string
      */
-    private $name;
+    private $code;
 
+    /**
+     * @var string
+     */
+    private $name;
+    
     /**
      * @var \DateTime
      */
@@ -59,6 +69,30 @@ class Mwl implements \Serializable
         return $this->id;
     }
 
+    /**
+     * Set code
+     *
+     * @param string $code
+     *
+     * @return Mwl
+     */
+    public function setCode($code)
+    {
+    	$this->code = $code;
+    
+    	return $this;
+    }
+    
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+    	return $this->code;
+    }
+    
     /**
      * Set name
      *
@@ -140,6 +174,7 @@ class Mwl implements \Serializable
      */
     public function __construct()
     {
+    	$this->active = false;
         $this->slots = new \Doctrine\Common\Collections\ArrayCollection();
     }
 

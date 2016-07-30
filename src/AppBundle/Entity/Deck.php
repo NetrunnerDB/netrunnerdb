@@ -25,6 +25,7 @@ class Deck implements \Serializable
 				'description' => $this->description,
 				'user_id' => $this->user->getId(),
 				'user_name' => $this->user->getUsername(),
+				'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
 				'cards' => $cards
 		];
 	}

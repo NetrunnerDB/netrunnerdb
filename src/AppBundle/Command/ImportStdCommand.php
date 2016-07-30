@@ -2,17 +2,18 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Card;
+use AppBundle\Entity\Cycle;
+use AppBundle\Entity\Mwlslot;
+use AppBundle\Entity\Pack;
+use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Filesystem\Filesystem;
-use Doctrine\ORM\EntityManager;
-use AppBundle\Entity\Cycle;
-use AppBundle\Entity\Pack;
-use AppBundle\Entity\Card;
 
 class ImportStdCommand extends ContainerAwareCommand
 {
@@ -138,6 +139,21 @@ class ImportStdCommand extends ContainerAwareCommand
 		}
 		$this->em->flush();
 		$output->writeln("Done.");
+		
+		// mwl
+		
+		$output->writeln("Importing MWL...");
+		$mwlFileInfo = $this->getFileInfo($path, 'mwl.json');
+		$imported = $this->importMwlJsonFile($mwlFileInfo);
+		if(count($imported)) {
+			$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
+			if(!$helper->ask($input, $output, $question)) {
+				die();
+			}
+		}
+		$this->em->flush();
+		$output->writeln("Done.");
+		
 	}
 
 	protected function importSidesJsonFile(\SplFileInfo $fileinfo)
@@ -290,6 +306,36 @@ class ImportStdCommand extends ContainerAwareCommand
 		return $result;
 	}
 
+	protected function importMwlJsonFile(\SplFileInfo $fileinfo)
+	{
+		$result = [];
+	
+		$mwlData = $this->getDataFromFile($fileinfo);
+		foreach($mwlData as $mwlData) {
+			$mwl = $this->getEntityFromData('AppBundle\Entity\Mwl', $mwlData, [
+					'code',
+					'name',
+					'date_start'
+			], [], []);
+			if($mwl) {
+				$result[] = $mwl;
+				$this->em->persist($mwl);
+
+				foreach($mwlData['cards'] as $card_code => $penalty) {
+					$card = $this->em->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
+					if(!$card) continue;
+					$mwlslot = new Mwlslot();
+					$mwlslot->setCard($card);
+					$mwlslot->setPenalty($penalty);
+					$mwlslot->setMwl($mwl);
+					$this->em->persist($mwlslot);
+				}
+			}
+		}
+	
+		return $result;
+	}
+	
 	protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
 	{
 		$metadata = $this->em->getClassMetadata($entityName);
@@ -412,8 +458,39 @@ class ImportStdCommand extends ContainerAwareCommand
 			$functionName = 'import' . $entity->getType()->getName() . 'Data';
 			$this->$functionName($entity, $data);
 		}
+
+		$newer = $entity->serialize();
+		
+		// special case for Mwl
+		if($entityName === 'AppBundle\Entity\Mwl') {
+			$newer['cards'] = $data['cards'];
+			unset($newer['active']);
+			unset($orig['active']);
+		}
+
+		if(!$this->deepArrayEquality($newer, $orig)) return $entity;
+	}
 	
-		if($entity->serialize() !== $orig) return $entity;
+	/**
+	 * Encodes an array in JSON in such a way that two identical arrays have the same representation
+	 * @param array $data
+	 * @return string
+	 */
+	protected function uniquelyEncodeJson($data)
+	{
+		ksort($data);
+		return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	}
+	
+	/**
+	 * Performs a deep equality check of two arrays
+	 * @param unknown $array1
+	 * @param unknown $array2
+	 * @return boolean
+	 */
+	protected function deepArrayEquality($array1, $array2)
+	{
+		return $this->uniquelyEncodeJson($array1) === $this->uniquelyEncodeJson($array2);
 	}
 	
 	protected function importAgendaData(Card $card, $data)
