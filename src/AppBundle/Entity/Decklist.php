@@ -30,6 +30,7 @@ class Decklist implements \Serializable
 				'description' => $this->description,
 				'user_id' => $this->user->getId(),
 				'user_name' => $this->user->getUsername(),
+				'tournament_badge' => $this->tournament ? true : false,
 				'cards' => $cards
 		];
 	}
