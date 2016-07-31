@@ -357,7 +357,6 @@ function update_deck(options) {
 	check_influence();
 	if($('#costChart .highcharts-container').size()) setTimeout(make_cost_graph, 100);
 	if($('#strengthChart .highcharts-container').size()) setTimeout(make_strength_graph, 100);
-	$('#deck').show();
 }
 
 

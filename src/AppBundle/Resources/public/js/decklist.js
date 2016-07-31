@@ -368,4 +368,5 @@ function update_mwl(mwl_id) {
 		}
 	}
 	update_deck();
+	$('a[href="#deck"]').tab('show');
 }
