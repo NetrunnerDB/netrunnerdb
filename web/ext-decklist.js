@@ -207,7 +207,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   			}
   		} else if(card.keywords && card.keywords.match(/Alliance/)) {
   			// 6 or more non-alliance cards of the same faction
-  			var same_faction_cards = decklist_content.filter(function(card) { return card.faction_code === faction_code; });
+  			var same_faction_cards = decklist_content.filter(function(other_card) { return card.faction_code === other_card.faction_code; });
   			var alliance_count = 0;
   			same_faction_cards.forEach(function (same_faction_card) {
   				if(same_faction_card.keywords && same_faction_card.keywords.match(/Alliance/)) return;
