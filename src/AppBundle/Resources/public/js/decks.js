@@ -499,11 +499,17 @@ function show_deck() {
 	$('#btn-edit').attr('href', Routing.generate('deck_edit', {deck_id:deck.id,_locale:NRDB.locale}));
 
 	var mwl_id = deck.mwl_id, mwl_record = mwl_id && NRDB.data.mwl({id:parseInt(mwl_id)}).first();
-	MWL = mwl_record ? mwl_record.cards : null;
+	if(mwl_record) {
+		MWL = mwl_record.cards;
+		$('#mwl').html('Built for '+mwl_record.name);
+	} else {
+		MWL = null;
+		$('#mwl').empty();
+	}
 
 	update_deck();
 	// convert date from UTC to local
-	$('#date_creation').html('<small>Creation: '+moment(deck.date_creation).format('LLLL')+'</small>');
-	$('#date_update').html('<small>Last update: '+moment(deck.date_update).format('LLLL')+'</small>');
+	$('#date_creation').html('Creation: '+moment(deck.date_creation).format('LLLL'));
+	$('#date_update').html('Last update: '+moment(deck.date_update).format('LLLL'));
 	$('#btn-publish').prop('disabled', deck.problem || deck.unsaved);
 }
