@@ -118,7 +118,7 @@ NRDB.suggestions = {};
 					+ '" value="' + i + '">' + i + '</label>';
 		}
 
-		var imgsrc = record.faction_code == "neutral" ? "" : '<img src="'
+		var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
 					+ Url_FactionImage.replace('xxx', record.faction_code)
 					+ '.png" alt="'+record.title+'">';
 		var div = $('<tr class="card-container" data-index="'

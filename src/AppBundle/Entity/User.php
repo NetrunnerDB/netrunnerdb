@@ -470,7 +470,7 @@ class User extends BaseUser
        	$this->following = new ArrayCollection();
        	$this->followers = new ArrayCollection();
        	$this->reputation = 1;
-       	$this->faction = 'neutral';
+       	$this->faction = 'neutral-runner';
        	$this->creation = new \DateTime();
        	$this->donation = 0;
        	

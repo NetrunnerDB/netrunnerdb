@@ -84,7 +84,7 @@ NRDB.data_loaded.add(function() {
 	$('#faction_code').empty();
 	$.each(NRDB.data.cards().distinct("faction_code").sort(
 			function(a, b) {
-				return b === "neutral" ? -1 : a === "neutral" ? 1 : a < b ? -1
+				return b.substr(0,7) === "neutral" ? -1 : a.substr(0,7) === "neutral" ? 1 : a < b ? -1
 						: a > b ? 1 : 0;
 			}), function(index, record) {
 		var example = NRDB.data.cards({"faction_code": record}).first();
@@ -767,7 +767,7 @@ function build_div(record) {
 	switch (DisplayColumns) {
 	case 1:
 
-		var imgsrc = record.faction_code == "neutral" ? "" : '<img src="'
+		var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
 				+ Url_FactionImage.replace('xxx', record.faction_code)
 				+ '.png" alt="'+record.faction+'">';
 		div = $('<tr class="card-container" data-index="'
@@ -832,10 +832,10 @@ function is_card_usable(record) {
 	if (Identity.code == "03002"
 			&& record.faction_code == "jinteki")
 		return false;
-	if (record.type_code == "agenda"
-			&& record.faction_code != "neutral"
-			&& record.faction_code != Identity.faction_code
-			&& Identity.faction_code != "neutral")
+	if (record.type_code === "agenda"
+			&& record.faction_code !== "neutral-corp"
+			&& record.faction_code !== Identity.faction_code
+			&& Identity.faction_code !== "neutral-corp")
 		return false;
 	return true;
 }

@@ -22,7 +22,8 @@ class CardsData
 			'criminal' => 'c',
 			'jinteki' => 'j',
 			'nbn' => 'n',
-			'neutral' => '-',
+			'neutral-corp' => '-',
+			'neutral-runner' => '-',
 			'apex' => 'p',
 			'adam' => 'd',
 			'sunny-lebeau' => 'u',
@@ -677,13 +678,12 @@ class CardsData
 		foreach($conditions as $i => $l)
 		{
 			if(in_array($l[1], $numeric) && !in_array($l[0], $canDoNumeric)) unset($conditions[$i]);
-			if($l[0] == 'f') {
-				if(strlen($l[2]) === 1 && in_array($l[2], self::$faction_letters)) {
- 					$conditions[$i][2] = array_search($l[2], self::$faction_letters, TRUE);
-				} else {
-					if(!key_exists($l[2], self::$faction_letters)) {
-						unset($conditions[$i]);
-					}
+			if($l[0] == 'f' && strlen($l[2]) === 1) {
+				$keys = array_keys(self::$faction_letters, $l[2]);
+				unset($conditions[$i]);
+				if(count($keys)) {
+					array_unshift($keys, 'f', ':');
+					array_unshift($conditions, $keys);
 				}
 			}
 		}

@@ -27,71 +27,65 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
 .influence-anarch{color:orangered;border-color:orangered}
 .influence-criminal{color:royalblue;border-color:royalblue}
 .influence-shaper{color:limegreen;border-color:limegreen}
-.influence-neutral{color:gray;border-color:gray}
+.influence-neutral-runner{color:gray;border-color:gray}
 .influence-haas-bioroid{color:blueviolet;border-color:blueviolet}
 .influence-jinteki{color:crimson;border-color:crimson}
 .influence-nbn{color:darkorange;border-color:darkorange}
 .influence-weyland-consortium{color:darkgreen;border-color:darkgreen}
+.influence-neutral-corp{color:gray;border-color:gray}
 
 .background-anarch-10{background-color:#ffece6}
 .background-criminal-10{background-color:#ecf0fc}
 .background-shaper-10{background-color:#eafaea}
-.background-neutral-10{background-color:#f0f2f4}
+.background-neutral-runner-10{background-color:#f0f2f4}
 .background-haas-bioroid-10{background-color:#f3eafc}
 .background-jinteki-10{background-color:#fbe7eb}
 .background-nbn-10{background-color:#fff3e6}
 .background-weyland-consortium-10{background-color:#e6efe6}
+.background-neutral-corp-10{background-color:#f0f2f4}
 
 .nav>li>a.background-anarch-hover:hover{background-color:#ffece6}
 .nav>li>a.background-criminal-hover:hover{background-color:#ecf0fc}
 .nav>li>a.background-shaper-hover:hover{background-color:#eafaea}
-.nav>li>a.background-neutral-hover:hover{background-color:#f0f2f4}
+.nav>li>a.background-neutral-runner-hover:hover{background-color:#f0f2f4}
 .nav>li>a.background-haas-bioroid-hover:hover{background-color:#f3eafc}
 .nav>li>a.background-jinteki-hover:hover{background-color:#fbe7eb}
 .nav>li>a.background-nbn-hover:hover{background-color:#fff3e6}
 .nav>li>a.background-weyland-consortium-hover:hover{background-color:#e6efe6}
+.nav>li>a.background-neutral-corp-hover:hover{background-color:#f0f2f4}
 
 .background-anarch-20{background-color:#ffd9cc}
 .background-criminal-20{background-color:#d9e1f9}
 .background-shaper-20{background-color:#d6f5d6}
-.background-neutral-20{background-color:#e2e5e8}
+.background-neutral-runner-20{background-color:#e2e5e8}
 .background-haas-bioroid-20{background-color:#e7d4f9}
 .background-jinteki-20{background-color:#f8d0d8}
 .background-nbn-20{background-color:#ffe8cc}
 .background-weyland-consortium-20{background-color:#cce0cc}
+.background-neutral-corp-20{background-color:#e2e5e8}
 
 .border-anarch{border-color:orangered}
 .border-criminal{border-color:royalblue}
 .border-shaper{border-color:limegreen}
-.border-neutral{border-color:gray}
+.border-neutral-runner{border-color:gray}
 .border-haas-bioroid{border-color:blueviolet}
 .border-jinteki{border-color:crimson}
 .border-nbn{border-color:darkorange}
 .border-weyland-consortium{border-color:darkgreen}
+.border-neutral-corp{border-color:gray}
 
 #tag_toggles button {margin:0 1px 1px 0}
 .label {margin:0 1px 1px 0}
-/*
-.tag-anarch{background-color:orangered}
-.tag-criminal{background-color:royalblue}
-.tag-shaper{background-color:limegreen}
-.tag-neutral{background-color:gray}
-.tag-haas-bioroid{background-color:blueviolet}
-.tag-jinteki{background-color:crimson}
-.tag-nbn{background-color:darkorange}
-.tag-weyland-consortium{background-color:darkgreen}
 
-.tag-corp{color:blue;background-color:#ddd}
-.tag-runner{color:red;background-color:#ddd}
-*/
 .anarch{stroke:orangered;color:orangered !important;border-color:orangered}
 .criminal{stroke:royalblue;color:royalblue !important;border-color:royalblue}
 .shaper{stroke:limegreen;color:limegreen !important;border-color:limegreen}
-.neutral{stroke:gray;color:gray !important;border-color:gray}
+.neutral-runner{stroke:gray;color:gray !important;border-color:gray}
 .haas-bioroid{stroke:blueviolet;color:blueviolet !important;border-color:blueviolet}
 .jinteki{stroke:crimson;color:crimson !important;border-color:crimson}
 .nbn{stroke:darkorange;color:darkorange !important;border-color:darkorange}
 .weyland-consortium{stroke:darkgreen;color:darkgreen !important;border-color:darkgreen}
+.neutral-corp{stroke:gray;color:gray !important;border-color:gray}
 .admin{stroke:deeppink;color:deeppink !important;border-color:deeppink}
 
 .qtip-nrdb{min-width: 310px;max-width:350px;font-size:85.7%}

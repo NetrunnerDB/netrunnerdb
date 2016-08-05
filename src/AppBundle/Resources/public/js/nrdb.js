@@ -108,7 +108,10 @@ function getDisplayDescriptions(sort) {
                     id: 'weyland-consortium',
                     label: 'Weyland Consortium'
                 }, {
-                    id: 'neutral',
+                    id: 'neutral-corp',
+                    label: 'Neutral'
+                }, {
+                    id: 'neutral-runner',
                     label: 'Neutral'
                 }, {
                     id: 'adam',
@@ -495,11 +498,12 @@ var FactionColors = {
 	"anarch": "#FF4500",
 	"criminal": "#4169E1",
 	"shaper": "#32CD32",
-	"neutral": "#708090",
+	"neutral-runner": "#708090",
 	"haas-bioroid": "#8A2BE2",
 	"jinteki": "#DC143C",
 	"nbn": "#FF8C00",
-	"weyland-consortium": "#006400"
+	"weyland-consortium": "#006400",
+  "neutral-corp": "#708090"
 };
 
 function build_bbcode(deck) {
