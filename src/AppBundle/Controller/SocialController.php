@@ -26,6 +26,9 @@ class SocialController extends Controller
 	 */
     public function publishAction ($deck_id, Request $request)
     {
+    	$response = new JsonResponse();
+    	$response->expire();
+    	
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
 
@@ -37,19 +40,21 @@ class SocialController extends Controller
 
         $lastPack = $deck->getLastPack();
         if(!$lastPack->getDateRelease() || $lastPack->getDateRelease() > new \DateTime()) {
-        	return new JsonResponse([
+        	$response->setData([
         			'allowed' => FALSE,
         			'message' => "You cannot publish this deck yet, because it has unreleased cards.",
         	]);
+        	return $response;
         }
         $judge = $this->get('judge');
         $analyse = $judge->analyse($deck->getSlots());
 
         if (is_string($analyse)) {
-        	return new JsonResponse([
+        	$response->setData([
         			'allowed' => FALSE,
         			'message' => $judge->problem($analyse),
         	]);
+        	return $response;
         }
 
         $new_content = json_encode($deck->getContent());
@@ -65,17 +70,19 @@ class SocialController extends Controller
                         'decklist_id' => $decklist->getId(),
                         'decklist_name' => $decklist->getPrettyName()
                 ));
-            	return new JsonResponse([
+            	$response->setData([
             			'allowed' => TRUE,
             			'message' => 'This deck is <a href="'+$url+'">already published</a>. Are you sure you want to publish a duplicate?',
             	]);
+        		return $response;
             }
         }
 
-        return new JsonResponse([
-            			'allowed' => TRUE,
-            			'message' => '',
-            	]);
+        $response->setData([
+        		'allowed' => TRUE,
+        		'message' => '',
+        ]);
+        return $response;
     }
 
     /*
