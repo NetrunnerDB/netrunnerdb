@@ -258,8 +258,8 @@ class CardsData
 					$or = array();
 					foreach($condition as $arg) {
 						switch($operator) {
-							case ':': $or[] = "(t.name = ?$i)"; break;
-							case '!': $or[] = "(t.name != ?$i)"; break;
+							case ':': $or[] = "(t.code = ?$i)"; break;
+							case '!': $or[] = "(t.code != ?$i)"; break;
 						}
 						$parameters[$i++] = $arg;
 					}
