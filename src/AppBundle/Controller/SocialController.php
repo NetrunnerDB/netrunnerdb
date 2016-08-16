@@ -27,7 +27,6 @@ class SocialController extends Controller
     public function publishAction ($deck_id, Request $request)
     {
     	$response = new JsonResponse();
-    	$response->expire();
     	
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
