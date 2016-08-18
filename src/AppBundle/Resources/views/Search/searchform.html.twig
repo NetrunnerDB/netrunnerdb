@@ -5,7 +5,13 @@
 {% block body %}
 <div class="container">
 
-<script type="text/javascript" src="{{ asset('/bundles/app/js/save-settings.js') }}"></script>
+<script type="text/javascript">
+$(function () {
+	$('#faction-select').multiselect({
+		buttonWidth: '100%'
+	});
+})
+</script>
 
 <div class="row">
 
@@ -54,33 +60,37 @@
 <fieldset>
 <legend>Faction and side</legend>
 <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-6">
         <div class="form-group">
 			<label>Side</label>
-			<div class="btn-group btn-group-justified" data-toggle="buttons">
-				<label class="btn btn-default active"><input type="radio" name="d" checked value="">Either</label>
-				<label class="btn btn-default"><input type="radio" name="d" value="c">Corp</label>
-				<label class="btn btn-default"><input type="radio" name="d" value="r">Runner</label>
-			</div>
+			<select class="form-control" name="d">
+				<option value="">Either</option>
+				<option value="c">Corp</option>
+				<option value="r">Runner</option>
+			</select>
 		</div>
     </div>
-    <div class="col-sm-8">
+    <div class="col-sm-6">
         <div class="form-group">
 			<label>Faction</label>
-			<div class="btn-group" data-toggle="buttons">
-				<label class="btn btn-default active" title="Anarch"><input type="checkbox" name="f[]" checked value="anarch"><span class="icon icon-anarch anarch"></span></label>
-				<label class="btn btn-default active" title="Criminal"><input type="checkbox" name="f[]" checked value="criminal"><span class="icon icon-criminal criminal"></span></label>
-				<label class="btn btn-default active" title="Shaper"><input type="checkbox" name="f[]" checked value="shaper"><span class="icon icon-shaper shaper"></span></label>
-				<label class="btn btn-default active" title="Adam"><input type="checkbox" name="f[]" checked value="adam"><span class="icon icon-adam adam"></span></label>
-				<label class="btn btn-default active" title="Apex"><input type="checkbox" name="f[]" checked value="apex"><span class="icon icon-apex apex"></span></label>
-				<label class="btn btn-default active" title="Sunny Lebeau"><input type="checkbox" name="f[]" checked value="sunny-lebeau"><span class="icon icon-sunny-lebeau sunny-lebeau"></span></label>
-				<label class="btn btn-default active" title="Neutral"><input type="checkbox" name="f[]" checked value="neutral-runner">R</label>
-				<label class="btn btn-default active" title="Haas Bioroid"><input type="checkbox" name="f[]" checked value="haas-bioroid"><span class="icon icon-haas-bioroid haas-bioroid"></span></label>
-				<label class="btn btn-default active" title="Jinteki"><input type="checkbox" name="f[]" checked value="jinteki"><span class="icon icon-jinteki jinteki"></span></label>
-				<label class="btn btn-default active" title="NBN"><input type="checkbox" name="f[]" checked value="nbn"><span class="icon icon-nbn nbn"></span></label>
-				<label class="btn btn-default active" title="Weyland Consortium"><input type="checkbox" name="f[]" checked value="weyland-consortium"><span class="icon icon-weyland-consortium weyland-consortium"></span></label>
-				<label class="btn btn-default active" title="Neutral"><input type="checkbox" name="f[]" checked value="neutral-corp">C</label>
-			</div>
+			<select name="f[]" id="faction-select" multiple="multiple" class="hidden">
+				<optgroup label="Runner">
+					<option value="anarch">Anarch</option>
+					<option value="criminal">Criminal</option>
+					<option value="shaper">Shaper</option>
+					<option value="adam">Adam</option>
+					<option value="apex">Apex</option>
+					<option value="sunny-lebeau">Sunny Lebeau</option>
+					<option value="neutral-runner">Neutral</option>
+				</optgroup>
+				<optgroup label="Corp">
+					<option value="haas-bioroid">Haas-Bioroid</option>
+					<option value="jinteki">Jinteki</option>
+					<option value="nbn">NBN</option>
+					<option value="weyland-consortium">Weyland Consortium</option>
+					<option value="neutral">Neutral</option>
+				</optgroup>
+			</select>
 		</div>
     </div>
 </div>
@@ -193,11 +203,11 @@
     <div class="col-sm-6">
         <div class="form-group">
 			<label>Previews</label>
-			<div class="btn-group btn-group-justified" data-toggle="buttons">
-				<label class="btn btn-default active"><input type="radio" name="r" checked value="">Yes</label>
-				<label class="btn btn-default"><input type="radio" name="r" value="<now">No</label>
-				<label class="btn btn-default"><input type="radio" name="r" value=">now">Only</label>
-			</div>
+			<select class="form-control" name="r">
+				<option value="">Yes</option>
+				<option value="<now">No</option>
+				<option value=">now">Only</option>
+			</select>
 		</div>
     </div>
     <div class="col-sm-6">

@@ -125,8 +125,8 @@ tbody#decks{cursor:pointer}
 .nav-tabs{margin-bottom:15px}
 tbody .btn-group{white-space:nowrap}
 /* .btn-group>.btn,.btn-group-vertical>.btn{float:none;display:inline-block} */
-.dropdown-menu input[type=checkbox]{margin:-4px 8px 0 -6px}
-.dropdown-menu label{margin:0}
+.dropdown-controls input[type=checkbox]{margin:-4px 8px 0 -6px}
+.dropdown-controls label{margin:0}
 #collection td{vertical-align:middle}
 
 .decklist .comment-date{color:lightgray;float:right}
