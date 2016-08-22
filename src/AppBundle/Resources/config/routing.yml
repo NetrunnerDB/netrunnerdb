@@ -315,6 +315,15 @@ decklists_diff:
         decklist1_id: \d+
         decklist2_id: \d+
 
+prebuilt_view:
+    path: /{_locale}/prebuilt/{prebuilt_code}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Prebuilt:view
+        _locale: en
+    requirements:
+        _locale: \w\w
+
 user_profile:
     path: /{_locale}/user/profile
     methods: [GET]
@@ -771,7 +780,7 @@ cards_cycle:
 cards_search:
     path:  /{_locale}/search
     defaults:
-        _controller: AppBundle:Default:search
+        _controller: AppBundle:Search:form
         _locale: en
     requirements:
         _locale: \w\w

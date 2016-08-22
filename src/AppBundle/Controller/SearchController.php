@@ -7,11 +7,88 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\AppBundle;
 use Symfony\Component\HttpFoundation\Request;
 
-class SearchController extends Controller
+class SearchController extends Controller 
 {
+	public function formAction(Request $request) 
+	{
+		$response = new Response ();
+		$response->setPublic();
+		$response->setMaxAge($this->container->getParameter('long_cache'));
+		
+		$dbh = $this->get('doctrine')->getConnection();
+		
+		$list_packs = $this->getDoctrine()->getRepository('AppBundle:Pack')->findBy([], [
+				"dateRelease" => "ASC",
+				"position" => "ASC"
+		]);
+		$packs = [];
+		foreach($list_packs as $pack) {
+			$packs [] = [
+					"name" => $pack->getName(),
+					"code" => $pack->getCode()
+			];
+		}
+		
+		$list_cycles = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findBy([], [
+				"position" => "ASC"
+		]);
+		$cycles = [];
+		foreach($list_cycles as $cycle) {
+			$cycles [] = array(
+					"name" => $cycle->getName(),
+					"code" => $cycle->getCode() 
+			);
+		}
+		
+		$list_types = $this->getDoctrine()->getRepository('AppBundle:Type')->findBy([
+				"isSubtype" => false
+		], [
+				"name" => "ASC"
+		]);
+		$types = array_map(function($type) {
+			return $type->getName();
+		}, $list_types);
+		
+		$list_keywords = $dbh->executeQuery("SELECT DISTINCT c.keywords FROM card c WHERE c.keywords != ''")->fetchAll();
+		$keywords = [];
+		foreach($list_keywords as $keyword) {
+			$subs = explode(' - ', $keyword ["keywords"]);
+			foreach($subs as $sub) {
+				$keywords [$sub] = 1;
+			}
+		}
+		$keywords = array_keys($keywords);
+		sort($keywords);
+		
+		$list_illustrators = $dbh->executeQuery("SELECT DISTINCT c.illustrator FROM card c WHERE c.illustrator != '' ORDER BY c.illustrator")->fetchAll();
+		$illustrators = array_map(function($elt) {
+			return $elt ["illustrator"];
+		}, $list_illustrators);
+		
+		$prebuilts = $this->getDoctrine()->getRepository('AppBundle:Prebuilt')->findBy([], [
+			"position" => "ASC" 
+		]);
+		
+		$allsets = $this->renderView('AppBundle:Default:allsets.html.twig', [
+			"data" => $this->get('cards_data')->allsetsdata(),
+		]);
+	
+		return $this->render('AppBundle:Search:searchform.html.twig', [
+			"pagetitle" => "Card Search",
+			"pagedescription" => "Find all the cards of the game, easily searchable.",
+			"packs" => $packs,
+			"cycles" => $cycles,
+			"types" => $types,
+			"keywords" => $keywords,
+			"illustrators" => $illustrators,
+			"allsets" => $allsets,
+			"prebuilts" => $prebuilts
+		], $response);
+	}
+	
 	public function zoomAction($card_code, Request $request)
 	{
-		$card = $this->getDoctrine()->getRepository('AppBundle:Card')->findOneBy(array("code" => $card_code));
+		$card = $this->getDoctrine()->getRepository('AppBundle:Card')->findOneBy(["code" => $card_code]);
 		if(!$card) throw $this->createNotFoundException('Sorry, this card is not in the database (yet?)');
 		$meta = $card->getTitle().", a ".$card->getFaction()->getName()." ".$card->getType()->getName()." card for Android:Netrunner from the set ".$card->getPack()->getName()." published by Fantasy Flight Games.";
 		return $this->forward(
@@ -31,7 +108,7 @@ class SearchController extends Controller
 	
 	public function listAction($pack_code, $view, $sort, $page, Request $request)
 	{
-		$pack = $this->getDoctrine()->getRepository('AppBundle:Pack')->findOneBy(array("code" => $pack_code));
+		$pack = $this->getDoctrine()->getRepository('AppBundle:Pack')->findOneBy(["code" => $pack_code]);
 		if(!$pack) throw $this->createNotFoundException('This pack does not exist');
 		$meta = $pack->getName().", a set of cards for Android:Netrunner"
 				.($pack->getDateRelease() ? " published on ".$pack->getDateRelease()->format('Y/m/d') : "")
@@ -54,7 +131,7 @@ class SearchController extends Controller
 
 	public function cycleAction($cycle_code, $view, $sort, $page, Request $request)
 	{
-		$cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(array("code" => $cycle_code));
+		$cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(["code" => $cycle_code]);
 		if(!$cycle) throw $this->createNotFoundException('This cycle does not exist');
 		$meta = $cycle->getName().", a cycle of datapack for Android:Netrunner published by Fantasy Flight Games.";
 		return $this->forward(
@@ -80,13 +157,13 @@ class SearchController extends Controller
 		$sort = $request->query->get('sort') ?: 'name';
 		$locale = $request->query->get('_locale') ?: $request->getLocale();
 		
-		$operators = array(":","!","<",">");
+		$operators = [":","!","<",">"];
 		
-		$params = array();
+		$params = [];
 		if($request->query->get('q') != "") {
 			$params[] = $request->query->get('q');
 		}
-		$keys = array("e","t","f","s","x","p","o","n","d","r","i","l","y","a","u");
+		$keys = ["e","t","f","s","x","p","o","n","d","r","i","l","y","a","u"];
 		foreach($keys as $key) {
 			$val = $request->query->get($key);
 			if(isset($val) && $val != "") {
@@ -134,7 +211,7 @@ class SearchController extends Controller
 		    }
 		    if($conditions[0][0] == "c") {
 		        $cycle_position = $conditions[0][2];
-		        $cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(array('position' => $cycle_position));
+		        $cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(['position' => $cycle_position]);
 		        if($cycle) {
 		            $url = $this->get('router')->generate('cards_cycle', array('cycle_code' => $cycle->getCode(), 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()));
 		            return $this->redirect($url);
@@ -162,24 +239,24 @@ class SearchController extends Controller
 		$response->setPublic();
 		$response->setMaxAge($this->container->getParameter('short_cache'));
 		
-		static $availability = array();
+		static $availability = [];
 		
 		if(empty($locale)) $locale = $request->getLocale();
 		else $request->setLocale($locale);
 		
-		$cards = array();
+		$cards = [];
 		$first = 0;
 		$last = 0;
 		$pagination = '';
 		
-		$pagesizes = array(
+		$pagesizes = [
 			'list' => 200,
 			'text' => 200,
 			'full' => 20,
 			'images' => 20,
 			'short' => 1000,
 		    'zoom' => 1,
-		);
+		];
 		
 		$synonyms = [
 				'spoiler' => 'text',
@@ -206,11 +283,11 @@ class SearchController extends Controller
 			if($title == "") {
         		if(count($conditions) == 1 && count($conditions[0]) == 3 && $conditions[0][1] == ":") {
         			if($conditions[0][0] == "e") {
-        				$pack = $this->getDoctrine()->getRepository('AppBundle:Pack')->findOneBy(array("code" => $conditions[0][2]));
+        				$pack = $this->getDoctrine()->getRepository('AppBundle:Pack')->findOneBy(["code" => $conditions[0][2]]);
         				if($pack) $title = $pack->getName();
         			}
         			if($conditions[0][0] == "c") {
-        				$cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(array("code" => $conditions[0][2]));
+        				$cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(["code" => $conditions[0][2]]);
         				if($cycle) $title = $cycle->getName();
         			}
         		}
@@ -256,38 +333,38 @@ class SearchController extends Controller
 			// si on est en vue "short" on casse la liste par tri
 			if(count($cards) && $view == "short") {
 				
-				$sortfields = array(
+				$sortfields = [
 					'set' => 'setname',
 					'name' => 'title',
 					'faction' => 'faction',
 					'type' => 'type',
 					'cost' => 'cost',
 					'strength' => 'strength',
-				);
+				];
 				
-				$brokenlist = array();
+				$brokenlist = [];
 				for($i=0; $i<count($cards); $i++) {
 					$val = $cards[$i][$sortfields[$sort]];
 					if($sort == "name") $val = substr($val, 0, 1);
-					if(!isset($brokenlist[$val])) $brokenlist[$val] = array();
+					if(!isset($brokenlist[$val])) $brokenlist[$val] = [];
 					array_push($brokenlist[$val], $cards[$i]);
 				}
 				$cards = $brokenlist;
 			}
 		}
 		
-		$searchbar = $this->renderView('AppBundle:Search:searchbar.html.twig', array(
+		$searchbar = $this->renderView('AppBundle:Search:searchbar.html.twig', [
 			"q" => $q,
 			"view" => $view,
 			"sort" => $sort,
-		));
+		]);
 		
 		if(empty($title)) {
 			$title = $q;
 		}
 
 		// attention si $s="short", $cards est un tableau à 2 niveaux au lieu de 1 seul
-		return $this->render('AppBundle:Search:display-'.$view.'.html.twig', array(
+		return $this->render('AppBundle:Search:display-'.$view.'.html.twig', [
 			"view" => $view,
 			"sort" => $sort,
 			"cards" => $cards,
@@ -298,7 +375,7 @@ class SearchController extends Controller
 			"pagetitle" => $title,
 			"metadescription" => $meta,
 			"locales" => $locales,
-		), $response);
+		], $response);
 	}
 
 	public function setnavigation($card, $q, $view, $sort, $locale)
@@ -320,7 +397,7 @@ class SearchController extends Controller
 	public function paginationItem($q = null, $v, $s, $ps, $pi, $total, $locale)
 	{
 		return $this->renderView('AppBundle:Search:paginationitem.html.twig', array(
-			"href" => $q == null ? "" : $this->get('router')->generate('cards_find', array('q' => $q, 'view' => $v, 'sort' => $s, 'page' => $pi, '_locale' => $locale)),
+			"href" => $q == null ? "" : $this->get('router')->generate('cards_find', ['q' => $q, 'view' => $v, 'sort' => $s, 'page' => $pi, '_locale' => $locale]),
 			"ps" => $ps,
 			"pi" => $pi,
 			"s" => $ps*($pi-1)+1,
@@ -359,7 +436,7 @@ class SearchController extends Controller
 			$last = $this->paginationItem($q, $view, $sort, $pagesize, $pagecount, $total, $locale);
 		}
 		
-		return $this->renderView('AppBundle:Search:pagination.html.twig', array(
+		return $this->renderView('AppBundle:Search:pagination.html.twig', [
 			"first" => $first,
 			"prev" => $prev,
 			"current" => $current,
@@ -368,7 +445,7 @@ class SearchController extends Controller
 			"count" => $total,
 			"ellipsisbefore" => $pageindex > 3,
 			"ellipsisafter" => $pageindex < $pagecount - 2,
-		));
+		]);
 	}
 
 }

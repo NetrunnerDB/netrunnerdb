@@ -42,7 +42,7 @@ AppBundle\Entity\Prebuilt:
         code:
             type: string
             unique: true
-            length: 10
+            length: 50
         name:
             type: string
             length: 255

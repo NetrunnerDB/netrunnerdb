@@ -149,7 +149,6 @@ class CardsData
 		return $cycles;
 	}
 
-
 	public function get_search_rows($conditions, $sortorder, $forceempty = false)
 	{
 		$locale = $this->request_stack->getCurrentRequest()->getLocale();

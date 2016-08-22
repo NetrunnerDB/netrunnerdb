@@ -19,6 +19,12 @@ $(function () {
     <h2>Browse by set</h2>
 	{{ allsets|raw }}
 
+    <h2>Prebuilt Decks</h2>
+    <ul>
+	{% for prebuilt in prebuilts %}
+	<li><a href="{{ path('prebuilt_view',{prebuilt_code:prebuilt.code}) }}">{{ prebuilt.name }}</a></li>
+	{% endfor %}
+	</ul>
 </div>
 
 <div class="col-md-8">

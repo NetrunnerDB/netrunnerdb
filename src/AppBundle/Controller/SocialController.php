@@ -493,9 +493,6 @@ class SocialController extends Controller
         $decklist['comments'] = $comments;
         $decklist['cards'] = $cards;
         
-        $similar_decklists = array(); // $this->findSimilarDecklists($decklist_id,
-                                      // 5);
-
         $precedent_decklists = $dbh->executeQuery(
                 "SELECT
 					d.id,
@@ -579,7 +576,6 @@ class SocialController extends Controller
                         'pagetitle' => $decklist['name'],
                         'decklist' => $decklist,
                         'commenters' => $commenters,
-                        'similar' => $similar_decklists,
                         'precedent_decklists' => $precedent_decklists,
                         'successor_decklists' => $successor_decklists,
                 		'duplicate' => $duplicate,
