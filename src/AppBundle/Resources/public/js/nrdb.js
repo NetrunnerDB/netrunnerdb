@@ -1,6 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = { data_loaded: jQuery.Callbacks() };
-
 $.fn.ignore = function(sel){
 	  return this.clone().find(sel).remove().end();
 	};
@@ -145,16 +142,16 @@ function process_deck_by_type() {
 	}
 
 	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).order("type,title").each(function(record) {
-		var type = record.type_code, subtypes = record.subtype_code ? record.subtype_code.split(" - ") : [];
+		var type = record.type_code, keywords = record.keywords ? record.keywords.toLowerCase().split(" - ") : [];
 		if(type == "ice") {
 			var ice_type = [];
-			 if(subtypes.indexOf("barrier") >= 0) {
+			 if(keywords.indexOf("barrier") >= 0) {
 				 ice_type.push("barrier");
 			 }
-			 if(subtypes.indexOf("code gate") >= 0) {
+			 if(keywords.indexOf("code gate") >= 0) {
 				 ice_type.push("code-gate");
 			 }
-			 if(subtypes.indexOf("sentry") >= 0) {
+			 if(keywords.indexOf("sentry") >= 0) {
 				 ice_type.push("sentry");
 			 }
 			 switch(ice_type.length) {
@@ -164,14 +161,14 @@ function process_deck_by_type() {
 			 }
 		}
 		if(type == "program") {
-			 if(subtypes.indexOf("icebreaker") >= 0) {
+			 if(keywords.indexOf("icebreaker") >= 0) {
 				 type = "icebreaker";
 			 }
 		}
 		var influence = 0, faction_code = '';
-		if(record.faction != Identity.faction) {
+		if(record.faction_code != Identity.faction_code) {
 			faction_code = record.faction_code;
-			influence = record.factioncost * record.indeck;
+			influence = record.faction_cost * record.indeck;
 		}
 		
 		if(bytype[type] == null) bytype[type] = [];
@@ -234,7 +231,7 @@ function update_deck(options) {
 	}
 	if(DisplaySort === 'number' && displayDescription.length === 0) {
 		var rows = [];
-		NRDB.data.sets().each(function (record) {
+		NRDB.data.packs().each(function (record) {
 			rows.push({id: record.code, label: record.name});
 		});
 		displayDescription.push(rows);
@@ -265,13 +262,13 @@ function update_deck(options) {
 	var cabinet = {};
 	var parts = Identity.title.split(/: /);
 	$('#identity').html('<a href="'+Routing.generate('cards_zoom', {card_code:Identity.code})+'" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="'+Identity.code+'">'+parts[0]+' <small>'+parts[1]+'</small></a>');
-	$('#img_identity').prop('src', Identity.imagesrc);
-	InfluenceLimit = Identity.influencelimit;
+	$('#img_identity').prop('src', Identity.imageUrl);
+	InfluenceLimit = Identity.influence_limit;
 	if(typeof InfluenceLimit === "undefined") InfluenceLimit = Number.POSITIVE_INFINITY;
 	
 	check_decksize();
 	
-	var latestpack = NRDB.data.sets({name:Identity.setname}).first();
+	var latestpack = NRDB.data.packs({code:Identity.pack_code}).first();
 	var order = '';
 	switch(DisplaySort) {
 		case 'type':
@@ -300,12 +297,12 @@ function update_deck(options) {
 	}
 	order += ',title';
 	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).order(order).each(function(record) {
-		var pack = NRDB.data.sets({name:record.setname}).first();
-		if(latestpack.cyclenumber < pack.cyclenumber || (latestpack.cyclenumber == pack.cyclenumber && latestpack.number < pack.number)) latestpack = pack;
+		var pack = NRDB.data.packs({code:record.pack_code}).first();
+		if(latestpack.cycle.position < pack.cycle.position || (latestpack.cycle.position == pack.cycle.position && latestpack.position < pack.position)) latestpack = pack;
 		
 		var influence = '';
-		if(record.faction != Identity.faction) {
-			var theorical_influence_spent = record.indeck * record.factioncost
+		if(record.faction_code != Identity.faction_code) {
+			var theorical_influence_spent = record.indeck * record.faction_cost
 			record.influence_spent = get_influence_cost_of_card_in_deck(record);
 			for(var i=0; i<theorical_influence_spent; i++) {
 				if(i && i%5 == 0) influence += " ";
@@ -319,12 +316,12 @@ function update_deck(options) {
 		var additional_info = get_influence_penalty_icons(record, record.indeck) + influence;
 		
 		if(DisplaySort === 'type') {
-			criteria = record.type_code, subtypes = record.subtype_code ? record.subtype_code.split(" - ") : [];
+			criteria = record.type_code, keywords = record.keywords ? record.keywords.toLowerCase().split(" - ") : [];
 			if(criteria == "ice") {
 				var ice_type = [];
-				if(subtypes.indexOf("barrier") >= 0) ice_type.push("barrier");
-				if(subtypes.indexOf("code gate") >= 0) ice_type.push("code-gate");
-				if(subtypes.indexOf("sentry") >= 0) ice_type.push("sentry");
+				if(keywords.indexOf("barrier") >= 0) ice_type.push("barrier");
+				if(keywords.indexOf("code gate") >= 0) ice_type.push("code-gate");
+				if(keywords.indexOf("sentry") >= 0) ice_type.push("sentry");
 				switch(ice_type.length) {
 				case 0: criteria = "none"; break;
 				case 1: criteria = ice_type.pop(); break;
@@ -332,12 +329,12 @@ function update_deck(options) {
 				}
 			}
 			if(criteria == "program") {
-				 if(subtypes.indexOf("icebreaker") >= 0) criteria = "icebreaker";
+				 if(keywords.indexOf("icebreaker") >= 0) criteria = "icebreaker";
 			}
 		} else if(DisplaySort === 'faction') {
 			criteria = record.faction_code;
 		} else if(DisplaySort === 'number') {
-			criteria = record.set_code;
+			criteria = record.pack_code;
 		} else if(DisplaySort === 'title') {
 			criteria = 'cards';
 		}
@@ -358,17 +355,17 @@ function update_deck(options) {
 	});
 	$('#latestpack').html('Cards up to <i>'+latestpack.name+'</i>');
 	check_influence();
-	if($('#costChart .highcharts-container').size()) setTimeout(make_cost_graph, 100);
-	if($('#strengthChart .highcharts-container').size()) setTimeout(make_strength_graph, 100);
+	if($('#costChart .highcharts-container').length) setTimeout(make_cost_graph, 100);
+	if($('#strengthChart .highcharts-container').length) setTimeout(make_strength_graph, 100);
 }
 
 
 function check_decksize() {
 	DeckSize = NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).select("indeck").reduce(function (previousValue, currentValue) { return previousValue+currentValue; }, 0);
-	MinimumDeckSize = Identity.minimumdecksize;
+	MinimumDeckSize = Identity.minimum_deck_size;
 	$('#cardcount').html(DeckSize+" cards (min "+MinimumDeckSize+")")[DeckSize < MinimumDeckSize ? 'addClass' : 'removeClass']("text-danger");
 	if(Identity.side_code == 'corp') {
-		AgendaPoints = NRDB.data.cards({indeck:{'gt':0},type_code:'agenda'}).select("indeck","agendapoints").reduce(function (previousValue, currentValue) { return previousValue+currentValue[0]*currentValue[1]; }, 0);
+		AgendaPoints = NRDB.data.cards({indeck:{'gt':0},type_code:'agenda'}).select("indeck","agenda_points").reduce(function (previousValue, currentValue) { return previousValue+currentValue[0]*currentValue[1]; }, 0);
 		var min = Math.floor(Math.max(DeckSize, MinimumDeckSize) / 5) * 2 + 2, max = min+1;
 		$('#agendapoints').html(AgendaPoints+" agenda points (between "+min+" and "+max+")")[AgendaPoints < min || AgendaPoints > max ? 'addClass' : 'removeClass']("text-danger");
 	} else {
@@ -384,11 +381,11 @@ function count_card_copies(cards) {
 	return count;
 }
 function get_influence_cost_of_card_in_deck(card) {
-	var inf = card.indeck * card.factioncost;
+	var inf = card.indeck * card.faction_cost;
 	if(inf) {
 		if(Identity.code == "03029" && card.type_code == "program") {
 			// The Professor: first program is free
-			inf = (card.indeck-1) * card.factioncost;
+			inf = (card.indeck-1) * card.faction_cost;
 		} else if(card.code === '10018') { 
 			// Mumba Temple: 15 or fewer ice
 			if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},type_code:'ice'}).get()) <= 15) {
@@ -409,12 +406,12 @@ function get_influence_cost_of_card_in_deck(card) {
 			if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},type_code:'asset'}).get()) >= 7) {
 				inf = 0;
 			}
-		} else if(card.subtype && card.subtype.match(/Alliance/)) {
+		} else if(card.keywords && card.keywords.match(/Alliance/)) {
 			// 6 or more non-alliance cards of the same faction
 			var same_faction_cards = NRDB.data.cards({indeck:{'gt':0},faction_code:card.faction_code}).get();
 			var alliance_count = 0;
 			same_faction_cards.forEach(function (same_faction_card) {
-				if(same_faction_card.subtype && same_faction_card.subtype.match(/Alliance/)) return;
+				if(same_faction_card.keywords && same_faction_card.keywords.match(/Alliance/)) return;
 				alliance_count += same_faction_card.indeck;
 			});
 			if(alliance_count >= 6) {
@@ -457,7 +454,7 @@ $(function () {
 		
 	$.each([ 'table-graph-costs', 'table-graph-strengths', 'table-predecessor', 'table-successor', 'table-draw-simulator', 'table-suggestions' ], function (i, table_id) {
 		var table = $('#'+table_id);
-		if(!table.size()) return;
+		if(!table.length) return;
 		var head = table.find('thead tr th');
 		var toggle = $('<a href="#" class="pull-right small">hide</a>');
 		toggle.on({click: toggle_table});
@@ -503,7 +500,7 @@ var FactionColors = {
 	"jinteki": "#DC143C",
 	"nbn": "#FF8C00",
 	"weyland-consortium": "#006400",
-  "neutral-corp": "#708090"
+	"neutral-corp": "#708090"
 };
 
 function build_bbcode(deck) {
@@ -516,7 +513,7 @@ function build_bbcode(deck) {
 			 + ']'
 			 + Identity.title
 			 + '[/url] ('
-			 + Identity.setname
+			 + Identity.pack.name
 			 + ")");
 	
 	$('#deck-content > div > h5:visible, #deck-content > div > div > div').each(function (i, line) {
@@ -534,7 +531,7 @@ function build_bbcode(deck) {
 					 + ']'
 					 + card.title
 					 + '[/url] [i]('
-					 + card.setname
+					 + card.pack.name
 					 + ")[/i] "
 					 + ( inf ? '[color=' + FactionColors[card.faction_code] + ']' + inf + '[/color]' : '' )
 					);
@@ -571,7 +568,7 @@ function build_markdown(deck) {
 			 + '](https://netrunnerdb.com/'+NRDB.locale+'/card/'
 			 + Identity.code
 			 + ') _('
-			 + Identity.setname
+			 + Identity.pack.name
 			 + ")_");
 
 	$('#deck-content > div > h5:visible, #deck-content > div > div > div').each(function (i, line) {
@@ -589,7 +586,7 @@ function build_markdown(deck) {
 				 + '](https://netrunnerdb.com/'+NRDB.locale+'/card/'
 				 + card.code
 				 + ') _('
-				 + card.setname
+				 + card.pack.name
 				 + ")_ "
 				 + inf
 				);
@@ -679,8 +676,8 @@ function make_cost_graph() {
 	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).each(function(record) {
 		if(record.cost != null) {
 			if(costs[record.cost] == null) costs[record.cost] = [];
-			if(costs[record.cost][record.type] == null) costs[record.cost][record.type] = 0;
-			costs[record.cost][record.type] += record.indeck;
+			if(costs[record.cost][record.type.name] == null) costs[record.cost][record.type.name] = 0;
+			costs[record.cost][record.type.name] += record.indeck;
 		}
 	});
 	
@@ -745,7 +742,7 @@ function make_strength_graph() {
 			if(strengths[record.strength] == null) strengths[record.strength] = [];
 			var ice_type = 'Other';
 			for(var i=0; i<ice_types.length; i++) {
-				if(record.subtype.indexOf(ice_types[i]) != -1) {
+				if(record.keywords.indexOf(ice_types[i]) != -1) {
 					ice_type = ice_types[i];
 					break;
 				}

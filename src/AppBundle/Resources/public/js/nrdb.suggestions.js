@@ -95,7 +95,7 @@ NRDB.suggestions = {};
 		var nb = 0;
 		for(var i=0; i<suggestions.current.length; i++) {
 			var card = NRDB.data.get_card_by_code(suggestions.current[i].code);
-			if(is_card_usable(card) && Filters.set_code.indexOf(card.set_code) > -1) {
+			if(is_card_usable(card) && Filters.pack_code.indexOf(card.pack_code) > -1) {
 				var div = suggestions.div(card);
 				div.on('click', 'button.close', suggestions.exclude.bind(this, card.code));
 				tbody.append(div);

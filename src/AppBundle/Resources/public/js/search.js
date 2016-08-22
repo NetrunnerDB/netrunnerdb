@@ -19,8 +19,8 @@ NRDB.data_loaded.add(function() {
 });
 
 function handle_checkbox_change() {
-	$('#packs-on').text($('#allowed_packs').find('input[type="checkbox"]:checked').size());
-	$('#packs-off').text($('#allowed_packs').find('input[type="checkbox"]:not(:checked)').size());
+	$('#packs-on').text($('#allowed_packs').find('input[type="checkbox"]:checked').length);
+	$('#packs-off').text($('#allowed_packs').find('input[type="checkbox"]:not(:checked)').length);
 }
 
 $(function() {

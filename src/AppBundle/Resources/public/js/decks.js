@@ -1,4 +1,4 @@
-$(function() {
+NRDB.data_loaded.add(function() {
 	$('#btn-group-deck').on('click', 'button[id],a[id]', do_action_deck);
 	$('#btn-group-selection').on('click', 'button[id],a[id]', do_action_selection);
 	$('#btn-group-sort').on('click', 'button[id],a[id]', do_action_sort);

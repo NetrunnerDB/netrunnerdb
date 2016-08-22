@@ -23,16 +23,16 @@ NRDB.smart_filter = {};
 
 			switch (type) {
 			case "e":
-				add_string_sf('set_code', operator, values);
+				add_string_sf('pack_code', operator, values);
 				break;
-			case "c":
+/*			case "c":
 				add_integer_sf('cyclenumber', operator, values);
 				break;
 			case "f":
 				add_string_sf('faction_letter', operator, values);
 				break;
-			case "t":
-				add_string_sf('type', operator, values);
+*/			case "t":
+				add_string_sf('type_code', operator, values);
 				break;
 			case "":
 				add_string_sf('title', operator, values);
@@ -44,25 +44,25 @@ NRDB.smart_filter = {};
 				add_string_sf('flavor', operator, values);
 				break;
 			case "s":
-				add_string_sf('subtype', operator, values);
+				add_string_sf('keywords', operator, values);
 				break;
 			case "o":
 				add_integer_sf('cost', operator, values);
 				break;
 			case "v":
-				add_integer_sf('agendapoints', operator, values);
+				add_integer_sf('agenda_points', operator, values);
 				break;
 			case "n":
-				add_integer_sf('factioncost', operator, values);
+				add_integer_sf('faction_cost', operator, values);
 				break;
 			case "p":
 				add_integer_sf('strength', operator, values);
 				break;
 			case "g":
-				add_integer_sf('advancementcost', operator, values);
+				add_integer_sf('advancement_cost', operator, values);
 				break;
 			case "h":
-				add_integer_sf('trash', operator, values);
+				add_integer_sf('trash_cost', operator, values);
 				break;
 			case "y":
 				add_integer_sf('quantity', operator, values);

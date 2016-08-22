@@ -58,9 +58,6 @@ function setup_comment_form() {
 							callback(NRDB.data.cards({
 								title : {
 									likenocase : term
-								},
-								cyclenumber : {
-									'!=': 0
 								}
 							}).get());
 						},

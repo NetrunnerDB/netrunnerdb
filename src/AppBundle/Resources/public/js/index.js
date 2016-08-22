@@ -28,7 +28,7 @@ function update_cardsearch_result() {
 								+ '" class="card" data-index="' + record.code
 								+ '">' + record.title
 								+ '</a></td><td class="small">'
-								+ record.setname + '</td></tr>');
+								+ record.pack.name + '</td></tr>');
 			});
 }
 

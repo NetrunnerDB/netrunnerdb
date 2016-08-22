@@ -55,21 +55,21 @@ NRDB.data_loaded.add(function() {
 		var indeck = 0;
 		if (Deck[record.code]) {
 			indeck = parseInt(Deck[record.code], 10);
-			sets_in_deck[record.set_code] = 1;
+			sets_in_deck[record.pack_code] = 1;
 		}
 		NRDB.data.cards(record.___id).update({
 			indeck : indeck,
-			factioncost : record.factioncost || 0
+			factioncost : record.faction_cost || 0
 		});
 	});
 	update_deck();
 	NRDB.draw_simulator.init();
 	NRDB.data.cards().each(function(record) {
-		var max_qty = record.limited;
-		if (record.set_code == 'core') {
+		var max_qty = record.deck_limit;
+		if (record.pack_code == 'core') {
 			max_qty = Math.min(record.quantity * CoreSets, max_qty);
 		}
-		if(Identity.set_code == "draft") {
+		if(Identity.pack_code == "draft") {
 			max_qty = 9;
 		}
 		NRDB.data.cards(record.___id).update({
@@ -86,16 +86,15 @@ NRDB.data_loaded.add(function() {
 			function(a, b) {
 				return b.substr(0,7) === "neutral" ? -1 : a.substr(0,7) === "neutral" ? 1 : a < b ? -1
 						: a > b ? 1 : 0;
-			}), function(index, record) {
-		var example = NRDB.data.cards({"faction_code": record}).first();
-		var faction = example.faction.replace(/.*Weyland.*/, 'Weyland');
-		var label = $('<label class="btn btn-default btn-sm" data-code="' + record
-				+ '" title="'+faction+'"><input type="checkbox" name="' + record
+			}), function(index, faction_code) {
+		var faction = NRDB.data.factions({"code": faction_code}).first();
+		var label = $('<label class="btn btn-default btn-sm" data-code="' + faction_code
+				+ '" title="'+faction.name+'"><input type="checkbox" name="' + faction_code
 				+ '"><img src="'
-				+ Url_FactionImage.replace('xxx', record)
-				+ '" style="height:12px" alt="'+record+'"></label>');
+				+ Url_FactionImage.replace('xxx', faction_code)
+				+ '" style="height:12px" alt="'+faction_code+'"></label>');
 		if(Modernizr.touch) {
-			label.append(' '+faction);
+			label.append(' '+faction.name);
 			label.addClass('btn-block');
 		} else {
 			label.tooltip({container: 'body'});
@@ -108,12 +107,12 @@ NRDB.data_loaded.add(function() {
 	});
 
 	$('#type_code').empty();
-	$.each(NRDB.data.cards().distinct("type_code").sort(), function(index, record) {
-		var example = NRDB.data.cards({"type_code": record}).first();
+	$.each(NRDB.data.cards().distinct("type_code").sort(), function(index, type_code) {
+		var type = NRDB.data.types({"code": type_code}).first().name;
 		var label = $('<label class="btn btn-default btn-sm" data-code="'
-				+ record + '" title="'+example.type+'"><input type="checkbox" name="' + record
-				+ '"><img src="' + Url_TypeImage.replace('xxx', record)
-				+ '" style="height:12px" alt="'+record+'"></label>');
+				+ type_code + '" title="'+type.name+'"><input type="checkbox" name="' + type_code
+				+ '"><img src="' + Url_TypeImage.replace('xxx', type_code)
+				+ '" style="height:12px" alt="'+type_code+'"></label>');
 		if(Modernizr.touch) {
 			label.append(' '+example.type);
 			label.addClass('btn-block');
@@ -127,13 +126,13 @@ NRDB.data_loaded.add(function() {
 		$(elt).button('toggle');
 	});
 
-	$('#set_code').empty();
-	NRDB.data.sets().each(
+	$('#pack_code').empty();
+	NRDB.data.packs().each(
 			function(record) {
-				var checked = record.available === ""
+				var checked = record.date_release === ""
 						&& sets_in_deck[record.code] == null ? ''
 						: ' checked="checked"';
-				$('#set_code').append(
+				$('#pack_code').append(
 						'<li><a href="#"><label><input type="checkbox" name="'
 								+ record.code + '"' + checked + '>'
 								+ record.name + '</label></a></li>');
@@ -143,29 +142,21 @@ NRDB.data_loaded.add(function() {
 	if (Identity.code == "03002")
 		$('input[name=Jinteki]').prop("checked", false);
 
-	$('.filter')
-			.each(
-					function(index, div) {
-						var columnName = $(div).attr('id');
-						var arr = [], checked;
-						$(div)
-								.find("input[type=checkbox]")
-								.each(
-										function(index, elt) {
-											if (columnName == "set_code"
-													&& localStorage
-													&& (checked = localStorage
-															.getItem('set_code_'
-																	+ $(elt)
-																			.attr(
-																					'name'))) !== null)
-												$(elt).prop('checked',
-														checked === "on");
-											if ($(elt).prop('checked'))
-												arr.push($(elt).attr('name'));
-										});
-						Filters[columnName] = arr;
-					});
+	$('.filter').each(function(index, div) {
+		var columnName = $(div).attr('id');
+		var arr = [], checked;
+		$(div).find("input[type=checkbox]").each(function(index, elt) {
+			var pack_name = $(elt).attr('name');
+			if(columnName == "pack_code" && localStorage && (checked = localStorage.getItem('pack_code_'+ pack_name)) !== null) {
+				$(elt).prop('checked', checked === "on");
+			}
+			if($(elt).prop('checked')) {
+				arr.push($(elt).attr('name'));
+			}
+		});
+		Filters[columnName] = arr;
+	});
+	
 	FilterQuery = {};
 	$.each(Filters, function(k) {
 		if (Filters[k] != '') {
@@ -242,7 +233,7 @@ $(function() {
 		}
 	});
 
-	$('#set_code,.search-buttons').on(
+	$('#pack_code,.search-buttons').on(
 			{
 				change : handle_input_change,
 				click : function(event) {
@@ -437,65 +428,57 @@ $(function() {
 			$('.modal input[type=radio][value=' + num + ']').trigger('change');
 		}
 	});
-	$('#filter-text-button')
-			.tooltip(
-					{
-						html : true,
-						container : 'body',
-						placement : 'bottom',
-						trigger : 'click',
-						title : "<h5>Smart filter syntax</h5><ul style=\"text-align:left\"><li>x: filters on text</li><li>a: flavor text</li><li>s: subtype</li><li>o: cost</li><li>v: agenda points</li><li>n: faction cost</li><li>p: strength</li><li>g: advancement cost</li><li>h: trash cost</li><li>u: uniqueness</li><li>y: quantity in pack</li></ul><code>s:\"code gate\" x:trace</code> to find code gates with trace"
-					});
+	$('#filter-text-button').tooltip({
+		html : true,
+		container : 'body',
+		placement : 'bottom',
+		trigger : 'click',
+		title : "<h5>Smart filter syntax</h5><ul style=\"text-align:left\"><li>x: filters on text</li><li>a: flavor text</li><li>s: subtype</li><li>o: cost</li><li>v: agenda points</li><li>n: faction cost</li><li>p: strength</li><li>g: advancement cost</li><li>h: trash cost</li><li>u: uniqueness</li><li>y: quantity in pack</li></ul><code>s:\"code gate\" x:trace</code> to find code gates with trace"
+	});
 
 	var converter = new Markdown.Converter();
-	$('#description').on(
-			'keyup',
-			function() {
-				$('#description-preview').html(
-						converter.makeHtml($('#description').val()));
-			});
+	$('#description').on('keyup', function() {
+		$('#description-preview').html(
+				converter.makeHtml($('#description').val()));
+	});
 
-	$('#description').textcomplete(
-			[
-					{
-						match : /\B#([\-+\w]*)$/,
-						search : function(term, callback) {
-							callback(NRDB.data.cards({
-								title : {
-									likenocase : term
-								},
-								cyclenumber : {
-									'!=': 0
-								}
-							}).get());
-						},
-						template : function(value) {
-							return value.title;
-						},
-						replace : function(value) {
-							return '[' + value.title + ']('
-									+ Routing.generate('cards_zoom', {card_code:value.code})
-									+ ')';
-						},
-						index : 1
-					}, {
-						match : /\$([\-+\w]*)$/,
-						search : function(term, callback) {
-							var regexp = new RegExp('^' + term);
-							callback($.grep(['credit', 'recurring-credit', 'click', 'link', 'trash', 'subroutine', 'mu', '1mu', '2mu', '3mu',
-								'anarch', 'criminal', 'shaper', 'haas-bioroid', 'weyland-consortium', 'jinteki', 'nbn'],
-								function(symbol) { return regexp.test(symbol); }
-							));
-						},
-						template : function(value) {
-							return value;
-						},
-						replace : function(value) {
-							return '<span class="icon icon-' + value + '"></span>';
-						},
-						index : 1
-					}
-			]);
+	$('#description').textcomplete([
+			{
+				match : /\B#([\-+\w]*)$/,
+				search : function(term, callback) {
+					callback(NRDB.data.cards({
+						title : {
+							likenocase : term
+						}
+					}).get());
+				},
+				template : function(value) {
+					return value.title;
+				},
+				replace : function(value) {
+					return '[' + value.title + ']('
+							+ Routing.generate('cards_zoom', {card_code:value.code})
+							+ ')';
+				},
+				index : 1
+			}, {
+				match : /\$([\-+\w]*)$/,
+				search : function(term, callback) {
+					var regexp = new RegExp('^' + term);
+					callback($.grep(['credit', 'recurring-credit', 'click', 'link', 'trash', 'subroutine', 'mu', '1mu', '2mu', '3mu',
+						'anarch', 'criminal', 'shaper', 'haas-bioroid', 'weyland-consortium', 'jinteki', 'nbn'],
+						function(symbol) { return regexp.test(symbol); }
+					));
+				},
+				template : function(value) {
+					return value;
+				},
+				replace : function(value) {
+					return '<span class="icon icon-' + value + '"></span>';
+				},
+				index : 1
+			}
+	]);
 	$('#mwl_id').on('change', update_mwl);
 	$('#tbody-history').on('click', 'a[role=button]', load_snapshot);
 	setInterval(autosave_interval, 1000);
@@ -606,8 +589,8 @@ function handle_input_change(event) {
 			function(index, elt) {
 				if ($(elt).prop('checked'))
 					arr.push($(elt).attr('name'));
-				if (columnName == "set_code" && localStorage)
-					localStorage.setItem('set_code_' + $(elt).attr('name'), $(
+				if (columnName == "pack_code" && localStorage)
+					localStorage.setItem('pack_code_' + $(elt).attr('name'), $(
 							elt).prop('checked') ? "on" : "off");
 			});
 	Filters[columnName] = arr;
@@ -642,14 +625,14 @@ function handle_submit(event) {
 function handle_quantity_change(event) {
 	var index = $(this).closest('.card-container').data('index')
 			|| $(this).closest('div.modal').data('index');
-	var in_collection = $(this).closest('#collection').size();
+	var in_collection = $(this).closest('#collection').length;
 	var quantity = parseInt($(this).val(), 10);
 	$(this).closest('.card-container')[quantity ? "addClass" : "removeClass"]('in-deck');
 	var cards = NRDB.data.get_cards_by_code(index);
 	cards.update({indeck : quantity});
 	var card = cards.first();
 	if (card.type_code == "identity") {
-		if (Identity.faction != card.faction) {
+		if (Identity.faction_code != card.faction_code) {
 			// change of faction, reset agendas
 			NRDB.data.cards({
 				indeck : {
@@ -720,10 +703,10 @@ function handle_quantity_change(event) {
 function update_core_sets() {
 	CardDivs = [ null, {}, {}, {} ];
 	NRDB.data.cards({
-		set_code : 'core'
+		pack_code : 'core'
 	}).each(function(record) {
-		var max_qty = Math.min(record.quantity * CoreSets, record.limited);
-		if(Identity.set_code == "draft") {
+		var max_qty = Math.min(record.quantity * CoreSets, record.deck_limit);
+		if(Identity.pack_code == "draft") {
 			max_qty = 9;
 		}
 		NRDB.data.cards(record.___id).update({
@@ -747,9 +730,8 @@ function update_mwl(event) {
 }
 
 function build_div(record) {
-	var faction = record.faction_code;
 	var influ = "";
-	for (var i = 0; i < record.factioncost; i++)
+	for (var i = 0; i < record.faction_cost; i++)
 		influ += "●";
 
 	var radios = '';
@@ -769,7 +751,7 @@ function build_div(record) {
 
 		var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
 				+ Url_FactionImage.replace('xxx', record.faction_code)
-				+ '.png" alt="'+record.faction+'">';
+				+ '.png" alt="'+record.faction.name+'">';
 		div = $('<tr class="card-container" data-index="'
 				+ record.code
 				+ '"><td><div class="btn-group" data-toggle="buttons">'
@@ -777,11 +759,11 @@ function build_div(record) {
 				+ '</div></td><td><a class="card" href="'
 				+ Routing.generate('cards_zoom', {card_code:record.code})
 				+ '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
-				+ record.title + '</a> '+get_influence_penalty_icons(record)+'</td><td class="influence influence-' + faction
-				+ '">' + influ + '</td><td class="type" title="' + record.type
+				+ record.title + '</a> '+get_influence_penalty_icons(record)+'</td><td class="influence influence-' + record.faction_code
+				+ '">' + influ + '</td><td class="type" title="' + record.type.name
 				+ '"><img src="/bundles/app/images/types/'
-				+ record.type_code + '.png" alt="'+record.type+'">'
-				+ '</td><td class="faction" title="' + record.faction + '">'
+				+ record.type_code + '.png" alt="'+record.type.name+'">'
+				+ '</td><td class="faction" title="' + record.faction.name + '">'
 				+ imgsrc + '</td></tr>');
 		break;
 
@@ -800,7 +782,7 @@ function build_div(record) {
 				+ '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
 				+ record.title + '</a> '+get_influence_penalty_icons(record)+'</h4>'
 				+ '    <div class="btn-group" data-toggle="buttons">' + radios
-				+ '</div>' + '    <span class="influence influence-' + faction + '">'
+				+ '</div>' + '    <span class="influence influence-' + record.faction_code + '">'
 				+ influ + '</span>' + '</div>' + '</div>' + '</div>');
 		break;
 
@@ -819,7 +801,7 @@ function build_div(record) {
 				+ '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
 				+ record.title + '</a> '+get_influence_penalty_icons(record)+'</h5>'
 				+ '    <div class="btn-group" data-toggle="buttons">' + radios
-				+ '</div>' + '    <span class="influence influence-' + faction + '">'
+				+ '</div>' + '    <span class="influence influence-' + record.faction_code + '">'
 				+ influ + '</span>' + '</div>' + '</div>' + '</div>');
 		break;
 

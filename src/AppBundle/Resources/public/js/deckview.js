@@ -5,7 +5,7 @@ NRDB.data_loaded.add(function() {
 		var indeck = 0;
 		if (SelectedDeck.slots[record.code]) {
 			indeck = parseInt(SelectedDeck.slots[record.code], 10);
-			sets_in_deck[record.set_code] = 1;
+			sets_in_deck[record.pack_code] = 1;
 		}
 		NRDB.data.cards(record.___id).update({
 			indeck : indeck,

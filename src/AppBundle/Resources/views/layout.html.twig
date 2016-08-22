@@ -21,7 +21,7 @@
       <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
     <![endif]-->
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
     <link rel="stylesheet" href="{{ asset('/bundles/app/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('/bundles/app/latofonts.css') }}">
@@ -31,8 +31,8 @@
     <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highcharts/3.0.9/highcharts.js"></script>
@@ -46,9 +46,14 @@
 	var NRDB = {
 		data_loaded: $.Callbacks(),
 		api_url: {
-			sets: '{{ path('api_sets')|raw }}',
-			cards: '{{ path('api_cards')|raw }}',
-            mwl: '{{ path('api_mwl')|raw }}'
+			cycles: '{{ path('api_public_cycles')|raw }}',
+			packs: '{{ path('api_public_packs')|raw }}',
+			cards: '{{ path('api_public_cards')|raw }}',
+			prebuilts: '{{ path('api_public_prebuilts')|raw }}',
+			factions: '{{ path('api_public_factions')|raw }}',
+			types: '{{ path('api_public_types')|raw }}',
+			sides: '{{ path('api_public_sides')|raw }}',
+            mwl: '{{ path('api_public_mwl')|raw }}'
 		},
 		locale: '{{ app.request.locale }}'
 	};
@@ -69,13 +74,6 @@ ga('send', 'pageview');
     <script src="{{ asset('/bundles/app/js/nrdb.data.js') }}"></script>
     <script src="{{ asset('/bundles/app/js/nrdb.format.js') }}"></script>
     <script src="{{ asset('/bundles/app/js/nrdb.tip.js') }}"></script>
-      <script type="text/javascript">
-          $(function () {
-              if(typeof NRDB.data.mwl === 'undefined') {
-                $('#wrapper > .container').prepend('<div class="alert alert-danger" role="alert">Your application is outdated. Please reload the page to update it.</div>')
-              }
-          });
-      </script>
 {% block head %}{% endblock %}
 
   </head>

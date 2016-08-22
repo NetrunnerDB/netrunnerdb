@@ -7,7 +7,7 @@ NRDB.deck_gallery = {};
 
 	deck_gallery.update = function() {
 
-		images = [ Identity.imagesrc ];
+		images = [ Identity.imageUrl ];
 		qtys = [ 1 ];
 		NRDB.data.cards({
 			indeck : {
@@ -17,7 +17,7 @@ NRDB.deck_gallery = {};
 				'!is' : 'identity'
 			}
 		}).order('type_code,title').each(function(record) {
-			images.push(record.imagesrc);
+			images.push(record.imageUrl);
 			qtys.push(record.indeck);
 		});
 		for (var i = 0; i < images.length; i++) {

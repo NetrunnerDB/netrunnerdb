@@ -47,7 +47,7 @@ NRDB.deck_browser = {};
 	
 	deck_browser.update = function() {
 
-		images = [ Identity.imagesrc ];
+		images = [ Identity.imageUrl ];
 		NRDB.data.cards({
 			indeck : {
 				'gt' : 0
@@ -57,7 +57,7 @@ NRDB.deck_browser = {};
 			}
 		}).order('type_code,title').each(function(record) {
 			for (var i = 0; i < record.indeck; i++) {
-				images.push(record.imagesrc);
+				images.push(record.imageUrl);
 			}
 		});
 		for (var i = 0; i < images.length; i++) {

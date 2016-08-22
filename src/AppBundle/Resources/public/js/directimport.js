@@ -84,7 +84,7 @@ function update_stats() {
 	});
 	html = size+' Cards.<br>'+html;
 	$('#stats').html(html);
-	if($('#analyzed li').size() > 0) {
+	if($('#analyzed li').length > 0) {
 	  $('#btn-save').prop('disabled', false);
 	} else {
 	  $('#btn-save').prop('disabled', true);

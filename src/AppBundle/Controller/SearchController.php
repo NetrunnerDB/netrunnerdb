@@ -307,7 +307,7 @@ class SearchController extends Controller
 			for($rowindex = $first; $rowindex < $last && $rowindex < count($rows); $rowindex++) {
 				$card = $rows[$rowindex];
 				$pack = $card->getPack();
-				$cardinfo = $this->get('cards_data')->getCardInfo($card, false);
+				$cardinfo = $this->get('cards_data')->getCardInfo($card);
 				if(empty($availability[$pack->getCode()])) {
 					$availability[$pack->getCode()] = false;
 					if($pack->getDateRelease() && $pack->getDateRelease() <= new \DateTime()) $availability[$pack->getCode()] = true;

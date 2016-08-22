@@ -413,69 +413,6 @@ demo_ext_decklist:
         _controller: AppBundle:Tools:extdecklist
         id: 98
 
-api_decklist:
-    path: /api/decklist/{decklist_id}.{_format}
-    defaults:
-        _controller: AppBundle:Api:decklist
-        _format: json
-    requirements:
-        _format: json
-        decklist_id: \d+
-        
-api_shareddeck:
-    path: /api/shareddeck/{deck_id}.{_format}
-    defaults:
-        _controller: AppBundle:Api:shareddeck
-        _format: json
-    requirements:
-        _format: json
-        deck_id: \d+
-
-api_decklists:
-    path: /api/decklists/by_date/{date}.{_format}
-    defaults:
-        _controller: AppBundle:Api:decklists
-        _format: json
-    requirements:
-        _format: json
-        date: \d\d\d\d-\d\d-\d\d
-
-api_decks:
-    path: /api/decks
-    defaults:
-        _controller: AppBundle:Api:decks
-        
-api_oauth2_decks:
-    path: /api_oauth2/decks
-    defaults:
-        _controller: AppBundle:Api:decks
-            
-api_oauth2_load_deck:
-    path: /api_oauth2/load_deck/{deck_id}
-    defaults:
-        _controller: AppBundle:Api:loadDeck
-    requirements:
-        deck_id: \d+
-
-api_oauth2_save_deck:
-    path: /api_oauth2/save_deck/{deck_id}
-    defaults:
-        _controller: AppBundle:Api:saveDeck
-    requirements:
-        deck_id: \d+
-
-api_oauth2_publish_deck:
-    path: /api_oauth2/publish_deck/{deck_id}
-    defaults:
-        _controller: AppBundle:Api:publish
-    requirements:
-        deck_id: \d+
-
-api_mwl:
-    path: /api/get_mwl/
-    defaults:
-        _controller: AppBundle:Api:getMwl
-
 tag_add:
     path: /tag/add
     methods: [POST]
@@ -818,30 +755,3 @@ cards_rulings:
         _locale: en
     requirements:
         _locale: \w\w
-
-api_cards:
-    path: /api/cards/
-    defaults:
-        _controller: AppBundle:Api:cards
-
-api_card:
-    path: /api/card/{card_code}.{_format}
-    defaults:
-        _controller: AppBundle:Api:card
-        _format: json
-    requirements:
-        _format: json
-        card_code: \d+
-
-api_sets:
-    path: /api/sets/
-    defaults:
-        _controller: AppBundle:Api:sets
-
-api_set:
-    path: /api/set/{pack_code}.{_format}
-    defaults:
-        _controller: AppBundle:Api:set
-        _format: json
-    requirements:
-        _format: json|xml|xlsx|xls

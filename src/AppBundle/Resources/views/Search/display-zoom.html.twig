@@ -45,7 +45,7 @@ NRDB.user.params.card_id = {{ cards[0].id|json_encode|raw }};
         					<div class="card-illustrator">
         						<small>
         						{{ card.faction }} &bull;
-        						{% if card.illustrator %}{{ card.illustrator }} &bull; {% endif %}<span class="icon icon-{{ card.cycle_code }}"></span> {{ card.setname }} {{ card.number }}
+        						{% if card.illustrator %}{{ card.illustrator }} &bull; {% endif %}<span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }} {{ card.number }}
         						</small>
         					</div>
         				</div>
@@ -55,8 +55,8 @@ NRDB.user.params.card_id = {{ cards[0].id|json_encode|raw }};
         	</div>
         	<div class="col-sm-5">
         		<div class="card-image">
-        			{% if card.imagesrc %}
-        			   <img src="{{ card.imagesrc }}" alt="{{ card.title }}" class="img-responsive" style="margin:auto">
+        			{% if card.imageUrl %}
+        			   <img src="{{ card.imageUrl }}" alt="{{ card.title }}" class="img-responsive" style="margin:auto">
         			{% else %}
         			   <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
         			{% endif %}

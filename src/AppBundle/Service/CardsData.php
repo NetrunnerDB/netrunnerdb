@@ -502,21 +502,16 @@ class CardsData
 	/**
 	 *
 	 * @param \AppBundle\Entity\Card $card
-	 * @param string $api
 	 * @return multitype:multitype: string number mixed NULL unknown
 	 */
-	public function getCardInfo($card, $api = false)
+	public function getCardInfo($card)
 	{
 	    static $cache = array();
-	    static $cacheApi = array();
 
 	    $locale = $this->request_stack->getCurrentRequest()->getLocale();
 
-	    if(!$api && isset($cache[$card->getId()]) && isset($cache[$card->getId()][$locale])) {
+	    if(isset($cache[$card->getId()]) && isset($cache[$card->getId()][$locale])) {
 	        return $cache[$card->getId()][$locale];
-	    }
-	    if($api && isset($cacheApi[$card->getId()]) && isset($cacheApi[$card->getId()][$locale])) {
-	        return $cacheApi[$card->getId()][$locale];
 	    }
 
 		$cardinfo = array(
@@ -569,7 +564,7 @@ class CardsData
 		}
 		
 		$cardinfo['url'] = $this->router->generate('cards_zoom', array('card_code' => $card->getCode(), '_locale' => $locale), UrlGeneratorInterface::ABSOLUTE_URL);
-		$cardinfo['imagesrc'] = $this->request_stack->getCurrentRequest()->getSchemeAndHttpHost() . "/card_image/". $card->getCode() . ".png";
+		$cardinfo['imageUrl'] = $this->request_stack->getCurrentRequest()->getSchemeAndHttpHost() . "/card_image/". $card->getCode() . ".png";
 		
 		// replacing <trace>
 		$cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1<sup>\2</sup></strong>–', $cardinfo['text']);
@@ -580,21 +575,14 @@ class CardsData
 		// replacing <champion>
 		$cardinfo['flavor'] = preg_replace('/<champion>(.+)<\/champion>/', '<span class="champion">\1</champion>', $cardinfo['flavor']);
 		
-		if($api) {
-			$cardinfo['text'] = $this->backwardCompatibilitySymbols($cardinfo['text']);
-			unset($cardinfo['id']);
-			unset($cardinfo['id_set']);
-			$cardinfo = array_filter($cardinfo, function ($var) { return isset($var); });
-			$cacheApi[$card->getId()][$locale] = $cardinfo;
-		} else {
-			$cardinfo['text'] = $this->replaceSymbols($cardinfo['text']);
-			$cardinfo['text'] = str_replace('&', '&amp;', $cardinfo['text']);
-			$cardinfo['text'] = implode(array_map(function ($l) { return "<p>$l</p>"; }, explode("\n", $cardinfo['text'])));
-			$cardinfo['flavor'] = $this->replaceSymbols($cardinfo['flavor']);
-			$cardinfo['flavor'] = str_replace('&', '&amp;', $cardinfo['flavor']);
-		    $cardinfo['cssfaction'] = str_replace(" ", "-", mb_strtolower($card->getFaction()->getName()));
-			$cache[$card->getId()][$locale] = $cardinfo;
-		}
+		$cardinfo['text'] = $this->replaceSymbols($cardinfo['text']);
+		$cardinfo['text'] = str_replace('&', '&amp;', $cardinfo['text']);
+		$cardinfo['text'] = implode(array_map(function ($l) { return "<p>$l</p>"; }, explode("\n", $cardinfo['text'])));
+		$cardinfo['flavor'] = $this->replaceSymbols($cardinfo['flavor']);
+		$cardinfo['flavor'] = str_replace('&', '&amp;', $cardinfo['flavor']);
+	    $cardinfo['cssfaction'] = str_replace(" ", "-", mb_strtolower($card->getFaction()->getName()));
+
+	    $cache[$card->getId()][$locale] = $cardinfo;
 
 		return $cardinfo;
 	}

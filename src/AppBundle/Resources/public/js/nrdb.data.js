@@ -1,107 +1,40 @@
-if (typeof NRDB != "object")
-	var NRDB = { 
-		data_loaded: jQuery.Callbacks(), 
-		api_url: {
-			sets: 'https://netrunnerdb.com/api/sets/',
-			cards: 'https://netrunnerdb.com/api/cards/',
-			mwl: 'https://netrunnerdb.com/api/get_mwl/'
-		},
-		locale: 'en'
-	};
 NRDB.data = {};
 (function(data, $) {
-	data.sets = {};
-	data.cards = {};
-	data.mwl = {};
-
-	var sets_data = null;
-	var cards_data = null;
-	var mwl_data = null;
-	var is_modified = null;
-
 	data.query = function() {
-		data.initialize();
-		data.promise_sets = $
-				.ajax(NRDB.api_url.sets+"?jsonp=NRDB.data.parse_sets&_locale="
-						+ NRDB.locale);
-		data.promise_cards = $
-				.ajax(NRDB.api_url.cards+"?jsonp=NRDB.data.parse_cards&_locale="
-						+ NRDB.locale);
-		data.promise_mwl = $
-				.ajax(NRDB.api_url.mwl+"?jsonp=NRDB.data.parse_mwl");
-
-		$.when(data.promise_sets, data.promise_cards, data.promise_mwl).done(data.initialize);
-	};
-
-	data.initialize = function() {
-		if (is_modified === false)
-			return;
-
-		if(!sets_data) {
-			try {
-				var json = localStorage.getItem('sets_data_' + NRDB.locale);
-				sets_data = JSON.parse(json);
-			} catch(e) {
-				localStorage.removeItem('sets_data_' + NRDB.locale);
-				sets_data = [];
-			}
-		}
-		if(!sets_data) return;
-		data.sets = TAFFY(sets_data);
-		data.sets.sort("cyclenumber,number");
-
-		if(!cards_data) {
-			try {
-				var json = localStorage.getItem('cards_data_' + NRDB.locale);
-				cards_data = JSON.parse(json);
-			} catch(e) {
-				localStorage.removeItem('cards_data_' + NRDB.locale);
-				cards_data = [];
-			}
-		}
-		if(!cards_data) return;
-		data.cards = TAFFY(cards_data);
-		data.cards.sort("code");
-
-		if(!mwl_data) {
-			try {
-				var json = localStorage.getItem('mwl_data');
-				mwl_data = JSON.parse(json);
-			} catch(e) {
-				localStorage.removeItem('mwl_data');
-				mwl_data = [];
-			}
-		}
-		if(!mwl_data) return;
-		data.mwl = TAFFY(mwl_data);
-		data.mwl.sort("start");
-
-		NRDB.data_loaded.fire();
-	};
-
-	data.parse_sets = function(response) {
-		if(typeof response === "undefined") return;
-		var json = JSON.stringify(sets_data = response);
-		is_modified = is_modified
-				|| json != localStorage.getItem("sets_data_" + NRDB.locale);
-		localStorage.setItem("sets_data_" + NRDB.locale, json);
-	};
-
-	data.parse_cards = function(response) {
-		if(typeof response === "undefined") return;
-		var json = JSON.stringify(cards_data = response);
-		is_modified = is_modified
-				|| json != localStorage.getItem("cards_data_" + NRDB.locale);
-		localStorage.setItem("cards_data_" + NRDB.locale, json);
-	};
-
-	data.parse_mwl = function(response) {
-		if(typeof response === "undefined") return;
-		mwl_data = response.version ? response.data : response;
-		var json = JSON.stringify(mwl_data);
-		is_modified = is_modified
-			|| json != localStorage.getItem("mwl_data");
-		localStorage.setItem("mwl_data", json);
+		var apiNames = ['cycles', 'packs', 'cards', 'prebuilts', 'factions', 'types', 'sides', 'mwl'];
+		var promises = [];
+		
+		apiNames.forEach(function (apiName) {
+			var promise = $.ajax(NRDB.api_url[apiName], {data: {locale: NRDB.locale}}).then(function (response) {
+				if(!response || !response.success) return;
+				if(apiName === 'cards') {
+					response.data.forEach(function (card) {
+						card.imageUrl = response.imageUrlTemplate.replace(/{code}/, card.code);
+					})
+				}
+				data[apiName] = TAFFY(response.data);
+			});
+			promises.push(promise);
+		});
+		
+		$.when.apply($, promises).done(function () {
+			data.cards().each(function (card) {
+				card.faction = data.factions({code:card.faction_code}).first();
+				card.type = data.types({code:card.type_code}).first();
+				card.pack = data.packs({code:card.pack_code}).first();
+				card.side = data.sides({code:card.side_code}).first();
+				if(card.cost === null && card.type_code !== 'agenda' && card.type_code !== 'identity') {
+					card.cost = 'X';
+				}
+				if(card.strength === null && card.keywords.toLowerCase().indexOf('icebreaker') !== -1) {
+					card.strength = 'X';
+				}
+			});
+			data.packs().each(function (pack) {
+				pack.cycle = data.cycles({code:pack.cycle_code}).first();
+			})
+			NRDB.data_loaded.fire();
+		});
 	};
 	
 	data.get_card_by_code = function(code) {
@@ -116,9 +49,7 @@ NRDB.data = {};
 		}
 	};
 	
-	$(function() {
-		if(NRDB.api_url) data.query();
-	});
+	$(data.query);
 
 })(NRDB.data, jQuery);
 

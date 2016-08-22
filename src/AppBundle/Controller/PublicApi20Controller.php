@@ -54,6 +54,7 @@ class PublicApi20Controller extends FOSRestController
 		$content['total'] = count($content['data']);
 		$content['success'] = TRUE;
 		$content['version_number'] = '2.0';
+		$content['last_updated'] = $dateUpdate->format('c');
 		
 		$response->setData($content);
 		

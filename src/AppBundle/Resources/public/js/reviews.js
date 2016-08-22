@@ -122,9 +122,6 @@ function write_review_open(event) {
 							callback(NRDB.data.cards({
 								title : {
 									likenocase : term
-								},
-								cyclenumber : {
-									'!=': 0
 								}
 							}).get());
 						},

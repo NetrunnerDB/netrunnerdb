@@ -29,10 +29,10 @@ NRDB.card_modal = {};
 		modal.data('index', code);
 		modal.find('.card-modal-link').attr('href', card.url);
 		modal.find('h3.modal-title').html((card.uniqueness ? "&diams; " : "")+card.title);
-		modal.find('.modal-image').html('<img class="img-responsive" src="'+card.imagesrc+'" alt="'+card.title+'">');
+		modal.find('.modal-image').html('<img class="img-responsive" src="'+card.imageUrl+'" alt="'+card.title+'">');
 		modal.find('.modal-info').html(
 		  '<div class="card-info">'+NRDB.format.type(card)+'</div>'
-		  +'<div><small>' + card.faction + ' &bull; '+ card.setname + '</small></div>'
+		  +'<div><small>' + card.faction + ' &bull; '+ card.pack.name + '</small></div>'
 		  +'<div class="card-text border-'+card.faction_code+'"><small>'+NRDB.format.text(card)+'</small></div>'
 		);
 
