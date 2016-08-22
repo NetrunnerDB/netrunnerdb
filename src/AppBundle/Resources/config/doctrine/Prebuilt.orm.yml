@@ -1,0 +1,72 @@
+AppBundle\Entity\Prebuilt:
+    type: entity
+    table: prebuilt
+    gedmo:
+        translation:
+            locale: locale
+    indexes:
+        prebuilt_date_release_index:
+            columns: [ date_release ]
+        prebuilt_position_index:
+            columns: [ position ]
+    manyToOne:
+        side:
+            targetEntity: Side
+            nullable: false
+            joinColumn:
+                name: side_id
+                referencedColumnName: id
+        identity:
+            targetEntity: Card
+            nullable: false
+            joinColumn:
+                name: identity_id
+                referencedColumnName: id
+        faction:
+            targetEntity: Faction
+            nullable: false
+            joinColumn:
+                name: faction_id
+                referencedColumnName: id
+    oneToMany:
+        slots:
+            targetEntity: Prebuiltslot
+            mappedBy: prebuilt
+            cascade: ["persist","detach","remove"]
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        code:
+            type: string
+            unique: true
+            length: 10
+        name:
+            type: string
+            length: 255
+            gedmo:
+                - translatable
+        dateRelease:
+            type: date
+            nullable: true
+            column: date_release
+        position:
+            type: smallint
+            nullable: false
+        dateCreation:
+            type: datetime
+            nullable: false
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on: create
+        dateUpdate:
+            type: datetime
+            nullable: false
+            column: date_update
+            gedmo:
+                timestampable:
+                    on: update
+    lifecycleCallbacks: {  }

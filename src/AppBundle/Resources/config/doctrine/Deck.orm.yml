@@ -1,13 +1,13 @@
 AppBundle\Entity\Deck:
     type: entity
     table: deck
-    repositoryClass: AppBundle\Entity\DeckRepository
+    repositoryClass: DeckRepository
     indexes:
         date_update_index:
             columns: [ date_update ]
     manyToOne:
         user:
-            targetEntity: AppBundle\Entity\User
+            targetEntity: User
             nullable: false
             inversedBy: decks
             joinColumn:
@@ -21,20 +21,20 @@ AppBundle\Entity\Deck:
                 name: mwl_id
                 referencedColumnName: id
         side:
-            targetEntity: AppBundle\Entity\Side
+            targetEntity: Side
             nullable: false
             inversedBy: decks
             joinColumn:
                 name: side_id
                 referencedColumnName: id
         identity:
-            targetEntity: AppBundle\Entity\Card
+            targetEntity: Card
             nullable: false
             joinColumn:
                 name: identity_id
                 referencedColumnName: id
         lastPack:
-            targetEntity: AppBundle\Entity\Pack
+            targetEntity: Pack
             nullable: false
             joinColumn:
                 name: last_pack_id

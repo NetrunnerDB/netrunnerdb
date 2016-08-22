@@ -1,7 +1,7 @@
 AppBundle\Entity\Deckslot:
     type: entity
     table: deckslot
-    repositoryClass: AppBundle\Entity\DeckslotRepository
+    repositoryClass: DeckslotRepository
     manyToOne:
         deck:
             targetEntity: Deck
@@ -11,7 +11,7 @@ AppBundle\Entity\Deckslot:
                 name: deck_id
                 referencedColumnName: id
         card:
-            targetEntity: AppBundle\Entity\Card
+            targetEntity: Card
             nullable: false
             joinColumn:
                 name: card_id

@@ -1,13 +1,13 @@
-AppBundle\Entity\Mwlslot:
+AppBundle\Entity\Prebuiltslot:
     type: entity
-    table: mwlslot
+    table: prebuiltslot
     manyToOne:
-        mwl:
-            targetEntity: Mwl
+        prebuilt:
+            targetEntity: Prebuilt
             nullable: false
             inversedBy: slots
             joinColumn:
-                name: mwl_id
+                name: prebuilt_id
                 referencedColumnName: id
         card:
             targetEntity: Card
@@ -15,13 +15,12 @@ AppBundle\Entity\Mwlslot:
             joinColumn:
                 name: card_id
                 referencedColumnName: id
-    id:
+    fields:
         id:
             type: integer
             id: true
             generator:
                 strategy: AUTO
-    fields:
-        penalty:
-            type: integer
+        quantity:
+            type: smallint
     lifecycleCallbacks: {  }

@@ -1,16 +1,16 @@
 AppBundle\Entity\Reviewcomment:
     type: entity
     table: reviewcomment
-    repositoryClass: AppBundle\Entity\ReviewcommentRepository
+    repositoryClass: ReviewcommentRepository
     manyToOne:
         author:
-            targetEntity: AppBundle\Entity\User
+            targetEntity: User
             nullable: false
             joinColumn:
                 name: user_id
                 referencedColumnName: id
         review:
-            targetEntity: AppBundle\Entity\Review
+            targetEntity: Review
             nullable: false
             inversedBy: comments
             joinColumn:

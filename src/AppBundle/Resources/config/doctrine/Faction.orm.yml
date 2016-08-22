@@ -13,7 +13,7 @@ AppBundle\Entity\Faction:
             targetEntity: Card
             mappedBy: faction
         decklists:
-            targetEntity: AppBundle\Entity\Decklist
+            targetEntity: Decklist
             mappedBy: faction
     manyToOne:
         side:

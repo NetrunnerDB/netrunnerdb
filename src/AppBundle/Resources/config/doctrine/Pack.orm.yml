@@ -23,7 +23,7 @@ AppBundle\Entity\Pack:
             targetEntity: Card
             mappedBy: pack
         decklists:
-            targetEntity: AppBundle\Entity\Decklist
+            targetEntity: Decklist
             mappedBy: lastPack
     fields:
         id:

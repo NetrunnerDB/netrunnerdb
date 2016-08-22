@@ -677,6 +677,12 @@ api_public_deck:
     requirements:
         deck_id: "\\d+"
         
+api_public_prebuilts:
+    path: /api/2.0/public/prebuilts
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:prebuilts
+        
 api_public_mwl:
     path: /api/2.0/public/mwl
     methods: [GET]

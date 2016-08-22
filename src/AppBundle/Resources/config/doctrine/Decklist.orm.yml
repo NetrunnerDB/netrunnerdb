@@ -1,41 +1,41 @@
 AppBundle\Entity\Decklist:
     type: entity
     table: decklist
-    repositoryClass: AppBundle\Entity\DecklistRepository
+    repositoryClass: DecklistRepository
     indexes:
         date_creation_index:
             columns: [ date_creation ]
     manyToOne:
         user:
-            targetEntity: AppBundle\Entity\User
+            targetEntity: User
             nullable: false
             inversedBy: decklists
             joinColumn:
                 name: user_id
                 referencedColumnName: id
         side:
-            targetEntity: AppBundle\Entity\Side
+            targetEntity: Side
             nullable: false
             inversedBy: decklists
             joinColumn:
                 name: side_id
                 referencedColumnName: id
         identity:
-            targetEntity: AppBundle\Entity\Card
+            targetEntity: Card
             nullable: false
             inversedBy: decklists
             joinColumn:
                 name: identity_id
                 referencedColumnName: id
         faction:
-            targetEntity: AppBundle\Entity\Faction
+            targetEntity: Faction
             nullable: false
             inversedBy: decklists
             joinColumn:
                 name: faction_id
                 referencedColumnName: id
         lastPack:
-            targetEntity: AppBundle\Entity\Pack
+            targetEntity: Pack
             nullable: false
             inversedBy: decklists
             joinColumn:
@@ -83,7 +83,7 @@ AppBundle\Entity\Decklist:
             cascade: ["remove"]
     manyToMany:
         favorites:
-            targetEntity: AppBundle\Entity\User
+            targetEntity: User
             inversedBy: favorites
             joinTable:
                 name: favorite
@@ -95,7 +95,7 @@ AppBundle\Entity\Decklist:
                         referencedColumnName: id
             cascade: ["persist"]
         votes:
-            targetEntity: AppBundle\Entity\User
+            targetEntity: User
             inversedBy: votes
             joinTable:
                 name: vote

@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Filesystem\Filesystem;
+use AppBundle\Entity\Prebuiltslot;
 
 class ImportStdCommand extends ContainerAwareCommand
 {
@@ -131,6 +132,20 @@ class ImportStdCommand extends ContainerAwareCommand
 		foreach ($fileSystemIterator as $fileinfo) {
 			$imported = array_merge($imported, $this->importCardsJsonFile($fileinfo));
 		}
+		if(count($imported)) {
+			$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
+			if(!$helper->ask($input, $output, $question)) {
+				die();
+			}
+		}
+		$this->em->flush();
+		$output->writeln("Done.");
+
+		// prebuilt
+		
+		$output->writeln("Importing Prebuilts...");
+		$prebuiltFileInfo = $this->getFileInfo($path, 'prebuilts.json');
+		$imported = $this->importPrebuiltJsonFile($prebuiltFileInfo);
 		if(count($imported)) {
 			$question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
 			if(!$helper->ask($input, $output, $question)) {
@@ -306,6 +321,43 @@ class ImportStdCommand extends ContainerAwareCommand
 		return $result;
 	}
 
+	protected function importPrebuiltJsonFile(\SplFileInfo $fileinfo)
+	{
+		$result = [];
+	
+		$prebuiltData = $this->getDataFromFile($fileinfo);
+		foreach($prebuiltData as $prebuiltData) {
+			$prebuilt = $this->getEntityFromData('AppBundle\Entity\Prebuilt', $prebuiltData, [
+					'code',
+					'name',
+					'date_release',
+					'position'
+			], [], []);
+			if($prebuilt) {
+				$result[] = $prebuilt;
+				$this->em->persist($prebuilt);
+	
+				foreach($prebuiltData['cards'] as $card_code => $quantity) {
+					$card = $this->em->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
+					if(!$card) continue;
+					$prebuiltslot = new Prebuiltslot();
+					$prebuiltslot->setCard($card);
+					$prebuiltslot->setQuantity($quantity);
+					$prebuiltslot->setPrebuilt($prebuilt);
+					$this->em->persist($prebuiltslot);
+					
+					if($card->getType()->getCode() === 'identity') {
+						$prebuilt->setIdentity($card);
+						$prebuilt->setFaction($card->getFaction());
+						$prebuilt->setSide($card->getFaction()->getSide());
+					}
+				}
+			}
+		}
+	
+		return $result;
+	}
+	
 	protected function importMwlJsonFile(\SplFileInfo $fileinfo)
 	{
 		$result = [];

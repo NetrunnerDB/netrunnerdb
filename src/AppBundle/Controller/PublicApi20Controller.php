@@ -377,6 +377,24 @@ class PublicApi20Controller extends FOSRestController
 	}
 
 	/**
+	 * Get all prebuilts
+	 *
+	 * @ApiDoc(
+	 *  section="Prebuilt",
+	 *  resource=true,
+	 *  description="Get all the prebuilts",
+	 *  parameters={
+	 *  },
+	 * )
+	 */
+	public function prebuiltsAction(Request $request)
+	{
+		$data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Prebuilt')->findAll();
+	
+		return $this->prepareResponse($data, $request);
+	}
+	
+	/**
 	 * Get all MWL data
 	 *
 	 * @ApiDoc(

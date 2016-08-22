@@ -1,17 +1,17 @@
 AppBundle\Entity\Comment:
     type: entity
     table: comment
-    repositoryClass: AppBundle\Entity\CommentRepository
+    repositoryClass: CommentRepository
     manyToOne:
         author:
-            targetEntity: AppBundle\Entity\User
+            targetEntity: User
             nullable: false
             inversedBy: comments
             joinColumn:
                 name: user_id
                 referencedColumnName: id
         decklist:
-            targetEntity: AppBundle\Entity\Decklist
+            targetEntity: Decklist
             nullable: false
             inversedBy: comments
             joinColumn:

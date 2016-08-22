@@ -16,10 +16,10 @@ AppBundle\Entity\Side:
             targetEntity: Faction
             mappedBy: side
         decks:
-            targetEntity: AppBundle\Entity\Deck
+            targetEntity: Deck
             mappedBy: side
         decklists:
-            targetEntity: AppBundle\Entity\Decklist
+            targetEntity: Decklist
             mappedBy: side
     fields:
         id:

@@ -45,11 +45,11 @@ AppBundle\Entity\Card:
                 referencedColumnName: id
     oneToMany:
         decklists:
-            targetEntity: AppBundle\Entity\Decklist
+            targetEntity: Decklist
             orderBy: {'dateCreation':'DESC'}
             mappedBy: identity
         reviews:
-            targetEntity: AppBundle\Entity\Review
+            targetEntity: Review
             orderBy: {'dateCreation':'DESC'}
             mappedBy: card
     fields:

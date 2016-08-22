@@ -1,35 +1,35 @@
 AppBundle\Entity\User:
     type: entity
     table: user
-    repositoryClass: AppBundle\Entity\UserRepository
+    repositoryClass: UserRepository
     oneToMany:
         decks:
-            targetEntity: AppBundle\Entity\Deck
+            targetEntity: Deck
             orderBy: {'dateUpdate':'DESC'}
             mappedBy: user
             cascade: ["remove"]
         decklists:
-            targetEntity: AppBundle\Entity\Decklist
+            targetEntity: Decklist
             mappedBy: user
         comments:
-            targetEntity: AppBundle\Entity\Comment
+            targetEntity: Comment
             orderBy: {'dateCreation':'DESC'}
             mappedBy: author
         reviews:
-            targetEntity: AppBundle\Entity\Review
+            targetEntity: Review
             orderBy: {'dateCreation':'DESC'}
             mappedBy: user
     manyToMany:
         favorites:
-            targetEntity: AppBundle\Entity\Decklist
+            targetEntity: Decklist
             mappedBy: favorites
             cascade: ["remove"]
         votes:
-            targetEntity: AppBundle\Entity\Decklist
+            targetEntity: Decklist
             mappedBy: votes
             cascade: ["remove"]
         reviewvotes:
-            targetEntity: AppBundle\Entity\Review
+            targetEntity: Review
             mappedBy: votes
             cascade: ["remove"]
         following:

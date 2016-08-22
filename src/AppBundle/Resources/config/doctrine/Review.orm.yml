@@ -1,19 +1,19 @@
 AppBundle\Entity\Review:
     type: entity
     table: review
-    repositoryClass: AppBundle\Entity\ReviewRepository
+    repositoryClass: ReviewRepository
     uniqueConstraints:
         usercard_index:
             columns: [ card_id, user_id ]
     manyToOne:
         card:
-            targetEntity: AppBundle\Entity\Card
+            targetEntity: Card
             inversedBy: reviews
             joinColumn:
                 name: card_id
                 referencedColumnName: id
         user:
-            targetEntity: AppBundle\Entity\User
+            targetEntity: User
             inversedBy: reviews
             joinColumn:
                 name: user_id
@@ -25,7 +25,7 @@ AppBundle\Entity\Review:
             cascade: ["persist"]
     manyToMany:
         votes:
-            targetEntity: AppBundle\Entity\User
+            targetEntity: User
             inversedBy: reviewvotes
             joinTable:
                 name: reviewvote
