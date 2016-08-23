@@ -1,4 +1,4 @@
-NRDB.data_loaded.add(function() {
+$(document).on('data.app', function() {
 	$('#btn-group-deck').on('click', 'button[id],a[id]', do_action_deck);
 	$('#btn-group-selection').on('click', 'button[id],a[id]', do_action_selection);
 	$('#btn-group-sort').on('click', 'button[id],a[id]', do_action_sort);
@@ -65,7 +65,7 @@ function do_diff(ids) {
 	var contents = [];
 	var names = [];
 	for(var decknum=0; decknum<ids.length; decknum++) {
-		var deck = DeckDB({id:ids[decknum]}).first();
+		var deck = _.find(Decks, function (deck) { return deck.id = ids[decknum] });
 		var hash = {};
 		for(var slotnum=0; slotnum<deck.cards.length; slotnum++) {
 			var slot = deck.cards[slotnum];
@@ -84,7 +84,7 @@ function do_diff(ids) {
 	container.append("<h4>Cards in all decks</h4>");
 	var list = $('<ul></ul>').appendTo(container);
 	var cards = $.map(intersect, function(qty, card_code) {
-		var card = NRDB.data.get_card_by_code(card_code);
+		var card = NRDB.data.cards.findById(card_code);
 		if(card) return { title: card.title, qty: qty };
 	}).sort(function (a, b) { return a.title.localeCompare(b.title); });
 	$.each(cards, function (index, card) {
@@ -95,7 +95,7 @@ function do_diff(ids) {
 		container.append("<h4>Cards only in <b>"+names[i]+"</b></h4>");
 		var list = $('<ul></ul>').appendTo(container);
 		var cards = $.map(listings[i], function(qty, card_code) {
-			var card = NRDB.data.get_card_by_code(card_code);
+			var card = NRDB.data.cards.findById(card_code);
 			if(card) return { title: card.title, qty: qty };
 		}).sort(function (a, b) { return a.title.localeCompare(b.title); });
 		$.each(cards, function (index, card) {
@@ -112,7 +112,7 @@ function do_diff_collection(ids) {
 	var ensembles; ensembles = [];
 	var lengths; lengths = [];
 	for(var decknum=0; decknum<ids.length; decknum++) {
-		var deck = DeckDB({id:String(ids[decknum])}).first();
+		var deck = _.find(Decks, function (deck) { return deck.id = ids[decknum] });
 		decks.push(deck);
 		var cards = [];
 		for(var slotnum=0; slotnum<deck.cards.length; slotnum++) {
@@ -166,7 +166,7 @@ function do_diff_collection(ids) {
 	container.append("<h4>Cards in all decks</h4>");
 	var list = $('<ul></ul>').appendTo(container);
 	$.each(intersect, function (card_code, qty) {
-		var card = NRDB.data.get_card_by_code(card_code);
+		var card = NRDB.data.cards.findById(card_code);
 		if(card) list.append('<li>'+card.title+' x'+qty+'</li>');
 	});
 
@@ -174,7 +174,7 @@ function do_diff_collection(ids) {
 		container.append("<h4>Cards only in <b>"+names[i]+"</b></h4>");
 		var list = $('<ul></ul>').appendTo(container);
 		$.each(listings[i], function (card_code, qty) {
-			var card = NRDB.data.get_card_by_code(card_code);
+			var card = NRDB.data.cards.findById(card_code);
 			if(card) list.append('<li>'+card.title+' x'+qty+'</li>');
 		});
 	}
@@ -215,7 +215,7 @@ function do_action_deck(event) {
 	event.stopPropagation();
 	if(event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
 	var deck_id = $(this).closest('.deck-list-group-item').data('id');
-	var deck = SelectedDeck = DeckDB({id:deck_id}).first();
+	var deck = SelectedDeck = _.find(Decks, function (deck) { return deck.id = deck_id });
 	if(!deck) return;
 	var action_id = $(this).attr('id');
 	if(!action_id) return;
@@ -261,9 +261,9 @@ function do_action_sort(event) {
 	switch(action_id) {
 		case 'btn-sort-update': sort_list('date_update'); break;
 		case 'btn-sort-creation': sort_list('date_creation'); break;
-		case 'btn-sort-identity': sort_list('identity_title,name'); break;
-		case 'btn-sort-faction': sort_list('faction_code,name'); break;
-		case 'btn-sort-lastpack': sort_list('cycle_id,pack_number'); break;
+		case 'btn-sort-identity': sort_list('identity_title'); break;
+		case 'btn-sort-faction': sort_list('faction_code'); break;
+		case 'btn-sort-lastpack': sort_list('lastpack_global_position'); break;
 		case 'btn-sort-name': sort_list('name'); break;
 	}
 	return false;
@@ -290,14 +290,16 @@ function sort_list(type)
     }
     container.data('sort-type', type);
     container.data('sort-order', order);
-    var sort = type.split(/,/).map(function (t) { return t+' '+(order > 0 ? 'desc' : 'asec'); }).join(',');
-	var sorted_list_id = DeckDB().order(sort).select('id');
-	var first_id = sorted_list_id.shift();
-	var deck_elt = $('#deck_'+first_id);
+    var sorted_list_id = Decks.sort(function (a, b) {
+		return order * a[type].localeCompare(b[type]);
+	}).map(function (deck) {
+		return deck.id;
+	});
+	var deck_elt = $('#deck_'+sorted_list_id.shift());
 	
 	container.prepend(deck_elt);
-	sorted_list_id.forEach(function (id) {
-		deck_elt = $('#deck_'+id).insertAfter(deck_elt);
+	sorted_list_id.forEach(function (deck_id) {
+		deck_elt = $('#deck_'+deck_id).insertAfter(deck_elt);
 	});
 	
 }
@@ -476,7 +478,7 @@ function hide_deck() {
 
 function show_deck() {
 	var deck_id = $(LastClickedDeck).data('id');
-	var deck = DeckDB({id:deck_id}).first();
+	var deck = _.find(Decks, function (deck) { return deck.id = deck_id });
 	if(!deck) return;
 
 	var container = $('#deck_'+deck.id);
@@ -489,16 +491,16 @@ function show_deck() {
 	$(this).closest('tr').siblings().removeClass('active');
 	$(this).closest('tr').addClass('active');
 	
-	NRDB.data.cards().update({indeck:0});
+	NRDB.data.cards.update({},{indeck:0});
 	for(var i=0; i<deck.cards.length; i++) {
 		var slot = deck.cards[i];
-		NRDB.data.get_cards_by_code(slot.card_code).update({indeck:parseInt(slot.qty,10)});
+		NRDB.data.cards.updateById(slot.card_code, {indeck:parseInt(slot.qty,10)});
 	}
 	$('#deck-name').text(deck.name);
 	$('#btn-view').attr('href', Routing.generate('deck_view', {deck_id:deck.id,_locale:NRDB.locale}));
 	$('#btn-edit').attr('href', Routing.generate('deck_edit', {deck_id:deck.id,_locale:NRDB.locale}));
 
-	var mwl_id = deck.mwl_id, mwl_record = mwl_id && NRDB.data.mwl({id:parseInt(mwl_id)}).first();
+	var mwl_code = deck.mwl_code, mwl_record = mwl_code && NRDB.data.mwl.findById(mwl_code);
 	if(mwl_record) {
 		MWL = mwl_record.cards;
 		$('#mwl').html('Built for '+mwl_record.name);

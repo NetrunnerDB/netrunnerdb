@@ -26,11 +26,11 @@
 				<input type="text" class="form-control" id="card" placeholder="Enter card title">
 			</div>
 			<div class="form-group">
-				<label for="mwl_id">Legal for</label>
-				<select class="form-control" id="mwl_id" name="mwl_id">
+				<label for="mwl_code">Legal for</label>
+				<select class="form-control" id="mwl_code" name="mwl_code">
 					<option value="">Casual Play</option>
 					{% for mwl in list_mwl %}
-					<option value="{{ mwl.id }}"{% if mwl.id == mwl_id %} selected="selected"{% endif %}>
+					<option value="{{ mwl.code }}"{% if mwl.code == mwl_code %} selected="selected"{% endif %}>
 						{{ mwl.name }}
 					</option>
 					{% endfor %}

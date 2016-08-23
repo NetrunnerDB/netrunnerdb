@@ -1,19 +1,19 @@
 
-NRDB.data_loaded.add(function() {
+$(document).on('data.app', function() {
 	var sets_in_deck = {};
-	NRDB.data.cards().each(function(record) {
+	NRDB.data.cards.find().forEach(function(card) {
 		var indeck = 0;
-		if (SelectedDeck.slots[record.code]) {
-			indeck = parseInt(SelectedDeck.slots[record.code], 10);
-			sets_in_deck[record.pack_code] = 1;
+		if (SelectedDeck.slots[card.code]) {
+			indeck = parseInt(SelectedDeck.slots[card.code], 10);
+			sets_in_deck[card.pack_code] = 1;
 		}
-		NRDB.data.cards(record.___id).update({
+		NRDB.data.cards.updateById(card.code, {
 			indeck : indeck,
-			factioncost : record.factioncost || 0
+			factioncost : card.factioncost || 0
 		});
 	});
 
-	var mwl_id = SelectedDeck.mwl_id, mwl_record = mwl_id && NRDB.data.mwl({id:parseInt(mwl_id)}).first();
+	var mwl_code = SelectedDeck.mwl_code, mwl_record = mwl_code && NRDB.data.mwl.findById(mwl_code);
 	MWL = mwl_record ? mwl_record.cards : null;
 
 	update_deck();

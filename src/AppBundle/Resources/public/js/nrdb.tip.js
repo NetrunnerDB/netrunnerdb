@@ -13,7 +13,7 @@ NRDB.tip = {};
 				|| ($(this).attr('href') && $(this).attr('href').replace(
 						/.*\/card\/(\d\d\d\d\d).*/,
 						"$1"));
-		var card = NRDB.data.get_card_by_code(code);
+		var card = NRDB.data.cards.findById(code);
 		if (!card) return;
 		var type = '<p class="card-info">' + NRDB.format.type(card) + '</p>';
 		var influence = '';
@@ -62,9 +62,9 @@ NRDB.tip = {};
 		}
 	}
 
-	$(function() {
+	$(document).on('data.app', function() {
 
-		if(NRDB.api_url && (typeof Modernizr === 'undefined' || !Modernizr.touch )) {
+		if(!Modernizr.touch) {
 			$('body').on({
 				mouseover : tip.display,
 				focus : tip.display

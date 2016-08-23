@@ -18,14 +18,14 @@ NRDB.card_modal = {};
 	};
 
 	card_modal.typeahead = function (event, data) {
-		var card = NRDB.data.cards({title:data.value}).first();
+		var card = NRDB.data.cards.find({title:data.value}).pop();
 		fill_modal(card.code);
 		$('#cardModal').modal('show');
 		InputByTitle = true;
 	};
 
 	function fill_modal (code) {
-		var card = NRDB.data.get_card_by_code(code);
+		var card = NRDB.data.cards.findById(code);
 		modal.data('index', code);
 		modal.find('.card-modal-link').attr('href', card.url);
 		modal.find('h3.modal-title').html((card.uniqueness ? "&diams; " : "")+card.title);

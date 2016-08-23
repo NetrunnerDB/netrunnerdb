@@ -47,8 +47,8 @@ NRDB.suggestions = {};
 				};
 			});
 			// find used cards
-			var indexes = NRDB.data.cards({indeck:{'gt':0}}).select('code').map(function (code) {
-				return suggestions.indexFromCodes[code];
+			var indexes = NRDB.data.cards.find({indeck:{'$gt':0}}).map(function (card) {
+				return suggestions.indexFromCodes[card.code];
 			});
 			// add suggestions of all used cards
 			indexes.forEach(function (i) {
@@ -63,8 +63,8 @@ NRDB.suggestions = {};
 				if(suggestions.current[i]) suggestions.current[i].proba = 0;
 			});
 			// remove suggestions of identity
-			NRDB.data.cards({type_code:'identity'}).select('code').map(function (code) {
-				return suggestions.indexFromCodes[code];
+			NRDB.data.cards.find({type_code:'identity'}).map(function (card) {
+				return suggestions.indexFromCodes[card.code];
 			}).forEach(function (i) {
 				if(suggestions.current[i]) suggestions.current[i].proba = 0;
 			});
@@ -94,7 +94,7 @@ NRDB.suggestions = {};
 		}
 		var nb = 0;
 		for(var i=0; i<suggestions.current.length; i++) {
-			var card = NRDB.data.get_card_by_code(suggestions.current[i].code);
+			var card = NRDB.data.cards.findById(suggestions.current[i].code);
 			if(is_card_usable(card) && Filters.pack_code.indexOf(card.pack_code) > -1) {
 				var div = suggestions.div(card);
 				div.on('click', 'button.close', suggestions.exclude.bind(this, card.code));
@@ -163,6 +163,6 @@ NRDB.suggestions = {};
 	});
 
 })(NRDB.suggestions, jQuery);
-NRDB.data_loaded.add(function() {
+$(document).on('data.app', function() {
 	NRDB.suggestions.query(Side);
 });

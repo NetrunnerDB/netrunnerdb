@@ -119,11 +119,10 @@ function write_review_open(event) {
 					{
 						match : /\B#([\-+\w]*)$/,
 						search : function(term, callback) {
-							callback(NRDB.data.cards({
-								title : {
-									likenocase : term
-								}
-							}).get());
+							var regexp = new RegExp('\\b' + term, 'i');
+							callback(NRDB.data.cards.find({
+								title : regexp
+							}));
 						},
 						template : function(value) {
 							return value.title;

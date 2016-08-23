@@ -31,20 +31,23 @@ class Decks
                 DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
 				d.description,
                 d.tags,
-                d.mwl_id,
+                m.code mwl_code,
                 (select count(*) from deckchange c where c.deck_id=d.id and c.saved=0) unsaved,
                 d.problem,
 				c.title identity_title,
                 c.code identity_code,
 				f.code faction_code,
+        		LPAD(y.position * 10 + p.position, 6, '0') lastpack_global_position,
                 p.cycle_id cycle_id,
                 p.position pack_number,
 				s.name side
 				from deck d
+        		left join mwl m on d.mwl_id=m.id
 				left join card c on d.identity_id=c.id
 				left join faction f on c.faction_id=f.id
 				left join side s on d.side_id=s.id
                 left join pack p on d.last_pack_id=p.id
+        		left join cycle y on p.cycle_id=y.id
 				where d.user_id=?
 				order by date_update desc", array(
                         $user->getId()
@@ -138,7 +141,7 @@ class Decks
 				DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
 				d.description,
                 d.tags,
-                d.mwl_id,
+                m.code mwl_code,
                 (select count(*) from deckchange c where c.deck_id=d.id and c.saved=0) unsaved,
                 d.problem,
 				c.title identity_title,
@@ -146,6 +149,7 @@ class Decks
 				f.code faction_code,
 				s.name side
 				from deck d
+        		left join mwl m on d.mwl_id=m.id
 				left join card c on d.identity_id=c.id
 				left join faction f on c.faction_id=f.id
 				left join side s on d.side_id=s.id
@@ -201,7 +205,7 @@ class Decks
     }
     
 
-    public function saveDeck ($user, $deck, $decklist_id, $name, $description, $tags, $mwl_id, $content, $source_deck)
+    public function saveDeck ($user, $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck)
     {
         $deck_content = array();
         if ($decklist_id) {
@@ -209,8 +213,8 @@ class Decks
             if ($decklist)
                 $deck->setParent($decklist);
         }
-        if($mwl_id) {
-            $mwl = $this->doctrine->getRepository('AppBundle:Mwl')->find($mwl_id);
+        if($mwl_code) {
+            $mwl = $this->doctrine->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
             if ($mwl)
                 $deck->setMwl($mwl);
         }

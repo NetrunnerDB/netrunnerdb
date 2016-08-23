@@ -9,8 +9,7 @@
 var Identity = null,
 	Decklist = {{ decklist|json_encode|raw }},
 	Commenters = {{ commenters|json_encode|raw }},
-	DeckDB = TAFFY([Decklist]),
-	SelectedDeck = DeckDB().first(),
+	SelectedDeck = Decklist,
 	MWL = {{ mwl|json_encode|raw }},
 	DisplaySort = 'type',
 	DisplaySortSecondary = 'name';
@@ -124,14 +123,14 @@ NRDB.user.params.decklist_id = Decklist.id;
     <td>
     	{% if legality.is_legal %}<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
     	{% else %}<span class="glyphicon glyphicon-thumbs-down" style="color:red"></span>{% endif %}
-    	<a href="#" class="change_mwl" data-id="{{ legality.id }}">{{ legality.name }}</a>
+    	<a href="#" class="change_mwl" data-code="{{ legality.code }}">{{ legality.name }}</a>
     </td>
 </tr>
 {% endfor %}
 <tr>
     <td>
     	<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
-    	<a href="#" class="change_mwl" data-id="0">Casual Play</a>
+    	<a href="#" class="change_mwl" data-code="0">Casual Play</a>
     </td>
 </tr>
 </tbody>

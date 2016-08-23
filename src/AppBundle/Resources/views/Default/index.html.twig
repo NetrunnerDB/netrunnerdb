@@ -8,8 +8,7 @@
 
 var Identity = null,
 	Decklist = {{ decklist|json_encode|raw }},
-	DeckDB = TAFFY([Decklist]),
-	SelectedDeck = DeckDB().first(),
+	SelectedDeck = Decklist,
         MWL = null,
 	DisplaySort = 'type',
 	DisplaySortSecondary = 'name';

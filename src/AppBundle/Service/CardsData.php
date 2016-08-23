@@ -97,7 +97,6 @@ class CardsData
 					"name" => $pack->getName(),
 					"code" => $pack->getCode(),
 					"number" => $pack->getPosition(),
-					"cyclenumber" => $pack->getCycle()->getPosition(),
 					"available" => $pack->getDateRelease() ? $pack->getDateRelease()->format('Y-m-d') : '',
 					"known" => intval($real),
 					"total" => $max,
@@ -122,7 +121,6 @@ class CardsData
 				$packs[] = array(
 						"name" => $pack->getName(),
 						"code" => $pack->getCode(),
-				        "cyclenumber" => $cycle->getPosition(),
 						"available" => $pack->getDateRelease() ? $pack->getDateRelease()->format('Y-m-d') : '',
 						"known" => intval($real),
 						"total" => $max,
@@ -137,7 +135,6 @@ class CardsData
 				$cycles[] = array(
 						"name" => $cycle->getName(),
 						"code" => $cycle->getCode(),
-				        "cyclenumber" => $cycle->getPosition(),
 						"known" => intval($sreal),
 						"total" => $smax,
 						"url" => $this->router->generate('cards_cycle', array('cycle_code' => $cycle->getCode()), UrlGeneratorInterface::ABSOLUTE_URL),
@@ -516,40 +513,36 @@ class CardsData
 
 		$cardinfo = array(
 				"id" => $card->getId(),
-				"last-modified" => $card->getDateUpdate()->format('c'),
 				"code" => $card->getCode(),
 				"title" => $card->getTitle(),
-				"type" => $card->getType()->getName(),
+				"type_name" => $card->getType()->getName(),
 				"type_code" => $card->getType()->getCode(),
 				"subtype" => $card->getKeywords(),
-				"subtype_code" => mb_strtolower($card->getKeywords()),
 				"text" => $card->getText(),
 				"advancementcost" => $card->getAdvancementCost(),
 				"agendapoints" => $card->getAgendaPoints(),
 				"baselink" => $card->getBaseLink(),
 				"cost" => $card->getCost(),
-				"faction" => $card->getFaction()->getName(),
+				"faction_name" => $card->getFaction()->getName(),
 				"faction_code" => $card->getFaction()->getCode(),
-                "faction_letter" => self::$faction_letters[$card->getFaction()->getCode()],
 		        "factioncost" => $card->getFactionCost(),
 				"flavor" => $card->getFlavor(),
 				"illustrator" => $card->getIllustrator(),
 				"influencelimit" => $card->getInfluenceLimit(),
 				"memoryunits" => $card->getMemoryCost(),
 				"minimumdecksize" => $card->getMinimumDeckSize(),
-				"number" => $card->getPosition(),
+				"position" => $card->getPosition(),
 				"quantity" => $card->getQuantity(),
-				"id_set" => $card->getPack()->getId(),
-				"setname" => $card->getPack()->getName(),
-				"set_code" => $card->getPack()->getCode(),
-				"side" => $card->getSide()->getName(),
+				"pack_name" => $card->getPack()->getName(),
+				"pack_code" => $card->getPack()->getCode(),
+				"side_name" => $card->getSide()->getName(),
 				"side_code" => $card->getSide()->getCode(),
 				"strength" => $card->getStrength(),
 				"trash" => $card->getTrashCost(),
 				"uniqueness" => $card->getUniqueness(),
 				"limited" => $card->getDeckLimit(),
+				"cycle_name" => $card->getPack()->getCycle()->getName(),
 				"cycle_code" => $card->getPack()->getCycle()->getCode(),
-		        "cyclenumber" => $card->getPack()->getCycle()->getPosition(),
 		        "ancur_link" => $card->getAncurLink(),
 		);
 
@@ -559,7 +552,7 @@ class CardsData
 		}
 		
 		// setting the card strength to X if the strength is null and the card subtype has icebreaker
-		if($cardinfo['strength'] === null && strstr($cardinfo['subtype_code'], 'icebreaker') !== FALSE) {
+		if($cardinfo['strength'] === null && strstr($cardinfo['subtype'], 'Icebreaker') !== FALSE) {
 			$cardinfo['strength'] = 'X';
 		}
 		

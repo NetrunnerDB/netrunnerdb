@@ -334,7 +334,7 @@ class SearchController extends Controller
 			if(count($cards) && $view == "short") {
 				
 				$sortfields = [
-					'set' => 'setname',
+					'set' => 'pack_name',
 					'name' => 'title',
 					'faction' => 'faction',
 					'type' => 'type',

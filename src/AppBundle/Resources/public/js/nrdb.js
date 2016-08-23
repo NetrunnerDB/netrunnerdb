@@ -136,13 +136,13 @@ function getDisplayDescriptions(sort) {
 function process_deck_by_type() {
 	
 	var bytype = {};
-	Identity = NRDB.data.cards({indeck:{'gt':0},type_code:'identity'}).first();
+	Identity = NRDB.data.cards.find({indeck:{'$gt':0},type_code:'identity'}).pop();
 	if(!Identity) {
 		return;
 	}
 
-	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).order("type,title").each(function(record) {
-		var type = record.type_code, keywords = record.keywords ? record.keywords.toLowerCase().split(" - ") : [];
+	NRDB.data.cards.find({indeck:{'$gt':0},type_code:{'$ne':'identity'}}, {type:1,title:1}).forEach(function(card) {
+		var type = card.type_code, keywords = card.keywords ? card.keywords.toLowerCase().split(" - ") : [];
 		if(type == "ice") {
 			var ice_type = [];
 			 if(keywords.indexOf("barrier") >= 0) {
@@ -166,15 +166,15 @@ function process_deck_by_type() {
 			 }
 		}
 		var influence = 0, faction_code = '';
-		if(record.faction_code != Identity.faction_code) {
-			faction_code = record.faction_code;
-			influence = record.faction_cost * record.indeck;
+		if(card.faction_code != Identity.faction_code) {
+			faction_code = card.faction_code;
+			influence = card.faction_cost * card.indeck;
 		}
 		
 		if(bytype[type] == null) bytype[type] = [];
 		bytype[type].push({
-			card: record,
-			qty: record.indeck,
+			card: card,
+			qty: card.indeck,
 			influence: influence,
 			faction: faction_code
 		});
@@ -212,7 +212,7 @@ function update_deck(options) {
 		if(options.restrainOneColumn) restrainOneColumn = options.restrainOneColumn;
 	}
 	
-	Identity = NRDB.data.cards({indeck:{'gt':0},type_code:'identity'}).first();
+	Identity = NRDB.data.cards.find({indeck:{'$gt':0},type_code:'identity'}).pop();
 	if(!Identity) return;
 
 	if(Identity.side_code === 'runner') $('#table-graph-strengths').hide();
@@ -231,8 +231,8 @@ function update_deck(options) {
 	}
 	if(DisplaySort === 'number' && displayDescription.length === 0) {
 		var rows = [];
-		NRDB.data.packs().each(function (record) {
-			rows.push({id: record.code, label: record.name});
+		NRDB.data.packs.find().forEach(function (pack) {
+			rows.push({id: pack.code, label: pack.name});
 		});
 		displayDescription.push(rows);
 	}
@@ -268,55 +268,58 @@ function update_deck(options) {
 	
 	check_decksize();
 	
-	var latestpack = NRDB.data.packs({code:Identity.pack_code}).first();
-	var order = '';
+	var orderBy = {};
 	switch(DisplaySort) {
 		case 'type':
-			order = 'type_code';
+			orderBy['type_code'] = 1;
 			break;
 		case 'faction':
-			order = 'faction_code';
+			orderBy['faction_code'] = 1;
 			break;
 		case 'number':
-			order = 'code';
+			orderBy['code'] = 1;
 			break;
 		case 'title':
-			order = 'title';
+			orderBy['title'] = 1;
 			break;
 	}
 	switch(DisplaySortSecondary) {
 		case 'type':
-			order += ',type_code';
+			orderBy['type_code'] = 1;
 			break;
 		case 'faction':
-			order += ',faction_code';
+			orderBy['faction_code'] = 1;
 			break;
 		case 'number':
-			order = ',code';
+			orderBy['code'] = 1;
 			break;
 	}
-	order += ',title';
-	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).order(order).each(function(record) {
-		var pack = NRDB.data.packs({code:record.pack_code}).first();
-		if(latestpack.cycle.position < pack.cycle.position || (latestpack.cycle.position == pack.cycle.position && latestpack.position < pack.position)) latestpack = pack;
+	orderBy['title'] = 1;
+	
+	var latestpack = Identity.pack;
+	NRDB.data.cards.find({indeck:{'$gt':0},type_code:{'$ne':'identity'}}, {'$orderBy': orderBy}).forEach(function(card) {
+		if(latestpack.cycle.position < card.pack.cycle.position 
+				|| (latestpack.cycle.position == card.pack.cycle.position && latestpack.position < card.pack.position)) {
+			latestpack = card.pack;
+		}
 		
 		var influence = '';
-		if(record.faction_code != Identity.faction_code) {
-			var theorical_influence_spent = record.indeck * record.faction_cost
-			record.influence_spent = get_influence_cost_of_card_in_deck(record);
+		if(card.faction_code != Identity.faction_code) {
+			var theorical_influence_spent = card.indeck * card.faction_cost
+			card.influence_spent = get_influence_cost_of_card_in_deck(card);
 			for(var i=0; i<theorical_influence_spent; i++) {
 				if(i && i%5 == 0) influence += " ";
-				influence += (i < record.influence_spent ? "●" : "○");
+				influence += (i < card.influence_spent ? "●" : "○");
 			}
 			
-			influence = ' <span class="influence influence-'+record.faction_code+'">'+influence+'</span>';
+			influence = ' <span class="influence influence-'+card.faction_code+'">'+influence+'</span>';
 		}
 
 		var criteria = null;
-		var additional_info = get_influence_penalty_icons(record, record.indeck) + influence;
+		var additional_info = get_influence_penalty_icons(card, card.indeck) + influence;
 		
 		if(DisplaySort === 'type') {
-			criteria = record.type_code, keywords = record.keywords ? record.keywords.toLowerCase().split(" - ") : [];
+			criteria = card.type_code, keywords = card.keywords ? card.keywords.toLowerCase().split(" - ") : [];
 			if(criteria == "ice") {
 				var ice_type = [];
 				if(keywords.indexOf("barrier") >= 0) ice_type.push("barrier");
@@ -332,24 +335,24 @@ function update_deck(options) {
 				 if(keywords.indexOf("icebreaker") >= 0) criteria = "icebreaker";
 			}
 		} else if(DisplaySort === 'faction') {
-			criteria = record.faction_code;
+			criteria = card.faction_code;
 		} else if(DisplaySort === 'number') {
-			criteria = record.pack_code;
+			criteria = card.pack_code;
 		} else if(DisplaySort === 'title') {
 			criteria = 'cards';
 		}
 
 		if (DisplaySort === 'number' || DisplaySortSecondary === 'number'){
-			var number_of_sets = Math.ceil(record.indeck / record.quantity);
+			var number_of_sets = Math.ceil(card.indeck / card.quantity);
 			var alert_number_of_sets = number_of_sets > 1 ? '<small class="text-warning">'+number_of_sets+' sets needed</small> ' : '';
-			additional_info = '(<span class="small icon icon-'+record.cycle_code+'"></span> ' + record.number + ') ' + alert_number_of_sets + influence;
+			additional_info = '(<span class="small icon icon-'+card.pack.cycle.code+'"></span> ' + card.position + ') ' + alert_number_of_sets + influence;
 		}
 
-		var item = $('<div>'+record.indeck+'x <a href="'+Routing.generate('cards_zoom', {card_code:record.code})+'" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="'+record.code+'">'+record.title+'</a> '+additional_info+'</div>');
+		var item = $('<div>'+card.indeck+'x <a href="'+Routing.generate('cards_zoom', {card_code:card.code})+'" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="'+card.code+'">'+card.title+'</a> '+additional_info+'</div>');
 		item.appendTo($('#deck-content .deck-'+criteria));
 		
 		cabinet[criteria] |= 0;
-		cabinet[criteria] = cabinet[criteria] + record.indeck;
+		cabinet[criteria] = cabinet[criteria] + card.indeck;
 		$('#deck-content .deck-'+criteria).prev().show().find('span:last').html(cabinet[criteria]);
 		
 	});
@@ -361,11 +364,17 @@ function update_deck(options) {
 
 
 function check_decksize() {
-	DeckSize = NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).select("indeck").reduce(function (previousValue, currentValue) { return previousValue+currentValue; }, 0);
+	DeckSize = _.reduce(
+			NRDB.data.cards.find({indeck:{'$gt':0},type_code:{'$ne':'identity'}}),
+			function (acc, card) { return acc + card.indeck },
+			0);
 	MinimumDeckSize = Identity.minimum_deck_size;
 	$('#cardcount').html(DeckSize+" cards (min "+MinimumDeckSize+")")[DeckSize < MinimumDeckSize ? 'addClass' : 'removeClass']("text-danger");
 	if(Identity.side_code == 'corp') {
-		AgendaPoints = NRDB.data.cards({indeck:{'gt':0},type_code:'agenda'}).select("indeck","agenda_points").reduce(function (previousValue, currentValue) { return previousValue+currentValue[0]*currentValue[1]; }, 0);
+		AgendaPoints = _.reduce(
+				NRDB.data.cards.find({indeck:{'$gt':0},type_code:'agenda'}),
+				function (acc, card) { return acc + card.indeck * card.agenda_points },
+				0);
 		var min = Math.floor(Math.max(DeckSize, MinimumDeckSize) / 5) * 2 + 2, max = min+1;
 		$('#agendapoints').html(AgendaPoints+" agenda points (between "+min+" and "+max+")")[AgendaPoints < min || AgendaPoints > max ? 'addClass' : 'removeClass']("text-danger");
 	} else {
@@ -380,6 +389,7 @@ function count_card_copies(cards) {
 	}
 	return count;
 }
+
 function get_influence_cost_of_card_in_deck(card) {
 	var inf = card.indeck * card.faction_cost;
 	if(inf) {
@@ -388,7 +398,7 @@ function get_influence_cost_of_card_in_deck(card) {
 			inf = (card.indeck-1) * card.faction_cost;
 		} else if(card.code === '10018') { 
 			// Mumba Temple: 15 or fewer ice
-			if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},type_code:'ice'}).get()) <= 15) {
+			if(count_card_copies(NRDB.data.cards.find({indeck:{'$gt':0},type_code:'ice'})) <= 15) {
 				inf = 0;
 			}
 		} else if(card.code === '10019') {
@@ -398,17 +408,17 @@ function get_influence_cost_of_card_in_deck(card) {
 			}
 		} else if(card.code === '10038') {
 			// PAD Factory: 3 PAD Campaign
-			if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},code:'01109'}).get()) === 3) {
+			if(count_card_copies(NRDB.data.cards.find({indeck:{'$gt':0},code:'01109'})) === 3) {
 				inf = 0;
 			}
 		} else if(card.code === '10076') {
 			// Mumbad Virtual Tour: 7 or more assets
-			if(count_card_copies(NRDB.data.cards({indeck:{'gt':0},type_code:'asset'}).get()) >= 7) {
+			if(count_card_copies(NRDB.data.cards.find({indeck:{'$gt':0},type_code:'asset'})) >= 7) {
 				inf = 0;
 			}
 		} else if(card.keywords && card.keywords.match(/Alliance/)) {
 			// 6 or more non-alliance cards of the same faction
-			var same_faction_cards = NRDB.data.cards({indeck:{'gt':0},faction_code:card.faction_code}).get();
+			var same_faction_cards = NRDB.data.cards.find({indeck:{'$gt':0},faction_code:card.faction_code});
 			var alliance_count = 0;
 			same_faction_cards.forEach(function (same_faction_card) {
 				if(same_faction_card.keywords && same_faction_card.keywords.match(/Alliance/)) return;
@@ -422,14 +432,14 @@ function get_influence_cost_of_card_in_deck(card) {
 	return inf;
 }
 function check_influence() {
-	InfluenceSpent = 0;
-	var influencePenalty = 0;
-	NRDB.data.cards({indeck:{'gt':0},faction_code:{'!is':Identity.faction_code}}).each(function(record) {
-		InfluenceSpent += record.influence_spent;
-	});
-	NRDB.data.cards({indeck:{'gt':0}}).each(function(record) {
-		influencePenalty += get_influence_penalty(record, record.indeck);
-	});
+	InfluenceSpent = _.reduce(
+			NRDB.data.cards.find({indeck:{'$gt':0},faction_code:{'$ne':Identity.faction_code}}), 
+			function (acc, card) { return acc + card.influence_spent }
+			, 0);
+	var influencePenalty = _.reduce(
+			NRDB.data.cards.find({indeck:{'$gt':0}}), 
+			function (acc, card) { return acc + get_influence_penalty(card, card.indeck) }
+			, 0);
 	var displayInfluenceLimit = InfluenceLimit, 
 			remainingInfluence = Math.max(1, InfluenceLimit - influencePenalty),
 			availableInfluence = remainingInfluence - InfluenceSpent;
@@ -525,7 +535,7 @@ function build_bbcode(deck) {
 		default:
 			var qty = $(line).ignore("a, span, small").text().trim().replace(/x.*/, "x");
 			var inf = $(line).find("span").text().trim();
-			var card = NRDB.data.get_card_by_code($(line).find('a.card').data('index'));
+			var card = NRDB.data.cards.findById($(line).find('a.card').data('index'));
 			lines.push(qty + ' [url=https://netrunnerdb.com/'+NRDB.locale+'/card/'
 					 + card.code
 					 + ']'
@@ -580,7 +590,7 @@ function build_markdown(deck) {
 		default:
 			var qty = $(line).ignore("a, span, small").text().trim().replace(/x.*/, "x");
 			var inf = $(line).find("span").text().trim();
-			var card = NRDB.data.get_card_by_code($(line).find('a.card').data('index'));
+			var card = NRDB.data.cards.findById($(line).find('a.card').data('index'));
 			lines.push('* '+ qty + ' ['
 				 + card.title 
 				 + '](https://netrunnerdb.com/'+NRDB.locale+'/card/'
@@ -673,11 +683,11 @@ function export_jintekinet() {
 function make_cost_graph() {
 	var costs = [];
 	
-	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).each(function(record) {
-		if(record.cost != null) {
-			if(costs[record.cost] == null) costs[record.cost] = [];
-			if(costs[record.cost][record.type.name] == null) costs[record.cost][record.type.name] = 0;
-			costs[record.cost][record.type.name] += record.indeck;
+	NRDB.data.cards.find({indeck:{'$gt':0},type_code:{'$ne':'identity'}}).forEach(function(card) {
+		if(card.cost != null) {
+			if(costs[card.cost] == null) costs[card.cost] = [];
+			if(costs[card.cost][card.type.name] == null) costs[card.cost][card.type.name] = 0;
+			costs[card.cost][card.type.name] += card.indeck;
 		}
 	});
 	
@@ -737,18 +747,18 @@ function make_strength_graph() {
 	var strengths = [];
 	var ice_types = [ 'Barrier', 'Code Gate', 'Sentry', 'Other' ];
 	
-	NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).each(function(record) {
-		if(record.strength != null) {
-			if(strengths[record.strength] == null) strengths[record.strength] = [];
+	NRDB.data.cards.find({indeck:{'$gt':0},type_code:{'$ne':'identity'}}).forEach(function(card) {
+		if(card.strength != null) {
+			if(strengths[card.strength] == null) strengths[card.strength] = [];
 			var ice_type = 'Other';
 			for(var i=0; i<ice_types.length; i++) {
-				if(record.keywords.indexOf(ice_types[i]) != -1) {
+				if(card.keywords.indexOf(ice_types[i]) != -1) {
 					ice_type = ice_types[i];
 					break;
 				}
 			}
-			if(strengths[record.strength][ice_type] == null) strengths[record.strength][ice_type] = 0;
-			strengths[record.strength][ice_type] += record.indeck;
+			if(strengths[card.strength][ice_type] == null) strengths[card.strength][ice_type] = 0;
+			strengths[card.strength][ice_type] += card.indeck;
 		}
 	});
 	

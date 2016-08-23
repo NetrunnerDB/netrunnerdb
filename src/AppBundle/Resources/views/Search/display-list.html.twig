@@ -23,7 +23,7 @@
 	</td>
 	<td data-th="Faction">{% if card.faction_code[:7] != 'neutral' %}<span class="icon icon-{{ card.faction_code }} {{ card.faction_code }}"></span>{% endif %}</td>
 	<td data-th="Cost">{{ card.cost }}{{ card.advancementcost }}</td>
-	<td data-th="Type" >{{ card.type }}</td>
+	<td data-th="Type" >{{ card.type_name }}</td>
 	<td data-th="&hellip;">{% if card.strength is not null %}{{ card.strength }}{% elseif card.agendapoints is not null %}{{ card.agendapoints }}{% else %}{{ card.trash }}{% endif %}</td>
 	<td data-th="Subtype">{{ card.subtype }}</td>
 	<td data-th="Influence">
@@ -33,7 +33,7 @@
 		</span>
 		{% endif %}
 	</td>
-	<td data-th="Set"><span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }} {{ card.number }}</td>
+	<td data-th="Set"><span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }} {{ card.position }}</td>
 </tr>
 {% endfor %}
 </table>

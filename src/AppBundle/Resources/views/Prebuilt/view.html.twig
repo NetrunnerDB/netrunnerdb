@@ -6,13 +6,12 @@
 
 var Identity = null,
 	Prebuilt = {{ prebuilt|json_encode|raw }},
-	DeckDB = TAFFY([Prebuilt]),
-	SelectedDeck = DeckDB().first(),
+	SelectedDeck = Prebuilt,
 	MWL = null,
 	DisplaySort = 'type',
 	DisplaySortSecondary = 'name';
 
-NRDB.data_loaded.add(function() {
+$(document).on('data.app', function() {
 	for (var i = 0; i < Prebuilt.cards.length; i++) {
 		var slot = Prebuilt.cards[i];
 		NRDB.data.get_cards_by_code(slot.card_code).update({indeck : parseInt(slot.qty, 10)});

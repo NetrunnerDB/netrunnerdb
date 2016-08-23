@@ -17,9 +17,9 @@ NRDB.draw_simulator = {};
 		container = $('#table-draw-simulator-content');
 		deck = [];
 		check_draw_type();
-		NRDB.data.cards({indeck:{'gt':0},type_code:{'!is':'identity'}}).each(function (record) {
-			for(var ex = 0; ex < record.indeck; ex++) {
-				deck.push(record);
+		NRDB.data.cards.find({indeck:{'$gt':0},type_code:{'$ne':'identity'}}).forEach(function (card) {
+			for(var ex = 0; ex < card.indeck; ex++) {
+				deck.push(card);
 			}
 		});
 		initial_size = deck.length;
@@ -33,7 +33,7 @@ NRDB.draw_simulator = {};
 	}
 
 	function check_draw_type() {
-		identity = NRDB.data.cards({indeck:{'gt':0},type_code:{'is':'identity'}}).first();
+		identity = NRDB.data.cards.find({indeck:{'$gt':0},type_code:{'$eq':'identity'}}).pop();
 		var special_button = $("#draw-simulator-special");
 		var special_draw = false;
 		switch (identity.code) {

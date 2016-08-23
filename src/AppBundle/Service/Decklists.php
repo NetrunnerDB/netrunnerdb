@@ -528,7 +528,7 @@ class Decklists
         $decklist_title = filter_var($request->query->get('title'), FILTER_SANITIZE_STRING);
         $sort = $request->query->get('sort');
         $packs = $request->query->get('packs');
-        $mwl_id = $request->query->get('mwl_id');
+        $mwl_code = $request->query->get('mwl_code');
         
         if(!is_array($packs)) {
             $packs = $dbh->executeQuery("select id from pack")->fetchAll(\PDO::FETCH_COLUMN);
@@ -580,9 +580,9 @@ class Decklists
             $params[] = array_unique($packs);
             $types[] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
         }
-        if (! empty($mwl_id)) {
-        	$wheres[] = 'exists(select * from legality where legality.decklist_id=d.id and legality.mwl_id=? and legality.is_legal=1)';
-        	$params[] = $mwl_id;
+        if (! empty($mwl_code)) {
+        	$wheres[] = 'exists(select * from legality where legality.decklist_id=d.id and legality.mwl_code=? and legality.is_legal=1)';
+        	$params[] = $mwl_code;
         	$types[] = \PDO::PARAM_INT;
         }
         

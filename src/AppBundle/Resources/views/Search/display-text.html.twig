@@ -15,7 +15,7 @@
 		</h4>
 	<div class="card-info">
 	<p>
-		<span class="card-type">{{ card.type }}</span><span class="card-keywords">{% if card.subtype %}: {{ card.subtype }}{% endif %}</span>
+		<span class="card-type">{{ card.type_name }}</span><span class="card-keywords">{% if card.subtype %}: {{ card.subtype }}{% endif %}</span>
 	</p>
 	<p class="card-props">
 		{% if card.type_code == "agenda" %} Adv: {{ card.advancementcost }} &bull; Score: {{ card.agendapoints }} {% endif %}
@@ -38,7 +38,7 @@
 		{{ card.illustrator }}
 	</p>
 	<p>
-		<span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }} {{ card.number }} &bull; {{ card.faction }}
+		<span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }} {{ card.position }} &bull; {{ card.faction_name }}
 	</p>
 </div>
 {% endif %}

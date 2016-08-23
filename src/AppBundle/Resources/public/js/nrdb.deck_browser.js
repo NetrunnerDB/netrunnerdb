@@ -48,16 +48,21 @@ NRDB.deck_browser = {};
 	deck_browser.update = function() {
 
 		images = [ Identity.imageUrl ];
-		NRDB.data.cards({
+		NRDB.data.cards.find({
 			indeck : {
-				'gt' : 0
+				'$gt' : 0
 			},
 			type_code : {
-				'!is' : 'identity'
+				'$ne' : 'identity'
 			}
-		}).order('type_code,title').each(function(record) {
-			for (var i = 0; i < record.indeck; i++) {
-				images.push(record.imageUrl);
+		}, {
+			'$orderBy': {
+				type_code: 1,
+				title: 1
+			}
+		}).forEach(function(card) {
+			for (var i = 0; i < card.indeck; i++) {
+				images.push(card.imageUrl);
 			}
 		});
 		for (var i = 0; i < images.length; i++) {

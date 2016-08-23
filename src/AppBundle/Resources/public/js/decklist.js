@@ -1,9 +1,9 @@
-NRDB.data_loaded.add(function() {
+$(document).on('data.app', function() {
 	$(this).closest('tr').siblings().removeClass('active');
 	$(this).closest('tr').addClass('active');
 	for (var i = 0; i < Decklist.cards.length; i++) {
 		var slot = Decklist.cards[i];
-		NRDB.data.get_cards_by_code(slot.card_code).update({indeck : parseInt(slot.qty, 10)});
+		NRDB.data.cards.updateById(slot.card_code, {indeck : parseInt(slot.qty, 10)});
 	}
 	$('.change_mwl').on('click', on_mwl_click);
 	update_mwl(MWL);
@@ -55,11 +55,10 @@ function setup_comment_form() {
 					{
 						match : /\B#([\-+\w]*)$/,
 						search : function(term, callback) {
-							callback(NRDB.data.cards({
-								title : {
-									likenocase : term
-								}
-							}).get());
+							var regexp = new RegExp('\\b' + term, 'i');
+							callback(NRDB.data.cards.find({
+								title : regexp
+							}));
 						},
 						template : function(value) {
 							return value.title;
@@ -351,15 +350,15 @@ function send_favorite() {
 }
 function on_mwl_click(event) {
 	event.preventDefault();
-	var mwl_id = $(this).data('id');
-	update_mwl(mwl_id);
+	var mwl_code = $(this).data('code');
+	update_mwl(mwl_code);
 	return false;
 
 }
-function update_mwl(mwl_id) {
+function update_mwl(mwl_code) {
 	MWL = null;
-	if(mwl_id) {
-		var mwl = NRDB.data.mwl({id:parseInt(mwl_id)}).first();
+	if(mwl_code) {
+		var mwl = NRDB.data.mwl.findById(mwl_code);
 		if(mwl.cards) {
 			MWL = mwl.cards;
 		}

@@ -1,9 +1,9 @@
-NRDB.data_loaded.add(function() {
+$(document).on('data.app', function() {
 	for (var i = 0; i < Decklist.cards.length; i++) {
 		var slot = Decklist.cards[i];
-		NRDB.data.cards({
+		NRDB.data.cards.update({
 			code : slot.card_code
-		}).update({
+		}, {
 			indeck : parseInt(slot.qty, 10)
 		});
 	}

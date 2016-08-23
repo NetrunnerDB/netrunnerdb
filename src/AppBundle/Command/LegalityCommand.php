@@ -20,9 +20,9 @@ class LegalityCommand extends ContainerAwareCommand
             ->setName('nrdb:legality')
             ->setDescription('Compute decklist legality for a MWL')
             ->addArgument(
-                'mwl_id',
+                'mwl_code',
                 InputArgument::REQUIRED,
-                'Id of the MWL'
+                'Code of the MWL'
             )
             ->addOption(
             		'decklist',
@@ -42,8 +42,8 @@ class LegalityCommand extends ContainerAwareCommand
     	/* @var $judge \AppBundle\Service\Judge */
     	$judge = $this->getContainer()->get('judge');
     	
-    	$mwl_id = $input->getArgument('mwl_id');
-    	$mwl = $entityManager->getRepository('AppBundle:Mwl')->find($mwl_id);
+    	$mwl_code = $input->getArgument('mwl_code');
+    	$mwl = $entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
     	
     	if(!$mwl) 
     	{

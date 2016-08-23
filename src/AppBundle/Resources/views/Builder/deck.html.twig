@@ -91,11 +91,11 @@ var Filters = {},
 		<input type="text" class="form-control decklist-name" name="name" value="{{ deck.name }}">
 	</div>
 	<div class="form-group">
-		<label for="mwl_id">Legality</label>
-		<select class="form-control" name="mwl_id" id="mwl_id">
+		<label for="mwl_code">Legality</label>
+		<select class="form-control" name="mwl_code" id="mwl_code">
 			<option value="">Casual Play</option>
 			{% for mwl in list_mwl %}
-			<option value="{{ mwl.id }}"{% if mwl.id == deck.mwl_id %} selected="selected"{% endif %}>
+			<option value="{{ mwl.code }}"{% if mwl.code == deck.mwl_code %} selected="selected"{% endif %}>
 				{{ mwl.name }}{% if not mwl.active %}{% if mwl.dateStart %} (after {{ mwl.dateStart|date('Y-m-d') }}){% endif %}{% else %} (active){% endif %}
 			</option>
 		{% endfor %}

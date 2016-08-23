@@ -84,22 +84,22 @@ NRDB.smart_filter = {};
 		switch (operator) {
 		case ":":
 			condition[key] = {
-				'is' : values
+				'$eq' : values
 			};
 			break;
 		case "<":
 			condition[key] = {
-				'lt' : values
+				'$lt' : values
 			};
 			break;
 		case ">":
 			condition[key] = {
-				'gt' : values
+				'$gt' : values
 			};
 			break;
 		case "!":
 			condition[key] = {
-				'!is' : values
+				'$ne' : values
 			};
 			break;
 		}
@@ -110,14 +110,14 @@ NRDB.smart_filter = {};
 		switch (operator) {
 		case ":":
 			condition[key] = {
-				'isNull': false,
-				'likenocase' : values
+				'$nee': null,
+				'$eq' : new RegExp(values, 'i')
 			};
 			break;
 		case "!":
 			condition[key] = {
-				'isNull': false,
-				'!likenocase' : values
+				'$nee': null,
+				'$eq' : new RegExp(values, 'i')
 			};
 			break;
 		}
@@ -128,12 +128,12 @@ NRDB.smart_filter = {};
 		switch (operator) {
 		case ":":
 			condition[key] = {
-				'is': value ? true : false
+				'$eeq': value ? true : false
 			};
 			break;
 		case "!":
 			condition[key] = {
-				'is': value ? false : true
+				'$eeq': value ? false : true
 			};
 			break;
 		}

@@ -8,7 +8,7 @@ var Deck_changed_since_last_autosave = false;
 var Autosave_running = false;
 var Autosave_period = 60;
 
-NRDB.data_loaded.add(function() {
+$(document).on('data.app', function() {
 	var localStorageDisplayColumns;
 	if (localStorage
 			&& (localStorageDisplayColumns = parseInt(localStorage
@@ -45,54 +45,67 @@ NRDB.data_loaded.add(function() {
 	}
 	$('input[name=buttons-behavior-' + Buttons_Behavior + ']').prop('checked', true);
 
-	NRDB.data.cards({
+	NRDB.data.cards.remove({
 		side_code : {
-			"!is" : Side
+			"$ne" : Side
 		}
-	}).remove();
+	});
+	
 	var sets_in_deck = {};
-	NRDB.data.cards().each(function(record) {
+	NRDB.data.cards.find().forEach(function(card) {
 		var indeck = 0;
-		if (Deck[record.code]) {
-			indeck = parseInt(Deck[record.code], 10);
-			sets_in_deck[record.pack_code] = 1;
+		if (Deck[card.code]) {
+			indeck = parseInt(Deck[card.code], 10);
+			sets_in_deck[card.pack_code] = 1;
 		}
-		NRDB.data.cards(record.___id).update({
+		NRDB.data.cards.updateById(card.code, {
 			indeck : indeck,
-			factioncost : record.faction_cost || 0
+			factioncost : card.faction_cost || 0
 		});
 	});
+	
 	update_deck();
+	
 	NRDB.draw_simulator.init();
-	NRDB.data.cards().each(function(record) {
-		var max_qty = record.deck_limit;
-		if (record.pack_code == 'core') {
-			max_qty = Math.min(record.quantity * CoreSets, max_qty);
+	
+	NRDB.data.cards.find().forEach(function(card) {
+		var max_qty = card.deck_limit;
+		if(card.pack_code == 'core') {
+			max_qty = Math.min(card.quantity * CoreSets, max_qty);
 		}
 		if(Identity.pack_code == "draft") {
 			max_qty = 9;
 		}
-		NRDB.data.cards(record.___id).update({
+		NRDB.data.cards.updateById(card.code, {
 			maxqty : max_qty
 		});
 	});
+	
 	if(Modernizr.touch) {
 		$('#faction_code, #type_code').css('width', '100%').addClass('btn-group-vertical');
 	} else {
 		$('#faction_code, #type_code').addClass('btn-group');
 	}
+	
 	$('#faction_code').empty();
-	$.each(NRDB.data.cards().distinct("faction_code").sort(
-			function(a, b) {
-				return b.substr(0,7) === "neutral" ? -1 : a.substr(0,7) === "neutral" ? 1 : a < b ? -1
-						: a > b ? 1 : 0;
-			}), function(index, faction_code) {
-		var faction = NRDB.data.factions({"code": faction_code}).first();
-		var label = $('<label class="btn btn-default btn-sm" data-code="' + faction_code
-				+ '" title="'+faction.name+'"><input type="checkbox" name="' + faction_code
+	
+	var factions = NRDB.data.factions.find({side_code: Side}).sort(function(a, b) {
+		return b.code.substr(0,7) === "neutral" 
+			? -1
+			: a.code.substr(0,7) === "neutral" 
+				? 1 
+				: a < b 
+					? -1
+					: a > b 
+						? 1
+						: 0;
+	});
+	factions.forEach(function(faction) {
+		var label = $('<label class="btn btn-default btn-sm" data-code="' + faction.code
+				+ '" title="'+faction.name+'"><input type="checkbox" name="' + faction.code
 				+ '"><img src="'
-				+ Url_FactionImage.replace('xxx', faction_code)
-				+ '" style="height:12px" alt="'+faction_code+'"></label>');
+				+ Url_FactionImage.replace('xxx', faction.code)
+				+ '" style="height:12px" alt="'+faction.code+'"></label>');
 		if(Modernizr.touch) {
 			label.append(' '+faction.name);
 			label.addClass('btn-block');
@@ -101,20 +114,21 @@ NRDB.data_loaded.add(function() {
 		}
 		$('#faction_code').append(label);
 	});
+	
 	$('#faction_code').button();
 	$('#faction_code').children('label[data-code='+Identity.faction_code+']').each(function(index, elt) {
 		$(elt).button('toggle');
 	});
 
 	$('#type_code').empty();
-	$.each(NRDB.data.cards().distinct("type_code").sort(), function(index, type_code) {
-		var type = NRDB.data.types({"code": type_code}).first().name;
+	var types = NRDB.data.types.find({is_subtype:false}).sort();
+	types.forEach(function(type) {
 		var label = $('<label class="btn btn-default btn-sm" data-code="'
-				+ type_code + '" title="'+type.name+'"><input type="checkbox" name="' + type_code
-				+ '"><img src="' + Url_TypeImage.replace('xxx', type_code)
-				+ '" style="height:12px" alt="'+type_code+'"></label>');
+				+ type.code + '" title="'+type.name+'"><input type="checkbox" name="' + type.code
+				+ '"><img src="' + Url_TypeImage.replace('xxx', type.code)
+				+ '" style="height:12px" alt="'+type.code+'"></label>');
 		if(Modernizr.touch) {
-			label.append(' '+example.type);
+			label.append(' '+type.name);
 			label.addClass('btn-block');
 		} else {
 			label.tooltip({container: 'body'});
@@ -127,21 +141,20 @@ NRDB.data_loaded.add(function() {
 	});
 
 	$('#pack_code').empty();
-	NRDB.data.packs().each(
-			function(record) {
-				var checked = record.date_release === ""
-						&& sets_in_deck[record.code] == null ? ''
-						: ' checked="checked"';
-				$('#pack_code').append(
-						'<li><a href="#"><label><input type="checkbox" name="'
-								+ record.code + '"' + checked + '>'
-								+ record.name + '</label></a></li>');
-			});
+	var packs = NRDB.data.packs.find();
+	packs.forEach(function(pack) {
+		var checked = pack.date_release === "" && sets_in_deck[pack.code] == null ? '' : ' checked="checked"';
+		$('#pack_code').append(
+			'<li><a href="#"><label><input type="checkbox" name="'
+					+ pack.code + '"' + checked + '>'
+					+ pack.name + '</label></a></li>');
+	});
 
 	$('input[name=Identity]').prop("checked", false);
-	if (Identity.code == "03002")
+	if (Identity.code == "03002") {
 		$('input[name=Jinteki]').prop("checked", false);
-
+	}
+		
 	$('.filter').each(function(index, div) {
 		var columnName = $(div).attr('id');
 		var arr = [], checked;
@@ -164,17 +177,15 @@ NRDB.data_loaded.add(function() {
 		}
 	});
 
-	$('#mwl_id').trigger('change');
+	$('#mwl_code').trigger('change');
 	// triggers a refresh_collection();
 	// triggers a update_deck();
 
 
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
-		var matches = NRDB.data.cards({title: {likenocase: q}}).map(function (record) {
-			return { value: record.title };
-		});
-		cb(matches);
+		var regexp = new RegExp(q, 'i');
+		cb(NRDB.data.cards.find({name: regexp}));
 	}
 
 	$('#filter-text').typeahead({
@@ -446,11 +457,10 @@ $(function() {
 			{
 				match : /\B#([\-+\w]*)$/,
 				search : function(term, callback) {
-					callback(NRDB.data.cards({
-						title : {
-							likenocase : term
-						}
-					}).get());
+					var regexp = new RegExp('\\b' + term, 'i');
+					callback(NRDB.data.cards.find({
+						title : regexp
+					}));
 				},
 				template : function(value) {
 					return value.title;
@@ -479,7 +489,7 @@ $(function() {
 				index : 1
 			}
 	]);
-	$('#mwl_id').on('change', update_mwl);
+	$('#mwl_code').on('change', update_mwl);
 	$('#tbody-history').on('click', 'a[role=button]', load_snapshot);
 	setInterval(autosave_interval, 1000);
 });
@@ -499,12 +509,12 @@ function add_snapshot(snapshot) {
 	var list = [];
 	if(snapshot.variation) {
 		$.each(snapshot.variation[0], function (code, qty) {
-			var card = NRDB.data.get_card_by_code(code);
+			var card = NRDB.data.cards.findById(code);
 			if(!card) return;
 			list.push('+'+qty+' '+'<a href="'+Routing.generate('cards_zoom',{card_code:code})+'" class="card" data-index="'+code+'">'+card.title+'</a>');
 		});
 		$.each(snapshot.variation[1], function (code, qty) {
-			var card = NRDB.data.get_card_by_code(code);
+			var card = NRDB.data.cards.findById(code);
 			if(!card) return;
 			list.push('&minus;'+qty+' '+'<a href="'+Routing.generate('cards_zoom',{card_code:code})+'" class="card" data-index="'+code+'">'+card.title+'</a>');
 		});
@@ -521,12 +531,12 @@ function load_snapshot(event) {
 	var snapshot = Snapshots[index];
 	if(!snapshot) return;
 
-	NRDB.data.cards().each(function(record) {
+	NRDB.data.cards.forEach(function(card) {
 		var indeck = 0;
-		if (snapshot.content[record.code]) {
-			indeck = parseInt(snapshot.content[record.code], 10);
+		if (snapshot.content[card.code]) {
+			indeck = parseInt(snapshot.content[card.code], 10);
 		}
-		NRDB.data.cards(record.___id).update({
+		NRDB.data.cards.updateById(card.code, {
 			indeck : indeck
 		});
 	});
@@ -604,15 +614,10 @@ function handle_input_change(event) {
 	refresh_collection();
 }
 function get_deck_content() {
-	var deck_content = {};
-	NRDB.data.cards({
-		indeck : {
-			'gt' : 0
-		}
-	}).each(function(record) {
-		deck_content[record.code] = record.indeck;
-	});
-	return deck_content;
+	return _.reduce(
+			NRDB.data.cards.find({indeck:{'$gt':0}}),
+			function (acc, card) { acc[card.code] = card.indeck; return acc; },
+			{});
 }
 function handle_submit(event) {
 	Deck_changed_since_last_autosave = false;
@@ -628,18 +633,19 @@ function handle_quantity_change(event) {
 	var in_collection = $(this).closest('#collection').length;
 	var quantity = parseInt($(this).val(), 10);
 	$(this).closest('.card-container')[quantity ? "addClass" : "removeClass"]('in-deck');
-	var cards = NRDB.data.get_cards_by_code(index);
-	cards.update({indeck : quantity});
-	var card = cards.first();
+	NRDB.data.cards.updateById(index, {
+		indeck : quantity
+	});
+	var card = NRDB.data.cards.findById(index);
 	if (card.type_code == "identity") {
 		if (Identity.faction_code != card.faction_code) {
 			// change of faction, reset agendas
-			NRDB.data.cards({
+			NRDB.data.cards.update({
 				indeck : {
-					'gt' : 0
+					'$gt' : 0
 				},
 				type_code : 'agenda'
-			}).update({
+			}, {
 				indeck : 0
 			});
 			// also automatically change tag of deck
@@ -649,15 +655,15 @@ function handle_quantity_change(event) {
 					}).join(' ')
 			);
 		}
-		NRDB.data.cards({
+		NRDB.data.cards.update({
 			indeck : {
-				'gt' : 0
+				'$gt' : 0
 			},
 			type_code : 'identity',
 			code : {
-				'!==' : index
+				'$ne' : index
 			}
-		}).update({
+		}, {
 			indeck : 0
 		});
 	}
@@ -702,24 +708,24 @@ function handle_quantity_change(event) {
 
 function update_core_sets() {
 	CardDivs = [ null, {}, {}, {} ];
-	NRDB.data.cards({
+	NRDB.data.cards.find({
 		pack_code : 'core'
-	}).each(function(record) {
-		var max_qty = Math.min(record.quantity * CoreSets, record.deck_limit);
+	}).forEach(function(card) {
+		var max_qty = Math.min(card.quantity * CoreSets, card.deck_limit);
 		if(Identity.pack_code == "draft") {
 			max_qty = 9;
 		}
-		NRDB.data.cards(record.___id).update({
+		NRDB.data.cards.updateById(card.code, {
 			maxqty : max_qty
 		});
 	});
 }
 
 function update_mwl(event) {
-	var mwl_id = $(this).val();
+	var mwl_code = $(this).val();
 	MWL = null;
-	if(mwl_id) {
-		var mwl = NRDB.data.mwl({id:parseInt(mwl_id)}).first();
+	if(mwl_code) {
+		var mwl = NRDB.data.mwl.findById(mwl_code);
 		if(mwl.cards) {
 			MWL = mwl.cards;
 		}
@@ -828,46 +834,47 @@ function update_filtered() {
 
 	var counter = 0, container = $('#collection-table');
 	var SmartFilterQuery = NRDB.smart_filter.get_query(FilterQuery);
-	NRDB.data.cards.apply(window, SmartFilterQuery)
-			.order(Sort + (Order > 0 ? " asec" : " desc") + ',title')
-			.each(
-					function(record) {
+	
+	var orderBy = {};
+	orderBy[Sort] = Order > 0 ? " asec" : " desc";
+	orderBy['title'] = 1;
+	
+	NRDB.data.cards.find(SmartFilterQuery, {'$orderBy':orderBy}).forEach(function(card) {
+		if (ShowOnlyDeck && !card.indeck)
+			return;
 
-						if (ShowOnlyDeck && !record.indeck)
-							return;
+		var unusable = !is_card_usable(card);
 
-						var unusable = !is_card_usable(record);
+		if (HideDisabled && unusable)
+			return;
 
-						if (HideDisabled && unusable)
-							return;
+		var index = card.code;
+		var row = (CardDivs[DisplayColumns][index] || (CardDivs[DisplayColumns][index] = build_div(card)))
+				.data("index", card.code);
+		row.find('input[name="qty-' + card.code + '"]').each(
+				function(i, element) {
+					if ($(element).val() == card.indeck)
+						$(element).prop('checked', true)
+								.closest('label').addClass(
+										'active');
+					else
+						$(element).prop('checked', false)
+								.closest('label').removeClass(
+										'active');
+				});
 
-						var index = record.code;
-						var row = (CardDivs[DisplayColumns][index] || (CardDivs[DisplayColumns][index] = build_div(record)))
-								.data("index", record.code);
-						row.find('input[name="qty-' + record.code + '"]').each(
-								function(i, element) {
-									if ($(element).val() == record.indeck)
-										$(element).prop('checked', true)
-												.closest('label').addClass(
-														'active');
-									else
-										$(element).prop('checked', false)
-												.closest('label').removeClass(
-														'active');
-								});
+		if (unusable)
+			row.find('label').addClass("disabled").find(
+					'input[type=radio]').attr("disabled", true);
 
-						if (unusable)
-							row.find('label').addClass("disabled").find(
-									'input[type=radio]').attr("disabled", true);
-
-						if (DisplayColumns > 1
-								&& counter % DisplayColumns === 0) {
-							container = $('<div class="row"></div>').appendTo(
-									$('#collection-grid'));
-						}
-						container.append(row);
-						counter++;
-					});
+		if (DisplayColumns > 1
+				&& counter % DisplayColumns === 0) {
+			container = $('<div class="row"></div>').appendTo(
+					$('#collection-grid'));
+		}
+		container.append(row);
+		counter++;
+	});
 }
 var refresh_collection = debounce(update_filtered, 250);
 

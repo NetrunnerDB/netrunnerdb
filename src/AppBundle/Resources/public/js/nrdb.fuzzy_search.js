@@ -21,7 +21,7 @@ NRDB.fuzzy_search = {};
     	if(types.indexOf(name) > -1) return;
     	
     	var options = [];
-    	var query = NRDB.data.cards({token: {likenocase:name}});
+    	var query = NRDB.data.cards.find({token: new RegExp(name, 'i')});
     	if(query.count()) {
     		query.each(function (record,recordnumber) {
     			options.push(record);
@@ -46,10 +46,10 @@ NRDB.fuzzy_search = {};
     };
     
     var dict = [];
-    NRDB.data_loaded.add(function() {
-    	NRDB.data.cards().each(function (record, recordnumber) {
-            record.token = record.title.replace(/[^0-9\.\-A-Za-z\u00C0-\u017F]+/g, ' ').trim().toLowerCase();
-    		dict.push(record);
+    $(document).on('data.app', function() {
+    	NRDB.data.cards.find().forEach(function (card) {
+            card.token = card.title.replace(/[^0-9\.\-A-Za-z\u00C0-\u017F]+/g, ' ').trim().toLowerCase();
+    		dict.push(card);
     	});
     });
 	

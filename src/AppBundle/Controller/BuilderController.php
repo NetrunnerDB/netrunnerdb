@@ -83,7 +83,7 @@ class BuilderController extends Controller
                                 "id" => "",
                                 "history" => array(),
                                 "unsaved" => 0,
-                                "mwl_id" => $active_mwl ? $active_mwl->getId() : null,
+                                "mwl_code" => $active_mwl ? $active_mwl->getCode() : null,
                         ),
                         "published_decklists" => array(),
                         "list_mwl" => $list_mwl,
@@ -498,9 +498,9 @@ class BuilderController extends Controller
         $decklist_id = filter_var($request->get('decklist_id'), FILTER_SANITIZE_NUMBER_INT);
         $description = trim($request->get('description'));
         $tags = filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-        $mwl_id = filter_var($request->get('mwl_id'), FILTER_SANITIZE_NUMBER_INT);
+        $mwl_code = filter_var($request->get('mwl_code'), FILTER_SANITIZE_NUMBER_INT);
 
-        $this->get('decks')->saveDeck($this->getUser(), $deck, $decklist_id, $name, $description, $tags, $mwl_id, $content, $source_deck ? $source_deck : null);
+        $this->get('decks')->saveDeck($this->getUser(), $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck ? $source_deck : null);
 
         return $this->redirect($this->generateUrl('decks_list'));
     
@@ -567,7 +567,7 @@ class BuilderController extends Controller
         $rows = $dbh->executeQuery("SELECT
 				d.id,
 				d.name,
-				d.mwl_id,
+				m.code mwl_code,
 				DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
                 DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
                 d.description,
@@ -576,6 +576,7 @@ class BuilderController extends Controller
                 (select count(*) from deckchange c where c.deck_id=d.id and c.saved=0) unsaved,
                 s.name side_name
 				from deck d
+        		join mwl m on d.mwl_id=m.id
                 join user u on d.user_id=u.id
 				left join side s on d.side_id=s.id
 				where d.id=?
@@ -711,7 +712,7 @@ class BuilderController extends Controller
 				d.id,
 				d.name,
 				d.description,
-				d.mwl_id,
+				m.code,
                 d.problem,
         		d.date_update,
                 u.id user_id,
@@ -720,6 +721,7 @@ class BuilderController extends Controller
 				c.code identity_code,
 				f.code faction_code
                 from deck d
+        		join mwl m  on d.mwl_id=m.id
                 join user u on d.user_id=u.id
 				join side s on d.side_id=s.id
 				join card c on d.identity_id=c.id

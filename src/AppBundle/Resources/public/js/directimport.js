@@ -1,4 +1,4 @@
-NRDB.data_loaded.add(function() {
+$(document).on('data.app', function() {
 	$('#btn-import').prop('disabled', false);
 });
 
@@ -71,7 +71,7 @@ function update_stats() {
 		var card = $(element).val().split(':');
 		var code = card[0], qty = parseInt(card[1], 10);
 		deck[code] = qty;
-		var record = NRDB.data.get_card_by_code(code);
+		var record = NRDB.data.cards.findById(code);
 		types[record.type] = types[record.type] || 0;
 		types[record.type]+=qty;
 	});

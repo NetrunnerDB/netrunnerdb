@@ -201,7 +201,7 @@ class SocialController extends Controller
         $decklist_title = filter_var($request->query->get('title'), FILTER_SANITIZE_STRING);
         $sort = $request->query->get('sort');
         $packs = $request->query->get('packs');
-        $mwl_id = $request->query->get('mwl_id');
+        $mwl_code = $request->query->get('mwl_code');
         
         if(!is_array($packs)) {
             $packs = $dbh->executeQuery("select id from pack")->fetchAll(\PDO::FETCH_COLUMN);
@@ -245,7 +245,7 @@ class SocialController extends Controller
                 'author' => $author_name,
                 'title' => $decklist_title,
         		'list_mwl' => $list_mwl,
-        		'mwl_id' => $mwl_id,
+        		'mwl_code' => $mwl_code,
         );
         $params['sort_'.$sort] = ' selected="selected"';
         $params['faction_'.substr($faction_code, 0, 1)] = ' selected="selected"';
@@ -544,7 +544,7 @@ class SocialController extends Controller
 
         $legalities = $dbh->executeQuery(
         		"SELECT
-        			m.id,
+        			m.code,
         			m.name,
         			l.is_legal
         		FROM legality l
@@ -554,10 +554,10 @@ class SocialController extends Controller
 
         $mwl = $dbh->executeQuery(
             "SELECT
-                m.id
+                m.code
             FROM mwl m
             WHERE m.active=1")->fetch();
-        if($mwl) $mwl = $mwl['id'];
+        if($mwl) $mwl = $mwl['code'];
         
         $packs = $dbh->executeQuery("SELECT DISTINCT
 				p.code code,
@@ -1409,7 +1409,7 @@ class SocialController extends Controller
                                 'author' => '',
                                 'title' => '',
                             	'list_mwl' => $list_mwl,
-                            	'mwl_id' => '',
+                            	'mwl_code' => '',
                             )
                         ),
                 ), $response);

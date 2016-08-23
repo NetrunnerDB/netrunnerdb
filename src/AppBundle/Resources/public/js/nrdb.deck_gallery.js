@@ -9,16 +9,21 @@ NRDB.deck_gallery = {};
 
 		images = [ Identity.imageUrl ];
 		qtys = [ 1 ];
-		NRDB.data.cards({
+		NRDB.data.cards.find({
 			indeck : {
-				'gt' : 0
+				'$gt' : 0
 			},
 			type_code : {
-				'!is' : 'identity'
+				'$ne' : 'identity'
 			}
-		}).order('type_code,title').each(function(record) {
-			images.push(record.imageUrl);
-			qtys.push(record.indeck);
+		}, {
+			'$orderBy': {
+				type_code: 1,
+				title: 1
+			}
+		}).forEach(function(card) {
+			images.push(card.imageUrl);
+			qtys.push(card.indeck);
 		});
 		for (var i = 0; i < images.length; i++) {
 			var cell = $('<td><div><img src="' + images[i] + '" alt="Card Image"><div>'+qtys[i]+'</div></div></td>');
