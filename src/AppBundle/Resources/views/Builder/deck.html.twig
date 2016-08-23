@@ -115,45 +115,19 @@ var Filters = {},
 <div role="tabpanel">
 
 <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#tab-pane-build" aria-controls="tab-pane-build" role="tab" data-toggle="tab">Build</a></li>
-    <li role="presentation"><a href="#tab-pane-infos" aria-controls="tab-pane-infos" role="tab" data-toggle="tab">Notes</a></li>
-    <li role="presentation"><a href="#tab-pane-check" aria-controls="tab-pane-check" role="tab" data-toggle="tab">Check</a></li>
-    <li role="presentation"><a href="#tab-pane-history" aria-controls="tab-pane-history" role="tab" data-toggle="tab" id="tab-header-history">History</a></li>
+  <ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom:20px">
+    <li role="presentation" class="active"><a href="#tab-pane-build" role="tab" data-toggle="tab">Build</a></li>
+    <li role="presentation"><a href="#tab-pane-infos" role="tab" data-toggle="tab">Notes</a></li>
+    <li role="presentation"><a href="#tab-pane-check" role="tab" data-toggle="tab">Check</a></li>
+    <li role="presentation"><a href="#tab-pane-history" role="tab" data-toggle="tab" id="tab-header-history">History</a></li>
+    <li role="presentation"><a href="#tab-pane-collection" role="tab" data-toggle="tab">Collection</a></li>
+    <li role="presentation"><a href="#tab-pane-settings" role="tab" data-toggle="tab">Settings</a></li>
    </ul>
   
    <!-- Tab panes -->
   <div class="tab-content">
   
    <div role="tabpanel" class="tab-pane active" id="tab-pane-build">
-
-<div class="row">
-	<div class="col-md-12 text-right" style="margin-bottom:10px">
-        <button class="btn btn-default btn-xs" type="button" id="filter-text-button">Filter help</button>
-        <div class="btn-group">
-			<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">Sets <span class="caret"></span></button>
-			<ul class="dropdown-menu dropdown-controls filter pull-right" id="pack_code" title="Shift+Click to select only one option ; Alt+Shift+Click to select all other options"></ul>
-		</div>
-		<div class="btn-group">
-			<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">Options <span class="caret"></span></button>
-			<ul class="dropdown-menu dropdown-controls pull-right">
-			    <li><a href="#"><label><input type="checkbox" name="show-disabled"> Show unusable cards</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="only-deck"> Show only used cards</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="display-column-1"> Display on 1 column</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="display-column-2"> Display on 2 columns</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="display-column-3"> Display on 3 columns</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="core-set-1"> Use 1 Core Set</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="core-set-2"> Use 2 Core Sets</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="core-set-3"> Use 3 Core Sets</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="show-suggestions-0"> Show no suggestion</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="show-suggestions-3"> Show 3 suggestions</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="show-suggestions-10"> Show 10 suggestions</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="buttons-behavior-cumulative"> Faction/type cumulative</label></a></li>
-				<li><a href="#"><label><input type="checkbox" name="buttons-behavior-exclusive"> Faction/type exclusive</label></a></li>
-			</ul>
-		</div><!-- /.btn-group -->
-	</div><!-- /.col-sm-6 -->
-</div><!-- /.row -->
 
 <!-- Search Bar -->
 <div class="row">
@@ -293,6 +267,35 @@ var Filters = {},
     
     
     
+    </div>
+    <div role="tabpanel" class="tab-pane" id="tab-pane-collection">
+    	<div class="panel panel-default">
+    		<div class="panel-heading">Select your packs</div>
+    		<div class="panel-body filter" id="pack_code"></div>
+    	</div>
+    	<div class="panel panel-default">
+    		<div class="panel-heading">Select your prebuilt decks</div>
+    		<div class="panel-body filter" id="prebuilt_code"></div>
+    	</div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="tab-pane-settings">
+    	<div class="panel panel-default">
+    		<div class="panel-body">
+		    	<div class="checkbox"><label><input type="checkbox" name="show-disabled"> Show unusable cards</label></div>
+		    	<div class="checkbox"><label><input type="checkbox" name="only-deck"> Show only used cards</label></div>
+		    	<div class="checkbox"><label><input type="checkbox" name="display-column-1"> Display on 1 column</label></div>
+		    	<div class="checkbox"><label><input type="checkbox" name="display-column-2"> Display on 2 columns</label></div>
+		    	<div class="checkbox"><label><input type="checkbox" name="display-column-3"> Display on 3 columns</label></div>
+		    	<div class="checkbox"><label><input type="checkbox" name="core-set-1"> Use 1 Core Set</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="core-set-2"> Use 2 Core Sets</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="core-set-3"> Use 3 Core Sets</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-0"> Show no suggestion</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-3"> Show 3 suggestions</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-10"> Show 10 suggestions</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="buttons-behavior-cumulative"> Faction/type cumulative</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="buttons-behavior-exclusive"> Faction/type exclusive</label></div>
+			</div>
+		</div>
     </div>
   </div>
 

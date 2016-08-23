@@ -94,11 +94,7 @@ $(document).on('data.app', function() {
 			? -1
 			: a.code.substr(0,7) === "neutral" 
 				? 1 
-				: a < b 
-					? -1
-					: a > b 
-						? 1
-						: 0;
+				: a.code.localeCompare(b.code);
 	});
 	factions.forEach(function(faction) {
 		var label = $('<label class="btn btn-default btn-sm" data-code="' + faction.code
@@ -121,7 +117,14 @@ $(document).on('data.app', function() {
 	});
 
 	$('#type_code').empty();
-	var types = NRDB.data.types.find({is_subtype:false}).sort();
+	var types = NRDB.data.types.find({
+		is_subtype:false,
+		'$or': [{
+			side_code: Identity.side_code
+		},{
+			side_code: null
+		}]
+	}).sort();
 	types.forEach(function(type) {
 		var label = $('<label class="btn btn-default btn-sm" data-code="'
 				+ type.code + '" title="'+type.name+'"><input type="checkbox" name="' + type.code
@@ -141,13 +144,21 @@ $(document).on('data.app', function() {
 	});
 
 	$('#pack_code').empty();
-	var packs = NRDB.data.packs.find();
-	packs.forEach(function(pack) {
+	NRDB.data.packs.find().sort(function (a, b) {
+		return (a.cycle.position - b.cycle.position) || (a.position - b.position);
+	}).forEach(function(pack) {
 		var checked = pack.date_release === "" && sets_in_deck[pack.code] == null ? '' : ' checked="checked"';
 		$('#pack_code').append(
-			'<li><a href="#"><label><input type="checkbox" name="'
-					+ pack.code + '"' + checked + '>'
-					+ pack.name + '</label></a></li>');
+			'<div class="checkbox"><label><input type="checkbox" name="' + pack.code + '"' + checked + '>' + pack.name + '</label></div>');
+	});
+
+	$('#prebuilt_code').empty();
+	NRDB.data.prebuilts.find().sort(function (a, b) {
+		return (a.position - b.position);
+	}).forEach(function(prebuilt) {
+		var checked = prebuilt.date_release === "" ? '' : ' checked="checked"';
+		$('#prebuilt_code').append(
+			'<div class="checkbox"><label><input type="checkbox" name="' + prebuilt.code + '"' + checked + '>' + prebuilt.name + '</label></div>');
 	});
 
 	$('input[name=Identity]').prop("checked", false);
@@ -170,12 +181,7 @@ $(document).on('data.app', function() {
 		Filters[columnName] = arr;
 	});
 	
-	FilterQuery = {};
-	$.each(Filters, function(k) {
-		if (Filters[k] != '') {
-			FilterQuery[k] = Filters[k];
-		}
-	});
+	FilterQuery = get_filter_query(Filters);
 
 	$('#mwl_code').trigger('change');
 	// triggers a refresh_collection();
@@ -208,6 +214,31 @@ $(document).on('data.app', function() {
 	$('html,body').css('height', 'auto');
 
 });
+
+function get_filter_query(Filters) {
+	var FilterQuery = _.pickBy(Filters);
+	
+	// we're including some packs and some prebuilts (normal situation)
+	// it's an OR situation: cards are available if they are in the packs selected OR in the prebuilt selected
+	if(FilterQuery.prebuilt_code && FilterQuery.pack_code) {
+
+		var cards_in_prebuilts = _.flatten(FilterQuery.prebuilt_code.map(function (prebuilt_code) {
+			var prebuilt = NRDB.data.prebuilts.findById(prebuilt_code);
+			return _.keys(prebuilt.cards)
+		}));
+		
+		FilterQuery['$or'] = [{
+			pack_code: FilterQuery.pack_code
+		}, {
+			code: cards_in_prebuilts
+		}];
+		
+		delete(FilterQuery.pack_code);
+		delete(FilterQuery.prebuilt_code);
+	}
+
+	return FilterQuery;
+}
 
 function uncheck_all_others() {
 	$(this).closest(".filter").find("input[type=checkbox]").prop("checked",false);
@@ -244,31 +275,29 @@ $(function() {
 		}
 	});
 
-	$('#pack_code,.search-buttons').on(
-			{
-				change : handle_input_change,
-				click : function(event) {
-					var dropdown = $(this).closest('ul').hasClass('dropdown-menu');
-					if (dropdown) {
-						if (event.shiftKey) {
-							if (!event.altKey) {
-								uncheck_all_others.call(this);
-							} else {
-								check_all_others.call(this);
-							}
-						}
-						event.stopPropagation();
-					} else {
-						if (!event.shiftKey && Buttons_Behavior === 'exclusive' || event.shiftKey && Buttons_Behavior === 'cumulative') {
-							if (!event.altKey) {
-								uncheck_all_active.call(this);
-							} else {
-								check_all_inactive.call(this);
-							}
-						}
-					}
+	$('#pack_code,.search-buttons').on('change', 'label', handle_input_change);
+	
+	$('#pack_code,.search-buttons').on('click', 'label', function(event) {
+		var dropdown = $(this).closest('ul').hasClass('dropdown-menu');
+		if (dropdown) {
+			if (event.shiftKey) {
+				if (!event.altKey) {
+					uncheck_all_others.call(this);
+				} else {
+					check_all_others.call(this);
 				}
-			}, 'label');
+			}
+			event.stopPropagation();
+		} else {
+			if (!event.shiftKey && Buttons_Behavior === 'exclusive' || event.shiftKey && Buttons_Behavior === 'cumulative') {
+				if (!event.altKey) {
+					uncheck_all_active.call(this);
+				} else {
+					check_all_inactive.call(this);
+				}
+			}
+		}
+	});
 
 	$('#filter-text').on({
 		input : function (event) {
@@ -604,13 +633,7 @@ function handle_input_change(event) {
 							elt).prop('checked') ? "on" : "off");
 			});
 	Filters[columnName] = arr;
-
-	FilterQuery = {};
-	$.each(Filters, function(k) {
-		if (Filters[k] != '') {
-			FilterQuery[k] = Filters[k];
-		}
-	});
+	FilterQuery = get_filter_query(Filters);
 	refresh_collection();
 }
 function get_deck_content() {

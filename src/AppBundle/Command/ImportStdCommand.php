@@ -225,7 +225,9 @@ class ImportStdCommand extends ContainerAwareCommand
 					'name',
 					'position',
 					'is_subtype'
-			], [], []);
+			], [
+					'side_code'
+			], []);
 			if($type) {
 				$result[] = $type;
 				$this->em->persist($type);
@@ -488,6 +490,9 @@ class ImportStdCommand extends ContainerAwareCommand
 			}
 	
 			$foreignCode = $data[$key];
+			if($foreignCode === null) {
+				continue;
+			}
 			if(!key_exists($foreignEntityShortName, $this->collections)) {
 				throw new \Exception("No collection for [$foreignEntityShortName] in ".json_encode($data));
 			}

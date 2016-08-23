@@ -56,9 +56,10 @@ NRDB.user.params.decklist_id = Decklist.id;
 <!-- Left-side Column -->
 <div class="col-md-6">
 
-<ul class="nav nav-tabs" role="tablist">
+<ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom:20px">
     <li role="presentation" class="active"><a href="#deck" data-toggle="tab">Decklist</a></li>
-    <li role="presentation"><a href="#tools" data-toggle="tab">Tools</a></li>
+    <li role="presentation"><a href="#packs" data-toggle="tab">Packs</a></li>
+    <li role="presentation"><a href="#tools" data-toggle="tab">Info</a></li>
     <li role="presentation" class="dropdown">
     	<a href="#" id="actions" class="dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
     	<ul class="dropdown-menu" id="btn-group-decklist">
@@ -106,11 +107,8 @@ NRDB.user.params.decklist_id = Decklist.id;
 <!-- Identity and Stats -->
 
 <!-- Deck Content -->
-<div class="row" id="deck-content"></div>
+<div class="row" id="deck-content" style="margin-bottom:20px"></div>
 <!-- Deck Content -->
-
-</div><!-- /#deck -->
-<div role="tabpanel" class="tab-pane" id="tools">
 
 <!-- MWL -->
 <table class="table table-condensed" id="table-mwl">
@@ -136,6 +134,9 @@ NRDB.user.params.decklist_id = Decklist.id;
 </tbody>
 </table>
 
+</div><!-- /#deck -->
+<div role="tabpanel" class="tab-pane" id="packs">
+
 <!-- Packs -->
 <table class="table table-condensed" id="table-packs">
 <thead>
@@ -152,6 +153,8 @@ NRDB.user.params.decklist_id = Decklist.id;
 </tbody>
 </table>
 
+</div>
+<div role="tabpanel" class="tab-pane" id="tools">
 
 {% include 'AppBundle:Builder:draw-simulator.html.twig' %}
 
@@ -161,9 +164,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 <tr><th colspan="1"><span class="glyphicon glyphicon-stats"></span> Repartition by Cost</th></tr>
 </thead>
 <tbody>
-<tr>
-    <td><div id="costChart"><button type="button" class="btn btn-link" onclick="make_cost_graph()">Display graph</button></div></td>
-</tr>
+<tr><td><div id="costChart"></div></td></tr>
 </tbody>
 </table>
 
@@ -172,9 +173,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 <tr><th colspan="1"><span class="glyphicon glyphicon-stats"></span> Repartition by Strength</th></tr>
 </thead>
 <tbody>
-<tr>
-    <td><div id="strengthChart"><button type="button" class="btn btn-link" onclick="make_strength_graph()">Display graph</button></div></td>
-</tr>
+<tr><td><div id="strengthChart"></div></td></tr>
 </tbody>
 </table>
 

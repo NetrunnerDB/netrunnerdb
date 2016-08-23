@@ -131,7 +131,7 @@ NRDB.data = {};
 				 * we display a message informing the user that they can reload their page to use the updated data
 				 * except if we are on the front page, because data is not essential on the front page
 				 */
-				if($('.site-title').size() === 0) {
+				if($('.site-title').length === 0) {
 					var message = "A new version of the data is available. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.";
 					alert(message);
 				}
@@ -160,6 +160,12 @@ NRDB.data = {};
 			data[dbName] = data.db.collection(dbName, {primaryKey:'code', changeTimestamp: false});
 			data[dbName].setData(data.masters[dbName].find());
 		})
+
+		_.each(data.types.find(), function (type) {
+			data.types.updateById(type.code, {
+				side: data.sides.findById(type.side_code)
+			});
+		});
 
 		_.each(data.packs.find(), function (pack) {
 			data.packs.updateById(pack.code, {

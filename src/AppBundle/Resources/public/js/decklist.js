@@ -9,7 +9,14 @@ $(document).on('data.app', function() {
 	update_mwl(MWL);
 	update_deck();
 	NRDB.draw_simulator.init();
+	
+	$('a[href="#tools"]').on('shown.bs.tab', function (e) {
+		make_cost_graph();
+		make_strength_graph();
+	});
 });
+
+
 
 function setup_comment_form() {
 	

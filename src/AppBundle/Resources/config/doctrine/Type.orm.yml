@@ -12,6 +12,12 @@ AppBundle\Entity\Type:
         cards:
             targetEntity: Card
             mappedBy: type
+    manyToOne:
+        side:
+            targetEntity: Side
+            joinColumn:
+                name: side_id
+                referencedColumnName: id
     fields:
         id:
             type: integer

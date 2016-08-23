@@ -16,7 +16,8 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
 				'code' => $this->code,
 				'name' => $this->name,
 				'position' => $this->position,
-				'is_subtype' => $this->isSubtype
+				'is_subtype' => $this->isSubtype,
+				'side_code' => $this->side ? $this->side->getCode() : null
 		];
 	}
 	
@@ -32,9 +33,52 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * @var string
      */
+    private $code;
+    
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var \AppBundle\Entity\Side
+     */
+    private $side;
+
+    /**
+     * @var boolean
+     */
+    private $isSubtype;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateCreation;
+    
+    /**
+     * @var \DateTime
+     */
+    private $dateUpdate;
+    
+    /**
+     * @var integer
+     */
+    private $position;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $cards;
     
     private $locale = 'en';
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+    	$this->cards = new \Doctrine\Common\Collections\ArrayCollection();
+    }
     
     /**
      * Get id
@@ -70,62 +114,6 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $cards;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    /**
-     * Add cards
-     *
-     * @param \AppBundle\Entity\Card $cards
-     * @return Type
-     */
-    public function addCard(\AppBundle\Entity\Card $cards)
-    {
-        $this->cards[] = $cards;
-    
-        return $this;
-    }
-
-    /**
-     * Remove cards
-     *
-     * @param \AppBundle\Entity\Card $cards
-     */
-    public function removeCard(\AppBundle\Entity\Card $cards)
-    {
-        $this->cards->removeElement($cards);
-    }
-
-    /**
-     * Get cards
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getCards()
-    {
-        return $this->cards;
-    }
-    
-    public function setTranslatableLocale($locale)
-    {
-    	$this->locale = $locale;
-    }
-    /**
-     * @var string
-     */
-    private $code;
-
-
-    /**
      * Set code
      *
      * @param string $code
@@ -148,16 +136,6 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     {
         return $this->code;
     }
-    /**
-     * @var \DateTime
-     */
-    private $dateCreation;
-
-    /**
-     * @var \DateTime
-     */
-    private $dateUpdate;
-
 
     /**
      * Set dateCreation
@@ -206,11 +184,6 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     {
         return $this->dateUpdate;
     }
-    /**
-     * @var boolean
-     */
-    private $isSubtype;
-
 
     /**
      * Set isSubtype
@@ -235,11 +208,6 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     {
         return $this->isSubtype;
     }
-    /**
-     * @var integer
-     */
-    private $position;
-
 
     /**
      * Set position
@@ -264,4 +232,66 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     {
         return $this->position;
     }
+
+    /**
+     * Set side
+     *
+     * @param \AppBundle\Entity\Side $side
+     * @return Card
+     */
+    public function setSide(\AppBundle\Entity\Side $side = null)
+    {
+    	$this->side = $side;
+    
+    	return $this;
+    }
+    
+    /**
+     * Get side
+     *
+     * @return \AppBundle\Entity\Side
+     */
+    public function getSide()
+    {
+    	return $this->side;
+    }
+
+    /**
+     * Add cards
+     *
+     * @param \AppBundle\Entity\Card $cards
+     * @return Type
+     */
+    public function addCard(\AppBundle\Entity\Card $cards)
+    {
+    	$this->cards[] = $cards;
+    
+    	return $this;
+    }
+    
+    /**
+     * Remove cards
+     *
+     * @param \AppBundle\Entity\Card $cards
+     */
+    public function removeCard(\AppBundle\Entity\Card $cards)
+    {
+    	$this->cards->removeElement($cards);
+    }
+    
+    /**
+     * Get cards
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCards()
+    {
+    	return $this->cards;
+    }
+    
+    public function setTranslatableLocale($locale)
+    {
+    	$this->locale = $locale;
+    }
+    
 }
