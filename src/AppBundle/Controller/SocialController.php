@@ -548,7 +548,7 @@ class SocialController extends Controller
         			m.name,
         			l.is_legal
         		FROM legality l
-        		JOIN mwl m ON l.mwl_id=m.id
+        		LEFT JOIN mwl m ON l.mwl_id=m.id
         		WHERE l.decklist_id=?
         		ORDER BY m.date_start DESC", array($decklist_id))->fetchAll();
 

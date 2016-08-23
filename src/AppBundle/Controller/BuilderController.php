@@ -576,8 +576,8 @@ class BuilderController extends Controller
                 (select count(*) from deckchange c where c.deck_id=d.id and c.saved=0) unsaved,
                 s.name side_name
 				from deck d
-        		join mwl m on d.mwl_id=m.id
-                join user u on d.user_id=u.id
+        		left join mwl m on d.mwl_id=m.id
+                left join user u on d.user_id=u.id
 				left join side s on d.side_id=s.id
 				where d.id=?
 				", array(
@@ -721,11 +721,11 @@ class BuilderController extends Controller
 				c.code identity_code,
 				f.code faction_code
                 from deck d
-        		join mwl m  on d.mwl_id=m.id
-                join user u on d.user_id=u.id
-				join side s on d.side_id=s.id
-				join card c on d.identity_id=c.id
-				join faction f on c.faction_id=f.id
+        		left join mwl m  on d.mwl_id=m.id
+                left join user u on d.user_id=u.id
+				left join side s on d.side_id=s.id
+				left join card c on d.identity_id=c.id
+				left join faction f on c.faction_id=f.id
                 where d.id=?
 				", array(
                 $deck_id

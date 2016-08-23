@@ -478,7 +478,7 @@ function hide_deck() {
 
 function show_deck() {
 	var deck_id = $(LastClickedDeck).data('id');
-	var deck = _.find(Decks, function (deck) { return deck.id = deck_id });
+	var deck = _.find(Decks, function (deck) { return deck.id === deck_id });
 	if(!deck) return;
 
 	var container = $('#deck_'+deck.id);
