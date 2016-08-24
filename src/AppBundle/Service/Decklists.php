@@ -581,7 +581,7 @@ class Decklists
             $types[] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
         }
         if (! empty($mwl_code)) {
-        	$wheres[] = 'exists(select * from legality where legality.decklist_id=d.id and legality.mwl_code=? and legality.is_legal=1)';
+        	$wheres[] = 'exists(select * from legality join mwl on legality.mwl_id=mwl.id where legality.decklist_id=d.id and mwl.code=? and legality.is_legal=1)';
         	$params[] = $mwl_code;
         	$types[] = \PDO::PARAM_INT;
         }
