@@ -32,8 +32,8 @@ function import_one_line(line, lineNumber) {
 	var options = result.cards, qty = result.qty;
 	var qty_text = "", qty_int = qty;
 	if(qty == null) {
-		options = $.grep(options, function (element) {
-			return element.type == "Identity";
+		options = $.grep(options, function (card) {
+			return card.type_code == "identity";
 		});
 		qty_int = 1;
 	} else {
@@ -72,8 +72,8 @@ function update_stats() {
 		var code = card[0], qty = parseInt(card[1], 10);
 		deck[code] = qty;
 		var record = NRDB.data.cards.findById(code);
-		types[record.type] = types[record.type] || 0;
-		types[record.type]+=qty;
+		types[record.type.name] = types[record.type.name] || 0;
+		types[record.type.name] += qty;
 	});
 	var html = '';
 	$.each(types, function (key, value) {

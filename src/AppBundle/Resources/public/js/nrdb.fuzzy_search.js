@@ -22,34 +22,35 @@ NRDB.fuzzy_search = {};
     	
     	var options = [];
     	var query = NRDB.data.cards.find({token: new RegExp(name, 'i')});
-    	if(query.count()) {
-    		query.each(function (record,recordnumber) {
-    			options.push(record);
+    	if(query.length) {
+    		query.forEach(function (card) {
+    			options.push(card);
     		});
     		options = options.sort(function (a, b) {
     			return a.title.length - b.title.length;
     		});
     	} else if(typeof String.prototype.score === "function") {
     		var matches = [];
-    		$.each(dict, function(index, row) {
-    			var score = row.token.score(name, 0.9);
-                row.score = score;
-    			matches.push(row);
+    		NRDB.data.cards.find().forEach(function(card) {
+                matches.push({
+                	score: card.token.score(name, 0.9),
+                	card: card
+                });
     		});
     		matches.sort(function (a,b) { return a.score > b.score ? -1 : a.score < b.score ? 1 : 0; });
     		var bestScore = matches[0].score;
     		for(var i=0; i<max_results && matches[i].score > 0.4 && matches[i].score > bestScore * 0.9; i++) {
-    			options.push(matches[i]);
+    			options.push(matches[i].card);
     		}
     	}
         return { qty: qty, cards: options };
     };
     
-    var dict = [];
     $(document).on('data.app', function() {
     	NRDB.data.cards.find().forEach(function (card) {
-            card.token = card.title.replace(/[^0-9\.\-A-Za-z\u00C0-\u017F]+/g, ' ').trim().toLowerCase();
-    		dict.push(card);
+    		NRDB.data.cards.updateById(card.code, {
+    			token: card.title.replace(/[^0-9\.\-A-Za-z\u00C0-\u017F]+/g, ' ').trim().toLowerCase()
+    		});
     	});
     });
 	
