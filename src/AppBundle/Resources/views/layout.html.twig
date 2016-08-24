@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="{{ asset('/bundles/app/netrunnerfont.css') }}">
 
     <script src="{{ asset('/bundles/fosjsrouting/js/router.js') }}"></script>
-    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData","version": assets_version()}) }}"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lie/3.1.0/lie.polyfill.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.js"></script>
