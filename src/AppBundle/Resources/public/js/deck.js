@@ -191,7 +191,7 @@ $(document).on('data.app', function() {
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
 		var regexp = new RegExp(q, 'i');
-		cb(NRDB.data.cards.find({name: regexp}));
+		cb(NRDB.data.cards.find({title: regexp}));
 	}
 
 	$('#filter-text').typeahead({
@@ -199,8 +199,7 @@ $(document).on('data.app', function() {
 		  highlight: true,
 		  minLength: 2
 		},{
-		name : 'cardnames',
-		displayKey: 'value',
+		displayKey: 'title',
 		source: findMatches
 	});
 

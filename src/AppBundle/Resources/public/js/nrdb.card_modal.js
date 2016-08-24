@@ -18,8 +18,7 @@ NRDB.card_modal = {};
 	};
 
 	card_modal.typeahead = function (event, data) {
-		var card = NRDB.data.cards.find({title:data.value}).pop();
-		fill_modal(card.code);
+		fill_modal(data.code);
 		$('#cardModal').modal('show');
 		InputByTitle = true;
 	};

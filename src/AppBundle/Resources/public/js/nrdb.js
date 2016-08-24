@@ -306,7 +306,7 @@ function update_deck(options) {
 		var influence = '';
 		if(card.faction_code != Identity.faction_code) {
 			var theorical_influence_spent = card.indeck * card.faction_cost
-			card.influence_spent = get_influence_cost_of_card_in_deck(card);
+			NRDB.data.cards.updateById(card.code, {influence_spent: get_influence_cost_of_card_in_deck(card)});
 			for(var i=0; i<theorical_influence_spent; i++) {
 				if(i && i%5 == 0) influence += " ";
 				influence += (i < card.influence_spent ? "●" : "○");
