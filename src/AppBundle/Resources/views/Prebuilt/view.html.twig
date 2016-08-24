@@ -14,7 +14,7 @@ var Identity = null,
 $(document).on('data.app', function() {
 	for (var i = 0; i < Prebuilt.cards.length; i++) {
 		var slot = Prebuilt.cards[i];
-		NRDB.data.get_cards_by_code(slot.card_code).update({indeck : parseInt(slot.qty, 10)});
+		NRDB.data.cards.updateById(slot.card_code, {indeck : parseInt(slot.qty, 10)});
 	}
 	update_deck();
 });
