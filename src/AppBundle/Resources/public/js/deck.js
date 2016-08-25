@@ -147,9 +147,9 @@ $(document).on('data.app', function() {
 	NRDB.data.packs.find().sort(function (a, b) {
 		return (a.cycle.position - b.cycle.position) || (a.position - b.position);
 	}).forEach(function(pack) {
-		var checked = pack.date_release === "" && sets_in_deck[pack.code] == null ? '' : ' checked="checked"';
+		var is_checked = pack.date_release || sets_in_deck[pack.code];
 		$('#pack_code').append(
-			'<div class="checkbox"><label><input type="checkbox" name="' + pack.code + '"' + checked + '>' + pack.name + '</label></div>');
+			'<div class="checkbox"><label><input type="checkbox" name="' + pack.code + '"' + (is_checked ? ' checked="checked"' : '')+ '>' + pack.name + '</label></div>');
 	});
 
 	$('#prebuilt_code').empty();
@@ -170,12 +170,15 @@ $(document).on('data.app', function() {
 		var columnName = $(div).attr('id');
 		var arr = [], checked;
 		$(div).find("input[type=checkbox]").each(function(index, elt) {
-			var pack_name = $(elt).attr('name');
-			if(columnName == "pack_code" && localStorage && (checked = localStorage.getItem('pack_code_'+ pack_name)) !== null) {
+			var name = $(elt).attr('name');
+			if(columnName == "pack_code" && localStorage && (checked = localStorage.getItem('pack_code_'+ name)) !== null) {
+				$(elt).prop('checked', checked === "on");
+			}
+			if(columnName == "prebuilt_code" && localStorage && (checked = localStorage.getItem('prebuilt_code_'+ name)) !== null) {
 				$(elt).prop('checked', checked === "on");
 			}
 			if($(elt).prop('checked')) {
-				arr.push($(elt).attr('name'));
+				arr.push(name);
 			}
 		});
 		Filters[columnName] = arr;
@@ -274,9 +277,9 @@ $(function() {
 		}
 	});
 
-	$('#pack_code,.search-buttons').on('change', 'label', handle_input_change);
+	$('#pack_code,#prebuilt_code,.search-buttons').on('change', 'label', handle_input_change);
 	
-	$('#pack_code,.search-buttons').on('click', 'label', function(event) {
+	$('.search-buttons').on('click', 'label', function(event) {
 		var dropdown = $(this).closest('ul').hasClass('dropdown-menu');
 		if (dropdown) {
 			if (event.shiftKey) {
@@ -623,14 +626,16 @@ function handle_input_change(event) {
 	var div = $(this).closest('.filter');
 	var columnName = div.attr('id');
 	var arr = [];
-	div.find("input[type=checkbox]").each(
-			function(index, elt) {
-				if ($(elt).prop('checked'))
-					arr.push($(elt).attr('name'));
-				if (columnName == "pack_code" && localStorage)
-					localStorage.setItem('pack_code_' + $(elt).attr('name'), $(
-							elt).prop('checked') ? "on" : "off");
-			});
+	div.find("input[type=checkbox]").each(function(index, elt) {
+		if ($(elt).prop('checked'))
+			arr.push($(elt).attr('name'));
+		if (columnName == "pack_code" && localStorage)
+			localStorage.setItem('pack_code_' + $(elt).attr('name'), $(
+					elt).prop('checked') ? "on" : "off");
+		if (columnName == "prebuilt_code" && localStorage)
+			localStorage.setItem('prebuilt_code_' + $(elt).attr('name'), $(
+					elt).prop('checked') ? "on" : "off");
+	});
 	Filters[columnName] = arr;
 	FilterQuery = get_filter_query(Filters);
 	refresh_collection();

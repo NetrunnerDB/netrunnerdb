@@ -129,8 +129,7 @@ NRDB.smart_filter = {};
 		var condition = {}, value = parseInt(values.shift());
 		switch (operator) {
 		case ":":
-			condition[key] = !!value
-			};
+			condition[key] = !!value;
 			break;
 		case "!":
 			condition[key] = {
