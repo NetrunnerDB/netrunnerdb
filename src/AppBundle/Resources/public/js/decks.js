@@ -215,7 +215,7 @@ function do_action_deck(event) {
 	event.stopPropagation();
 	if(event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
 	var deck_id = $(this).closest('.deck-list-group-item').data('id');
-	var deck = SelectedDeck = _.find(Decks, function (deck) { return deck.id = deck_id });
+	var deck = SelectedDeck = _.find(Decks, function (deck) { return deck.id == deck_id });
 	if(!deck) return;
 	var action_id = $(this).attr('id');
 	if(!action_id) return;
