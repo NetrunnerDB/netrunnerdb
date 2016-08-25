@@ -31,7 +31,7 @@ NRDB.card_modal = {};
 		modal.find('.modal-image').html('<img class="img-responsive" src="'+card.imageUrl+'" alt="'+card.title+'">');
 		modal.find('.modal-info').html(
 		  '<div class="card-info">'+NRDB.format.type(card)+'</div>'
-		  +'<div><small>' + card.faction + ' &bull; '+ card.pack.name + '</small></div>'
+		  +'<div><small>' + card.faction.name + ' &bull; '+ card.pack.name + '</small></div>'
 		  +'<div class="card-text border-'+card.faction_code+'"><small>'+NRDB.format.text(card)+'</small></div>'
 		);
 
