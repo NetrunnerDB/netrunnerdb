@@ -106,12 +106,14 @@ NRDB.smart_filter = {};
 		SmartFilterQuery.push(condition);
 	}
 	function add_string_sf(key, operator, values) {
+		for (var j = 0; j < values.length; j++) {
+			values[j] = new RegExp(values[j], 'i');
+		}
 		var condition = {};
 		switch (operator) {
 		case ":":
 			condition[key] = {
-				'$nee': null,
-				'$eq' : new RegExp(values, 'i')
+				'$in' : values
 			};
 			break;
 		case "!":
@@ -124,16 +126,15 @@ NRDB.smart_filter = {};
 		SmartFilterQuery.push(condition);
 	}
 	function add_boolean_sf(key, operator, values) {
-		var condition = {}, value = values.pop();
+		var condition = {}, value = parseInt(values.shift());
 		switch (operator) {
 		case ":":
-			condition[key] = {
-				'$eeq': value ? true : false
+			condition[key] = !!value
 			};
 			break;
 		case "!":
 			condition[key] = {
-				'$eeq': value ? false : true
+				'$ne': !!value
 			};
 			break;
 		}
