@@ -297,6 +297,8 @@ function update_deck(options) {
 	orderBy['title'] = 1;
 	
 	var latestpack = Identity.pack;
+	var influenceSpent = {};
+	
 	NRDB.data.cards.find({indeck:{'$gt':0},type_code:{'$ne':'identity'}}, {'$orderBy': orderBy}).forEach(function(card) {
 		if(latestpack.cycle.position < card.pack.cycle.position 
 				|| (latestpack.cycle.position == card.pack.cycle.position && latestpack.position < card.pack.position)) {
@@ -306,10 +308,10 @@ function update_deck(options) {
 		var influence = '';
 		if(card.faction_code != Identity.faction_code) {
 			var theorical_influence_spent = card.indeck * card.faction_cost
-			NRDB.data.cards.updateById(card.code, {influence_spent: get_influence_cost_of_card_in_deck(card)});
+			influenceSpent[card.code] = get_influence_cost_of_card_in_deck(card);
 			for(var i=0; i<theorical_influence_spent; i++) {
 				if(i && i%5 == 0) influence += " ";
-				influence += (i < card.influence_spent ? "●" : "○");
+				influence += (i < influenceSpent[card.code] ? "●" : "○");
 			}
 			
 			influence = ' <span class="influence influence-'+card.faction_code+'">'+influence+'</span>';
@@ -357,7 +359,7 @@ function update_deck(options) {
 		
 	});
 	$('#latestpack').html('Cards up to <i>'+latestpack.name+'</i>');
-	check_influence();
+	check_influence(influenceSpent);
 	if($('#costChart .highcharts-container').length) setTimeout(make_cost_graph, 100);
 	if($('#strengthChart .highcharts-container').length) setTimeout(make_strength_graph, 100);
 }
@@ -431,10 +433,10 @@ function get_influence_cost_of_card_in_deck(card) {
 	}
 	return inf;
 }
-function check_influence() {
+function check_influence(influenceSpent) {
 	InfluenceSpent = _.reduce(
 			NRDB.data.cards.find({indeck:{'$gt':0},faction_code:{'$ne':Identity.faction_code}}), 
-			function (acc, card) { return acc + card.influence_spent }
+			function (acc, card) { return acc + influenceSpent[card.code] }
 			, 0);
 	var influencePenalty = _.reduce(
 			NRDB.data.cards.find({indeck:{'$gt':0}}), 
