@@ -13,7 +13,7 @@
 var Filters = {},
 	FilterQuery = {},
 	CardDivs = [null, {}, {}, {}],
-	Sort = "type",
+	Sort = "title",
 	Order = 1,
 	Identity = null,
 	InfluenceSpent = 0,
@@ -153,10 +153,10 @@ var Filters = {},
 			<thead>
 				<tr>
 					<th style="min-width:85px"><a href="#" data-sort="indeck">Quantity</a></th>
-					<th><a href="#" data-sort="title">Name</a></th>
-					<th><a href="#" data-sort="factioncost" title="Influence">I.</a></th>
-					<th class="type"><a href="#" data-sort="type" title="Type">T.</a><span class="caret"></span></th>
-					<th class="faction"><a href="#" data-sort="faction" title="Faction">F.</a></th>
+					<th><a href="#" data-sort="title">Name</a><span class="caret"></span></th>
+					<th><a href="#" data-sort="faction_cost" title="Influence">I.</a></th>
+					<th class="type"><a href="#" data-sort="type_code" title="Type">T.</a></th>
+					<th class="faction"><a href="#" data-sort="faction_code" title="Faction">F.</a></th>
 				</tr>
 			</thead>
 			<tbody id="collection-table" class="collection"></tbody>

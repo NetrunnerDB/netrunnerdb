@@ -232,7 +232,9 @@ function get_filter_query(Filters) {
 		FilterQuery['$or'] = [{
 			pack_code: FilterQuery.pack_code
 		}, {
-			code: cards_in_prebuilts
+			code: {
+				'$in': cards_in_prebuilts
+			}
 		}];
 		
 		delete(FilterQuery.pack_code);
@@ -863,8 +865,8 @@ function update_filtered() {
 	var SmartFilterQuery = NRDB.smart_filter.get_query(FilterQuery);
 	
 	var orderBy = {};
-	orderBy[Sort] = Order > 0 ? " asec" : " desc";
-	orderBy['title'] = 1;
+	orderBy[Sort] = Order;
+	if(Sort != 'title') orderBy['title'] = 1;
 	
 	NRDB.data.cards.find(SmartFilterQuery, {'$orderBy':orderBy}).forEach(function(card) {
 		if (ShowOnlyDeck && !card.indeck)

@@ -6,14 +6,12 @@ NRDB.smart_filter = {};
 	var SmartFilterQuery = [];
 	
 	smart_filter.get_query = function(FilterQuery) {
-		var query = $.merge([], SmartFilterQuery);
-		if(FilterQuery) query.push(FilterQuery);
-		return query;
+		return _.extend(FilterQuery, SmartFilterQuery);
 	};
 	
 	smart_filter.handler = function (value, callback) {
 		var conditions = filterSyntax(value);
-		SmartFilterQuery = [];
+		SmartFilterQuery = {};
 
 		for (var i = 0; i < conditions.length; i++) {
 			var condition = conditions[i];
@@ -80,64 +78,59 @@ NRDB.smart_filter = {};
 		for (var j = 0; j < values.length; j++) {
 			values[j] = parseInt(values[j], 10);
 		}
-		var condition = {};
 		switch (operator) {
 		case ":":
-			condition[key] = {
+			SmartFilterQuery[key] = {
 				'$eq' : values
 			};
 			break;
 		case "<":
-			condition[key] = {
+			SmartFilterQuery[key] = {
 				'$lt' : values
 			};
 			break;
 		case ">":
-			condition[key] = {
+			SmartFilterQuery[key] = {
 				'$gt' : values
 			};
 			break;
 		case "!":
-			condition[key] = {
+			SmartFilterQuery[key] = {
 				'$ne' : values
 			};
 			break;
 		}
-		SmartFilterQuery.push(condition);
 	}
 	function add_string_sf(key, operator, values) {
 		for (var j = 0; j < values.length; j++) {
 			values[j] = new RegExp(values[j], 'i');
 		}
-		var condition = {};
 		switch (operator) {
 		case ":":
-			condition[key] = {
+			SmartFilterQuery[key] = {
 				'$in' : values
 			};
 			break;
 		case "!":
-			condition[key] = {
+			SmartFilterQuery[key] = {
 				'$nee': null,
 				'$eq' : new RegExp(values, 'i')
 			};
 			break;
 		}
-		SmartFilterQuery.push(condition);
 	}
 	function add_boolean_sf(key, operator, values) {
 		var condition = {}, value = parseInt(values.shift());
 		switch (operator) {
 		case ":":
-			condition[key] = !!value;
+			SmartFilterQuery[key] = !!value;
 			break;
 		case "!":
-			condition[key] = {
+			SmartFilterQuery[key] = {
 				'$ne': !!value
 			};
 			break;
 		}
-		SmartFilterQuery.push(condition);
 	}
 	function filterSyntax(query) {
 		// renvoie une liste de conditions (array)
