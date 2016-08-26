@@ -215,8 +215,9 @@ class Decks
         }
         if($mwl_code) {
             $mwl = $this->doctrine->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
-            if ($mwl)
-                $deck->setMwl($mwl);
+            if ($mwl) {
+            	$deck->setMwl($mwl);
+            }
         }
         
         $deck->setName($name);

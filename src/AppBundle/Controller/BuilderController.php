@@ -498,7 +498,7 @@ class BuilderController extends Controller
         $decklist_id = filter_var($request->get('decklist_id'), FILTER_SANITIZE_NUMBER_INT);
         $description = trim($request->get('description'));
         $tags = filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-        $mwl_code = filter_var($request->get('mwl_code'), FILTER_SANITIZE_NUMBER_INT);
+        $mwl_code = $request->get('mwl_code');
 
         $this->get('decks')->saveDeck($this->getUser(), $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck ? $source_deck : null);
 
