@@ -125,7 +125,7 @@ NRDB.data = {};
 				data.release();
 				return;
 			}
-	
+
 			if(_.find(collectionsUpdated)) {
 				/*
 				 * we display a message informing the user that they can reload their page to use the updated data
@@ -133,7 +133,7 @@ NRDB.data = {};
 				 */
 				if($('.site-title').length === 0) {
 					var message = "A new version of the data is available. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.";
-					alert(message);
+					$('<div class="bg-info">').html(message).insertAfter($('nav'));
 				}
 			}
 			
@@ -143,7 +143,7 @@ NRDB.data = {};
 			 */
 			if(!_.every(dataLoaded)) {
 				var message = "Unable to load the data. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.";
-				alert(message);
+				$('<div class="bg-info">').html(message).insertAfter($('nav'));
 				return;
 			} else {
 				data.release();
