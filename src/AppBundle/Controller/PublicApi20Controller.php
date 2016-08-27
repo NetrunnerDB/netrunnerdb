@@ -54,13 +54,28 @@ class PublicApi20Controller extends FOSRestController
 		$content['total'] = count($content['data']);
 		$content['success'] = TRUE;
 		$content['version_number'] = '2.0';
-		$content['last_updated'] = $dateUpdate->format('c');
+		$content['last_updated'] = $dateUpdate ? $dateUpdate->format('c') : null;
 		
 		$response->setData($content);
 		
 		return $response;
 	}
 
+	private function prepareFailedResponse($msg)
+	{
+		$response = new JsonResponse();
+		$response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+		$response->setPrivate();
+	
+		$content = [ 'version_number' => '2.0' ];
+		$content['success'] = FALSE;
+		$content['msg'] = $msg;
+	
+		$response->setData($content);
+	
+		return $response;
+	}
+	
 	/**
 	 * Get a type
 	 *
@@ -339,6 +354,11 @@ class PublicApi20Controller extends FOSRestController
 		$date_from = new \DateTime($date);
 		$date_to = clone($date_from);
 		$date_to->modify('+1 day');
+		
+		$date_today = new \DateTime();
+		if($date_today < $date_from) {
+			return $this->prepareFailedResponse("Date is in the future");
+		}
 		
 		$qb = $this->getDoctrine()->getManager()->getRepository('AppBundle:Decklist')->createQueryBuilder('d');
 		$qb->where($qb->expr()->between('d.dateCreation', ':date_from', ':date_to'));
