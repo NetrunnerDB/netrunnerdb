@@ -121,7 +121,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     if(active_mwl[card.code]) {
       html += ' <span class="nrdb-ext-decklist-mwl">';
       for(var i=0; i<quantity*active_mwl[card.code]; i++) {
-        html += '☆';
+        html += '★';
       }
       html += '</span>';
     }
@@ -268,7 +268,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   function createInfo() {
     var lines = [];
     if(options.stats) {
-      lines.push(stats.nbinfluence+" influence spent (max "+(stats.influencepenalty ? stats.maxinfluence+"-"+stats.influencepenalty+"☆="+(stats.maxinfluence-stats.influencepenalty) : stats.maxinfluence)+")");
+      lines.push(stats.nbinfluence+" influence spent (max "+(stats.influencepenalty ? stats.maxinfluence+"-"+stats.influencepenalty+"★="+(stats.maxinfluence-stats.influencepenalty) : stats.maxinfluence)+")");
       if(stats.nbagendapoints) {
         lines.push(stats.nbagendapoints+" agenda points (between "+stats.minagendapoints+" and "+stats.maxagendapoints+")");
       }

@@ -201,7 +201,7 @@ function get_influence_penalty_icons(card, qty) {
 		return '';
 	}
 	for(var i=0; i<penalty; i++) {
-		icons += '☆';
+		icons += '★';
 	}
 	return '<span title="Most Wanted List">'+icons+'</span>';
 }
@@ -446,7 +446,7 @@ function check_influence(influenceSpent) {
 			remainingInfluence = Math.max(1, InfluenceLimit - influencePenalty),
 			availableInfluence = remainingInfluence - InfluenceSpent;
 	if(InfluenceLimit != remainingInfluence) {
-		displayInfluenceLimit = InfluenceLimit+'-'+influencePenalty+'☆='+(InfluenceLimit-influencePenalty);
+		displayInfluenceLimit = InfluenceLimit+'-'+influencePenalty+'★='+(InfluenceLimit-influencePenalty);
 	}
 	if(InfluenceLimit === Number.POSITIVE_INFINITY) {
 		displayInfluenceLimit = "&#8734;";
