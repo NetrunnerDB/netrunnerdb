@@ -65,7 +65,7 @@ function do_diff(ids) {
 	var contents = [];
 	var names = [];
 	for(var decknum=0; decknum<ids.length; decknum++) {
-		var deck = _.find(Decks, function (deck) { return deck.id = ids[decknum] });
+		var deck = _.find(Decks, function (deck) { return deck.id == ids[decknum] });
 		var hash = {};
 		for(var slotnum=0; slotnum<deck.cards.length; slotnum++) {
 			var slot = deck.cards[slotnum];
@@ -112,7 +112,7 @@ function do_diff_collection(ids) {
 	var ensembles; ensembles = [];
 	var lengths; lengths = [];
 	for(var decknum=0; decknum<ids.length; decknum++) {
-		var deck = _.find(Decks, function (deck) { return deck.id = ids[decknum] });
+		var deck = _.find(Decks, function (deck) { return deck.id == ids[decknum] });
 		decks.push(deck);
 		var cards = [];
 		for(var slotnum=0; slotnum<deck.cards.length; slotnum++) {
