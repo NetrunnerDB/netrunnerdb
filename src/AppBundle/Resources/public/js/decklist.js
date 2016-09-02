@@ -57,58 +57,57 @@ function setup_comment_form() {
 		}
 	);
 	
-	$('#comment-form-text').textcomplete(
-			[
-					{
-						match : /\B#([\-+\w]*)$/,
-						search : function(term, callback) {
-							var regexp = new RegExp('\\b' + term, 'i');
-							callback(NRDB.data.cards.find({
-								title : regexp
-							}));
-						},
-						template : function(value) {
-							return value.title;
-						},
-						replace : function(value) {
-							return '[' + value.title + ']('
-									+ Routing.generate('cards_zoom', {card_code:value.code})
-									+ ')';
-						},
-						index : 1
-					}, {
-						match : /\B@([\-+\w]*)$/,
-						search : function(term, callback) {
-							var regexp = new RegExp('^' + term);
-							callback($.grep(Commenters, function(commenter) {
-								return regexp.test(commenter);
-							}));
-						},
-						template : function(value) {
-							return value;
-						},
-						replace : function(value) {
-							return '`@' + value + '`';
-						},
-						index : 1
-					}, {
-						match : /\$([\-+\w]*)$/,
-						search : function(term, callback) {
-							var regexp = new RegExp('^' + term);
-							callback($.grep(['credit', 'recurring-credit', 'click', 'link', 'trash', 'subroutine', 'mu', '1mu', '2mu', '3mu', 
-								'anarch', 'criminal', 'shaper', 'haas-bioroid', 'weyland-consortium', 'jinteki', 'nbn'],
-								function(symbol) { return regexp.test(symbol); }
-							));
-						},
-						template : function(value) {
-							return value;
-						},
-						replace : function(value) {
-							return '<span class="icon icon-' + value + '"></span>';
-						},
-						index : 1
-					} ]);
-
+	$('#comment-form-text').textcomplete([{
+		match : /\B#([\-+\w]*)$/,
+		search : function(term, callback) {
+			var regexp = new RegExp('\\b' + term, 'i');
+			var result = NRDB.data.cards.find({
+				title : regexp
+			});
+			callback(result);
+		},
+		template : function(value) {
+			return value.title;
+		},
+		replace : function(value) {
+			return '[' + value.title + ']('
+					+ Routing.generate('cards_zoom', {card_code:value.code})
+					+ ')';
+		},
+		index : 1,
+		idProperty: 'code'
+	}, {
+		match : /\B@([\-+\w]*)$/,
+		search : function(term, callback) {
+			var regexp = new RegExp('^' + term);
+			callback($.grep(Commenters, function(commenter) {
+				return regexp.test(commenter);
+			}));
+		},
+		template : function(value) {
+			return value;
+		},
+		replace : function(value) {
+			return '`@' + value + '`';
+		},
+		index : 1
+	}, {
+		match : /\$([\-+\w]*)$/,
+		search : function(term, callback) {
+			var regexp = new RegExp('^' + term);
+			callback($.grep(['credit', 'recurring-credit', 'click', 'link', 'trash', 'subroutine', 'mu', '1mu', '2mu', '3mu', 
+				'anarch', 'criminal', 'shaper', 'haas-bioroid', 'weyland-consortium', 'jinteki', 'nbn'],
+				function(symbol) { return regexp.test(symbol); }
+			));
+		},
+		template : function(value) {
+			return value;
+		},
+		replace : function(value) {
+			return '<span class="icon icon-' + value + '"></span>';
+		},
+		index : 1
+	}]);
 }
 
 function setup_social_icons() {
