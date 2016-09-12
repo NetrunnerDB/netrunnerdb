@@ -81,12 +81,6 @@ $(document).on('data.app', function() {
 		});
 	});
 	
-	if(Modernizr.touch) {
-		$('#faction_code, #type_code').css('width', '100%').addClass('btn-group-vertical');
-	} else {
-		$('#faction_code, #type_code').addClass('btn-group');
-	}
-	
 	$('#faction_code').empty();
 	
 	var factions = NRDB.data.factions.find({side_code: Side}).sort(function(a, b) {
@@ -102,12 +96,7 @@ $(document).on('data.app', function() {
 				+ '"><img src="'
 				+ Url_FactionImage.replace('xxx', faction.code)
 				+ '" style="height:12px" alt="'+faction.code+'"></label>');
-		if(Modernizr.touch) {
-			label.append(' '+faction.name);
-			label.addClass('btn-block');
-		} else {
-			label.tooltip({container: 'body'});
-		}
+		label.tooltip({container: 'body'});
 		$('#faction_code').append(label);
 	});
 	
@@ -130,12 +119,7 @@ $(document).on('data.app', function() {
 				+ type.code + '" title="'+type.name+'"><input type="checkbox" name="' + type.code
 				+ '"><img src="' + Url_TypeImage.replace('xxx', type.code)
 				+ '" style="height:12px" alt="'+type.code+'"></label>');
-		if(Modernizr.touch) {
-			label.append(' '+type.name);
-			label.addClass('btn-block');
-		} else {
-			label.tooltip({container: 'body'});
-		}
+		label.tooltip({container: 'body'});
 		$('#type_code').append(label);
 	});
 	$('#type_code').button();

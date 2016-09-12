@@ -170,7 +170,7 @@ tbody .btn-group{white-space:nowrap}
   margin-bottom: 0;
 }
 
-.tt-dropdown-menu {
+.tt-menu {
   min-width: 160px;
   margin-top: 2px;
   padding: 5px 0;
@@ -487,4 +487,16 @@ span.label-as-badge {
 span.champion {
 	font-style: normal;
     font-weight: bold;
+}
+
+/******** fix for twitter typehead + bootstrap input-group-btn ***********/
+
+.input-group .twitter-typeahead {
+	top: 3px;
+}
+.input-group .twitter-typeahead:last-child input.form-control.tt-input {
+    border-radius: 0 4px 4px 0;
+}
+.input-group .twitter-typeahead:first-child input.form-control.tt-input {
+	border-radius: 4px 0 0 4px;
 }

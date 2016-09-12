@@ -132,17 +132,22 @@ var Filters = {},
 <!-- Search Bar -->
 <div class="row">
 	<div class="col-sm-12" style="margin-bottom:10px">
-		<input type="text" class="form-control" id="filter-text" placeholder="Find a card or filter the list" tabindex="1">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm" id="filter-text" placeholder="Find a card or filter the list" tabindex="1">
+			<span class="input-group-btn">
+				<button class="btn btn-default btn-sm" type="button" id="filter-text-button"><span class="glyphicon glyphicon-info-sign"></span></button>
+			</span>
+		</div>
 	</div>
 </div>
 <!-- Search Bar -->
 
-<div class="row search-buttons" style="margin-bottom:10px">
-    <div class="col-xs-6">
-        <div id="faction_code" class="filter" data-toggle="buttons"></div>
+<div class="row search-buttons">
+    <div class="col-sm-6" style="margin-bottom:10px">
+        <div id="faction_code" class="filter btn-group btn-group-justified" data-toggle="buttons"></div>
     </div>
-    <div class="col-xs-6 text-right">
-        <div id="type_code" class="filter" data-toggle="buttons"></div>
+    <div class="col-sm-6" style="margin-bottom:10px">
+        <div id="type_code" class="filter btn-group btn-group-justified" data-toggle="buttons"></div>
     </div>
 </div>
 
