@@ -456,13 +456,6 @@ $(function() {
 			$('.modal input[type=radio][value=' + num + ']').trigger('change');
 		}
 	});
-	$('#filter-text-button').tooltip({
-		html : true,
-		container : 'body',
-		placement : 'bottom',
-		trigger : 'click',
-		title : "<h5>Smart filter syntax</h5><ul style=\"text-align:left\"><li>x: filters on text</li><li>a: flavor text</li><li>s: subtype</li><li>o: cost</li><li>v: agenda points</li><li>n: faction cost</li><li>p: strength</li><li>g: advancement cost</li><li>h: trash cost</li><li>u: uniqueness</li><li>y: quantity in pack</li></ul><code>s:\"code gate\" x:trace</code> to find code gates with trace"
-	});
 
 	var converter = new Markdown.Converter();
 	$('#description').on('keyup', function() {
