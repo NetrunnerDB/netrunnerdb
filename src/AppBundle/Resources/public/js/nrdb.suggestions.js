@@ -14,7 +14,7 @@ NRDB.suggestions = {};
 
 	suggestions.query = function(side) {
 		suggestions.promise = $.ajax('/'+side+'.json', {
-			dataTYpe: 'json',
+			dataType: 'json',
 			success: function (data) {
 				suggestions.codesFromindex = data.index;
 				suggestions.matrix = data.matrix;
@@ -94,6 +94,7 @@ NRDB.suggestions = {};
 		}
 		var nb = 0;
 		for(var i=0; i<suggestions.current.length; i++) {
+			if(suggestions.current[i].proba === 0) continue;
 			var card = NRDB.data.cards.findById(suggestions.current[i].code);
 			if(is_card_usable(card) && Filters.pack_code.indexOf(card.pack_code) > -1) {
 				var div = suggestions.div(card);
