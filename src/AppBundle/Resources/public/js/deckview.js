@@ -20,8 +20,8 @@ $(document).on('data.app', function() {
 	NRDB.draw_simulator.init();
 	NRDB.deck_gallery.update();
 	
-	$('html,body').css('height', 'auto');
-	$('.container').show();
+	make_cost_graph();
+	make_strength_graph();
 });
 
 
@@ -49,8 +49,6 @@ function do_action_deck(event) {
 }
 
 $(function() {
-	$('html,body').css('height', '100%');
-
 	$('#cardModal').on({
 		keypress : function(event) {
 			var num = parseInt(event.which, 10) - 48;
@@ -61,7 +59,7 @@ $(function() {
 	var converter = new Markdown.Converter();
 	$('#description').html(converter.makeHtml(SelectedDeck.description ? SelectedDeck.description : '<i>No description.</i>'));
 
-	$('#btn-group-deck').on({
+	$('.btn-actions').on({
 		click: do_action_deck
 	}, 'button[id],a[id]');
 	

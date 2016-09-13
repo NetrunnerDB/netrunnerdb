@@ -477,9 +477,6 @@ div.ad-blocked {
 	background: transparent;
 	color: inherit;
 }
-div#deck h3#identity {
-	margin-top: 0;
-}
 span.label-as-badge {
 	border-radius: 1em;
 }
@@ -500,3 +497,12 @@ span.champion {
 .input-group .twitter-typeahead:first-child input.form-control.tt-input {
 	border-radius: 4px 0 0 4px;
 }
+
+/*** remove href after links caused by bootstrap ****/
+
+@media print {
+  a[href]:after {
+    content: "";
+  }
+}
+
