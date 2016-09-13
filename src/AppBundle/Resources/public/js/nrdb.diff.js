@@ -1,9 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = { 
-		data_loaded: jQuery.Callbacks(), 
-		locale: 'en'
-	};
-NRDB.diff = {};
 (function(diff, $) {
 	
 
@@ -66,6 +60,4 @@ NRDB.diff = {};
 		return [ listings, intersect ];
 	};
 	
-})(NRDB.diff, jQuery);
-
-
+})(NRDB.diff = {}, jQuery);

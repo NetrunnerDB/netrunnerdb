@@ -19,3 +19,5 @@ src/Netrunnerdb/CardsBundle/Resources/public/images/cards
 .project
 .DS_Store
 .htaccess
+web/runner.json
+web/corp.json

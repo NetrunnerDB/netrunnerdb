@@ -1,6 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = { data_loaded: jQuery.Callbacks() };
-NRDB.format = {};
 (function(format, $) {
 
 	format.type = function(card) {
@@ -43,4 +40,4 @@ NRDB.format = {};
 		return '<p>'+text+'</p>';
 	};
 
-})(NRDB.format, jQuery);
+})(NRDB.format = {}, jQuery);

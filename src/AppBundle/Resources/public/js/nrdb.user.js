@@ -1,7 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = { data_loaded: jQuery.Callbacks() };
-
-NRDB.user = {};
 (function(user, $) {
 
 	user.params = {};
@@ -103,5 +99,4 @@ NRDB.user = {};
 		}
 	});
 	
-})(NRDB.user, jQuery);
-
+})(NRDB.user = {}, jQuery);

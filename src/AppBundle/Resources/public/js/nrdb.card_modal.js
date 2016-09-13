@@ -1,7 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = { data_loaded: jQuery.Callbacks() };
-
-NRDB.card_modal = {};
 (function(card_modal, $) {
 	var modal = null;
 	
@@ -68,4 +64,4 @@ NRDB.card_modal = {};
 		card_modal.create_element();
 	});
 	
-})(NRDB.card_modal, jQuery);
+})(NRDB.card_modal = {}, jQuery);

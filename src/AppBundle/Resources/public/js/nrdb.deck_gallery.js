@@ -1,7 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = { data_loaded: jQuery.Callbacks() };
-
-NRDB.deck_gallery = {};
 (function(deck_gallery, $) {
 	var images = null;
 
@@ -31,4 +27,4 @@ NRDB.deck_gallery = {};
 		}
 	};
 
-})(NRDB.deck_gallery, jQuery);
+})(NRDB.deck_gallery = {}, jQuery);

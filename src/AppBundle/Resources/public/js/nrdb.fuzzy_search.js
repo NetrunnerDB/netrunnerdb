@@ -1,7 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = { data_loaded: jQuery.Callbacks() };
-
-NRDB.fuzzy_search = {};
 (function(fuzzy_search, $) {
 	var types = ['agenda','asset','operation','upgrade','operation','barrier','code gate','sentry','other','event','hardware','resource','icebreaker','program'];
     // takes a card name and fuzzy-searches it in the card db
@@ -54,4 +50,4 @@ NRDB.fuzzy_search = {};
     	});
     });
 	
-})(NRDB.fuzzy_search, jQuery);
+})(NRDB.fuzzy_search = {}, jQuery);

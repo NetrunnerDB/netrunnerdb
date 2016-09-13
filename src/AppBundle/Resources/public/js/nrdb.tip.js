@@ -1,7 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = { data_loaded: jQuery.Callbacks() };
-
-NRDB.tip = {};
 (function(tip, $) {
 	
 	var hide_event = 'mouseout';
@@ -73,5 +69,4 @@ NRDB.tip = {};
 
 	});
 
-})(NRDB.tip, jQuery);
-
+})(NRDB.tip = {}, jQuery);

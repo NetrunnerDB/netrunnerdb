@@ -1,4 +1,3 @@
-NRDB.data = {};
 (function(data, $) {
 
 	var force_update = false;
@@ -208,6 +207,4 @@ NRDB.data = {};
 		data.load();
 	});
 
-})(NRDB.data, jQuery);
-
-
+})(NRDB.data = {}, jQuery);

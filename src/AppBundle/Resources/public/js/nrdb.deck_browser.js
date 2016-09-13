@@ -1,7 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = { data_loaded: jQuery.Callbacks() };
-
-NRDB.deck_browser = {};
 (function(deck_browser, $) {
 	var images = null;
 
@@ -77,4 +73,4 @@ NRDB.deck_browser = {};
 		focus_index(0);
 	};
 
-})(NRDB.deck_browser, jQuery);
+})(NRDB.deck_browser = {}, jQuery);

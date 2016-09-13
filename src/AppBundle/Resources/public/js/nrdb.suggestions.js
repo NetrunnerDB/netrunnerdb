@@ -1,9 +1,3 @@
-if (typeof NRDB != "object")
-	var NRDB = {
-		data_loaded: jQuery.Callbacks(),
-		locale: 'en'
-	};
-NRDB.suggestions = {};
 (function(suggestions, $) {
 	suggestions.codesFromindex = [];
 	suggestions.matrix = [];
@@ -163,7 +157,8 @@ NRDB.suggestions = {};
 
 	});
 
-})(NRDB.suggestions, jQuery);
+})(NRDB.suggestions = {}, jQuery);
+
 $(document).on('data.app', function() {
 	NRDB.suggestions.query(Side);
 });
