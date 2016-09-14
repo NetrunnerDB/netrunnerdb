@@ -539,7 +539,7 @@ function load_snapshot(event) {
 	var snapshot = Snapshots[index];
 	if(!snapshot) return;
 
-	NRDB.data.cards.forEach(function(card) {
+	NRDB.data.cards.find().forEach(function(card) {
 		var indeck = 0;
 		if (snapshot.content[card.code]) {
 			indeck = parseInt(snapshot.content[card.code], 10);
