@@ -39,8 +39,8 @@ var Identity = null,
 </div>
 
 <!-- Buttons -->
-<div class="btn-actions text-center hidden-print">
-{% if is_owner %}
+<div class="btn-actions text-center">
+	{% if is_owner %}
 	<div class="btn-group" role="group" style="margin-bottom:5px">
     	<button type="button" id="btn-print" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-print"></span> Print</button>
     </div>
@@ -53,23 +53,28 @@ var Identity = null,
 	<div class="btn-group" role="group" style="margin-bottom:5px">
 		<button type="button" id="btn-delete" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span> Delete</button>
 	</div>
+	{% else %}
+	This is a private deck shared by {{ deck.user_name }}
 	{% endif %}
+</div>
+
+<div class="btn-actions text-center hidden-print">
 	<div class="btn-group" style="margin-bottom:5px">
-    		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-    			<span class="glyphicon glyphicon-sort"></span>
-      			Sort
-      			<span class="caret"></span>
-    		</button>
-    		<ul class="dropdown-menu" role="menu" id="menu-sort">
-				<li><a href="#" id="btn-sort-type"><label><input type="radio" name="sort-order" checked="checked">by Type</label></a></li>
-				<li><a href="#" id="btn-sort-number"><label><input type="radio" name="sort-order">by Set</label></a></li>
-				<li><a href="#" id="btn-sort-faction"><label><input type="radio" name="sort-order">by Faction</label></a></li>
-				<li><a href="#" id="btn-sort-faction-type"><label><input type="radio" name="sort-order">by Faction, then Type</label></a></li>
-				<li><a href="#" id="btn-sort-faction-number"><label><input type="radio" name="sort-order">by Faction, then Set</label></a></li>
-				<li><a href="#" id="btn-sort-title"><label><input type="radio" name="sort-order">by Name</label></a></li>
-		    </ul>
-  		</div>
-		<div class="btn-group" style="margin-bottom:5px">
+		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+			<span class="glyphicon glyphicon-sort"></span>
+			Sort
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu" id="menu-sort">
+			<li><a href="#" id="btn-sort-type"><label><input type="radio" name="sort-order" checked="checked">by Type</label></a></li>
+			<li><a href="#" id="btn-sort-number"><label><input type="radio" name="sort-order">by Set</label></a></li>
+			<li><a href="#" id="btn-sort-faction"><label><input type="radio" name="sort-order">by Faction</label></a></li>
+			<li><a href="#" id="btn-sort-faction-type"><label><input type="radio" name="sort-order">by Faction, then Type</label></a></li>
+			<li><a href="#" id="btn-sort-faction-number"><label><input type="radio" name="sort-order">by Faction, then Set</label></a></li>
+			<li><a href="#" id="btn-sort-title"><label><input type="radio" name="sort-order">by Name</label></a></li>
+	    </ul>
+	</div>
+	<div class="btn-group" style="margin-bottom:5px">
 		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
 			<span class="glyphicon glyphicon-download"></span> Download <span class="caret"></span>
 		</button>
