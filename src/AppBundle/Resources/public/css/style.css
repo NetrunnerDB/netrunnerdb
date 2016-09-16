@@ -486,6 +486,12 @@ span.champion {
     font-weight: bold;
 }
 
+img[data-src] {
+    font-weight: bold;
+    color: #337ab7;
+    cursor: pointer;
+}
+
 /******** fix for twitter typehead + bootstrap input-group-btn ***********/
 
 .input-group .twitter-typeahead {

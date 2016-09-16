@@ -492,6 +492,21 @@ $(function () {
 		title : "<h5>Smart filter syntax</h5><ul style=\"text-align:left\"><li>x: filters on text</li><li>a: flavor text</li><li>s: subtype</li><li>o: cost</li><li>v: agenda points</li><li>n: faction cost</li><li>p: strength</li><li>g: advancement cost</li><li>h: trash cost</li><li>u: uniqueness</li><li>y: quantity in pack</li></ul><code>s:\"code gate\" x:trace</code> to find code gates with trace<h5>In-text symbols</h5><ul style=\"text-align:left\"><li>[subroutine]</li><li>[credit]</li><li>[trash]</li><li>[click]</li><li>[recurring-credit]</li><li>[mu]</li><li>[link]</li><li>[anarch]</li><li>[criminal]</li><li>[shaper]</li><li>[jinteki]</li><li>[haas-bioroid]</li><li>[nbn]</li><li>[weyland-consortium]</li><li>&lt;trace&gt;</li><li>&lt;errata&gt;</li></ul>"
 	});
 
+	$('img[data-src]').each(function (image) {
+		var alt = this.getAttribute('alt');
+		if(alt) alt = alt + " (Click to load)";
+		else alt = "Click to load";
+		this.setAttribute('alt', alt);
+	}).on('click', function () {
+		var src = this.getAttribute('data-src'),
+			alt = this.getAttribute('alt');
+		if(alt) alt = alt + " (Click to load)";
+		else alt = "Click to load image";
+		this.setAttribute('src', src);
+		this.setAttribute('alt', alt);
+		this.removeAttribute('data-src');
+		this.setAttribute('class', 'img-responsive');
+	});
 });
 
 function oddsModalCalculator(event) {

@@ -57,7 +57,7 @@ class Texts
      */
     public function markdown($string)
     {
-        return $this->purify($this->img_responsive($this->transform($string)));
+        return $this->img_responsive($this->purify($this->transform($string)));
     }
 
     /**
@@ -87,6 +87,6 @@ class Texts
      */
     public function img_responsive($string)
     {
-    	return preg_replace('/<img/', '<img class="img-responsive"', $string);
+    	return preg_replace('/<img src=/', '<img data-src=', $string);
     }
 }
