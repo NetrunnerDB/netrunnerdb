@@ -902,4 +902,64 @@ class User extends BaseUser
     {
         return $this->last_activity_check;
     }
+    /**
+     * @var boolean
+     */
+    private $autoload_images;
+
+
+    /**
+     * Set autoloadImages
+     *
+     * @param boolean $autoloadImages
+     *
+     * @return User
+     */
+    public function setAutoloadImages($autoloadImages)
+    {
+        $this->autoload_images = $autoloadImages;
+
+        return $this;
+    }
+
+    /**
+     * Get autoloadImages
+     *
+     * @return boolean
+     */
+    public function getAutoloadImages()
+    {
+        return $this->autoload_images;
+    }
+    
+    /**
+     * @var array
+     */
+    
+    private $introductions;
+
+
+    /**
+     * Set introductions
+     *
+     * @param array $introductions
+     *
+     * @return User
+     */
+    public function setIntroductions($introductions)
+    {
+        $this->introductions = $introductions;
+
+        return $this;
+    }
+
+    /**
+     * Get introductions
+     *
+     * @return \json
+     */
+    public function getIntroductions()
+    {
+        return $this->introductions;
+    }
 }

@@ -354,6 +354,17 @@ user_profile_view:
         _locale: \w\w
         user_id: \d+
         
+user_validate_introduction:
+    path: /user/validate_introduction/{introduction}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Default:validateIntroduction  
+      
+user_reset_introductions:
+    path: /user/reset_introductions
+    defaults:
+        _controller: AppBundle:Default:resetIntroductions  
+      
 user_follow:
     path: /user/follow/{user_id}
     methods: [GET]

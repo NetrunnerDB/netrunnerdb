@@ -89,7 +89,14 @@
 				$(element).addClass('ad-blocked').html("No ad,<br>no <span class=\"icon icon-credit\"></span>.<br>Like NRDB?<br>Whitelist us<br>or <a href=\""+Routing.generate('donators')+"\">donate</a>.");
 			});
 		}
+		
+		$(document).trigger('user.app');
 	}
+
+	user.promise = new Promise(function (resolve, reject) {
+		$(document).on('user.app', resolve);
+	})
+
 	
 	$(function() {
 		if($.isEmptyObject(user.params)) {

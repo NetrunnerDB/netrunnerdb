@@ -16,8 +16,6 @@ $(document).on('data.app', function() {
 	});
 });
 
-
-
 function setup_comment_form() {
 	
 	var form = $('<form method="POST" action="'+Routing.generate('decklist_comment')+'"><input type="hidden" name="id" value="'+Decklist.id+'"><div class="form-group">'

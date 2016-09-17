@@ -8,6 +8,7 @@ use AppBundle\Entity\Card;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Cycle;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends Controller
 {
@@ -58,14 +59,16 @@ class DefaultController extends Controller
     	$notifCommenter = $request->get('notif_commenter') ? TRUE : FALSE;
     	$notifMention = $request->get('notif_mention') ? TRUE : FALSE;
     	$shareDecks = $request->get('share_decks') ? TRUE : FALSE;
-    	
+    	$autoloadImages = $request->get('autoload_images') ? TRUE : FALSE;
+    	 
     	$user->setFaction($faction_code);
     	$user->setResume($resume);
     	$user->setNotifAuthor($notifAuthor);
     	$user->setNotifCommenter($notifCommenter);
     	$user->setNotifMention($notifMention);
     	$user->setShareDecks($shareDecks);
-    	
+    	$user->setAutoloadImages($autoloadImages);
+    	 
     	$this->get('doctrine')->getManager()->flush();
     	
         $this->get('session')
@@ -73,6 +76,42 @@ class DefaultController extends Controller
             ->set('notice', "Successfully saved your profile.");
 		
     	return $this->redirect($this->generateUrl('user_profile'));
+    }
+    
+    /**
+     * tags an introduction as completed
+     * @param string $introduction
+     * @param Request $request
+     */
+    public function validateIntroductionAction($introduction, Request $request)
+    {
+    	$user = $this->getUser();
+    	if($user) {
+    		$introductions = $user->getIntroductions();
+    		if(!$introductions) $introductions = [];
+    		$introductions[$introduction] = true;
+    		$user->setIntroductions($introductions);
+    		$this->getDoctrine()->getManager()->flush();
+    	}
+    	return new JsonResponse([
+    			'success' => true
+    	]);
+    }
+
+    /**
+     * resets all introductions to "uncompleted"
+     * @param Request $request
+     */
+    public function resetIntroductionsAction(Request $request)
+    {
+    	$user = $this->getUser();
+    	if($user) {
+    		$user->setIntroductions(null);
+    		$this->getDoctrine()->getManager()->flush();
+    	}
+    	return new JsonResponse([
+    			'success' => true
+    	]);
     }
     
     public function infoAction(Request $request)
@@ -93,8 +132,10 @@ class DefaultController extends Controller
             $content = array(
                     'id' => $user_id,
                     'name' => $user->getUsername(),
+            		'introductions' => $user->getIntroductions(),
                     'faction' => $user->getFaction(),
-                    'donation' => $user->getDonation(),
+                    'autoload_images' => $user->getAutoloadImages(),
+            		'donation' => $user->getDonation(),
             		'unchecked_activity' => $this->get('activity')->countUncheckedItems($this->get('activity')->getItems($user)),
             		'following' => array_map(function ($following) {
             			return $following->getId();

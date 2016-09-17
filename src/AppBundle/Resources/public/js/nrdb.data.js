@@ -202,6 +202,10 @@
 		});
 		data.load();
 	}
+	
+	data.promise = new Promise(function (resolve, reject) {
+		$(document).on('data.app', resolve);
+	})
 
 	$(function() {
 		data.load();

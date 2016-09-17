@@ -107,6 +107,14 @@ AppBundle\Entity\User:
             nullable: false
             options:
                 default: false
+        autoload_images:
+            type: boolean
+            nullable: true
+            options:
+                default: true
+        introductions:
+            type: json_array
+            nullable: true
         soft_ban:
             type: boolean
             nullable: false
