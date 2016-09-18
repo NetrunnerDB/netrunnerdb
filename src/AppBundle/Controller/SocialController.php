@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Legality;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use AppBundle\Service\CardsData;
 
 class SocialController extends Controller
 {
@@ -248,7 +249,7 @@ class SocialController extends Controller
         		'mwl_code' => $mwl_code,
         );
         $params['sort_'.$sort] = ' selected="selected"';
-        $params['faction_'.substr($faction_code, 0, 1)] = ' selected="selected"';
+        $params['faction_'.CardsData::$faction_letters[$faction_code]] = ' selected="selected"';
 
         if (! empty($cards_code) && is_array($cards_code)) {
             $cards = $dbh->executeQuery(

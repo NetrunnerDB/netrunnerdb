@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class CardsData
 {
 
-	private static $faction_letters = [
+	public static $faction_letters = [
 			'haas-bioroid' => 'h',
 			'weyland-consortium' => 'w',
 			'anarch' => 'a',
