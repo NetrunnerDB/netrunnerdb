@@ -130,10 +130,7 @@
 				 * we display a message informing the user that they can reload their page to use the updated data
 				 * except if we are on the front page, because data is not essential on the front page
 				 */
-				if($('.site-title').length === 0) {
-					var message = "A new version of the data is available. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.";
-					$('<div class="alert alert-info">').html(message).insertAfter($('nav'));
-				}
+				NRDB.ui.showBanner("A new version of the data is available. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.");
 			}
 			
 		}, function (dataLoaded) {
@@ -141,8 +138,7 @@
 			 * if not all data has been loaded, we can't run the site properly
 			 */
 			if(!_.every(dataLoaded)) {
-				var message = "Unable to load the data. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.";
-				$('<div class="alert alert-info">').html(message).insertAfter($('nav'));
+				NRDB.ui.showBanner("Unable to load the data. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.");
 				return;
 			} else {
 				data.release();

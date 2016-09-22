@@ -1,5 +1,9 @@
 (function(ui, $) {
 
+	ui.showBanner = function showBanner(message, type) {
+		$('<div class="alert alert-'+(type || 'info')+'">').html(message).prependTo($('#wrapper>.container'));
+	}
+	
 	ui.loadImage = function loadImage(image) {
 		var image = this,
 			src = image.getAttribute('data-src');
