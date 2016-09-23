@@ -127,20 +127,57 @@ $(document).on('data.app', function() {
 		$(elt).button('toggle');
 	});
 
+	var initialPackSelection = {};
+	var initialPrebuiltSelection = {};
+	if(localStorage) {
+		NRDB.data.packs.find().forEach(function (pack) {
+			 var checked = localStorage.getItem('pack_code_'+ pack.code);
+			 if(checked !== null) {
+				initialPackSelection[pack.code] = (checked === "on");
+			}
+		});
+		
+		NRDB.data.prebuilts.find().forEach(function (prebuilt) {
+			var checked = localStorage.getItem('prebuilt_code_'+ prebuilt.code);
+			if(checked !== null) {
+				initialPrebuiltSelection[prebuilt.code] = (checked === "on");
+			}
+		});
+	}
+	
 	$('#pack_code').empty();
-	NRDB.data.packs.find().sort(function (a, b) {
-		return (a.cycle.position - b.cycle.position) || (a.position - b.position);
-	}).forEach(function(pack) {
-		var is_checked = pack.date_release || sets_in_deck[pack.code];
-		$('#pack_code').append(
-			'<div class="checkbox"><label><input type="checkbox" name="' + pack.code + '"' + (is_checked ? ' checked="checked"' : '')+ '>' + pack.name + '</label></div>');
+	var f = function(pack, $container) {
+		var is_checked = (pack.date_release || sets_in_deck[pack.code]) && initialPackSelection[pack.code] !== false;
+		return $container.addClass("checkbox").append('<label><input type="checkbox" name="' + pack.code + '"' + (is_checked ? ' checked="checked"' : '')+ '>' + pack.name + '</label>');
+	};
+	_.sortBy(NRDB.data.cycles.find(), 'position').forEach(function (cycle) {
+		var packs = _.sortBy(NRDB.data.packs.find({cycle_code:cycle.code}), 'position');
+		if(cycle.size === 1) {
+			if(packs.length) {
+				var $div = f(packs[0], $('<div></div>'));
+				$('#pack_code').append($div);
+			}
+		} else {
+			var $list = $('<ul class="checkbox checklist-items"></ul>');
+			packs.forEach(function (pack) {
+				var $li = f(pack, $('<li></li>'));
+				$list.append($li);
+			});
+
+			var $group = $('<div class="checkbox"></div>');
+			var $toggle = $('<div class="checkbox" data-toggle="checklist"><label><input type="checkbox">' + cycle.name + '</label></div>');
+			$group.append($toggle);
+			$group.append($list);
+			$('#pack_code').append($group);
+			$toggle.checklist();
+		}
 	});
 
 	$('#prebuilt_code').empty();
 	NRDB.data.prebuilts.find().sort(function (a, b) {
 		return (a.position - b.position);
 	}).forEach(function(prebuilt) {
-		var checked = prebuilt.date_release === "" ? '' : ' checked="checked"';
+		var checked = (prebuilt.date_release !== "" && initialPrebuiltSelection[prebuilt.code] !== false) ? ' checked="checked"' : '';
 		$('#prebuilt_code').append(
 			'<div class="checkbox"><label><input type="checkbox" name="' + prebuilt.code + '"' + checked + '>' + prebuilt.name + '</label></div>');
 	});
@@ -152,15 +189,10 @@ $(document).on('data.app', function() {
 		
 	$('.filter').each(function(index, div) {
 		var columnName = $(div).attr('id');
-		var arr = [], checked;
+		var arr = [];
 		$(div).find("input[type=checkbox]").each(function(index, elt) {
 			var name = $(elt).attr('name');
-			if(columnName == "pack_code" && localStorage && (checked = localStorage.getItem('pack_code_'+ name)) !== null) {
-				$(elt).prop('checked', checked === "on");
-			}
-			if(columnName == "prebuilt_code" && localStorage && (checked = localStorage.getItem('prebuilt_code_'+ name)) !== null) {
-				$(elt).prop('checked', checked === "on");
-			}
+			if(!name) return;
 			if($(elt).prop('checked')) {
 				arr.push(name);
 			}

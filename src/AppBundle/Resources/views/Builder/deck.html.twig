@@ -114,7 +114,7 @@ var Filters = {},
 
 <div role="tabpanel">
 
-<!-- Nav tabs -->
+	<!-- Nav tabs -->
   <ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom:20px">
     <li role="presentation" class="active"><a href="#tab-pane-build" role="tab" data-toggle="tab">Build</a></li>
     <li role="presentation"><a href="#tab-pane-infos" role="tab" data-toggle="tab">Notes</a></li>
@@ -126,153 +126,136 @@ var Filters = {},
   
    <!-- Tab panes -->
   <div class="tab-content">
-  
-   <div role="tabpanel" class="tab-pane active" id="tab-pane-build">
-
-<!-- Search Bar -->
-<div class="row">
-	<div class="col-sm-12" style="margin-bottom:10px">
-		<div class="input-group">
-			<input type="text" class="form-control input-sm" id="filter-text" placeholder="Find a card or filter the list" tabindex="1">
-			<span class="input-group-btn">
-				<button class="btn btn-default btn-sm" type="button" id="filter-text-button"><span class="glyphicon glyphicon-info-sign"></span></button>
-			</span>
+	<!-- tabpanel Build -->
+	<div role="tabpanel" class="tab-pane active" id="tab-pane-build">
+		<!-- Search Bar -->
+		<div class="row">
+			<div class="col-sm-12" style="margin-bottom:10px">
+				<div class="input-group">
+					<input type="text" class="form-control input-sm" id="filter-text" placeholder="Find a card or filter the list" tabindex="1">
+					<span class="input-group-btn">
+						<button class="btn btn-default btn-sm" type="button" id="filter-text-button"><span class="glyphicon glyphicon-info-sign"></span></button>
+					</span>
+				</div>
+			</div>
 		</div>
+		<!-- Search Bar -->
+		<div class="row search-buttons">
+		    <div class="col-sm-6" style="margin-bottom:10px">
+		        <div id="faction_code" class="filter btn-group btn-group-justified" data-toggle="buttons"></div>
+		    </div>
+		    <div class="col-sm-6" style="margin-bottom:10px">
+		        <div id="type_code" class="filter btn-group btn-group-justified" data-toggle="buttons"></div>
+		    </div>
+		</div>
+		<!-- Collection Table (NOT the Collection pane) -->
+		<div class="row" id="collection">
+			<div class="col-sm-12">
+				<table class="table table-condensed table-hover" style="margin-bottom:10px">
+					<thead>
+						<tr>
+							<th style="min-width:85px"><a href="#" data-sort="indeck">Quantity</a></th>
+							<th><a href="#" data-sort="title">Name</a><span class="caret"></span></th>
+							<th><a href="#" data-sort="faction_cost" title="Influence">I.</a></th>
+							<th class="type"><a href="#" data-sort="type_code" title="Type">T.</a></th>
+							<th class="faction"><a href="#" data-sort="faction_code" title="Faction">F.</a></th>
+						</tr>
+					</thead>
+					<tbody id="collection-table" class="collection"></tbody>
+				</table>
+			</div><!-- /.col-sm-12 -->
+			<div id="collection-grid" class="col-sm-12"></div>
+		</div><!-- /.row -->
+		<!-- Collection Table -->
 	</div>
-</div>
-<!-- Search Bar -->
-
-<div class="row search-buttons">
-    <div class="col-sm-6" style="margin-bottom:10px">
-        <div id="faction_code" class="filter btn-group btn-group-justified" data-toggle="buttons"></div>
-    </div>
-    <div class="col-sm-6" style="margin-bottom:10px">
-        <div id="type_code" class="filter btn-group btn-group-justified" data-toggle="buttons"></div>
-    </div>
-</div>
-
-<!-- Collection Table -->
-<div class="row" id="collection">
-	<div class="col-sm-12">
-		<table class="table table-condensed table-hover" style="margin-bottom:10px">
-			<thead>
-				<tr>
-					<th style="min-width:85px"><a href="#" data-sort="indeck">Quantity</a></th>
-					<th><a href="#" data-sort="title">Name</a><span class="caret"></span></th>
-					<th><a href="#" data-sort="faction_cost" title="Influence">I.</a></th>
-					<th class="type"><a href="#" data-sort="type_code" title="Type">T.</a></th>
-					<th class="faction"><a href="#" data-sort="faction_code" title="Faction">F.</a></th>
-				</tr>
-			</thead>
-			<tbody id="collection-table" class="collection"></tbody>
-		</table>
-	</div><!-- /.col-sm-12 -->
-	<div id="collection-grid" class="col-sm-12"></div>
-</div><!-- /.row -->
-<!-- Collection Table -->
-	
-	
-	</div>
+	<!-- tabpanel Check -->
 	<div role="tabpanel" class="tab-pane" id="tab-pane-check">
-	
-	
-{% include 'AppBundle:Builder:draw-simulator.html.twig' %}
-
-<!-- Graphs -->
-<table class="table table-condensed" id="table-graph-costs">
-<thead>
-<tr><th colspan="1"><span class="glyphicon glyphicon-stats"></span> Repartition by Cost</th></tr>
-</thead>
-<tbody>
-<tr>
-	<td><div id="costChart"></div></td>
-</tr>
-</tbody>
-</table>
-
-<table class="table table-condensed" id="table-graph-strengths">
-<thead>
-<tr><th colspan="1"><span class="glyphicon glyphicon-stats"></span> Repartition by Strength</th></tr>
-</thead>
-<tbody>
-<tr>
-	<td><div id="strengthChart"></div></td>
-</tr>
-</tbody>
-</table>
-	
-	
-	
-	</div>
-    <div role="tabpanel" class="tab-pane" id="tab-pane-infos">
-    
-
-<!-- Notes Form -->
-<div class="row">
-	<div class="col-sm-12">
-		<div class="form-group">
-			<label for="tags_">Tags</label>
-			<input type="text" class="form-control" name="tags_" value="{{ deck.tags }}"></input>
-			<span class="help-block">Tags are for easy filtering in your list of decks, e.g. <i>tournament</i> or <i>glacier</i>.</span>
-		</div>
-		<div class="form-group">
-			<label for="description_">Notes</label>
-			<textarea class="form-control" rows="20" name="description_" id="description" placeholder="Type # to enter a card name. Type $ to enter a symbol.">{{ deck.description }}</textarea>
-		</div>
-		<div class="well text-muted" id="description-preview"><small>Preview. Look <a href="http://daringfireball.net/projects/markdown/dingus">here</a> for a Markdown syntax reference.</small></div>
-	</div><!-- /.col-sm-12 -->
-</div><!-- /.row -->
-<!-- Notes Form -->
-    
-    
-    
-    </div>
-    <div role="tabpanel" class="tab-pane" id="tab-pane-history">
-    
-
-<!-- History -->
-<div class="row">
-	<div class="col-sm-12">
-		<table class="table">
-		  <thead>
-		      <tr>
-		          <th>Time</th>
-		          <th>Change</th>
-		          <th>Action</th>
-		      </tr>
-		  </thead>
-		  <tbody id="tbody-history">
-		  </tbody>
-		</table>
-	</div><!-- /.col-sm-12 -->
-</div><!-- /.row -->
-<!-- History -->
-    
-<!-- Published decklists Table -->
-<table class="table table-condensed" id="table-predecessor">
-	<thead>
-		<tr><th colspan="{% if published_decklists|length %}4{% else %}1{% endif %}"><span class="glyphicon glyphicon-share"></span> Published versions</th></tr>
-	</thead>
-	<tbody>
-	{% if published_decklists|length %}
-	{% for decklist in published_decklists %}
+		{% include 'AppBundle:Builder:draw-simulator.html.twig' %}
+		
+		<!-- Graphs -->
+		<table class="table table-condensed" id="table-graph-costs">
+		<thead>
+		<tr><th colspan="1"><span class="glyphicon glyphicon-stats"></span> Repartition by Cost</th></tr>
+		</thead>
+		<tbody>
 		<tr>
-			<td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
-			<td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
-			<td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
-			<td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
+			<td><div id="costChart"></div></td>
 		</tr>
-	{% endfor %}
-	{% else %}
-		<tr><td>None.</td></tr>
-	{% endif %}
-	</tbody>
-</table>
-<!-- Published decklists Table -->
-    
-    
-    
+		</tbody>
+		</table>
+		
+		<table class="table table-condensed" id="table-graph-strengths">
+		<thead>
+		<tr><th colspan="1"><span class="glyphicon glyphicon-stats"></span> Repartition by Strength</th></tr>
+		</thead>
+		<tbody>
+		<tr>
+			<td><div id="strengthChart"></div></td>
+		</tr>
+		</tbody>
+		</table>
+	</div>
+	<!-- tabpanel Notes -->
+    <div role="tabpanel" class="tab-pane" id="tab-pane-infos">
+		<!-- Notes Form -->
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="form-group">
+					<label for="tags_">Tags</label>
+					<input type="text" class="form-control" name="tags_" value="{{ deck.tags }}"></input>
+					<span class="help-block">Tags are for easy filtering in your list of decks, e.g. <i>tournament</i> or <i>glacier</i>.</span>
+				</div>
+				<div class="form-group">
+					<label for="description_">Notes</label>
+					<textarea class="form-control" rows="20" name="description_" id="description" placeholder="Type # to enter a card name. Type $ to enter a symbol.">{{ deck.description }}</textarea>
+				</div>
+				<div class="well text-muted" id="description-preview"><small>Preview. Look <a href="http://daringfireball.net/projects/markdown/dingus">here</a> for a Markdown syntax reference.</small></div>
+			</div><!-- /.col-sm-12 -->
+		</div><!-- /.row -->
+		<!-- Notes Form -->
     </div>
+    <!-- tabpanel History -->
+    <div role="tabpanel" class="tab-pane" id="tab-pane-history">
+		<!-- History -->
+		<div class="row">
+			<div class="col-sm-12">
+				<table class="table">
+				  <thead>
+				      <tr>
+				          <th>Time</th>
+				          <th>Change</th>
+				          <th>Action</th>
+				      </tr>
+				  </thead>
+				  <tbody id="tbody-history">
+				  </tbody>
+				</table>
+			</div><!-- /.col-sm-12 -->
+		</div><!-- /.row -->
+		<!-- History -->
+		<!-- Published decklists Table -->
+		<table class="table table-condensed" id="table-predecessor">
+			<thead>
+				<tr><th colspan="{% if published_decklists|length %}4{% else %}1{% endif %}"><span class="glyphicon glyphicon-share"></span> Published versions</th></tr>
+			</thead>
+			<tbody>
+			{% if published_decklists|length %}
+			{% for decklist in published_decklists %}
+				<tr>
+					<td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+					<td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
+					<td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
+					<td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
+				</tr>
+			{% endfor %}
+			{% else %}
+				<tr><td>None.</td></tr>
+			{% endif %}
+			</tbody>
+		</table>
+		<!-- Published decklists Table -->
+    </div>
+    <!-- tabpanel Collection -->
     <div role="tabpanel" class="tab-pane" id="tab-pane-collection">
     	<div class="panel panel-default">
     		<div class="panel-heading">Select your packs</div>
@@ -283,6 +266,7 @@ var Filters = {},
     		<div class="panel-body filter" id="prebuilt_code"></div>
     	</div>
     </div>
+    <!-- tabpanel Settings -->
     <div role="tabpanel" class="tab-pane" id="tab-pane-settings">
     	<div class="panel panel-default">
     		<div class="panel-body">
