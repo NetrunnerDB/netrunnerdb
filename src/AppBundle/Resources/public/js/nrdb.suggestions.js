@@ -4,7 +4,7 @@
 	suggestions.indexFromCodes = {};
 	suggestions.current = [];
 	suggestions.exclusions = [];
-	suggestions.number = 3;
+	suggestions.number;
 
 	suggestions.query = function(side) {
 		suggestions.promise = $.ajax('/'+side+'.json', {
@@ -30,6 +30,7 @@
 	};
 
 	suggestions.compute = function() {
+		suggestions.number = NRDB.settings.getItem('show_suggestions');
 		if(suggestions.number)
 		{
 

@@ -2,6 +2,7 @@
 
 {% block head %}
 
+<script src="{{ asset('/bundles/app/js/nrdb.settings.js') }}"></script>
 <script src="{{ asset('/bundles/app/js/nrdb.draw_simulator.js') }}"></script>
 <script src="{{ asset('/bundles/app/js/nrdb.card_modal.js') }}"></script>
 <script src="{{ asset('/bundles/app/js/nrdb.smart_filter.js') }}"></script>
@@ -278,7 +279,7 @@ var Filters = {},
 		    	<div class="checkbox"><label><input type="checkbox" name="core-set-1"> Use 1 Core Set</label></div>
 				<div class="checkbox"><label><input type="checkbox" name="core-set-2"> Use 2 Core Sets</label></div>
 				<div class="checkbox"><label><input type="checkbox" name="core-set-3"> Use 3 Core Sets</label></div>
-				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-0"> Show no suggestion</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-0"> Show no suggestions</label></div>
 				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-3"> Show 3 suggestions</label></div>
 				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-10"> Show 10 suggestions</label></div>
 				<div class="checkbox"><label><input type="checkbox" name="buttons-behavior-cumulative"> Faction/type cumulative</label></div>

@@ -1,50 +1,17 @@
 var InputByTitle = false;
-var DisplayColumns = 1;
-var CoreSets = 3;
-var Buttons_Behavior = 'cumulative';
 var Snapshots = []; // deck contents autosaved
 var Autosave_timer = null;
 var Deck_changed_since_last_autosave = false;
 var Autosave_running = false;
 var Autosave_period = 60;
 
-$(document).on('data.app', function() {
-	var localStorageDisplayColumns;
-	if (localStorage
-			&& (localStorageDisplayColumns = parseInt(localStorage
-					.getItem('display_columns'), 10)) !== null
-			&& [ 1, 2, 3 ].indexOf(localStorageDisplayColumns) > -1) {
-		DisplayColumns = localStorageDisplayColumns;
-	}
-	$('input[name=display-column-' + DisplayColumns + ']')
-			.prop('checked', true);
-
-	var localStorageCoreSets;
-	if (localStorage
-			&& (localStorageCoreSets = parseInt(localStorage
-					.getItem('core_sets'), 10)) !== null
-			&& [ 1, 2, 3 ].indexOf(localStorageCoreSets) > -1) {
-		CoreSets = localStorageCoreSets;
-	}
-	$('input[name=core-set-' + CoreSets + ']').prop('checked', true);
-
-	var localStorageSuggestions;
-	if (localStorage
-			&& (localStorageSuggestions = parseInt(localStorage
-					.getItem('show_suggestions'), 10)) !== null
-			&& [ 0, 3, 10 ].indexOf(localStorageSuggestions) > -1) {
-		NRDB.suggestions.number = localStorageSuggestions;
-	}
-	$('input[name=show-suggestions-' + NRDB.suggestions.number + ']').prop('checked', true);
-
-	var localStorageButtonsBehavior;
-	if (localStorage
-			&& (localStorageButtonsBehavior = localStorage.getItem('buttons_behavior')) !== null
-			&& [ 'cumulative', 'exclusive' ].indexOf(localStorageButtonsBehavior) > -1) {
-		Buttons_Behavior = localStorageButtonsBehavior;
-	}
-	$('input[name=buttons-behavior-' + Buttons_Behavior + ']').prop('checked', true);
-
+Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
+	
+	$('input[name=display-column-'+NRDB.settings.getItem('display_columns')+']').prop('checked', true);
+	$('input[name=core-set-'+NRDB.settings.getItem('core_sets')+']').prop('checked', true);
+	$('input[name=show-suggestions-'+NRDB.settings.getItem('show_suggestions')+']').prop('checked', true);
+	$('input[name=buttons-behavior-'+NRDB.settings.getItem('buttons_behavior')+']').prop('checked', true);
+	
 	NRDB.data.cards.remove({
 		side_code : {
 			"$ne" : Side
@@ -71,7 +38,7 @@ $(document).on('data.app', function() {
 	NRDB.data.cards.find().forEach(function(card) {
 		var max_qty = card.deck_limit;
 		if(card.pack_code == 'core') {
-			max_qty = Math.min(card.quantity * CoreSets, max_qty);
+			max_qty = Math.min(card.quantity * NRDB.settings.getItem('core_sets'), max_qty);
 		}
 		if(Identity.pack_code == "draft") {
 			max_qty = 9;
@@ -129,21 +96,18 @@ $(document).on('data.app', function() {
 
 	var initialPackSelection = {};
 	var initialPrebuiltSelection = {};
-	if(localStorage) {
-		NRDB.data.packs.find().forEach(function (pack) {
-			 var checked = localStorage.getItem('pack_code_'+ pack.code);
-			 if(checked !== null) {
-				initialPackSelection[pack.code] = (checked === "on");
-			}
+	
+	NRDB.data.packs.find().forEach(function (pack) {
+		 localforage.getItem('pack_code_'+ pack.code).then(function (value) {
+			 if(value) initialPackSelection[pack.code] = (value === "on");
+		 });
+	});
+	
+	NRDB.data.prebuilts.find().forEach(function (prebuilt) {
+		localforage.getItem('prebuilt_code_'+ prebuilt.code).then(function (value) {
+			if(value) initialPrebuiltSelection[prebuilt.code] = (checked === "on");
 		});
-		
-		NRDB.data.prebuilts.find().forEach(function (prebuilt) {
-			var checked = localStorage.getItem('prebuilt_code_'+ prebuilt.code);
-			if(checked !== null) {
-				initialPrebuiltSelection[prebuilt.code] = (checked === "on");
-			}
-		});
-	}
+	});
 	
 	$('#pack_code').empty();
 	var f = function(pack, $container) {
@@ -309,7 +273,7 @@ $(function() {
 			}
 			event.stopPropagation();
 		} else {
-			if (!event.shiftKey && Buttons_Behavior === 'exclusive' || event.shiftKey && Buttons_Behavior === 'cumulative') {
+			if (!event.shiftKey && NRDB.settings.getItem('buttons_behavior') === 'exclusive' || event.shiftKey && NRDB.settings.getItem('buttons_behavior') === 'cumulative') {
 				if (!event.altKey) {
 					uncheck_all_active.call(this);
 				} else {
@@ -372,9 +336,7 @@ $(function() {
 		change : function(event) {
 			$('input[name=display-column-2]').prop('checked', false);
 			$('input[name=display-column-3]').prop('checked', false);
-			DisplayColumns = 1;
-			if (localStorage)
-				localStorage.setItem('display_columns', DisplayColumns);
+			NRDB.settings.setItem('display_columns', 1);
 			refresh_collection();
 		}
 	});
@@ -382,9 +344,7 @@ $(function() {
 		change : function(event) {
 			$('input[name=display-column-1]').prop('checked', false);
 			$('input[name=display-column-3]').prop('checked', false);
-			DisplayColumns = 2;
-			if (localStorage)
-				localStorage.setItem('display_columns', DisplayColumns);
+			NRDB.settings.setItem('display_columns', 2);
 			refresh_collection();
 		}
 	});
@@ -392,9 +352,7 @@ $(function() {
 		change : function(event) {
 			$('input[name=display-column-1]').prop('checked', false);
 			$('input[name=display-column-2]').prop('checked', false);
-			DisplayColumns = 3;
-			if (localStorage)
-				localStorage.setItem('display_columns', DisplayColumns);
+			NRDB.settings.setItem('display_columns', 3);
 			refresh_collection();
 		}
 	});
@@ -402,9 +360,7 @@ $(function() {
 		change : function(event) {
 			$('input[name=core-set-2]').prop('checked', false);
 			$('input[name=core-set-3]').prop('checked', false);
-			CoreSets = 1;
-			if (localStorage)
-				localStorage.setItem('core_sets', CoreSets);
+			NRDB.settings.setItem('core_sets', 1);
 			update_core_sets();
 			refresh_collection();
 		}
@@ -413,9 +369,7 @@ $(function() {
 		change : function(event) {
 			$('input[name=core-set-1]').prop('checked', false);
 			$('input[name=core-set-3]').prop('checked', false);
-			CoreSets = 2;
-			if (localStorage)
-				localStorage.setItem('core_sets', CoreSets);
+			NRDB.settings.setItem('core_sets', 2);
 			update_core_sets();
 			refresh_collection();
 		}
@@ -424,9 +378,7 @@ $(function() {
 		change : function(event) {
 			$('input[name=core-set-1]').prop('checked', false);
 			$('input[name=core-set-2]').prop('checked', false);
-			CoreSets = 3;
-			if (localStorage)
-				localStorage.setItem('core_sets', CoreSets);
+			NRDB.settings.setItem('core_sets', 3);
 			update_core_sets();
 			refresh_collection();
 		}
@@ -435,9 +387,7 @@ $(function() {
 		change : function(event) {
 			$('input[name=show-suggestions-3]').prop('checked', false);
 			$('input[name=show-suggestions-10]').prop('checked', false);
-			NRDB.suggestions.number = 0;
-			if (localStorage)
-				localStorage.setItem('show_suggestions', NRDB.suggestions.number);
+			NRDB.settings.setItem('show_suggestions', 0);
 			NRDB.suggestions.show();
 		}
 	});
@@ -445,9 +395,7 @@ $(function() {
 		change : function(event) {
 			$('input[name=show-suggestions-0]').prop('checked', false);
 			$('input[name=show-suggestions-10]').prop('checked', false);
-			NRDB.suggestions.number = 3;
-			if (localStorage)
-				localStorage.setItem('show_suggestions', NRDB.suggestions.number);
+			NRDB.settings.setItem('show_suggestions', 3);
 			NRDB.suggestions.show();
 		}
 	});
@@ -455,9 +403,7 @@ $(function() {
 		change : function(event) {
 			$('input[name=show-suggestions-0]').prop('checked', false);
 			$('input[name=show-suggestions-3]').prop('checked', false);
-			NRDB.suggestions.number = 10;
-			if (localStorage)
-				localStorage.setItem('show_suggestions', NRDB.suggestions.number);
+			NRDB.settings.setItem('show_suggestions', 10);
 			NRDB.suggestions.show();
 		}
 	});
@@ -465,18 +411,14 @@ $(function() {
 		change : function(event) {
 			$('input[name=buttons-behavior-exclusive]').prop('checked', false);
 			$('input[name=buttons-behavior-exclusive]').prop('checked', false);
-			Buttons_Behavior = 'cumulative';
-			if (localStorage)
-				localStorage.setItem('buttons_behavior', Buttons_Behavior);
+			NRDB.settings.setItem('buttons_behavior', 'cumulative');
 		}
 	});
 	$('input[name=buttons-behavior-exclusive]').on({
 		change : function(event) {
 			$('input[name=buttons-behavior-cumulative]').prop('checked', false);
 			$('input[name=buttons-behavior-cumulative]').prop('checked', false);
-			Buttons_Behavior = 'exclusive';
-			if (localStorage)
-				localStorage.setItem('buttons_behavior', Buttons_Behavior);
+			NRDB.settings.setItem('buttons_behavior', 'exclusive');
 		}
 	});
 	$('thead').on({
@@ -638,11 +580,11 @@ function handle_input_change(event) {
 	div.find("input[type=checkbox]").each(function(index, elt) {
 		if ($(elt).prop('checked'))
 			arr.push($(elt).attr('name'));
-		if (columnName == "pack_code" && localStorage)
-			localStorage.setItem('pack_code_' + $(elt).attr('name'), $(
+		if (columnName == "pack_code")
+			localforage.setItem('pack_code_' + $(elt).attr('name'), $(
 					elt).prop('checked') ? "on" : "off");
-		if (columnName == "prebuilt_code" && localStorage)
-			localStorage.setItem('prebuilt_code_' + $(elt).attr('name'), $(
+		if (columnName == "prebuilt_code")
+			localforage.setItem('prebuilt_code_' + $(elt).attr('name'), $(
 					elt).prop('checked') ? "on" : "off");
 	});
 	Filters[columnName] = arr;
@@ -747,7 +689,7 @@ function update_core_sets() {
 	NRDB.data.cards.find({
 		pack_code : 'core'
 	}).forEach(function(card) {
-		var max_qty = Math.min(card.quantity * CoreSets, card.deck_limit);
+		var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core_sets'), card.deck_limit);
 		if(Identity.pack_code == "draft") {
 			max_qty = 9;
 		}
@@ -788,7 +730,7 @@ function build_div(record) {
 	}
 
 	var div = '';
-	switch (DisplayColumns) {
+	switch (NRDB.settings.getItem('display_columns')) {
 	case 1:
 
 		var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
@@ -885,7 +827,7 @@ function update_filtered() {
 			return;
 
 		var index = card.code;
-		var row = (CardDivs[DisplayColumns][index] || (CardDivs[DisplayColumns][index] = build_div(card)))
+		var row = (CardDivs[NRDB.settings.getItem('display_columns')][index] || (CardDivs[NRDB.settings.getItem('display_columns')][index] = build_div(card)))
 				.data("index", card.code);
 		row.find('input[name="qty-' + card.code + '"]').each(
 				function(i, element) {
@@ -903,8 +845,8 @@ function update_filtered() {
 			row.find('label').addClass("disabled").find(
 					'input[type=radio]').attr("disabled", true);
 
-		if (DisplayColumns > 1
-				&& counter % DisplayColumns === 0) {
+		if (NRDB.settings.getItem('display_columns') > 1
+				&& counter % NRDB.settings.getItem('display_columns') === 0) {
 			container = $('<div class="row"></div>').appendTo(
 					$('#collection-grid'));
 		}

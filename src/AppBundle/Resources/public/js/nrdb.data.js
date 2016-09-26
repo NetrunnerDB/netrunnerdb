@@ -3,7 +3,9 @@
 	var force_update = false;
 	var dbNames = ['cycles', 'packs', 'cards', 'prebuilts', 'factions', 'types', 'sides', 'mwl'];
 	
-	
+	/**
+	 * Promise interface to forerunnerdb's load method
+	 */
 	data.fdb_load = function (db) {
 		return new Promise(function (resolve, reject) {
 			db.load(function (err) {

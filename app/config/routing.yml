@@ -37,11 +37,13 @@ fos_oauth_server_authorize:
 
 oauth_server_auth_login:
     path:  /oauth/v2/auth_login
-    defaults: { _controller: AppBundle:Security:login }
+    defaults:
+        _controller: AppBundle:Security:login
 
 oauth_server_auth_login_check:
     path:  /oauth/v2/auth_login_check
-    defaults: { _controller: AppBundle:Security:loginCheck }
+    defaults:
+        _controller: AppBundle:Security:loginCheck
 
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
