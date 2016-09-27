@@ -390,7 +390,7 @@ function test_onesies() {
 	});
 	
 	// deluxe and datapack check
-	var remaining_cards = NRDB.data.cards.find({type_code:{'$ne':'identity'},indeck:{'$gt':0},code:{'$nin':accepted_cards}});
+	var remaining_cards = NRDB.data.cards.find({type_code:{'$ne':'identity'},indeck:{'$gt':0},pack_code:{'$ne':'core'},code:{'$nin':accepted_cards}});
 	var packs = _.values(_.reduce(remaining_cards, function (acc, card) {
 		if(!acc[card.pack.code]) acc[card.pack.code] = { pack: card.pack, count: 0 };
 		acc[card.pack.code].count++;
