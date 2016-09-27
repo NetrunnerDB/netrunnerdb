@@ -269,23 +269,30 @@ var Filters = {},
     </div>
     <!-- tabpanel Settings -->
     <div role="tabpanel" class="tab-pane" id="tab-pane-settings">
-    	<div class="panel panel-default">
-    		<div class="panel-body">
-		    	<div class="checkbox"><label><input type="checkbox" name="show-disabled"> Show unusable cards</label></div>
-		    	<div class="checkbox"><label><input type="checkbox" name="only-deck"> Show only used cards</label></div>
-		    	<div class="checkbox"><label><input type="checkbox" name="display-column-1"> Display on 1 column</label></div>
-		    	<div class="checkbox"><label><input type="checkbox" name="display-column-2"> Display on 2 columns</label></div>
-		    	<div class="checkbox"><label><input type="checkbox" name="display-column-3"> Display on 3 columns</label></div>
-		    	<div class="checkbox"><label><input type="checkbox" name="core-set-1"> Use 1 Core Set</label></div>
-				<div class="checkbox"><label><input type="checkbox" name="core-set-2"> Use 2 Core Sets</label></div>
-				<div class="checkbox"><label><input type="checkbox" name="core-set-3"> Use 3 Core Sets</label></div>
-				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-0"> Show no suggestions</label></div>
-				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-3"> Show 3 suggestions</label></div>
-				<div class="checkbox"><label><input type="checkbox" name="show-suggestions-10"> Show 10 suggestions</label></div>
-				<div class="checkbox"><label><input type="checkbox" name="buttons-behavior-cumulative"> Faction/type cumulative</label></div>
-				<div class="checkbox"><label><input type="checkbox" name="buttons-behavior-exclusive"> Faction/type exclusive</label></div>
-			</div>
-		</div>
+    		<fieldset>
+		    	<div class="checkbox"><label><input type="checkbox" name="show-disabled" data-persistence> Show unusable cards</label></div>
+		    	<div class="checkbox"><label><input type="checkbox" name="only-deck" data-persistence> Show only used cards</label></div>
+				<div class="checkbox"><label><input type="checkbox" name="show-onesies" data-persistence> Show 1.1.1.1 format compliance</label></div>
+			</fieldset>
+		    <fieldset>
+		    	<div class="radio"><label><input type="radio" name="display-columns" value="1" data-persistence> Display on 1 column</label></div>
+		    	<div class="radio"><label><input type="radio" name="display-columns" value="2" data-persistence> Display on 2 columns</label></div>
+		    	<div class="radio"><label><input type="radio" name="display-columns" value="3" data-persistence> Display on 3 columns</label></div>
+		    </fieldset>
+			<fieldset>
+		    	<div class="radio"><label><input type="radio" name="core-sets" value="1" data-persistence> Use 1 Core Set</label></div>
+				<div class="radio"><label><input type="radio" name="core-sets" value="2" data-persistence> Use 2 Core Sets</label></div>
+				<div class="radio"><label><input type="radio" name="core-sets" value="3" data-persistence> Use 3 Core Sets</label></div>
+			</fieldset>
+			<fieldset>
+				<div class="radio"><label><input type="radio" name="show-suggestions" value="0" data-persistence> Show no suggestions</label></div>
+				<div class="radio"><label><input type="radio" name="show-suggestions" value="3" data-persistence>Show 3 suggestions</label></div>
+				<div class="radio"><label><input type="radio" name="show-suggestions" value="10" data-persistence> Show 10 suggestions</label></div>
+			</fieldset>
+			<fieldset>
+				<div class="radio"><label><input type="radio" name="buttons-behavior" value="cumulative" data-persistence> Faction/type cumulative</label></div>
+				<div class="radio"><label><input type="radio" name="buttons-behavior" value="exclusive" data-persistence> Faction/type exclusive</label></div>
+			</fieldset>
     </div>
   </div>
 

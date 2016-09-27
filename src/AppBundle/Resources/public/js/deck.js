@@ -7,23 +7,16 @@ var Autosave_period = 60;
 
 Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	
-	$('input[name=display-column-'+NRDB.settings.getItem('display_columns')+']').prop('checked', true);
-	$('input[name=core-set-'+NRDB.settings.getItem('core_sets')+']').prop('checked', true);
-	$('input[name=show-suggestions-'+NRDB.settings.getItem('show_suggestions')+']').prop('checked', true);
-	$('input[name=buttons-behavior-'+NRDB.settings.getItem('buttons_behavior')+']').prop('checked', true);
-	
 	NRDB.data.cards.remove({
 		side_code : {
 			"$ne" : Side
 		}
 	});
 	
-	var sets_in_deck = {};
 	NRDB.data.cards.find().forEach(function(card) {
 		var indeck = 0;
 		if (Deck[card.code]) {
 			indeck = parseInt(Deck[card.code], 10);
-			sets_in_deck[card.pack_code] = 1;
 		}
 		NRDB.data.cards.updateById(card.code, {
 			indeck : indeck,
@@ -38,7 +31,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	NRDB.data.cards.find().forEach(function(card) {
 		var max_qty = card.deck_limit;
 		if(card.pack_code == 'core') {
-			max_qty = Math.min(card.quantity * NRDB.settings.getItem('core_sets'), max_qty);
+			max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
 		}
 		if(Identity.pack_code == "draft") {
 			max_qty = 9;
@@ -93,20 +86,84 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	$('#type_code').children('label:first-child').each(function(index, elt) {
 		$(elt).button('toggle');
 	});
+	
+
+	$('input[name=Identity]').prop("checked", false);
+	if (Identity.code == "03002") {
+		$('input[name=Jinteki]').prop("checked", false);
+	}
+		
+
+	function findMatches(q, cb) {
+		if(q.match(/^\w:/)) return;
+		var regexp = new RegExp(q, 'i');
+		cb(NRDB.data.cards.find({title: regexp}));
+	}
+
+	$('#filter-text').typeahead({
+		  hint: true,
+		  highlight: true,
+		  minLength: 2
+		},{
+		displayKey: 'title',
+		source: findMatches
+	});
+
+	make_cost_graph();
+	make_strength_graph();
+
+	$.each(History, function (index, snapshot) {
+		add_snapshot(snapshot);
+	});
+
+	$('html,body').css('height', 'auto');
+
+	$(document).on('persistence:change', function (event) {
+		switch($(event.target).attr('name')) {
+		case 'core-sets':
+			update_core_sets();
+		case 'display-columns':
+		case 'show-disabled':
+		case 'only-deck':
+			refresh_collection();
+			break;
+		case 'show-suggestions':
+			NRDB.suggestions.show();
+			break;
+		case 'show-onesies':
+			update_deck();
+			break;
+		}
+	});
 
 	var initialPackSelection = {};
 	var initialPrebuiltSelection = {};
+	var promises = [];
 	
 	NRDB.data.packs.find().forEach(function (pack) {
-		 localforage.getItem('pack_code_'+ pack.code).then(function (value) {
+		 promises.push(localforage.getItem('pack_code_'+ pack.code).then(function (value) {
 			 if(value) initialPackSelection[pack.code] = (value === "on");
-		 });
+		 }));
 	});
 	
-	NRDB.data.prebuilts.find().forEach(function (prebuilt) {
-		localforage.getItem('prebuilt_code_'+ prebuilt.code).then(function (value) {
-			if(value) initialPrebuiltSelection[prebuilt.code] = (checked === "on");
-		});
+	NRDB.data.prebuilts.find().map(function (prebuilt) {
+		promises.push(localforage.getItem('prebuilt_code_'+ prebuilt.code).then(function (value) {
+			if(value) initialPrebuiltSelection[prebuilt.code] = (value === "on");
+		}));
+	});
+	
+	Promise.all(promises).then(function () {
+		create_collection_tab(initialPackSelection, initialPrebuiltSelection);
+	});
+	
+});
+
+function create_collection_tab(initialPackSelection, initialPrebuiltSelection) {
+	
+
+	var sets_in_deck = {};
+	NRDB.data.cards.find({indeck:{'$gt':0}}).forEach(function(card) {
+		sets_in_deck[card.pack_code] = 1;
 	});
 	
 	$('#pack_code').empty();
@@ -146,11 +203,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 			'<div class="checkbox"><label><input type="checkbox" name="' + prebuilt.code + '"' + checked + '>' + prebuilt.name + '</label></div>');
 	});
 
-	$('input[name=Identity]').prop("checked", false);
-	if (Identity.code == "03002") {
-		$('input[name=Jinteki]').prop("checked", false);
-	}
-		
+
 	$('.filter').each(function(index, div) {
 		var columnName = $(div).attr('id');
 		var arr = [];
@@ -169,33 +222,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	$('#mwl_code').trigger('change');
 	// triggers a refresh_collection();
 	// triggers a update_deck();
-
-
-	function findMatches(q, cb) {
-		if(q.match(/^\w:/)) return;
-		var regexp = new RegExp(q, 'i');
-		cb(NRDB.data.cards.find({title: regexp}));
-	}
-
-	$('#filter-text').typeahead({
-		  hint: true,
-		  highlight: true,
-		  minLength: 2
-		},{
-		displayKey: 'title',
-		source: findMatches
-	});
-
-	make_cost_graph();
-	make_strength_graph();
-
-	$.each(History, function (index, snapshot) {
-		add_snapshot(snapshot);
-	});
-
-	$('html,body').css('height', 'auto');
-
-});
+}
 
 function get_filter_query(Filters) {
 	var FilterQuery = _.pickBy(Filters);
@@ -273,7 +300,7 @@ $(function() {
 			}
 			event.stopPropagation();
 		} else {
-			if (!event.shiftKey && NRDB.settings.getItem('buttons_behavior') === 'exclusive' || event.shiftKey && NRDB.settings.getItem('buttons_behavior') === 'cumulative') {
+			if (!event.shiftKey && NRDB.settings.getItem('buttons-behavior') === 'exclusive' || event.shiftKey && NRDB.settings.getItem('buttons-behavior') === 'cumulative') {
 				if (!event.altKey) {
 					uncheck_all_active.call(this);
 				} else {
@@ -296,6 +323,7 @@ $(function() {
 	$('#btn-save-as-copy').on('click', function(event) {
 		$('#deck-save-as-copy').val(1);
 	});
+	
 	$('#btn-cancel-edits').on('click', function(event) {
 		var edits = $.grep(Snapshots, function (snapshot) {
 			return snapshot.saved === false;
@@ -306,124 +334,28 @@ $(function() {
 		}
 		$('#deck-cancel-edits').val(1);
 	});
+	
 	$('#collection').on({
 		change : function(event) {
 			InputByTitle = false;
 			handle_quantity_change.call(this, event);
 		}
 	}, 'input[type=radio]');
+
 	$('#collection').on({
 		click : function(event) {
 			InputByTitle = false;
 		}
 	}, 'a.card');
+	
 	$('.modal').on({
 		change : handle_quantity_change
 	}, 'input[type=radio]');
-	$('input[name=show-disabled]').on({
-		change : function(event) {
-			HideDisabled = !$(this).prop('checked');
-			refresh_collection();
-		}
-	});
-	$('input[name=only-deck]').on({
-		change : function(event) {
-			ShowOnlyDeck = $(this).prop('checked');
-			refresh_collection();
-		}
-	});
-	$('input[name=display-column-1]').on({
-		change : function(event) {
-			$('input[name=display-column-2]').prop('checked', false);
-			$('input[name=display-column-3]').prop('checked', false);
-			NRDB.settings.setItem('display_columns', 1);
-			refresh_collection();
-		}
-	});
-	$('input[name=display-column-2]').on({
-		change : function(event) {
-			$('input[name=display-column-1]').prop('checked', false);
-			$('input[name=display-column-3]').prop('checked', false);
-			NRDB.settings.setItem('display_columns', 2);
-			refresh_collection();
-		}
-	});
-	$('input[name=display-column-3]').on({
-		change : function(event) {
-			$('input[name=display-column-1]').prop('checked', false);
-			$('input[name=display-column-2]').prop('checked', false);
-			NRDB.settings.setItem('display_columns', 3);
-			refresh_collection();
-		}
-	});
-	$('input[name=core-set-1]').on({
-		change : function(event) {
-			$('input[name=core-set-2]').prop('checked', false);
-			$('input[name=core-set-3]').prop('checked', false);
-			NRDB.settings.setItem('core_sets', 1);
-			update_core_sets();
-			refresh_collection();
-		}
-	});
-	$('input[name=core-set-2]').on({
-		change : function(event) {
-			$('input[name=core-set-1]').prop('checked', false);
-			$('input[name=core-set-3]').prop('checked', false);
-			NRDB.settings.setItem('core_sets', 2);
-			update_core_sets();
-			refresh_collection();
-		}
-	});
-	$('input[name=core-set-3]').on({
-		change : function(event) {
-			$('input[name=core-set-1]').prop('checked', false);
-			$('input[name=core-set-2]').prop('checked', false);
-			NRDB.settings.setItem('core_sets', 3);
-			update_core_sets();
-			refresh_collection();
-		}
-	});
-	$('input[name=show-suggestions-0]').on({
-		change : function(event) {
-			$('input[name=show-suggestions-3]').prop('checked', false);
-			$('input[name=show-suggestions-10]').prop('checked', false);
-			NRDB.settings.setItem('show_suggestions', 0);
-			NRDB.suggestions.show();
-		}
-	});
-	$('input[name=show-suggestions-3]').on({
-		change : function(event) {
-			$('input[name=show-suggestions-0]').prop('checked', false);
-			$('input[name=show-suggestions-10]').prop('checked', false);
-			NRDB.settings.setItem('show_suggestions', 3);
-			NRDB.suggestions.show();
-		}
-	});
-	$('input[name=show-suggestions-10]').on({
-		change : function(event) {
-			$('input[name=show-suggestions-0]').prop('checked', false);
-			$('input[name=show-suggestions-3]').prop('checked', false);
-			NRDB.settings.setItem('show_suggestions', 10);
-			NRDB.suggestions.show();
-		}
-	});
-	$('input[name=buttons-behavior-cumulative]').on({
-		change : function(event) {
-			$('input[name=buttons-behavior-exclusive]').prop('checked', false);
-			$('input[name=buttons-behavior-exclusive]').prop('checked', false);
-			NRDB.settings.setItem('buttons_behavior', 'cumulative');
-		}
-	});
-	$('input[name=buttons-behavior-exclusive]').on({
-		change : function(event) {
-			$('input[name=buttons-behavior-cumulative]').prop('checked', false);
-			$('input[name=buttons-behavior-cumulative]').prop('checked', false);
-			NRDB.settings.setItem('buttons_behavior', 'exclusive');
-		}
-	});
+
 	$('thead').on({
 		click : handle_header_click
 	}, 'a[data-sort]');
+	
 	$('#cardModal').on({
 		keypress : function(event) {
 			var num = parseInt(event.which, 10) - 48;
@@ -578,14 +510,23 @@ function handle_input_change(event) {
 	var columnName = div.attr('id');
 	var arr = [];
 	div.find("input[type=checkbox]").each(function(index, elt) {
-		if ($(elt).prop('checked'))
-			arr.push($(elt).attr('name'));
-		if (columnName == "pack_code")
-			localforage.setItem('pack_code_' + $(elt).attr('name'), $(
-					elt).prop('checked') ? "on" : "off");
-		if (columnName == "prebuilt_code")
-			localforage.setItem('prebuilt_code_' + $(elt).attr('name'), $(
-					elt).prop('checked') ? "on" : "off");
+		var name = $(elt).attr('name');
+		
+		if (name && $(elt).prop('checked')) {
+			arr.push(name);
+		}
+		
+		if (columnName == "pack_code") {
+			var key = 'pack_code_' + name,
+				value = $(elt).prop('checked') ? "on" : "off";
+			localforage.setItem(key, value);
+		}
+			
+		if (columnName == "prebuilt_code") {
+			var key = 'prebuilt_code_' + name,
+				value = $(elt).prop('checked') ? "on" : "off";
+			localforage.setItem(key, value);
+		}
 	});
 	Filters[columnName] = arr;
 	FilterQuery = get_filter_query(Filters);
@@ -689,7 +630,7 @@ function update_core_sets() {
 	NRDB.data.cards.find({
 		pack_code : 'core'
 	}).forEach(function(card) {
-		var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core_sets'), card.deck_limit);
+		var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), card.deck_limit);
 		if(Identity.pack_code == "draft") {
 			max_qty = 9;
 		}
@@ -730,7 +671,7 @@ function build_div(record) {
 	}
 
 	var div = '';
-	switch (NRDB.settings.getItem('display_columns')) {
+	switch (Number(NRDB.settings.getItem('display-columns'))) {
 	case 1:
 
 		var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
@@ -810,7 +751,7 @@ function update_filtered() {
 	$('#collection-table').empty();
 	$('#collection-grid').empty();
 
-	var counter = 0, container = $('#collection-table');
+	var counter = 0, container = $('#collection-table'), display_columns = NRDB.settings.getItem('display-columns');
 	var SmartFilterQuery = NRDB.smart_filter.get_query(FilterQuery);
 	
 	var orderBy = {};
@@ -827,7 +768,7 @@ function update_filtered() {
 			return;
 
 		var index = card.code;
-		var row = (CardDivs[NRDB.settings.getItem('display_columns')][index] || (CardDivs[NRDB.settings.getItem('display_columns')][index] = build_div(card)))
+		var row = (CardDivs[display_columns][index] || (CardDivs[display_columns][index] = build_div(card)))
 				.data("index", card.code);
 		row.find('input[name="qty-' + card.code + '"]').each(
 				function(i, element) {
@@ -845,8 +786,8 @@ function update_filtered() {
 			row.find('label').addClass("disabled").find(
 					'input[type=radio]').attr("disabled", true);
 
-		if (NRDB.settings.getItem('display_columns') > 1
-				&& counter % NRDB.settings.getItem('display_columns') === 0) {
+		if (display_columns > 1
+				&& counter % display_columns === 0) {
 			container = $('<div class="row"></div>').appendTo(
 					$('#collection-grid'));
 		}
