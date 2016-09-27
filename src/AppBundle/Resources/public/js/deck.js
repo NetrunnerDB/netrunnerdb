@@ -24,7 +24,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 		});
 	});
 	
-	update_deck();
+	find_identity();
 	
 	NRDB.draw_simulator.init();
 	

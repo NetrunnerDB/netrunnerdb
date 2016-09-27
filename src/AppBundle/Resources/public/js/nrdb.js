@@ -206,13 +206,17 @@ function get_influence_penalty_icons(card, qty) {
 	return '<span title="Most Wanted List">'+icons+'</span>';
 }
 
+function find_identity() {
+	Identity = NRDB.data.cards.find({indeck:{'$gt':0},type_code:'identity'}).pop();
+}
+
 function update_deck(options) {
 	var restrainOneColumn = false;
 	if(options) {
 		if(options.restrainOneColumn) restrainOneColumn = options.restrainOneColumn;
 	}
 	
-	Identity = NRDB.data.cards.find({indeck:{'$gt':0},type_code:'identity'}).pop();
+	find_identity();
 	if(!Identity) return;
 
 	if(Identity.side_code === 'runner') $('#table-graph-strengths').hide();
@@ -359,11 +363,55 @@ function update_deck(options) {
 		
 	});
 	$('#latestpack').html('Cards up to <i>'+latestpack.name+'</i>');
+	if(NRDB.settings && NRDB.settings.getItem('show-onesies')) {
+		show_onesies();
+	} else {
+		$('#onesies').hide();
+	}
 	check_influence(influenceSpent);
 	if($('#costChart .highcharts-container').length) setTimeout(make_cost_graph, 100);
 	if($('#strengthChart .highcharts-container').length) setTimeout(make_strength_graph, 100);
 }
 
+function show_onesies() {
+	var content = test_onesies() ? '<span class="text-success glyphicon glyphicon-ok"></span> 1.1.1.1 format compliant' : '<span class="text-danger glyphicon glyphicon-remove"></span> Non 1.1.1.1 format compliant';
+	$('#onesies').html(content).show();
+}
+
+function test_onesies() {
+	var all_cards = _.map(NRDB.data.cards.find({type_code:{'$ne':'identity'},indeck:{'$gt':0}}), 'code'),
+		accepted_cards = [];
+	
+	// core set check
+	NRDB.data.cards.find({type_code:{'$ne':'identity'},indeck:{'$gt':0},pack_code:'core'}).forEach(function (card) {
+		if(card.indeck <= card.quantity) {
+			accepted_cards.push(card.code);
+		}
+	});
+	
+	// deluxe and datapack check
+	var remaining_cards = NRDB.data.cards.find({type_code:{'$ne':'identity'},indeck:{'$gt':0},code:{'$nin':accepted_cards}});
+	var packs = _.values(_.reduce(remaining_cards, function (acc, card) {
+		if(!acc[card.pack.code]) acc[card.pack.code] = { pack: card.pack, count: 0 };
+		acc[card.pack.code].count++;
+		return acc;
+	}, {})).sort(function (a, b) { return b.count - a.count });
+	var deluxe = _.find(packs, function (element) {
+		return element.pack.cycle.size == 1;
+	});
+	var datapack = _.find(packs, function (element) {
+		return element.pack.cycle.size > 1;
+	});
+	remaining_cards.forEach(function (card) {
+		if(deluxe && card.pack.code == deluxe.pack.code) accepted_cards.push(card.code);
+		if(datapack && card.pack.code == datapack.pack.code) accepted_cards.push(card.code);
+	});
+
+	// conclusion with an accepted difference of 1
+	if(all_cards.length <= accepted_cards.length + 1) return true;
+	
+	return false;
+}
 
 function check_decksize() {
 	DeckSize = _.reduce(
