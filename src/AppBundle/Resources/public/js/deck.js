@@ -118,7 +118,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 
 	$('html,body').css('height', 'auto');
 
-	$(document).on('persistence:change', function (event) {
+	$(document).on('persistence:change', function (event, value) {
 		switch($(event.target).attr('name')) {
 		case 'core-sets':
 			update_core_sets();
@@ -130,6 +130,8 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 		case 'show-suggestions':
 			NRDB.suggestions.show();
 			break;
+		case 'sort-order':
+			DisplaySort = value;
 		case 'show-onesies':
 			update_deck();
 			break;

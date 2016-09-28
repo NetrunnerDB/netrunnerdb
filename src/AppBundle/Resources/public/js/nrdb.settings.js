@@ -8,7 +8,8 @@
 			'display-columns': 1,
 			'core-sets': 3,
 			'show-suggestions': 3,
-			'buttons-behavior': 'cumulative'
+			'buttons-behavior': 'cumulative',
+			'sort-order': 'type'
 	};
 	
 	settings.load = function load() {
