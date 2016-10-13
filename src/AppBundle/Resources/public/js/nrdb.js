@@ -505,12 +505,7 @@ function check_influence(influenceSpent) {
 
 $(function () {
 	
-	if(Modernizr.touch) {
-		$('#svg').remove();
-		$('form.external').removeAttr('target');
-	} else {
-		$('[data-toggle="tooltip"]').tooltip();
-	}
+	$('[data-toggle="tooltip"]').tooltip();
 		
 	$.each([ 'table-graph-costs', 'table-graph-strengths', 'table-predecessor', 'table-successor', 'table-draw-simulator', 'table-suggestions' ], function (i, table_id) {
 		var table = $('#'+table_id);

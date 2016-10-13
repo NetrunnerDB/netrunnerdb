@@ -22,3 +22,4 @@ src/Netrunnerdb/CardsBundle/Resources/public/images/cards
 .htaccess
 web/runner.json
 web/corp.json
+/nbproject/
