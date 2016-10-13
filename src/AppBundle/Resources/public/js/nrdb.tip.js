@@ -1,14 +1,17 @@
 (function (tip, $) {
 
-    var hide_event = 'mouseout';
+    var hide_event = 'mouseout',
+        prevent_all = false;
 
     tip.prevent = function (event) {
-        $(this).addClass('no-popup');
+        prevent_all = true;
     };
     
     tip.display = function (event) {
-        if ($(this).hasClass('no-popup'))
+        if (prevent_all || $(this).hasClass('no-popup')) {
             return;
+        }
+            
         var code = $(this).data('index')
                 || $(this).closest('.card-container').data('index')
                 || ($(this).attr('href') && $(this).attr('href').replace(
@@ -67,6 +70,8 @@
     $(document).on('data.app', function () {
         $('body').on({
             touchstart: tip.prevent,
+        });
+        $('body').on({
             mouseover: tip.display
         }, 'a');
     });
