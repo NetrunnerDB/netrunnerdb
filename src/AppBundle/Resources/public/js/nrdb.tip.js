@@ -2,6 +2,10 @@
 
     var hide_event = 'mouseout';
 
+    tip.prevent = function (event) {
+        $(this).addClass('no-popup');
+    };
+    
     tip.display = function (event) {
         if ($(this).hasClass('no-popup'))
             return;
@@ -62,6 +66,7 @@
 
     $(document).on('data.app', function () {
         $('body').on({
+            touchstart: tip.prevent,
             mouseover: tip.display
         }, 'a');
     });
