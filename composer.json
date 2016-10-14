@@ -1,6 +1,6 @@
 {
-	"name" : "symfony/framework-standard-edition",
-	"description" : "The \"Symfony Standard Edition\" distribution",
+	"name" : "alsciende/netrunnerdb",
+	"description" : "NetrunnerDB",
 	"type" : "project",
 	"license" : "MIT",
 	"require" : {
