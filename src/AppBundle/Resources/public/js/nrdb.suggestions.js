@@ -35,53 +35,51 @@
 
 	suggestions.compute = function() {
 		suggestions.refresh();
-		if(suggestions.number)
-		{
-
-			// init current suggestions
-			suggestions.codesFromindex.forEach(function (code, index) {
-				suggestions.current[index] = {
-					code: code,
-					proba: 0
-				};
-			});
-			// find used cards
-			var indexes = NRDB.data.cards.find({indeck:{'$gt':0}}).map(function (card) {
-				return suggestions.indexFromCodes[card.code];
-			});
-			// add suggestions of all used cards
-			indexes.forEach(function (i) {
-				if(suggestions.matrix[i]) {
-					suggestions.matrix[i].forEach(function (value, j) {
-						suggestions.current[j].proba += (value || 0);
-					});
-				}
-			});
-			// remove suggestions of already used cards
-			indexes.forEach(function (i) {
-				if(suggestions.current[i]) suggestions.current[i].proba = 0;
-			});
-			// remove suggestions of identity
-			NRDB.data.cards.find({type_code:'identity'}).map(function (card) {
-				return suggestions.indexFromCodes[card.code];
-			}).forEach(function (i) {
-				if(suggestions.current[i]) suggestions.current[i].proba = 0;
-			});
-			// remove suggestions of excluded cards
-			suggestions.exclusions.forEach(function (i) {
-				suggestions.current[i].proba = 0;
-			});
-			// sort suggestions
-			suggestions.current.sort(function (a, b) {
-				return (b.proba - a.proba);
-			});
-
-		}
+                
+                // init current suggestions
+                suggestions.codesFromindex.forEach(function (code, index) {
+                        suggestions.current[index] = {
+                                code: code,
+                                proba: 0
+                        };
+                });
+                // find used cards
+                var indexes = NRDB.data.cards.find({indeck:{'$gt':0}}).map(function (card) {
+                        return suggestions.indexFromCodes[card.code];
+                });
+                // add suggestions of all used cards
+                indexes.forEach(function (i) {
+                        if(suggestions.matrix[i]) {
+                                suggestions.matrix[i].forEach(function (value, j) {
+                                        suggestions.current[j].proba += (value || 0);
+                                });
+                        }
+                });
+                // remove suggestions of already used cards
+                indexes.forEach(function (i) {
+                        if(suggestions.current[i]) suggestions.current[i].proba = 0;
+                });
+                // remove suggestions of identity
+                NRDB.data.cards.find({type_code:'identity'}).map(function (card) {
+                        return suggestions.indexFromCodes[card.code];
+                }).forEach(function (i) {
+                        if(suggestions.current[i]) suggestions.current[i].proba = 0;
+                });
+                // remove suggestions of excluded cards
+                suggestions.exclusions.forEach(function (i) {
+                        suggestions.current[i].proba = 0;
+                });
+                // sort suggestions
+                suggestions.current.sort(function (a, b) {
+                        return (b.proba - a.proba);
+                });
+                
 		suggestions.show();
 	};
 
 	suggestions.show = function() {
                 suggestions.refresh();
+                
                 var table = $('#table-suggestions');
 		var tbody = table.children('tbody');
 		tbody.empty();
