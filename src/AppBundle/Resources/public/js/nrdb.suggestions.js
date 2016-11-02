@@ -159,7 +159,3 @@
 	});
 
 })(NRDB.suggestions = {}, jQuery);
-
-$(document).on('data.app', function() {
-	NRDB.suggestions.query(Side);
-});

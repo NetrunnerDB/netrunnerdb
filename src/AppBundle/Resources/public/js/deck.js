@@ -224,6 +224,8 @@ function create_collection_tab(initialPackSelection, initialPrebuiltSelection) {
 	$('#mwl_code').trigger('change');
 	// triggers a refresh_collection();
 	// triggers a update_deck();
+        
+        NRDB.suggestions.query(Side);
 }
 
 function get_filter_query(Filters) {
