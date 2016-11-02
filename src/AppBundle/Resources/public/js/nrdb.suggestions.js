@@ -28,9 +28,13 @@
 		});
 		suggestions.promise.done(suggestions.compute);
 	};
+        
+        suggestions.refresh = function () {
+                suggestions.number = parseInt(NRDB.settings.getItem('show-suggestions'), 10);
+        }
 
 	suggestions.compute = function() {
-		suggestions.number = NRDB.settings.getItem('show-suggestions');
+		suggestions.refresh();
 		if(suggestions.number)
 		{
 
@@ -77,7 +81,7 @@
 	};
 
 	suggestions.show = function() {
-                suggestions.number = NRDB.settings.getItem('show-suggestions');
+                suggestions.refresh();
                 var table = $('#table-suggestions');
 		var tbody = table.children('tbody');
 		tbody.empty();
@@ -96,7 +100,7 @@
 				var div = suggestions.div(card);
 				div.on('click', 'button.close', suggestions.exclude.bind(this, card.code));
 				tbody.append(div);
-				if(++nb == suggestions.number) break;
+				if(++nb >= suggestions.number) break;
 			}
 		}
 	};
