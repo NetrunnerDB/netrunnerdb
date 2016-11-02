@@ -30,7 +30,7 @@
 	};
 
 	suggestions.compute = function() {
-		suggestions.number = NRDB.settings.getItem('show_suggestions');
+		suggestions.number = NRDB.settings.getItem('show-suggestions');
 		if(suggestions.number)
 		{
 
