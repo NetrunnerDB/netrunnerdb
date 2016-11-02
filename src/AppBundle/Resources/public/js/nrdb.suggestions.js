@@ -77,7 +77,8 @@
 	};
 
 	suggestions.show = function() {
-		var table = $('#table-suggestions');
+                suggestions.number = NRDB.settings.getItem('show-suggestions');
+                var table = $('#table-suggestions');
 		var tbody = table.children('tbody');
 		tbody.empty();
 		if(!suggestions.number && table.is(':visible')) {
