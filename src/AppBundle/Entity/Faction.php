@@ -17,7 +17,7 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
 				'color' => $this->color,
 				'is_mini' => $this->isMini,
 				'name' => $this->name,
-				'side_code' => $this->side->getCode()
+				'side_code' => $this->side ? $this->side->getCode() : null
 		];
 	}
 	

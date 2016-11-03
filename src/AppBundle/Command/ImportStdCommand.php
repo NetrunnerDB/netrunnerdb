@@ -203,7 +203,9 @@ class ImportStdCommand extends ContainerAwareCommand
 					'name',
 					'color',
 					'is_mini'
-			], [], []);
+			], [
+					'side_code'
+			], []);
 			if($faction) {
 				$result[] = $faction;
 				$this->em->persist($faction);
