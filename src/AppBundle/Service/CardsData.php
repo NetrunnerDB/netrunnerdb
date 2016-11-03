@@ -246,6 +246,10 @@ class CardsData {
                                 break;
                             case '!': $or[] = "(y.position != ?$i)";
                                 break;
+                            case '<': $or[] = "(y.position < ?$i)";
+                                break;
+                            case '>': $or[] = "(y.position > ?$i)";
+                                break;
                         }
                         $parameters[$i++] = $arg;
                     }
