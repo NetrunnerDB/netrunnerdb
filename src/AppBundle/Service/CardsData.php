@@ -708,7 +708,7 @@ class CardsData {
 
     public function validateConditions(&$conditions) {
         // suppression des conditions invalides
-        $canDoNumeric = array('o', 'n', 'p', 'r', 'y', 'e', 'h');
+        $canDoNumeric = array('o', 'n', 'p', 'r', 'y', 'e', 'h', 'c');
         $numeric = array('<', '>');
         foreach ($conditions as $i => $l) {
             if (in_array($l[1], $numeric) && !in_array($l[0], $canDoNumeric))
