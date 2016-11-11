@@ -1463,8 +1463,8 @@ class SocialController extends Controller
     	// max number of displayed items for each category
     	$max_items = 30;
     	
-    	$items = $this->get('activity')->getItems($this->getUser(), $max_items, $days);
-    	$items_by_day = $this->get('activity')->sortByDay($items);
+    	$items = $this->get('activity_helper')->getItems($this->getUser(), $max_items, $days);
+    	$items_by_day = $this->get('activity_helper')->sortByDay($items);
     	
     	// recording date of activity check
    		$this->getUser()->setLastActivityCheck(new \DateTime());

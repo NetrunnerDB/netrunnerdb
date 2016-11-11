@@ -19,8 +19,7 @@
 				user.deferred.resolve();
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
-				console.log('['+moment().format('YYYY-MM-DD HH:mm:ss')+'] Error on '+this.url, textStatus, errorThrown);
-				user.deferred.reject();
+				user.deferred.resolve();
 			}
 		});
 	};

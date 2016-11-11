@@ -1,0 +1,39 @@
+AppBundle\Entity\Moderation:
+    type: entity
+    table: moderation
+    manyToOne:
+        decklist:
+            targetEntity: Decklist
+            nullable: false
+            joinColumn:
+                name: decklist_id
+                referencedColumnName: id
+        moderator:
+            targetEntity: User
+            nullable: false
+            joinColumn:
+                name: user_id
+                referencedColumnName: id
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        dateCreation:
+            type: datetime
+            nullable: false
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on: create
+        statusBefore:
+            type: integer
+            nullable: true
+            column: status_before
+        statusAfter:
+            type: integer
+            nullable: true
+            column: status_after
+    lifecycleCallbacks: {  }

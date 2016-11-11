@@ -12,33 +12,38 @@ use AppBundle\Entity\Comment;
  */
 class Decklist implements \Serializable
 {
-	function __toString() {
-		return "[$this->id] $this->name";
-	}
-	
-	function serialize() {
-		$cards = [];
-		foreach($this->slots as $slot) {
-			$cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-		}
-		
-		return  [
-				'id' => $this->id,
-				'date_creation' => $this->dateCreation->format('c'),
-				'date_update' => $this->dateUpdate->format('c'),
-				'name' => $this->name,
-				'description' => $this->description,
-				'user_id' => $this->user->getId(),
-				'user_name' => $this->user->getUsername(),
-				'tournament_badge' => $this->tournament ? true : false,
-				'cards' => $cards
-		];
-	}
-	
-	function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
+    const MODERATION_PUBLISHED = 0;
+    const MODERATION_RESTORED = 1;
+    const MODERATION_TRASHED = 2;
+    const MODERATION_DELETED = 3;
+    
+    function __toString() {
+            return "[$this->id] $this->name";
+    }
+
+    function serialize() {
+            $cards = [];
+            foreach($this->slots as $slot) {
+                    $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+            }
+
+            return  [
+                            'id' => $this->id,
+                            'date_creation' => $this->dateCreation->format('c'),
+                            'date_update' => $this->dateUpdate->format('c'),
+                            'name' => $this->name,
+                            'description' => $this->description,
+                            'user_id' => $this->user->getId(),
+                            'user_name' => $this->user->getUsername(),
+                            'tournament_badge' => $this->tournament ? true : false,
+                            'cards' => $cards
+            ];
+    }
+
+    function unserialize($serialized) {
+            throw new \Exception("unserialize() method unsupported");
+    }
+
 	
     /**
      * @var integer
@@ -149,6 +154,11 @@ class Decklist implements \Serializable
      * @var User[]
      */
     private $votes;
+    
+    /**
+     * @var integer
+     */
+    private $moderationStatus;
     
     /**
      * Get id
@@ -968,5 +978,29 @@ class Decklist implements \Serializable
     public function getLegalities()
     {
         return $this->legalities;
+    }
+
+    /**
+     * Set moderationStatus
+     *
+     * @param integer $moderationStatus
+     *
+     * @return Decklist
+     */
+    public function setModerationStatus($moderationStatus)
+    {
+        $this->moderationStatus = $moderationStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get moderationStatus
+     *
+     * @return integer
+     */
+    public function getModerationStatus()
+    {
+        return $this->moderationStatus;
     }
 }

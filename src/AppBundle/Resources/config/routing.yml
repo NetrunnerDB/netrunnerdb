@@ -443,9 +443,9 @@ tag_clear:
         _controller: AppBundle:Tag:clear
 
 user_info:
-    path: /user/info
+    path: /info
     defaults:
-        _controller: AppBundle:Default:info
+        _controller: AppBundle:Info:get
     
 card_review_post:
     path: /review/post

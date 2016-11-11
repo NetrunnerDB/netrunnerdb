@@ -28,6 +28,12 @@ services:
     diff:
         class: "%diff.class%"
         arguments: ["@doctrine.orm.entity_manager"]
-    activity:
-        class: AppBundle\Service\Activity
-        arguments: ["@doctrine.orm.entity_manager"]
+    activity_helper:
+        class: AppBundle\Helper\ActivityHelper
+        arguments: ["@doctrine"]
+    moderation_helper:
+        class: AppBundle\Helper\ModerationHelper
+        arguments: ["@doctrine"]
+    personalization_helper:
+        class: AppBundle\Helper\PersonalizationHelper
+        arguments: ["@doctrine", "@activity_helper", "@security.authorization_checker"]

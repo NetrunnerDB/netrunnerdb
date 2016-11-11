@@ -150,4 +150,7 @@ AppBundle\Entity\Decklist:
             type: integer
         dotw:
             type: integer
+        moderationStatus:
+            type: integer
+            column: moderation_status
     lifecycleCallbacks: {  }
