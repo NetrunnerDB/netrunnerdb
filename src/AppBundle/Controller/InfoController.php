@@ -4,16 +4,11 @@ namespace AppBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\Entity\Card;
-use AppBundle\Entity\Pack;
-use AppBundle\Entity\Cycle;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class InfoController extends Controller
 {
-
     public function getAction (Request $request)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
@@ -28,8 +23,6 @@ class InfoController extends Controller
 
         /* @var $helper \AppBundle\Helper\PersonalizationHelper */
         $helper = $this->get('personalization_helper');
-
-        $isModerator = $this->get('security.authorization_checker')->isGranted('ROLE_MODERATOR');
 
         $content = $helper->defaultBlock($user);
 
@@ -52,5 +45,4 @@ class InfoController extends Controller
 
         return $response;
     }
-
 }

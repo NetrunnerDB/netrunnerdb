@@ -688,6 +688,7 @@ class BuilderController extends Controller
 					d.nbcomments
 					from decklist d
 					where d.parent_deck_id=?
+                                        and d.moderation_status<2
 					order by d.date_creation asc", array(
                         $deck_id
                 ))->fetchAll();
@@ -771,6 +772,7 @@ class BuilderController extends Controller
 					d.nbcomments
 					from decklist d
 					where d.parent_deck_id=?
+                                        and d.moderation_status<2
 					order by d.date_creation asc", array(
                         $deck_id
                 ))->fetchAll();

@@ -315,6 +315,15 @@ decklists_diff:
         decklist1_id: \d+
         decklist2_id: \d+
 
+decklist_moderate:
+    path: /decklist/moderate/{decklist_id}/{status}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:moderate
+    requirements:
+        decklist_id: \d+
+        status: \d
+    
 prebuilt_view:
     path: /{_locale}/prebuilt/{prebuilt_code}
     methods: [GET]

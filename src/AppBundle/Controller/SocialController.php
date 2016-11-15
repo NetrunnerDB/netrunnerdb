@@ -444,7 +444,8 @@ class SocialController extends Controller
 				f.code faction_code,
 				d.nbvotes,
 				d.nbfavorites,
-				d.nbcomments
+				d.nbcomments,
+                                d.moderation_status
 				from decklist d
 				join user u on d.user_id=u.id
 				join card c on d.identity_id=c.id
@@ -460,6 +461,11 @@ class SocialController extends Controller
         }
 
         $decklist = $rows[0];
+        
+        if($decklist['moderation_status'] > 1) {
+            $this->denyAccessUnlessGranted('ROLE_MODERATOR');
+        }
+        unset($decklist['moderation_status']);
 
         $comments = $dbh->executeQuery(
                 "SELECT
@@ -504,6 +510,7 @@ class SocialController extends Controller
 					d.nbcomments
 					from decklist d
 					where d.id=?
+                                        and d.moderation_status<2
 					order by d.date_creation asc", array(
                         $decklist['precedent']
                 ))->fetchAll();
@@ -518,6 +525,7 @@ class SocialController extends Controller
 					d.nbcomments
 					from decklist d
 					where d.precedent_decklist_id=?
+                                        and d.moderation_status<2
 					order by d.date_creation asc", array(
                         $decklist_id
                 ))->fetchAll();
@@ -530,6 +538,7 @@ class SocialController extends Controller
 					from decklist d
 					where d.signature=?
 					and d.date_creation<?
+                                        and d.moderation_status<2
 					order by d.date_creation asc
 					limit 0,1", array(
                         $decklist['signature'],
@@ -1476,5 +1485,36 @@ class SocialController extends Controller
     					'items_by_day' => $items_by_day,
     					'max' => $days
     			), $response);
+    }
+    
+    /**
+     * Change the moderation status of a decklist
+     * @param integer $decklist_id
+     * @param integer $status
+     */
+    public function moderateAction($decklist_id, $status)
+    {
+        $response = new Response();
+    	$response->setPrivate();
+    	$response->setMaxAge($this->container->getParameter('short_cache'));
+    	
+        $securityContext = $this->get('security.authorization_checker');
+    	if (! $securityContext->isGranted('ROLE_MODERATOR')) {
+            throw $this->createAccessDeniedException('Access denied');
+    	}
+        
+    	$em = $this->getDoctrine()->getManager();
+    	
+        /* @var $decklist Decklist */
+        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        if (! $decklist) {
+            throw $this->createNotFoundException('Not found');
+        }
+        
+        $decklist->setModerationStatus($status);
+        
+        $em->flush();
+        
+        return new JsonResponse(['success' => true]);
     }
 }
