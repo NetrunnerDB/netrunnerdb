@@ -49,6 +49,7 @@ class PersonalizationHelper
             'autoload_images' => $user->getAutoloadImages(),
             'donation' => $user->getDonation(),
             'unchecked_activity' => $this->activityHelper->countUncheckedItems($this->activityHelper->getItems($user)),
+            'moderator' => $this->authorizationChecker->isGranted('ROLE_MODERATOR'),
             'following' => array_map(function ($following) {
                         return $following->getId();
                     }, $user->getFollowing()->toArray())
@@ -80,6 +81,8 @@ class PersonalizationHelper
         $content['can_delete'] = ($decklist->getNbcomments() == 0) && ($decklist->getNbfavorites() == 0) && ($decklist->getNbvotes() == 0);
 
         if ($this->authorizationChecker->isGranted('ROLE_MODERATOR')) {
+            $content['moderation_status'] = $decklist->getModerationStatus();
+        } else if($content['is_author'] && $decklist->getModerationStatus() === Decklist::MODERATION_TRASHED) {
             $content['moderation_status'] = $decklist->getModerationStatus();
         }
         

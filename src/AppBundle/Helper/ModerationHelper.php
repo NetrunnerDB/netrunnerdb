@@ -27,7 +27,8 @@ class ModerationHelper
         static $labels = [
             'Published',
             'Restored',
-            'Trashed'
+            'Trashed',
+            'Deleted'
         ];
         
         return $labels[$moderationStatus];

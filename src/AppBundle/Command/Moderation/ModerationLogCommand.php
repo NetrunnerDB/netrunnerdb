@@ -45,7 +45,7 @@ class ModerationLogCommand extends ContainerAwareCommand
         $moderationList = $this->em->getRepository('AppBundle:Moderation')->findBy([], ['dateCreation' => 'DESC'], $limit);
         
         $table = new Table($output);
-        $table->setHeaders(['Date','Mod','Before','After','Deck']);
+        $table->setHeaders(['Date','Mod','Before','After','Id','Deck']);
         /* @var $moderation Moderation */
         foreach($moderationList as $moderation) {
             $table->addRow([
@@ -53,6 +53,7 @@ class ModerationLogCommand extends ContainerAwareCommand
                 $moderation->getModerator()->getUsername(),
                 $this->helper->getLabel($moderation->getStatusBefore()),
                 $this->helper->getLabel($moderation->getStatusAfter()),
+                $moderation->getDecklist()->getId(),
                 $moderation->getDecklist()->getName()
             ]);
         }

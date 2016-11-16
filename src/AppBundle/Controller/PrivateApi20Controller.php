@@ -273,6 +273,7 @@ class PrivateApi20Controller extends FOSRestController
 		$decklist->setNbfavorites(0);
 		$decklist->setNbcomments(0);
 		$decklist->setDotw(0);
+                $decklist->setModerationStatus(Decklist::MODERATION_PUBLISHED);
 		foreach ($deck->getSlots() as $slot) {
 			$card = $slot->getCard();
 			$decklistslot = new Decklistslot();

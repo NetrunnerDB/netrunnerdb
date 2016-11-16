@@ -63,7 +63,7 @@ class ModerationActionCommand extends ContainerAwareCommand
      */
     protected function getNewStatus()
     {
-        $choices = ['Published', 'Restored', 'Trashed'];
+        $choices = ['Published', 'Restored', 'Trashed', 'Deleted'];
         $question = new ChoiceQuestion(
             'Which status do you want to set on the decklist? ',
             $choices

@@ -20,11 +20,27 @@ NRDB.data.promise.then(function () {
 
 Promise.all([NRDB.data.promise,NRDB.user.promise]).then(function () {
     if('moderation_status' in NRDB.user.data) {
-        setup_moderation(NRDB.user.data.moderation_status);
+        setup_moderation(NRDB.user.data.moderation_status, NRDB.user.data.moderator);
     }
 });
 
-function setup_moderation(moderation_status) {
+function setup_moderation(moderation_status, is_moderator) {
+    switch(moderation_status) {
+        case 0:  // MODERATION_PUBLISHED
+            break;
+        case 1: // MODERATION_RESTORED
+            NRDB.ui.showBanner('This decklist has been restored to the public directories.', 'info');
+            break;
+        case 2: // MODERATION_TRASHED
+            NRDB.ui.showBanner('This decklist has been removed from the public directories.', 'danger');
+            break;
+        case 3: // MODERATION_DELETED
+            NRDB.ui.showBanner('This decklist has been deleted.', 'warning');
+            break;
+    }
+    
+    if(!is_moderator) return;
+    
     var $dropdown = $('#btn-group-decklist');
     $('<li class="dropdown-header"><span class="glyphicon glyphicon-ban-circle"></span> Moderation</li>').appendTo($dropdown);
     $('<li class="disabled"><a href="#" id="btn-moderation-trash">Trash</a></li>').appendTo($dropdown);

@@ -105,7 +105,7 @@ class Decklists
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
                 where d.user_id=?
-                and d.moderation_status<2
+                and d.moderation_status<3
                 order by date_creation desc
                 limit $start, $limit", array(
                         $user_id
