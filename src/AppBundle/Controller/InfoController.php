@@ -18,7 +18,7 @@ class InfoController extends Controller
         $user = $this->getUser();
 
         if (!$this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            return new JsonResponse('Must be authenticated', Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['id' => null], Response::HTTP_OK);
         }
 
         /* @var $helper \AppBundle\Helper\PersonalizationHelper */
