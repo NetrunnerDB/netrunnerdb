@@ -1,39 +1,31 @@
-parameters:
-    judge.class: AppBundle\Service\Judge
-    decks.class: AppBundle\Service\Decks
-    decklists.class: AppBundle\Service\Decklists
-    reviews.class: AppBundle\Service\Reviews
-    texts.class: AppBundle\Service\Texts
-    diff.class: AppBundle\Service\Diff
-
 services:
     cards_data:
-        class: 'AppBundle\Service\CardsData'
+        class: AppBundle\Service\CardsData
         arguments: ["@doctrine", "@request_stack", "@router"]
     judge:
-        class: "%judge.class%"
+        class: AppBundle\Service\Judge
         arguments: ["@doctrine.orm.entity_manager"]
     decks:
-        class: "%decks.class%"
+        class: AppBundle\Service\Decks
         arguments: ["@doctrine.orm.entity_manager", "@judge", "@diff", "@logger"]
     decklists:
-        class: "%decklists.class%"
+        class: AppBundle\Service\DecklistManager
         arguments: ["@doctrine.orm.entity_manager"]
     reviews:
-        class: "%reviews.class%"
+        class: AppBundle\Service\Reviews
         arguments: ["@doctrine.orm.entity_manager"]
     texts:
-        class: "%texts.class%"
+        class: AppBundle\Service\Texts
         arguments: ["%kernel.root_dir%"]
     diff:
-        class: "%diff.class%"
+        class: AppBundle\Service\Diff
         arguments: ["@doctrine.orm.entity_manager"]
     activity_helper:
-        class: AppBundle\Helper\ActivityHelper
+        class: AppBundle\Service\ActivityHelper
         arguments: ["@doctrine"]
     moderation_helper:
-        class: AppBundle\Helper\ModerationHelper
+        class: AppBundle\Service\ModerationHelper
         arguments: ["@doctrine"]
     personalization_helper:
-        class: AppBundle\Helper\PersonalizationHelper
+        class: AppBundle\Service\PersonalizationHelper
         arguments: ["@doctrine", "@activity_helper", "@security.authorization_checker"]

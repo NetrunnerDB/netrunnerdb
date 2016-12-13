@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Helper;
+namespace AppBundle\Service;
 
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Decklist;
@@ -42,6 +42,7 @@ class PersonalizationHelper
     public function defaultBlock (User $user)
     {
         return [
+            'is_authenticated' => true,
             'id' => $user->getId(),
             'name' => $user->getUsername(),
             'introductions' => $user->getIntroductions(),
@@ -49,7 +50,7 @@ class PersonalizationHelper
             'autoload_images' => $user->getAutoloadImages(),
             'donation' => $user->getDonation(),
             'unchecked_activity' => $this->activityHelper->countUncheckedItems($this->activityHelper->getItems($user)),
-            'moderator' => $this->authorizationChecker->isGranted('ROLE_MODERATOR'),
+            'is_moderator' => $this->authorizationChecker->isGranted('ROLE_MODERATOR'),
             'following' => array_map(function ($following) {
                         return $following->getId();
                     }, $user->getFollowing()->toArray())

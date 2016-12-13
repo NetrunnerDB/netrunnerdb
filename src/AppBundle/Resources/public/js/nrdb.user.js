@@ -4,7 +4,7 @@
 
     user.params = {};
     user.deferred = $.Deferred().always(function () {
-        if(user.data.id) {
+        if(user.data.is_authenticated) {
             user.update();
         } else {
             user.anonymous();
@@ -27,7 +27,6 @@
     };
 
     user.anonymous = function () {
-        delete user.data;
         $('#login').append('<ul class="dropdown-menu"><li><a href="' + Routing.generate('fos_user_security_login') + '">Login or Register</a></li></ul>');
     };
 

@@ -19,8 +19,8 @@ NRDB.data.promise.then(function () {
 });
 
 Promise.all([NRDB.data.promise, NRDB.user.promise]).then(function () {
-    if(NRDB.user.data && 'moderation_status' in NRDB.user.data) {
-        setup_moderation(NRDB.user.data.moderation_status, NRDB.user.data.moderator);
+    if(NRDB.user.data.is_moderator) {
+        setup_moderation(NRDB.user.data.moderation_status, NRDB.user.data.is_moderator);
     }
 });
 
@@ -39,8 +39,9 @@ function setup_moderation(moderation_status, is_moderator) {
             break;
     }
 
-    if(!is_moderator)
+    if(!is_moderator) {
         return;
+    }        
 
     var $dropdown = $('#btn-group-decklist');
     $('<li class="dropdown-header"><span class="glyphicon glyphicon-ban-circle"></span> Moderation</li>').appendTo($dropdown);
@@ -55,15 +56,12 @@ function setup_moderation(moderation_status, is_moderator) {
             break;
         case 1: // MODERATION_RESTORED
             $('#btn-moderation-trash,#btn-moderation-absolve,#btn-moderation-delete').parent().removeClass('disabled');
-            NRDB.ui.showBanner('Decklist restored', 'info');
             break;
         case 2: // MODERATION_TRASHED
             $('#btn-moderation-restore,#btn-moderation-absolve').parent().removeClass('disabled');
-            NRDB.ui.showBanner('Decklist trashed', 'danger');
             break;
         case 3: // MODERATION_DELETED
             $('#btn-moderation-restore').parent().removeClass('disabled');
-            NRDB.ui.showBanner('Decklist deleted', 'warning');
             break;
     }
 }
@@ -165,12 +163,12 @@ function setup_comment_form() {
 
 function setup_social_icons() {
 
-    if(!NRDB.user.data || NRDB.user.data.is_author || NRDB.user.data.is_liked) {
+    if(!NRDB.user.data.is_authenticated || NRDB.user.data.is_author || NRDB.user.data.is_liked) {
         var element = $('#social-icon-like');
         element.replaceWith($('<span class="social-icon-like"></span>').html(element.html()));
     }
 
-    if(!NRDB.user.data) {
+    if(!NRDB.user.data.is_authenticated) {
         var element = $('#social-icon-favorite');
         element.replaceWith($('<span class="social-icon-favorite"></span>').html(element.html()));
     } else if(NRDB.user.data.is_favorite) {
@@ -181,7 +179,7 @@ function setup_social_icons() {
         element.attr('title', "Add to favorites");
     }
 
-    if(!NRDB.user.data) {
+    if(!NRDB.user.data.is_authenticated) {
         var element = $('#social-icon-comment');
         element.replaceWith($('<span class="social-icon-comment"></span>').html(element.html()));
     }
@@ -190,16 +188,16 @@ function setup_social_icons() {
 
 function setup_title() {
     var title = $('h1.decklist-name');
-    if(NRDB.user.data && NRDB.user.data.is_author && NRDB.user.data.can_delete) {
+    if(NRDB.user.data.is_author && NRDB.user.data.can_delete) {
         title.prepend('<a href="#" title="Delete decklist" id="decklist-delete"><span class="glyphicon glyphicon-trash pull-right text-danger"></span></a>');
     }
-    if(NRDB.user.data && NRDB.user.data.is_author) {
+    if(NRDB.user.data.is_author) {
         title.prepend('<a href="#" title="Edit decklist name / description" id="decklist-edit"><span class="glyphicon glyphicon-pencil pull-right"></span></a>');
     }
 }
 
 function setup_comment_hide() {
-    if(NRDB.user.data && NRDB.user.data.is_author) {
+    if(NRDB.user.data.is_author) {
         $('.comment-hide-button').remove();
         $('<a href="#" class="comment-hide-button"><span class="text-danger glyphicon glyphicon-remove" style="margin-left:.5em"></span></a>').appendTo('.collapse.in > .comment-date').on('click', function (event) {
             if(confirm('Do you really want to hide this comment for everybody?')) {
@@ -261,7 +259,7 @@ function unhide_comment(element) {
 $(function () {
 
     $.when(NRDB.user.deferred).then(function () {
-        if(NRDB.user.data) {
+        if(NRDB.user.data.is_authenticated) {
             setup_comment_form();
             setup_title();
             setup_comment_hide();

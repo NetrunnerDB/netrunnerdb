@@ -1,19 +1,18 @@
 <?php
 
-
 namespace AppBundle\Service;
 
 use Doctrine\ORM\EntityManager;
 use AppBundle\Entity\Decklist;
 use Symfony\Component\HttpFoundation\Request;
 
-class Decklists
+class DecklistManager
 {
-    public function __construct(EntityManager $doctrine)
+
+    public function __construct (EntityManager $doctrine)
     {
         $this->doctrine = $doctrine;
     }
-    
 
     /**
      * returns the list of decklist favorited by user
@@ -22,13 +21,11 @@ class Decklists
      */
     public function favorites ($user_id, $start = 0, $limit = 30)
     {
-    
-    
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
-    
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -56,19 +53,18 @@ class Decklists
                 and d.moderation_status<2
                 order by date_creation desc
                 limit $start, $limit", array(
-                        $user_id
+                    $user_id
                 ))
                 ->fetchAll(\PDO::FETCH_ASSOC);
-    
+
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
+
         return array(
-                "count" => $count,
-                "decklists" => $rows
+            "count" => $count,
+            "decklists" => $rows
         );
-    
     }
-    
+
     /**
      * returns the list of decklists published by user
      * @param integer $limit
@@ -76,12 +72,12 @@ class Decklists
      */
     public function by_author ($user_id, $start = 0, $limit = 30)
     {
-    
+
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
-    
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -108,18 +104,17 @@ class Decklists
                 and d.moderation_status<3
                 order by date_creation desc
                 limit $start, $limit", array(
-                        $user_id
+                    $user_id
                 ))->fetchAll(\PDO::FETCH_ASSOC);
-    
-                $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
-                return array(
-                        "count" => $count,
-                        "decklists" => $rows
-                );
-    
+
+        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+
+        return array(
+            "count" => $count,
+            "decklists" => $rows
+        );
     }
-    
+
     /**
      * returns the list of recent decklists with large number of votes
      * @param integer $limit
@@ -129,9 +124,9 @@ class Decklists
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
-    
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -159,14 +154,13 @@ class Decklists
                 and d.moderation_status<2
                 order by 2*nbvotes/(1+nbjours*nbjours) DESC, nbvotes desc, nbcomments desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
-    
+
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
+
         return array(
-                "count" => $count,
-                "decklists" => $rows
+            "count" => $count,
+            "decklists" => $rows
         );
-    
     }
 
     /**
@@ -176,11 +170,11 @@ class Decklists
      */
     public function dotw ($start = 0, $limit = 30)
     {
-    	/* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-    	$dbh = $this->doctrine->getConnection();
-    
-    	$rows = $dbh->executeQuery(
-    			"SELECT SQL_CALC_FOUND_ROWS
+        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
+        $dbh = $this->doctrine->getConnection();
+
+        $rows = $dbh->executeQuery(
+                        "SELECT SQL_CALC_FOUND_ROWS
     			d.id,
     			d.name,
     			d.prettyname,
@@ -206,16 +200,15 @@ class Decklists
     			where dotw > 0
     			order by dotw desc
     			limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
-    
-    	$count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
-    	return array(
-    			"count" => $count,
-    			"decklists" => $rows
-    	);
-    
+
+        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+
+        return array(
+            "count" => $count,
+            "decklists" => $rows
+        );
     }
-    
+
     /**
      * returns the list of decklists with most number of votes
      * @param integer $limit
@@ -225,9 +218,9 @@ class Decklists
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
-    
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -254,16 +247,15 @@ class Decklists
                 and d.moderation_status<2
                 order by nbvotes desc, date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
-    
+
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
+
         return array(
-                "count" => $count,
-                "decklists" => $rows
+            "count" => $count,
+            "decklists" => $rows
         );
-    
     }
-    
+
     /**
      * returns the list of decklists with large number of recent comments
      * @param integer $limit
@@ -273,9 +265,9 @@ class Decklists
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
-    
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -303,14 +295,13 @@ class Decklists
                 and d.moderation_status<2
                 order by nbrecentcomments desc, date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
-    
+
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
+
         return array(
-                "count" => $count,
-                "decklists" => $rows
+            "count" => $count,
+            "decklists" => $rows
         );
-    
     }
 
     /**
@@ -322,9 +313,9 @@ class Decklists
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
-    
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -351,16 +342,15 @@ class Decklists
                 and d.moderation_status<2
                 order by date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
-    
+
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
+
         return array(
-                "count" => $count,
-                "decklists" => $rows
+            "count" => $count,
+            "decklists" => $rows
         );
-    
     }
-    
+
     /**
      * returns the list of decklists of chosen faction
      * @param integer $limit
@@ -370,9 +360,9 @@ class Decklists
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
-    
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -400,18 +390,17 @@ class Decklists
                 and d.moderation_status<2
                 order by date_creation desc
                 limit $start, $limit", array(
-                        $faction_code
+                    $faction_code
                 ))->fetchAll(\PDO::FETCH_ASSOC);
-    
-                $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
-                return array(
-                        "count" => $count,
-                        "decklists" => $rows
-                );
-    
+
+        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+
+        return array(
+            "count" => $count,
+            "decklists" => $rows
+        );
     }
-    
+
     /**
      * returns the list of decklists of chosen datapack
      * @param integer $limit
@@ -421,9 +410,9 @@ class Decklists
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
-    
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -450,18 +439,17 @@ class Decklists
                 and d.moderation_status<2
                 order by date_creation desc
                 limit $start, $limit", array(
-                        $pack_code
+                    $pack_code
                 ))->fetchAll(\PDO::FETCH_ASSOC);
-    
-                $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
-                return array(
-                        "count" => $count,
-                        "decklists" => $rows
-                );
-    
+
+        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+
+        return array(
+            "count" => $count,
+            "decklists" => $rows
+        );
     }
-    
+
     /**
      * returns the list of recent decklists
      * @param integer $limit
@@ -471,11 +459,11 @@ class Decklists
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
-    
+
         $additional_clause = $includeEmptyDesc ? "" : "and d.rawdescription!=''";
-        
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -503,18 +491,107 @@ class Decklists
                 $additional_clause
                 order by date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
-    
+
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
+
         return array(
-                "count" => $count,
-                "decklists" => $rows
+            "count" => $count,
+            "decklists" => $rows
         );
-    
     }
     
+    /**
+     * returns the list of trashed decklists
+     * @param integer $limit
+     * @return \Doctrine\DBAL\Driver\PDOStatement
+     */
+    public function trashed ($start = 0, $limit = 30)
+    {
+        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
+        $dbh = $this->doctrine->getConnection();
 
+        $rows = $dbh->executeQuery(
+                        "SELECT SQL_CALC_FOUND_ROWS
+                d.id,
+                d.name,
+                d.prettyname,
+                d.date_creation,
+                d.user_id,
+                d.tournament_id,
+                t.description tournament,
+                u.username,
+                u.faction usercolor,
+                u.reputation,
+                u.donation,
+                c.code,
+                c.title identity,
+                p.name lastpack,
+                d.nbvotes,
+                d.nbfavorites,
+                d.nbcomments
+                from decklist d
+                join user u on d.user_id=u.id
+                join card c on d.identity_id=c.id
+                join pack p on d.last_pack_id=p.id
+                left join tournament t on d.tournament_id=t.id
+                where d.moderation_status=2
+                order by date_creation desc
+                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
 
+        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+
+        return array(
+            "count" => $count,
+            "decklists" => $rows
+        );
+    }
+    
+    /**
+     * returns the list of restored decklists
+     * @param integer $limit
+     * @return \Doctrine\DBAL\Driver\PDOStatement
+     */
+    public function restored ($start = 0, $limit = 30)
+    {
+        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
+        $dbh = $this->doctrine->getConnection();
+
+        $rows = $dbh->executeQuery(
+                        "SELECT SQL_CALC_FOUND_ROWS
+                d.id,
+                d.name,
+                d.prettyname,
+                d.date_creation,
+                d.user_id,
+                d.tournament_id,
+                t.description tournament,
+                u.username,
+                u.faction usercolor,
+                u.reputation,
+                u.donation,
+                c.code,
+                c.title identity,
+                p.name lastpack,
+                d.nbvotes,
+                d.nbfavorites,
+                d.nbcomments
+                from decklist d
+                join user u on d.user_id=u.id
+                join card c on d.identity_id=c.id
+                join pack p on d.last_pack_id=p.id
+                left join tournament t on d.tournament_id=t.id
+                where d.moderation_status=1
+                order by date_creation desc
+                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
+
+        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+
+        return array(
+            "count" => $count,
+            "decklists" => $rows
+        );
+    }
+    
     /**
      * returns a list of decklists according to search criteria
      * @param integer $limit
@@ -522,12 +599,12 @@ class Decklists
      */
     public function find ($start = 0, $limit = 30, Request $request)
     {
-    
+
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->doctrine->getConnection();
 
         $cardRepository = $this->doctrine->getRepository('AppBundle:Card');
-    
+
         $cards_code = $request->query->get('cards');
         if(!is_array($cards_code)) {
             $cards_code = array();
@@ -538,74 +615,75 @@ class Decklists
         $sort = $request->query->get('sort');
         $packs = $request->query->get('packs');
         $mwl_code = $request->query->get('mwl_code');
-        
+
         if(!is_array($packs)) {
             $packs = $dbh->executeQuery("select id from pack")->fetchAll(\PDO::FETCH_COLUMN);
         }
-        
-        if ($faction_code === "corp" || $faction_code === "runner") {
+
+        if($faction_code === "corp" || $faction_code === "runner") {
             $side_code = $faction_code;
             unset($faction_code);
         }
-    
+
         $wheres = array();
         $params = array();
         $types = array();
-        if (! empty($side_code)) {
+        if(!empty($side_code)) {
             $wheres[] = 's.code=?';
             $params[] = $side_code;
             $types[] = \PDO::PARAM_STR;
         }
-        if (! empty($faction_code)) {
+        if(!empty($faction_code)) {
             $wheres[] = 'f.code=?';
             $params[] = $faction_code;
             $types[] = \PDO::PARAM_STR;
         }
-        if (! empty($author_name)) {
+        if(!empty($author_name)) {
             $wheres[] = 'u.username=?';
             $params[] = $author_name;
             $types[] = \PDO::PARAM_STR;
         }
-        if (! empty($decklist_title)) {
+        if(!empty($decklist_title)) {
             $wheres[] = 'd.name like ?';
             $params[] = '%' . $decklist_title . '%';
             $types[] = \PDO::PARAM_STR;
         }
-        if (count($cards_code) ) {
-            foreach ($cards_code as $card_code) {
+        if(count($cards_code)) {
+            foreach($cards_code as $card_code) {
                 /* @var $card \AppBundle\Entity\Card */
                 $card = $cardRepository->findOneBy(array('code' => $card_code));
-                if(!$card) continue;
-                
+                if(!$card)
+                    continue;
+
                 $wheres[] = 'exists(select * from decklistslot where decklistslot.decklist_id=d.id and decklistslot.card_id=?)';
                 $params[] = $card->getId();
                 $types[] = \PDO::PARAM_STR;
-                
+
                 $packs[] = $card->getPack()->getId();
             }
         }
-        if (count($packs)) {
+        if(count($packs)) {
             $wheres[] = 'not exists(select * from decklistslot join card on decklistslot.card_id=card.id where decklistslot.decklist_id=d.id and card.pack_id not in (?))';
             $params[] = array_unique($packs);
             $types[] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
         }
-        if (! empty($mwl_code)) {
-        	$wheres[] = 'exists(select * from legality join mwl on legality.mwl_id=mwl.id where legality.decklist_id=d.id and mwl.code=? and legality.is_legal=1)';
-        	$params[] = $mwl_code;
-        	$types[] = \PDO::PARAM_INT;
+        if(!empty($mwl_code)) {
+            $wheres[] = 'exists(select * from legality join mwl on legality.mwl_id=mwl.id where legality.decklist_id=d.id and mwl.code=? and legality.is_legal=1)';
+            $params[] = $mwl_code;
+            $types[] = \PDO::PARAM_INT;
         }
-        
-        if (empty($wheres)) {
+
+        if(empty($wheres)) {
             $where = "d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)";
             $params = array();
             $types = array();
         } else {
             $where = implode(" AND ", $wheres);
         }
-    
+
         $extra_select = "";
-        
-        switch ($sort) {
+
+        switch($sort) {
             case 'date':
                 $order = 'date_creation';
                 break;
@@ -615,15 +693,15 @@ class Decklists
             case 'reputation':
                 $order = 'reputation';
                 break;
-        	case 'popularity':
+            case 'popularity':
             default:
-        	    $order = 'popularity';
-        		$extra_select = '(d.nbvotes/(1+DATEDIFF(CURRENT_TIMESTAMP(),d.date_creation)/10)) as popularity,';
-        		break;
+                $order = 'popularity';
+                $extra_select = '(d.nbvotes/(1+DATEDIFF(CURRENT_TIMESTAMP(),d.date_creation)/10)) as popularity,';
+                break;
         }
-    
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+                        "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -653,50 +731,45 @@ class Decklists
                 and d.moderation_status<2
                 order by $order desc
                 limit $start, $limit", $params, $types)->fetchAll(\PDO::FETCH_ASSOC);
-    
+
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
+
         return array(
-                "count" => $count,
-                "decklists" => $rows
+            "count" => $count,
+            "decklists" => $rows
         );
-    
     }
 
     public function removeConstraints (Decklist $decklist)
     {
-    	$successors = $this->doctrine->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
-    	foreach($successors as $successor)
-    	{
-    		/* @var $successor \AppBundle\Entity\Decklist */
-    		$successor->setPrecedent(null);
-    	}
-    
-    	$children = $this->doctrine->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
-    	foreach($children as $child)
-    	{
-    		/* @var $child \AppBundle\Entity\Deck */
-    		$child->setParent(null);
-    	}
-    }
-    
-    public function remove (Decklist $decklist)
-    {
         $successors = $this->doctrine->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
-        foreach($successors as $successor)
-        {
+        foreach($successors as $successor) {
             /* @var $successor \AppBundle\Entity\Decklist */
             $successor->setPrecedent(null);
         }
 
         $children = $this->doctrine->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
-        foreach($children as $child)
-        {
+        foreach($children as $child) {
+            /* @var $child \AppBundle\Entity\Deck */
+            $child->setParent(null);
+        }
+    }
+
+    public function remove (Decklist $decklist)
+    {
+        $successors = $this->doctrine->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
+        foreach($successors as $successor) {
+            /* @var $successor \AppBundle\Entity\Decklist */
+            $successor->setPrecedent(null);
+        }
+
+        $children = $this->doctrine->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
+        foreach($children as $child) {
             /* @var $child \AppBundle\Entity\Deck */
             $child->setParent(null);
         }
 
         $this->doctrine->remove($decklist);
     }
-    
+
 }

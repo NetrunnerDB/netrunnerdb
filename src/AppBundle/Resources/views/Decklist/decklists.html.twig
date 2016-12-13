@@ -2,6 +2,7 @@
 
 {% block head %}
 <script src="{{ asset('/bundles/app/js/search.js') }}"></script>
+<script src="{{ asset('/bundles/app/js/decklists.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -10,7 +11,7 @@
 <div class="row">
 <div class="col-md-3">
 
-<ul class="nav nav-pills nav-stacked" style="margin-bottom:2em">
+<ul class="nav nav-pills nav-stacked" id="side_nav" style="margin-bottom:2em">
 {% set linkurl = path('decklists_list', {type:'popular'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Popular</a></li>
 {% set linkurl = path('decklists_list', {type:'recent'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Recent</a></li>
 {% set linkurl = path('decklists_list', {type:'tournament'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Tournaments</a></li>

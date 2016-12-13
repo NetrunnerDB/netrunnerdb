@@ -227,7 +227,7 @@ decklists_searchform:
     path: /{_locale}/decklists/search
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:search
+        _controller: AppBundle:Decklists:search
         _locale: en
     requirements:
         _locale: \w\w
@@ -236,7 +236,7 @@ decklists_list:
     path: /{_locale}/decklists/{type}/{page}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:list
+        _controller: AppBundle:Decklists:list
         page: 1
         _locale: en
     requirements:
@@ -308,7 +308,7 @@ decklists_diff:
     path: /{_locale}/decklists/diff/{decklist1_id}/{decklist2_id}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Diff:decklistDiff
+        _controller: AppBundle:Decklists:diff
         _locale: en
     requirements:
         _locale: \w\w

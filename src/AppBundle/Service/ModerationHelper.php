@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Helper;
+namespace AppBundle\Service;
 
 use AppBundle\Entity\Moderation;
 use DateTime;

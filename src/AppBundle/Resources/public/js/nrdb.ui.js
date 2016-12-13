@@ -32,7 +32,7 @@
 
         var introduction = 'autoloadImages';
 
-        if(NRDB.user.data && !NRDB.user.data.introductions[introduction]) {
+        if(NRDB.user.data.is_authenticated && !NRDB.user.data.introductions[introduction]) {
             // first time the user is presented with this feature
             // we load the images, then we display the Intro
             ui.loadAllImages().then(function () {
@@ -53,7 +53,7 @@
                 $.post(Routing.generate('user_validate_introduction', {introduction: introduction}));
             });
         } else {
-            if(!NRDB.user.data || NRDB.user.data.autoload_images) {
+            if(!NRDB.user.data.is_authenticated || NRDB.user.data.autoload_images) {
                 // if the user opted to load images, or didn't make a choice, leaving the default value
                 ui.loadAllImages();
             } else {
@@ -62,6 +62,8 @@
             }
         }
     };
+
+    ui.promise = new Promise($);
 
     Promise.all([NRDB.user.promise, NRDB.data.promise]).then(ui.manageImages);
 

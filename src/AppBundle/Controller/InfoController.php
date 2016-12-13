@@ -13,7 +13,7 @@ class InfoController extends Controller
     public function getAction (Request $request)
     {
         if(!$this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            return new JsonResponse(['id' => null]);
+            return new JsonResponse(['is_authenticated' => false]);
         }
 
         /* @var $user \AppBundle\Entity\User */
