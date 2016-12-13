@@ -3,7 +3,7 @@
 NRDB.data.promise.then(function () {
     $(this).closest('tr').siblings().removeClass('active');
     $(this).closest('tr').addClass('active');
-    for (var i = 0; i < Decklist.cards.length; i++) {
+    for(var i = 0; i < Decklist.cards.length; i++) {
         var slot = Decklist.cards[i];
         NRDB.data.cards.updateById(slot.card_code, {indeck: parseInt(slot.qty, 10)});
     }
@@ -18,8 +18,8 @@ NRDB.data.promise.then(function () {
     });
 });
 
-Promise.all([NRDB.data.promise,NRDB.user.promise]).then(function () {
-    if('moderation_status' in NRDB.user.data) {
+Promise.all([NRDB.data.promise, NRDB.user.promise]).then(function () {
+    if(NRDB.user.data && 'moderation_status' in NRDB.user.data) {
         setup_moderation(NRDB.user.data.moderation_status, NRDB.user.data.moderator);
     }
 });
@@ -38,16 +38,17 @@ function setup_moderation(moderation_status, is_moderator) {
             NRDB.ui.showBanner('This decklist has been deleted.', 'warning');
             break;
     }
-    
-    if(!is_moderator) return;
-    
+
+    if(!is_moderator)
+        return;
+
     var $dropdown = $('#btn-group-decklist');
     $('<li class="dropdown-header"><span class="glyphicon glyphicon-ban-circle"></span> Moderation</li>').appendTo($dropdown);
     $('<li class="disabled"><a href="#" id="btn-moderation-trash">Trash</a></li>').appendTo($dropdown);
     $('<li class="disabled"><a href="#" id="btn-moderation-restore">Restore</a></li>').appendTo($dropdown);
     $('<li class="disabled"><a href="#" id="btn-moderation-absolve">Absolve</a></li>').appendTo($dropdown);
     $('<li class="disabled"><a href="#" id="btn-moderation-delete">Delete</a></li>').appendTo($dropdown);
-    
+
     switch(moderation_status) {
         case 0:  // MODERATION_PUBLISHED
             $('#btn-moderation-trash').parent().removeClass('disabled');
@@ -78,7 +79,7 @@ function setup_comment_form() {
     form.on('submit', function (event) {
         event.preventDefault();
         var data = $(this).serialize();
-        if (already_submitted)
+        if(already_submitted)
             return;
         already_submitted = true;
         $.ajax(Routing.generate('decklist_comment'), {
@@ -164,15 +165,15 @@ function setup_comment_form() {
 
 function setup_social_icons() {
 
-    if (!NRDB.user.data || NRDB.user.data.is_author || NRDB.user.data.is_liked) {
+    if(!NRDB.user.data || NRDB.user.data.is_author || NRDB.user.data.is_liked) {
         var element = $('#social-icon-like');
         element.replaceWith($('<span class="social-icon-like"></span>').html(element.html()));
     }
 
-    if (!NRDB.user.data) {
+    if(!NRDB.user.data) {
         var element = $('#social-icon-favorite');
         element.replaceWith($('<span class="social-icon-favorite"></span>').html(element.html()));
-    } else if (NRDB.user.data.is_favorite) {
+    } else if(NRDB.user.data.is_favorite) {
         var element = $('#social-icon-favorite');
         element.attr('title', "Remove from favorites");
     } else {
@@ -180,7 +181,7 @@ function setup_social_icons() {
         element.attr('title', "Add to favorites");
     }
 
-    if (!NRDB.user.data) {
+    if(!NRDB.user.data) {
         var element = $('#social-icon-comment');
         element.replaceWith($('<span class="social-icon-comment"></span>').html(element.html()));
     }
@@ -189,25 +190,25 @@ function setup_social_icons() {
 
 function setup_title() {
     var title = $('h1.decklist-name');
-    if (NRDB.user.data && NRDB.user.data.is_author && NRDB.user.data.can_delete) {
+    if(NRDB.user.data && NRDB.user.data.is_author && NRDB.user.data.can_delete) {
         title.prepend('<a href="#" title="Delete decklist" id="decklist-delete"><span class="glyphicon glyphicon-trash pull-right text-danger"></span></a>');
     }
-    if (NRDB.user.data && NRDB.user.data.is_author) {
+    if(NRDB.user.data && NRDB.user.data.is_author) {
         title.prepend('<a href="#" title="Edit decklist name / description" id="decklist-edit"><span class="glyphicon glyphicon-pencil pull-right"></span></a>');
     }
 }
 
 function setup_comment_hide() {
-    if (NRDB.user.data && NRDB.user.data.is_author) {
+    if(NRDB.user.data && NRDB.user.data.is_author) {
         $('.comment-hide-button').remove();
         $('<a href="#" class="comment-hide-button"><span class="text-danger glyphicon glyphicon-remove" style="margin-left:.5em"></span></a>').appendTo('.collapse.in > .comment-date').on('click', function (event) {
-            if (confirm('Do you really want to hide this comment for everybody?')) {
+            if(confirm('Do you really want to hide this comment for everybody?')) {
                 hide_comment($(this).closest('td'));
             }
             return false;
         });
         $('<a href="#" class="comment-hide-button"><span class="text-success glyphicon glyphicon-ok" style="margin-left:.5em"></span></a>').appendTo('.collapse:not(.in) > .comment-date').on('click', function (event) {
-            if (confirm('Do you really want to unhide this comment?')) {
+            if(confirm('Do you really want to unhide this comment?')) {
                 unhide_comment($(this).closest('td'));
             }
             return false;
@@ -221,7 +222,7 @@ function hide_comment(element) {
         type: 'POST',
         dataType: 'json',
         success: function (data, textStatus, jqXHR) {
-            if (data === true) {
+            if(data === true) {
                 $(element).find('.collapse').collapse('hide');
                 $(element).find('.comment-toggler').show().prepend('The comment will be hidden for everyone in a few minutes.');
                 setTimeout(setup_comment_hide, 1000);
@@ -242,7 +243,7 @@ function unhide_comment(element) {
         type: 'POST',
         dataType: 'json',
         success: function (data, textStatus, jqXHR) {
-            if (data === true) {
+            if(data === true) {
                 $(element).find('.collapse').collapse('show');
                 $(element).find('.comment-toggler').hide();
                 setTimeout(setup_comment_hide, 1000);
@@ -260,7 +261,7 @@ function unhide_comment(element) {
 $(function () {
 
     $.when(NRDB.user.deferred).then(function () {
-        if (NRDB.user.data) {
+        if(NRDB.user.data) {
             setup_comment_form();
             setup_title();
             setup_comment_hide();
@@ -294,12 +295,12 @@ $(function () {
 
     $('#btn-group-decklist').on({
         click: function (event) {
-            if ($(this).attr('id').match(/btn-sort-(\w+)/)) {
+            if($(this).attr('id').match(/btn-sort-(\w+)/)) {
                 DisplaySort = RegExp.$1;
                 DisplaySortSecondary = null;
                 update_deck();
             }
-            if ($(this).attr('id').match(/btn-sort-(\w+)-(\w+)/)) {
+            if($(this).attr('id').match(/btn-sort-(\w+)-(\w+)/)) {
                 DisplaySort = RegExp.$1;
                 DisplaySortSecondary = RegExp.$2;
                 update_deck();
@@ -325,14 +326,14 @@ function copy_decklist() {
 function compare_submit() {
     var url = $('#decklist2_url').val();
     var id = null;
-    if (url.match(/^\d+$/)) {
+    if(url.match(/^\d+$/)) {
         id = parseInt(url, 10);
-    } else if (url.match(/decklist\/(\d+)\//)) {
+    } else if(url.match(/decklist\/(\d+)\//)) {
         id = parseInt(RegExp.$1, 10);
     }
-    if (id) {
+    if(id) {
         var id1, id2;
-        if (Decklist.id < id) {
+        if(Decklist.id < id) {
             id1 = Decklist.id;
             id2 = id;
         } else {
@@ -360,9 +361,9 @@ function delete_form() {
 
 function do_action_decklist(event) {
     var action_id = $(this).attr('id');
-    if (!action_id || !SelectedDeck)
+    if(!action_id || !SelectedDeck)
         return;
-    switch (action_id) {
+    switch(action_id) {
         case 'btn-download-text':
             location.href = Routing.generate('decklist_export_text', {decklist_id: Decklist.id});
             break;
@@ -417,9 +418,9 @@ function on_mwl_click(event) {
 }
 function update_mwl(mwl_code) {
     MWL = null;
-    if (mwl_code) {
+    if(mwl_code) {
         var mwl = NRDB.data.mwl.findById(mwl_code);
-        if (mwl.cards) {
+        if(mwl.cards) {
             MWL = mwl.cards;
         }
     }

@@ -27,6 +27,7 @@
     };
 
     user.anonymous = function () {
+        delete user.data;
         $('#login').append('<ul class="dropdown-menu"><li><a href="' + Routing.generate('fos_user_security_login') + '">Login or Register</a></li></ul>');
     };
 
@@ -68,7 +69,6 @@
     user.promise = new Promise(function (resolve, reject) {
         $(document).on('user.app', resolve);
     });
-
 
     $(function () {
         user.query();
