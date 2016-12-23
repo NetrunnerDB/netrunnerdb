@@ -106,6 +106,18 @@ AppBundle\Entity\Decklist:
                     user_id:
                         referencedColumnName: id
             cascade: ["persist"]
+        modflags:
+            targetEntity: Modflag
+            inversedBy: decklists
+            joinTable:
+                name: decklistflag
+                joinColumns:
+                    decklist_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    modflag_id:
+                        referencedColumnName: id
+            cascade: ["persist","remove"]
     id:
         id:
             type: integer

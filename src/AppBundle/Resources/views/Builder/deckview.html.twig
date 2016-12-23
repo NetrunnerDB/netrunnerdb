@@ -298,6 +298,9 @@ var Identity = null,
 								{% endfor %}
 								</select>
 							</div>
+                                                        <div class="form-group">
+                                                                <span class="help-block">By submitting content, you agree to the <a href="{{ path('cards_about') }}#code-of-conduct">Code of Conduct</a> of the website.</span>
+                                                        </div>
 							<div class="pull-right">
 								<button type="submit" id="btn-publish-submit" class="btn btn-success">Checking...</button>
 								<button type="button" class="btn btn-default" onclick="$('#publishModal').modal('hide')">Cancel</button>

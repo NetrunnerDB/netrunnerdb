@@ -71,6 +71,7 @@ function setup_comment_form() {
     var form = $('<form method="POST" action="' + Routing.generate('decklist_comment') + '"><input type="hidden" name="id" value="' + Decklist.id + '"><div class="form-group">'
             + '<textarea id="comment-form-text" class="form-control" maxlength="10000" rows="4" name="comment" placeholder="Enter your comment in Markdown format. Type # to enter a card name. Type $ to enter a symbol. Type @ to enter a user name."></textarea>'
             + '</div><div class="well text-muted" id="comment-form-preview"><small>Preview. Look <a href="http://daringfireball.net/projects/markdown/dingus">here</a> for a Markdown syntax reference.</small></div>'
+            + '<div class="form-group small"><span class="help-block">By submitting content, you agree to the <a href="'+Routing.generate('cards_about')+'#code-of-conduct">Code of Conduct</a> of the website.</span></div>'
             + '<button type="submit" class="btn btn-success">Submit comment</button></form>').insertAfter('#comment-form');
 
     var already_submitted = false;

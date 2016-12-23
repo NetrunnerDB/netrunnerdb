@@ -775,3 +775,8 @@ cards_rulings:
         _locale: en
     requirements:
         _locale: \w\w
+
+modflags_get:
+    path: /modflags
+    defaults:
+        _controller: AppBundle:Modflags:get

@@ -1003,4 +1003,43 @@ class Decklist implements \Serializable
     {
         return $this->moderationStatus;
     }
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $modflags;
+
+    /**
+     * Add modflag
+     *
+     * @param \AppBundle\Entity\Modflag $modflag
+     *
+     * @return Decklist
+     */
+    public function addModflag(\AppBundle\Entity\Modflag $modflag)
+    {
+        $this->modflags[] = $modflag;
+
+        return $this;
+    }
+
+    /**
+     * Remove modflag
+     *
+     * @param \AppBundle\Entity\Modflag $modflag
+     */
+    public function removeModflag(\AppBundle\Entity\Modflag $modflag)
+    {
+        $this->modflags->removeElement($modflag);
+    }
+
+    /**
+     * Get modflags
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getModflags()
+    {
+        return $this->modflags;
+    }
 }

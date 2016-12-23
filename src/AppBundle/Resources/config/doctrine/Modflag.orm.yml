@@ -1,0 +1,19 @@
+AppBundle\Entity\Modflag:
+    type: entity
+    table: modflags
+    manyToMany:
+        decklists:
+            targetEntity: Decklist
+            mappedBy: modflags
+            cascade: ["remove"]
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+    lifecycleCallbacks: {  }
