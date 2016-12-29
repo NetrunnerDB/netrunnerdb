@@ -237,6 +237,7 @@ decklists_list:
     methods: [GET]
     defaults:
         _controller: AppBundle:Decklists:list
+        type: popular
         page: 1
         _locale: en
     requirements:
@@ -314,15 +315,6 @@ decklists_diff:
         _locale: \w\w
         decklist1_id: \d+
         decklist2_id: \d+
-
-decklist_moderate:
-    path: /decklist/moderate/{decklist_id}/{status}
-    methods: [POST]
-    defaults:
-        _controller: AppBundle:Social:moderate
-    requirements:
-        decklist_id: \d+
-        status: \d
     
 prebuilt_view:
     path: /{_locale}/prebuilt/{prebuilt_code}
@@ -775,6 +767,16 @@ cards_rulings:
         _locale: en
     requirements:
         _locale: \w\w
+
+decklist_moderate:
+    path: /decklist/moderate/{decklist_id}/{status}/{modflag_id}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:moderate
+        modflag_id: null
+    requirements:
+        decklist_id: \d+
+        status: \d
 
 modflags_get:
     path: /modflags

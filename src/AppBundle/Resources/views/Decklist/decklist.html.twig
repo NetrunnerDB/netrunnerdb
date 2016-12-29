@@ -455,4 +455,32 @@ NRDB.user.params.decklist_id = Decklist.id;
 </div><!-- /.modal -->
 <!-- Modal -->
 
+<!-- Modal -->
+<div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="modal-title" id="moderationModalLabel">Compare with another decklist</h3>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12">
+						<input type="hidden" name="decklist1_id" id="moderation-decklist-id" value="{{ decklist.id }}">
+						<div class="form-group">
+							<label for="moderation-reason">Reason for moderation</label>
+                                                        <select class="form-control" name="modflag_id" id="moderation-reason"></select>
+						</div>
+						<div class="pull-right">
+							<button type="submit" id="btn-moderation-submit" class="btn btn-success">Moderate</button>
+							<button type="button" class="btn btn-default" onclick="$('#moderationModal').modal('hide')">Cancel</button>
+						</div>
+					</div><!-- /#modal-info -->
+				</div><!-- /.row -->
+			</div><!-- /.modal-body -->
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- Modal -->
+
 {% endblock %}

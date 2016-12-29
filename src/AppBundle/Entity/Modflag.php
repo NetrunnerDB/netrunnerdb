@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use JMS\Serializer\Annotation\Exclude;
+
 /**
  * Modflag
  */
@@ -15,9 +17,15 @@ class Modflag
     /**
      * @var string
      */
-    private $name;
+    private $reason;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     * @Exclude
+     */
+    private $decklists;
 
+    
     /**
      * Get id
      *
@@ -29,34 +37,29 @@ class Modflag
     }
 
     /**
-     * Set name
+     * Set reason
      *
-     * @param string $name
+     * @param string $reason
      *
      * @return Modflag
      */
-    public function setName($name)
+    public function setReason($reason)
     {
-        $this->name = $name;
+        $this->reason = $reason;
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get reason
      *
      * @return string
      */
-    public function getName()
+    public function getReason()
     {
-        return $this->name;
+        return $this->reason;
     }
     
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $decklists;
-
     /**
      * Constructor
      */

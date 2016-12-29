@@ -1,0 +1,12 @@
+<p>
+    Hello {{ username }}.<br>
+    <br>
+    The moderation team has reviewed your decklist <b><a href="{{ url|replace({'&':'&amp;'})|raw }}">{{ decklist_name }}</a></b>.<br>
+    We are sorry to tell you that your decklist has been removed from the website. The reason is: <b>{{ reason }}</b>.<br>
+    You can edit your decklist to fix that issue and have your decklist reviewed again.
+</p>
+
+<p>
+    Regards,<br>
+    The moderation team of NetrunnerDB
+</p>

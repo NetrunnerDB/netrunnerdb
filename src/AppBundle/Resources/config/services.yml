@@ -25,7 +25,7 @@ services:
         arguments: ["@doctrine"]
     moderation_helper:
         class: AppBundle\Service\ModerationHelper
-        arguments: ["@doctrine"]
+        arguments: ["@doctrine", "@mailer", "@twig", "@router", "@logger"]
     personalization_helper:
         class: AppBundle\Service\PersonalizationHelper
         arguments: ["@doctrine", "@activity_helper", "@security.authorization_checker"]

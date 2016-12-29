@@ -19,12 +19,12 @@ NRDB.data.promise.then(function () {
 });
 
 Promise.all([NRDB.data.promise, NRDB.user.promise]).then(function () {
-    if(NRDB.user.data.is_moderator) {
-        setup_moderation(NRDB.user.data.moderation_status, NRDB.user.data.is_moderator);
+    if(NRDB.user.data.moderation_status || NRDB.user.data.is_moderator) {
+        setup_moderation(NRDB.user.data.moderation_status, NRDB.user.data.moderation_reason, NRDB.user.data.is_moderator);
     }
 });
 
-function setup_moderation(moderation_status, is_moderator) {
+function setup_moderation(moderation_status, moderation_reason, is_moderator) {
     switch(moderation_status) {
         case 0:  // MODERATION_PUBLISHED
             break;
@@ -32,7 +32,7 @@ function setup_moderation(moderation_status, is_moderator) {
             NRDB.ui.showBanner('This decklist has been restored to the public directories.', 'info');
             break;
         case 2: // MODERATION_TRASHED
-            NRDB.ui.showBanner('This decklist has been removed from the public directories.', 'danger');
+            NRDB.ui.showBanner('This decklist has been removed from the public directories. Reason: <b>'+moderation_reason+'</b>.', 'danger');
             break;
         case 3: // MODERATION_DELETED
             NRDB.ui.showBanner('This decklist has been deleted.', 'warning');
@@ -46,7 +46,6 @@ function setup_moderation(moderation_status, is_moderator) {
     var $dropdown = $('#btn-group-decklist');
     $('<li class="dropdown-header"><span class="glyphicon glyphicon-ban-circle"></span> Moderation</li>').appendTo($dropdown);
     $('<li class="disabled"><a href="#" id="btn-moderation-trash">Trash</a></li>').appendTo($dropdown);
-    $('<li class="disabled"><a href="#" id="btn-moderation-restore">Restore</a></li>').appendTo($dropdown);
     $('<li class="disabled"><a href="#" id="btn-moderation-absolve">Absolve</a></li>').appendTo($dropdown);
     $('<li class="disabled"><a href="#" id="btn-moderation-delete">Delete</a></li>').appendTo($dropdown);
 
@@ -257,6 +256,20 @@ function unhide_comment(element) {
     });
 }
 
+function do_action_decklist(event) {
+    var action_id = $(this).attr('id');
+    if(!action_id || !SelectedDeck)
+        return;
+    switch(action_id) {
+        case 'btn-download-text':
+            location.href = Routing.generate('decklist_export_text', {decklist_id: Decklist.id});
+            break;
+        case 'btn-download-octgn':
+            location.href = Routing.generate('decklist_export_octgn', {decklist_id: Decklist.id});
+            break;
+    }
+}
+
 $(function () {
 
     $.when(NRDB.user.deferred).then(function () {
@@ -274,8 +287,12 @@ $(function () {
     $(document).on('click', '#decklist-delete', delete_form);
     $(document).on('click', '#social-icon-like', send_like);
     $(document).on('click', '#social-icon-favorite', send_favorite);
-    $(document).on('click', '#btn-group-decklist button[id],a[id]', do_action_decklist);
-    $(document).on('click', '#btn-compare', compare_form);
+    $(document).on('click', '#btn-download-text', do_action_decklist);
+    $(document).on('click', '#btn-download-octgn', do_action_decklist);
+    $(document).on('click', '#btn-export-bbcode', export_bbcode);
+    $(document).on('click', '#btn-export-markdown', export_markdown);
+    $(document).on('click', '#btn-export-plaintext', export_plaintext);
+    $(document).on('click', '#btn-export-jintekinet', export_jintekinet);
     $(document).on('click', '#btn-compare-submit', compare_submit);
     $(document).on('click', '#btn-copy-decklist', copy_decklist);
     $(document).on('click', '#btn-moderation-absolve', moderation_absolve);
@@ -294,6 +311,7 @@ $(function () {
 
     $('#btn-group-decklist').on({
         click: function (event) {
+            event.preventDefault();
             if($(this).attr('id').match(/btn-sort-(\w+)/)) {
                 DisplaySort = RegExp.$1;
                 DisplaySortSecondary = null;
@@ -358,32 +376,6 @@ function delete_form() {
     $('#deleteModal').modal('show');
 }
 
-function do_action_decklist(event) {
-    var action_id = $(this).attr('id');
-    if(!action_id || !SelectedDeck)
-        return;
-    switch(action_id) {
-        case 'btn-download-text':
-            location.href = Routing.generate('decklist_export_text', {decklist_id: Decklist.id});
-            break;
-        case 'btn-download-octgn':
-            location.href = Routing.generate('decklist_export_octgn', {decklist_id: Decklist.id});
-            break;
-        case 'btn-export-bbcode':
-            export_bbcode();
-            break;
-        case 'btn-export-markdown':
-            export_markdown();
-            break;
-        case 'btn-export-plaintext':
-            export_plaintext();
-            break;
-        case 'btn-export-jintekinet':
-            export_jintekinet();
-            break;
-    }
-}
-
 function send_like() {
     var obj = $(this);
     $.post(Routing.generate('decklist_like'), {
@@ -427,28 +419,76 @@ function update_mwl(mwl_code) {
     $('a[href="#deck"]').tab('show');
 }
 
-function moderation_absolve() {
+function moderation_absolve(event) {
+    if($(this).parent().hasClass('disabled')) {
+        return;
+    }
     change_moderation_status(0);
 }
 
-function moderation_restore() {
+function moderation_restore(event) {
+    if($(this).parent().hasClass('disabled')) {
+        return;
+    }
     change_moderation_status(1);
 }
 
-function moderation_trash() {
-    change_moderation_status(2);
+function moderation_trash(event) {
+    if($(this).parent().hasClass('disabled')) {
+        return;
+    }
+    ask_modflag().then(function (modflag_id) {
+        change_moderation_status(2, modflag_id);
+    });
 }
 
-function moderation_delete() {
+function moderation_delete(event) {
+    if($(this).parent().hasClass('disabled')) {
+        return;
+    }
     change_moderation_status(3);
+}
+
+function ask_modflag() {
+    return get_modflags().then(show_modflag_modal);
+}
+
+function get_modflags() {
+    return new Promise(function (resolve, reject) {
+        var url = Routing.generate('modflags_get');
+        $.get(url).then(function (response) {
+            resolve(response.data);
+        });
+    });
+}
+
+function show_modflag_modal(data) {
+    return new Promise(function (resolve, reject) {
+        var $modal = $('#moderationModal');
+        var $list = $('#moderation-reason');
+        data.forEach(function (modflag) {
+           $list.append($('<option value="'+modflag.id+'">'+modflag.reason+'</option>'));
+        });
+        var $button = $('#btn-moderation-submit');
+        $button.click(function (event) {
+            $modal.modal('hide');
+            resolve($list.val());
+        });
+        $modal.modal('show');
+    });
 }
 
 function change_moderation_status(status) {
     var url = Routing.generate('decklist_moderate', {
         decklist_id: Decklist.id,
-        status: status
+        status: status,
+        modflag_id: 1
     });
     $.post(url).then(function () {
-        location.reload();
+        if(status !== 3) {
+            location.reload();
+        } else {
+            location = Routing.generate('decklists_list');
+        }
     });
 }

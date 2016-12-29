@@ -726,7 +726,7 @@ class SocialController extends Controller
         if(!$user) {
             throw new UnauthorizedHttpException("You must be logged in for this operation.");
         }
-
+        /* @var $decklist Decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if(!$decklist || $decklist->getUser()->getId() != $user->getId()) {
             throw new UnauthorizedHttpException("You don't have access to this decklist.");
@@ -769,6 +769,11 @@ class SocialController extends Controller
         $decklist->setDescription($description);
         $decklist->setPrecedent($precedent_decklist);
         $decklist->setTournament($tournament);
+        
+        if($decklist->getModerationStatus() === Decklist::MODERATION_TRASHED) {
+            $this->get('moderation_helper')->changeStatus($this->getUser(), $decklist, Decklist::MODERATION_RESTORED);
+        }        
+        
         $em->flush();
 
         return $this->redirect($this->generateUrl('decklist_detail', array(
@@ -1119,8 +1124,9 @@ class SocialController extends Controller
      * Change the moderation status of a decklist
      * @param integer $decklist_id
      * @param integer $status
+     * @param integer $modflag_id
      */
-    public function moderateAction ($decklist_id, $status)
+    public function moderateAction ($decklist_id, $status, $modflag_id = null)
     {
         $response = new Response();
         $response->setPrivate();
@@ -1139,7 +1145,7 @@ class SocialController extends Controller
             throw $this->createNotFoundException('Not found');
         }
 
-        $decklist->setModerationStatus($status);
+        $this->get('moderation_helper')->changeStatus($this->getUser(), $decklist, $status, $modflag_id);
 
         $em->flush();
 

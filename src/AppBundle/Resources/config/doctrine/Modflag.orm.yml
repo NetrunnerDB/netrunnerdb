@@ -1,11 +1,10 @@
 AppBundle\Entity\Modflag:
     type: entity
     table: modflags
-    manyToMany:
+    oneToMany:
         decklists:
             targetEntity: Decklist
-            mappedBy: modflags
-            cascade: ["remove"]
+            mappedBy: modflag
     id:
         id:
             type: integer
@@ -13,7 +12,7 @@ AppBundle\Entity\Modflag:
             generator:
                 strategy: AUTO
     fields:
-        name:
+        reason:
             type: string
             length: 255
     lifecycleCallbacks: {  }

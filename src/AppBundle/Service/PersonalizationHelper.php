@@ -81,10 +81,10 @@ class PersonalizationHelper
 
         $content['can_delete'] = ($decklist->getNbcomments() == 0) && ($decklist->getNbfavorites() == 0) && ($decklist->getNbvotes() == 0);
 
-        if ($this->authorizationChecker->isGranted('ROLE_MODERATOR')) {
+        if ($this->authorizationChecker->isGranted('ROLE_MODERATOR') 
+                or ($content['is_author'] and $decklist->getModerationStatus() === Decklist::MODERATION_TRASHED)) {
             $content['moderation_status'] = $decklist->getModerationStatus();
-        } else if($content['is_author'] && $decklist->getModerationStatus() === Decklist::MODERATION_TRASHED) {
-            $content['moderation_status'] = $decklist->getModerationStatus();
+            $content['moderation_reason'] = $decklist->getModflag() ? $decklist->getModflag()->getReason() : null;
         }
         
         return $content;
