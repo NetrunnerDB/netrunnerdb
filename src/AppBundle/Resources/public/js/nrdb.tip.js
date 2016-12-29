@@ -28,7 +28,7 @@
         var influence = '';
         for(var i = 0; i < card.faction_cost; i++)
             influence += "●";
-        if(card.strength !== null)
+        if(card.strength != null)
             type += '<p>Strength <b>' + card.strength + '</b></p>';
         var image_svg = '';
         if($('#nrdb_svg_hex').length && typeof InstallTrigger === 'undefined') {
