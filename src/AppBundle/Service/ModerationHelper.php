@@ -108,7 +108,7 @@ class ModerationHelper
                 ->setSubject("Your decklist on NetrunnerDB")
                 ->setFrom("moderation@netrunnerdb.com", "NetrunnerDB Moderation Team")
                 ->setTo($decklist->getUser()->getEmail())
-                ->setBody($body)
+                ->setBody($body, 'text/html')
                 ;
         
         $this->mailer->send($message);
