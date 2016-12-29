@@ -782,3 +782,7 @@ modflags_get:
     path: /modflags
     defaults:
         _controller: AppBundle:Modflags:get
+
+claims:
+    resource: "@AppBundle/Controller/ClaimsController.php"
+    type:     annotation

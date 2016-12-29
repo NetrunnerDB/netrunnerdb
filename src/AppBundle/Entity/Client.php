@@ -33,4 +33,43 @@ class Client extends BaseClient
     {
         $this->name = $name;
     }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $claims;
+
+
+    /**
+     * Add claim
+     *
+     * @param \AppBundle\Entity\Claim $claim
+     *
+     * @return Client
+     */
+    public function addClaim(\AppBundle\Entity\Claim $claim)
+    {
+        $this->claims[] = $claim;
+
+        return $this;
+    }
+
+    /**
+     * Remove claim
+     *
+     * @param \AppBundle\Entity\Claim $claim
+     */
+    public function removeClaim(\AppBundle\Entity\Claim $claim)
+    {
+        $this->claims->removeElement($claim);
+    }
+
+    /**
+     * Get claims
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getClaims()
+    {
+        return $this->claims;
+    }
 }

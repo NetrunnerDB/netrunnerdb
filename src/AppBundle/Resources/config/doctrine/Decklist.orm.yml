@@ -88,6 +88,10 @@ AppBundle\Entity\Decklist:
             targetEntity: Legality
             mappedBy: decklist
             cascade: ["remove"]
+        claims:
+            targetEntity: Claim
+            mappedBy: decklist
+            cascade: ["remove"]
     manyToMany:
         favorites:
             targetEntity: User

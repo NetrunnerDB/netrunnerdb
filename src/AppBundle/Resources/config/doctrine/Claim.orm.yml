@@ -1,0 +1,34 @@
+AppBundle\Entity\Claim:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    manyToOne:
+        decklist:
+            targetEntity: Decklist
+            nullable: false
+            inversedBy: claims
+            joinColumn:
+                name: decklist_id
+                referencedColumnName: id
+        client:
+            targetEntity: Client
+            nullable: true
+            inversedBy: claims
+            joinColumn:
+                name: client_id
+                referencedColumnName: id
+    fields:
+        name:
+            type: string
+            length: '255'
+        url:
+            type: string
+            length: '255'
+        rank:
+            type: smallint
+    lifecycleCallbacks: {  }

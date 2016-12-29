@@ -1,6 +1,11 @@
 AppBundle\Entity\Client:
     type: entity
     table: client
+    oneToMany:
+        claims:
+            targetEntity: Claim
+            mappedBy: client
+            cascade: ["remove"]
     fields:
         id:
             type: integer
