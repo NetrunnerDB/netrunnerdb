@@ -67,7 +67,7 @@ AppBundle\Entity\Decklist:
             nullable: true
             inversedBy: decklists
             joinColumn:
-                name: decklist_id
+                name: modflag_id
                 referencedColumnName: id
     oneToMany:
         slots:
