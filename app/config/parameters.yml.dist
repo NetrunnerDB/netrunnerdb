@@ -30,5 +30,5 @@ parameters:
         - en
     oauth_test_client_id: ~
     oauth_test_client_secret: ~
-    oauth_test_redirect_url: ~
+    oauth_test_redirect_uri: ~
     

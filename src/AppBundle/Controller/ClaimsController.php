@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * API Controller for Claims (decklist ranking in tournaments)
  *
  * @author cbertolini
- * @Route("/decklists/{decklist_id}/claims")
+ * @Route("/api/2.1/private/decklists/{decklist_id}/claims")
  */
 class ClaimsController extends AbstractOauthController
 {
@@ -26,7 +26,7 @@ class ClaimsController extends AbstractOauthController
      */
     public function postAction ($decklist_id, Request $request)
     {
-        $client = $this->getOauthClient($request);
+        $client = $this->getOauthClient();
         if(!$client) {
             throw $this->createAccessDeniedException();
         }
@@ -57,9 +57,9 @@ class ClaimsController extends AbstractOauthController
      * @return Claim
      * @throws \Exception
      */
-    protected function retrieveClaim ($decklist_id, $id, Request $request)
+    protected function retrieveClaim ($decklist_id, $id)
     {
-        $client = $this->getOauthClient($request);
+        $client = $this->getOauthClient();
         if(!$client) {
             throw $this->createAccessDeniedException();
         }
@@ -90,9 +90,9 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("GET")
      */
-    public function getAction ($decklist_id, $id, Request $request)
+    public function getAction ($decklist_id, $id)
     {
-        $claim = $this->retrieveClaim($decklist_id, $id, $request);
+        $claim = $this->retrieveClaim($decklist_id, $id);
         $jsend = $this->getJsendResponse('success', ['claim' => $claim]);
         return $this->createJsonResponse($jsend);
     }
@@ -105,7 +105,7 @@ class ClaimsController extends AbstractOauthController
      */
     public function putAction ($decklist_id, $id, Request $request)
     {
-        $claim = $this->retrieveClaim($decklist_id, $id, $request);
+        $claim = $this->retrieveClaim($decklist_id, $id);
         /* @var $updatingClaim Claim */
         $updatingClaim = $this->parseJsonRequest($request, 'AppBundle\Entity\Claim');
         $claim->setName($updatingClaim->getName());
@@ -125,9 +125,9 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("DELETE")
      */
-    public function deleteAction ($decklist_id, $id, Request $request)
+    public function deleteAction ($decklist_id, $id)
     {
-        $claim = $this->retrieveClaim($decklist_id, $id, $request);
+        $claim = $this->retrieveClaim($decklist_id, $id);
         $em = $this->getDoctrine()->getManager();
         $em->remove($claim);
         $em->flush();

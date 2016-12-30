@@ -684,16 +684,6 @@ api_private_account_info:
     methods: [GET]
     defaults:
         _controller: AppBundle:PrivateApi20:accountInfo
-
-redirect_url:
-    path: /redirect
-    defaults:
-        _controller: AppBundle:ApiDoc:redirect
-        
-start_oauth:
-    path: /oauth
-    defaults:
-        _controller: AppBundle:ApiDoc:oauth
         
 cards_list:
     path:  /{_locale}/set/{pack_code}/{view}/{sort}/{page}
@@ -785,4 +775,8 @@ modflags_get:
 
 claims:
     resource: "@AppBundle/Controller/ClaimsController.php"
+    type:     annotation
+
+oauth:
+    resource: "@AppBundle/Controller/OauthController.php"
     type:     annotation

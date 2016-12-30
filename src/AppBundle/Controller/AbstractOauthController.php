@@ -28,13 +28,8 @@ abstract class AbstractOauthController extends Controller
      * @param Request $request
      * @return Client
      */
-    public function getOauthClient (Request $request)
+    public function getOauthClient ()
     {
-        if($this->container->getParameter('kernel.environment') === 'dev') {
-            $client_id = $request->query->get('client_id');
-            return $this->getDoctrine()->getManager()->getRepository('AppBundle:Client')->find($client_id);
-        }
-
         $tokenManager = $this->container->get('fos_oauth_server.access_token_manager.default');
         $token = $this->container->get('security.token_storage')->getToken();
         $accessToken = $tokenManager->findTokenByToken($token->getToken());
