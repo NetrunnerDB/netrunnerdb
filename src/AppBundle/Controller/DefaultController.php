@@ -23,11 +23,10 @@ class DefaultController extends Controller
                     'user' => $user, 'factions' => $factions));
     }
 
-    public function saveProfileAction ()
+    public function saveProfileAction (Request $request)
     {
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
-        $request = $request;
         $em = $this->getDoctrine()->getManager();
 
         $username = filter_var($request->get('username'), FILTER_SANITIZE_STRING);
