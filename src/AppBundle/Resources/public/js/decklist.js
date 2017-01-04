@@ -478,11 +478,11 @@ function show_modflag_modal(data) {
     });
 }
 
-function change_moderation_status(status) {
+function change_moderation_status(status, modflag_id) {
     var url = Routing.generate('decklist_moderate', {
         decklist_id: Decklist.id,
         status: status,
-        modflag_id: 1
+        modflag_id: modflag_id
     });
     $.post(url).then(function () {
         if(status !== 3) {
