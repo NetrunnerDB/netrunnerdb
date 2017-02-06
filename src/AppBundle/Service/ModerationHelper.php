@@ -69,8 +69,8 @@ class ModerationHelper
             }
             $decklist->setModflag($modflag);
         } else {
-            if($status !== Decklist::MODERATION_PUBLISHED && $status !== Decklist::MODERATION_RESTORED) {
-                throw new \RuntimException("modflag_id required");
+            if($status != Decklist::MODERATION_PUBLISHED && $status != Decklist::MODERATION_RESTORED) {
+                throw new \RuntimeException("modflag_id required");
             }
         }
         
