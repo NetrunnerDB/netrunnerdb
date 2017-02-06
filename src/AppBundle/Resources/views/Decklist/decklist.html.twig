@@ -134,6 +134,27 @@ NRDB.user.params.decklist_id = Decklist.id;
 </tbody>
 </table>
 
+<!-- Claims -->
+{% if claims|length %}
+<table class="table table-condensed" id="table-claims">
+<thead>
+<tr><th colspan="2"><span class="glyphicon glyphicon-certificate"></span> Tournaments</th></tr>
+</thead>
+<tbody>
+{% for claim in claims %}
+<tr>
+    <td>
+        #{{ claim.rank }}
+    </td>
+    <td>
+    	<a href="{{ claim.url|raw }}" class="tournament_claim">{{ claim.name }}</a>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
 </div><!-- /#deck -->
 <div role="tabpanel" class="tab-pane" id="packs">
 
