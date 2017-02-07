@@ -22,6 +22,12 @@ AppBundle\Entity\Claim:
             joinColumn:
                 name: client_id
                 referencedColumnName: id
+        user:
+            targetEntity: User
+            nullable: true
+            joinColumn:
+                name: user_id
+                referencedColumnName: id
     fields:
         name:
             type: string
@@ -30,5 +36,7 @@ AppBundle\Entity\Claim:
             type: string
             length: '255'
         rank:
+            type: smallint
+        participants:
             type: smallint
     lifecycleCallbacks: {  }

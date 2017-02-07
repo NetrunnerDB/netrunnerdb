@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'netrunner';
-    src:    url('fonts/netrunner.eot?y6hcdy');
-    src:    url('fonts/netrunner.eot?y6hcdy#iefix') format('embedded-opentype'),
-        url('fonts/netrunner.ttf?y6hcdy') format('truetype'),
-        url('fonts/netrunner.woff?y6hcdy') format('woff'),
-        url('fonts/netrunner.svg?y6hcdy#netrunner') format('svg');
+    src:  url('fonts/netrunner.eot?ymovf3');
+    src:  url('fonts/netrunner.eot?ymovf3#iefix') format('embedded-opentype'),
+        url('fonts/netrunner.ttf?ymovf3') format('truetype'),
+        url('fonts/netrunner.woff?ymovf3') format('woff'),
+        url('fonts/netrunner.svg?ymovf3#netrunner') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,6 +24,9 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-abr:before {
+    content: "\e920";
+}
 .icon-subroutine:before {
     content: "\e900";
 }

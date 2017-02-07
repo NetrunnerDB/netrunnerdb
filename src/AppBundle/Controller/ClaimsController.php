@@ -17,7 +17,26 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class ClaimsController extends AbstractOauthController
 {
+    private function deserializeClaim (Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        
+        /* @var $serializer \JMS\Serializer\Serializer */
+        $serializer = $this->get('jms_serializer');
 
+        $data = json_decode($request->getContent(), true);
+        
+        /* @var $user \AppBundle\Entity\User */
+        $user_id = $data['user_id'];
+        $user = $em->getRepository('AppBundle:User')->find($user_id);
+
+        /* @var $claim Claim */
+        $claim = $serializer->fromArray($data, 'AppBundle\Entity\Claim');
+        $claim->setUser($user);
+
+        return $claim;
+    }
+          
     /**
      * Create a claim
      * @param Request $request
@@ -37,7 +56,7 @@ class ClaimsController extends AbstractOauthController
             throw $this->createNotFoundException();
         }
         /* @var $claim Claim */
-        $claim = $this->parseJsonRequest($request, 'AppBundle\Entity\Claim');
+        $claim = $this->deserializeClaim($request);
         $claim->setDecklist($decklist);
         $claim->setClient($client);
         $em->persist($claim);
@@ -107,9 +126,10 @@ class ClaimsController extends AbstractOauthController
     {
         $claim = $this->retrieveClaim($decklist_id, $id);
         /* @var $updatingClaim Claim */
-        $updatingClaim = $this->parseJsonRequest($request, 'AppBundle\Entity\Claim');
+        $updatingClaim = $this->deserializeClaim($request);
         $claim->setName($updatingClaim->getName());
         $claim->setRank($updatingClaim->getRank());
+        $claim->setParticipants($updatingClaim->getParticipants());
         $claim->setUrl($updatingClaim->getUrl());
         $em = $this->getDoctrine()->getManager();
         $em->flush();

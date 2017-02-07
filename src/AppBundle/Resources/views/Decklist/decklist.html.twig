@@ -138,16 +138,19 @@ NRDB.user.params.decklist_id = Decklist.id;
 {% if claims|length %}
 <table class="table table-condensed" id="table-claims">
 <thead>
-<tr><th colspan="2"><span class="glyphicon glyphicon-certificate"></span> Tournaments</th></tr>
+<tr><th colspan="3"><span class="netrunner icon icon-abr"></span> Tournaments</th></tr>
 </thead>
 <tbody>
 {% for claim in claims %}
 <tr>
     <td>
-        #{{ claim.rank }}
+    	<a href="{{ claim.url|raw }}" class="tournament_claim">{{ claim.name }}</a>
     </td>
     <td>
-    	<a href="{{ claim.url|raw }}" class="tournament_claim">{{ claim.name }}</a>
+        #{{ claim.rank }} of {{ claim.participants }}
+    </td>
+    <td>
+        <a href="{{ path('user_profile_view', {_locale:app.request.locale,user_id:claim.user_id,user_name:claim.username|e('url')}) }}">{{ claim.username }}</a>
     </td>
 </tr>
 {% endfor %}

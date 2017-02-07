@@ -35,6 +35,12 @@ class Claim
     private $rank;
 
     /**
+     * @var integer
+     * @Serializer\Expose
+     */
+    private $participants;
+
+    /**
      * @var \AppBundle\Entity\Decklist
      * @Serializer\Exclude
      */
@@ -45,6 +51,12 @@ class Claim
      * @Serializer\Exclude
      */
     private $client;
+
+    /**
+     * @var \AppBundle\Entity\User
+     * @Serializer\Exclude
+     */
+    private $user;
 
     /**
      * Get id
@@ -129,6 +141,30 @@ class Claim
     }
 
     /**
+     * Get participants
+     * 
+     * @return integer
+     */
+    function getParticipants ()
+    {
+        return $this->participants;
+    }
+
+    /**
+     * Set participants
+     * 
+     * @param integer $participants
+     * 
+     * @return Claim
+     */
+    function setParticipants ($participants)
+    {
+        $this->participants = $participants;
+
+        return $this;
+    }
+
+    /**
      * Set decklist
      *
      * @param \AppBundle\Entity\Decklist $decklist
@@ -174,6 +210,30 @@ class Claim
     public function getClient ()
     {
         return $this->client;
+    }
+
+    /**
+     * Get user
+     * 
+     * @return \AppBundle\Entity\User
+     */
+    function getUser ()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set user
+     * 
+     * @param \AppBundle\Entity\User $user
+     * 
+     * @return Claim
+     */
+    function setUser (\AppBundle\Entity\User $user)
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
 }

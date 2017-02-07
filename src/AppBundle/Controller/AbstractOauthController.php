@@ -51,7 +51,7 @@ abstract class AbstractOauthController extends Controller
             "data" => $data
         ];
 
-        if(isset($message)) {
+        if (isset($message)) {
             $response['message'] = $message;
         }
 
@@ -77,19 +77,6 @@ abstract class AbstractOauthController extends Controller
         $response = new Response($content, $status, $headers);
         $response->headers->set('Content-Type', 'application/json');
         return $response;
-    }
-
-    /**
-     * 
-     * @param Request $request
-     * @param string $type
-     * @return mixed
-     */
-    public function parseJsonRequest (Request $request, $type)
-    {
-        /* @var $serializer Serializer2 */
-        $serializer = $this->get('jms_serializer');
-        return $serializer->deserialize($request->getContent(), $type, 'json');
     }
 
 }

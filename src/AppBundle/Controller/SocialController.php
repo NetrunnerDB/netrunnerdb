@@ -338,7 +338,17 @@ class SocialController extends Controller
             $mwl = $mwl['code'];
         }
 
-        $claims = $dbh->executeQuery("SELECT c.url, c.rank, c.name FROM Claim c join decklist d on d.id=c.decklist_id WHERE d.id=?", array($decklist_id))->fetchAll();
+        $claims = $dbh->executeQuery("SELECT "
+                . "c.url, "
+                . "c.rank, "
+                . "c.name, "
+                . "c.participants, "
+                . "u.id user_id, "
+                . "u.username "
+                . "FROM Claim c "
+                . "JOIN decklist d ON d.id=c.decklist_id "
+                . "JOIN user u ON u.id=c.user_id "
+                . "WHERE d.id=?", array($decklist_id))->fetchAll();
         
         $packs = $dbh->executeQuery("SELECT DISTINCT
 				p.code code,
