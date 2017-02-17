@@ -17,7 +17,7 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
 				'name' => $this->name,
 				'position' => $this->position,
 				'size' => $this->size,
-                'rotated' => $this->rotated
+				'rotated' => $this->rotated
 		];
 	}
 	
