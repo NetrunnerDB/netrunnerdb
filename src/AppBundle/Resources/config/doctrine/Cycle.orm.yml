@@ -36,6 +36,9 @@ AppBundle\Entity\Cycle:
         size:
             type: smallint
             nullable: false
+        rotated:
+            type: boolean
+            nullable: false
         dateCreation:
             type: datetime
             nullable: false
