@@ -93,6 +93,9 @@ class SocialController extends Controller
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
 
+        /* @var $manager \AppBundle\Service\DecklistManager */
+        $manager = $this->get('decklists');
+        
         $deck_id = filter_var($request->request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         /* @var $deck \AppBundle\Entity\Deck */
         $deck = $this->getDoctrine()
@@ -146,6 +149,7 @@ class SocialController extends Controller
         $decklist->setDotw(0);
         $decklist->setModerationStatus(Decklist::MODERATION_PUBLISHED);
         $decklist->setTournament($tournament);
+        $decklist->setIsLegal(true);
         foreach($deck->getSlots() as $slot) {
             $card = $slot->getCard();
             $decklistslot = new Decklistslot();
@@ -174,6 +178,8 @@ class SocialController extends Controller
         }
 
         $em->flush();
+        $decklist->setIsLegal($manager->isDecklistLegal($decklist));
+        $em->flush();
 
         return $this->redirect($this->generateUrl('decklist_detail', array(
                             'decklist_id' => $decklist->getId(),
@@ -200,10 +206,10 @@ class SocialController extends Controller
 				d.date_creation,
 				d.rawdescription,
 				d.description,
-        		d.signature,
+                		d.signature,
 				d.precedent_decklist_id precedent,
-                d.tournament_id,
-                t.description tournament,
+                                d.tournament_id,
+                                t.description tournament,
 				u.id user_id,
 				u.username,
 				u.faction usercolor,
@@ -214,12 +220,13 @@ class SocialController extends Controller
 				d.nbvotes,
 				d.nbfavorites,
 				d.nbcomments,
-                                d.moderation_status
+                                d.moderation_status,
+                                d.is_legal
 				from decklist d
 				join user u on d.user_id=u.id
 				join card c on d.identity_id=c.id
 				join faction f on d.faction_id=f.id
-                left join tournament t on d.tournament_id=t.id
+                                left join tournament t on d.tournament_id=t.id
 				where d.id=?
                                 and d.moderation_status<3
 				", array(

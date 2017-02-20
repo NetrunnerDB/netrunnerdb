@@ -1072,4 +1072,18 @@ class Decklist implements \Serializable
     {
         return $this->claims;
     }
+    
+    private $isLegal;
+    
+    function getIsLegal ()
+    {
+        return $this->isLegal;
+    }
+
+    function setIsLegal ($isLegal)
+    {
+        $this->isLegal = $isLegal;
+    }
+
+
 }

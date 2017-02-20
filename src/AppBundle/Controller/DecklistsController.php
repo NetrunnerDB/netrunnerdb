@@ -231,6 +231,7 @@ class DecklistsController extends Controller
                         'title' => '',
                         'list_mwl' => $list_mwl,
                         'mwl_code' => '',
+                        'is_legal' => ''
                             )
                     ),
                         ), $response);
@@ -247,6 +248,7 @@ class DecklistsController extends Controller
         $sort = $request->query->get('sort');
         $packs = $request->query->get('packs');
         $mwl_code = $request->query->get('mwl_code');
+        $is_legal = $request->query->get('is_legal');
 
         if(!is_array($packs)) {
             $packs = $dbh->executeQuery("select id from pack")->fetchAll(\PDO::FETCH_COLUMN);
@@ -291,7 +293,7 @@ class DecklistsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
 
-
+        
         $params = array(
             'allowed' => $categories,
             'on' => $on,
@@ -300,19 +302,22 @@ class DecklistsController extends Controller
             'title' => $decklist_title,
             'list_mwl' => $list_mwl,
             'mwl_code' => $mwl_code,
+            'is_legal' => $is_legal
         );
         $params['sort_' . $sort] = ' selected="selected"';
-        $params['faction_' . CardsData::$faction_letters[$faction_code]] = ' selected="selected"';
+        if(!empty($faction_code)) {
+            $params['faction_' . CardsData::$faction_letters[$faction_code]] = ' selected="selected"';
+        }
 
         if(!empty($cards_code) && is_array($cards_code)) {
             $cards = $dbh->executeQuery(
                             "SELECT
     				c.title,
     				c.code,
-                    f.code faction_code
+                                f.code faction_code
     				from card c
-                    join faction f on f.id=c.faction_id
-                    where c.code in (?)
+                                join faction f on f.id=c.faction_id
+                                where c.code in (?)
     				order by c.code desc", array($cards_code), array(\Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
                     ->fetchAll();
 

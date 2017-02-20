@@ -7,18 +7,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-class MwlApplyCommand extends ContainerAwareCommand
+class LegalityActiveMwlCommand extends ContainerAwareCommand
 {
-    
-    protected function configure()
+
+    protected function configure ()
     {
         $this
-        ->setName('nrdb:mwl:apply')
-        ->setDescription('Checks to see if a new MWL becomes active')
+                ->setName('nrdb:legality:active-mwl')
+                ->setDescription('Checks to see if a new MWL becomes active')
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute (InputInterface $input, OutputInterface $output)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -28,22 +28,20 @@ class MwlApplyCommand extends ContainerAwareCommand
 
         $qb = $em->createQueryBuilder();
         $qb->select('m')
-            ->from('AppBundle:Mwl', 'm')
-            ->orderBy('m.dateStart', 'DESC');
+                ->from('AppBundle:Mwl', 'm')
+                ->orderBy('m.dateStart', 'DESC');
         $query = $qb->getQuery();
 
         /* @var $mwl \AppBundle\Entity\Mwl */
         $list = $query->getResult();
 
-        if(!count($list))
-        {
+        if (!count($list)) {
             $output->writeln("<error>No MWL in database</error>");
             return;
         }
 
         $mwl = array_shift($list);
-        if($mwl->getActive() || $mwl->getDateStart() > $now)
-        {
+        if ($mwl->getActive() || $mwl->getDateStart() > $now) {
             $output->writeln("Nothing to do");
             return;
         }
@@ -51,10 +49,8 @@ class MwlApplyCommand extends ContainerAwareCommand
         $mwl->setActive(TRUE);
         $output->writeln($mwl->getName() . " set as ACTIVE");
 
-        while($mwl = array_shift($list))
-        {
-            if($mwl->getActive())
-            {
+        while ($mwl = array_shift($list)) {
+            if ($mwl->getActive()) {
                 $mwl->setActive(FALSE);
                 $output->writeln($mwl->getName() . " set as INACTIVE");
             }
@@ -62,4 +58,5 @@ class MwlApplyCommand extends ContainerAwareCommand
 
         $em->flush();
     }
+
 }

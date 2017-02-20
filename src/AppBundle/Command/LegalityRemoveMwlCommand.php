@@ -13,47 +13,46 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
  *
  * @author Alsciende <alsciende@icloud.com>
  */
-class MwlRemoveCommand extends ContainerAwareCommand
+class LegalityRemoveMwlCommand extends ContainerAwareCommand
 {
 
     protected function configure ()
     {
         $this
-                ->setName('nrdb:mwl:remove')
+                ->setName('nrdb:legality:remove-mwl')
                 ->setDescription('Remove a MWL')
                 ->addArgument(
-                        'id', InputArgument::REQUIRED, 'Id of the mwl'
+                        'mwl_code', InputArgument::REQUIRED, 'Code of the MWL'
                 )
         ;
     }
 
     protected function execute (InputInterface $input, OutputInterface $output)
     {
-        $id = $input->getArgument('id');
-
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
-        $mwl = $entityManager->getRepository('AppBundle:Mwl')->find($id);
-        if(!$mwl) {
-            throw new Exception("Cannot find MWL");
+        $mwl_code = $input->getArgument('mwl_code');
+        $mwl = $entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
+        if (!$mwl) {
+            throw new \Exception("MWL not found");
         }
-        
+
         /* @var $list_deck \AppBundle\Entity\Deck[] */
         $list_deck = $entityManager->getRepository('AppBundle:Deck')->findBy(array(
             'mwl' => $mwl
         ));
-        
-        foreach($list_deck as $deck) {
+
+        foreach ($list_deck as $deck) {
             $deck->setMwl(null);
         }
-        
+
         $entityManager->flush();
-        
+
         $entityManager->remove($mwl);
-        
+
         $entityManager->flush();
-        
+
         $output->writeln("Done.");
     }
 

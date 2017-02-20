@@ -164,4 +164,7 @@ AppBundle\Entity\Decklist:
         moderationStatus:
             type: integer
             column: moderation_status
+        isLegal:
+            type: boolean
+            column: is_legal
     lifecycleCallbacks: {  }
