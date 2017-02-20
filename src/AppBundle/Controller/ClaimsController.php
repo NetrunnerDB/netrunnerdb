@@ -26,19 +26,23 @@ class ClaimsController extends AbstractOauthController
 
         $data = json_decode($request->getContent(), true);
         
-        /* @var $user \AppBundle\Entity\User */
-        $user_id = $data['user_id'];
-        $user = $em->getRepository('AppBundle:User')->find($user_id);
-
         /* @var $claim Claim */
         $claim = $serializer->fromArray($data, 'AppBundle\Entity\Claim');
-        $claim->setUser($user);
 
         return $claim;
     }
           
     /**
      * Create a claim
+     * 
+     * Example body request:
+     * {
+     *   "name":"Cheltenham - Proud Lion - SC",
+     *   "url":"https://alwaysberunning.net/tournaments/300/cheltenham-proud-lion-sc",
+     *   "rank":1,
+     *   "participants":32,
+     * }
+     * 
      * @param Request $request
      * @Route("")
      * @Method("POST")
@@ -59,6 +63,7 @@ class ClaimsController extends AbstractOauthController
         $claim = $this->deserializeClaim($request);
         $claim->setDecklist($decklist);
         $claim->setClient($client);
+        $claim->setUser($this->getUser());
         $em->persist($claim);
         $em->flush();
 
@@ -78,6 +83,7 @@ class ClaimsController extends AbstractOauthController
      */
     protected function retrieveClaim ($decklist_id, $id)
     {
+        $user = $this->getUser();
         $client = $this->getOauthClient();
         if(!$client) {
             throw $this->createAccessDeniedException();
@@ -97,6 +103,9 @@ class ClaimsController extends AbstractOauthController
             throw $this->createNotFoundException();
         }
         if($claim->getClient()->getId() !== $client->getId()) {
+            throw $this->createAccessDeniedException();
+        }
+        if($claim->getUser()->getId() !== $user->getId()) {
             throw $this->createAccessDeniedException();
         }
 
