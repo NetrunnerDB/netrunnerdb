@@ -30,36 +30,16 @@ class LegalityDecklistsMwlCommand extends ContainerAwareCommand
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
-        $countDql = "SELECT COUNT(DISTINCT d) FROM AppBundle:Decklist d"
-                . " JOIN AppBundle:Legality l WITH l.decklist=d"
-                . " JOIN AppBundle:Mwl m WITH l.mwl=m"
-                . " WHERE m.active=true"
-                . " AND l.isLegal=false"
-                . " AND d.isLegal=true";
-        $countQuery = $entityManager->createQuery($countDql);
-        $count = $countQuery->getSingleResult()[1];
-        $output->writeln("<comment>Found $count decklists to change</comment>");
+        $sql = "UPDATE decklist d SET d.is_legal=0 WHERE d.is_legal=1"
+                . " AND EXISTS(SELECT *"
+                . " FROM legality l"
+                . " JOIN mwl m ON m.id=l.mwl_id"
+                . " WHERE m.active=1"
+                . " AND l.is_legal=0"
+                . " AND d.id=l.decklist_id)";
+        
+        $entityManager->getConnection()->executeQuery($sql);
 
-        if (!$count) {
-            return;
-        }
-
-        $progress = new ProgressBar($output, $count);
-        $progress->setRedrawFrequency(10);
-        $progress->start();
-
-        $fetchDql = str_replace('COUNT(DISTINCT d)', 'DISTINCT d', $countDql);
-        $fetchQuery = $entityManager->createQuery($fetchDql)->setMaxResults(1);
-        while ($count--) {
-            /* @var $decklist \AppBundle\Entity\Decklist */
-            $decklist = $fetchQuery->getSingleResult();
-            $decklist->setIsLegal(false);
-            $entityManager->flush();
-            $entityManager->detach($decklist);
-            $progress->advance();
-        }
-
-        $progress->finish();
         $output->writeln("<info>Done</info>");
     }
 

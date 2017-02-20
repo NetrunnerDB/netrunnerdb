@@ -29,37 +29,17 @@ class LegalityDecklistsRotationCommand extends ContainerAwareCommand
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
-        $countDql = "SELECT COUNT(DISTINCT d) FROM AppBundle:Decklist d"
-                . " JOIN AppBundle:Decklistslot s WITH s.decklist=d"
-                . " JOIN AppBundle:Card c WITH s.card=c"
-                . " JOIN AppBundle:Pack p WITH c.pack=p"
-                . " JOIN AppBundle:Cycle y WITH p.cycle=y"
-                . " WHERE y.rotated=true"
-                . " AND d.isLegal=true";
-        $countQuery = $entityManager->createQuery($countDql);
-        $count = $countQuery->getSingleResult()[1];
-        $output->writeln("<comment>Found $count decklists to change</comment>");
+        $sql = "UPDATE decklist d SET d.is_legal=0 WHERE d.is_legal=1"
+                . " AND EXISTS(SELECT *"
+                . " FROM decklistslot s"
+                . " JOIN card c ON c.id=s.card_id"
+                . " JOIN pack p ON p.id=c.pack_id"
+                . " JOIN cycle y ON y.id=p.cycle_id"
+                . " WHERE y.rotated=1"
+                . " AND d.id=s.decklist_id)";
+        
+        $entityManager->getConnection()->executeQuery($sql);
 
-        if (!$count) {
-            return;
-        }
-
-        $progress = new ProgressBar($output, $count);
-        $progress->setRedrawFrequency(10);
-        $progress->start();
-
-        $fetchDql = str_replace('COUNT(DISTINCT d)', 'DISTINCT d', $countDql);
-        $fetchQuery = $entityManager->createQuery($fetchDql)->setMaxResults(1);
-        while ($count--) {
-            /* @var $decklist \AppBundle\Entity\Decklist */
-            $decklist = $fetchQuery->getSingleResult();
-            $decklist->setIsLegal(false);
-            $entityManager->flush();
-            $entityManager->detach($decklist);
-            $progress->advance();
-        }
-
-        $progress->finish();
         $output->writeln("<info>Done</info>");
     }
 
