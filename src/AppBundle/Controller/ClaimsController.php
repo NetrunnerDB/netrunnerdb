@@ -25,6 +25,9 @@ class ClaimsController extends AbstractOauthController
         $serializer = $this->get('jms_serializer');
 
         $data = json_decode($request->getContent(), true);
+        if($data === null) {
+            throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException("Malformed JSON");
+        }
         
         /* @var $claim Claim */
         $claim = $serializer->fromArray($data, 'AppBundle\Entity\Claim');
@@ -40,7 +43,7 @@ class ClaimsController extends AbstractOauthController
      *   "name":"Cheltenham - Proud Lion - SC",
      *   "url":"https://alwaysberunning.net/tournaments/300/cheltenham-proud-lion-sc",
      *   "rank":1,
-     *   "participants":32,
+     *   "participants":32
      * }
      * 
      * @param Request $request
