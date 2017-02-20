@@ -7,13 +7,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-class MwlApplicationCommand extends ContainerAwareCommand
+class MwlApplyCommand extends ContainerAwareCommand
 {
     
     protected function configure()
     {
         $this
-        ->setName('nrdb:mwl')
+        ->setName('nrdb:mwl:apply')
         ->setDescription('Checks to see if a new MWL becomes active')
         ;
     }
