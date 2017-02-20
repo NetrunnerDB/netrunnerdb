@@ -249,7 +249,8 @@ class ImportStdCommand extends ContainerAwareCommand
 					'code', 
 					'name', 
 					'position', 
-					'size'
+					'size',
+					'rotated'
 			], [], []);
 			if($cycle) {
 				$result[] = $cycle;

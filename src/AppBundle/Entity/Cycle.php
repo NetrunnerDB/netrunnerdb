@@ -16,7 +16,8 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
 				'code' => $this->code,
 				'name' => $this->name,
 				'position' => $this->position,
-				'size' => $this->size
+				'size' => $this->size,
+				'rotated' => $this->rotated
 		];
 	}
 	
@@ -49,6 +50,11 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
      */
     private $size;
     
+    /**
+     * @var boolean
+     */
+    private $rotated;
+
     /**
      * @var string
      */
@@ -156,6 +162,31 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     {
     	return $this->size;
     }
+
+    /**
+     * Set rotated
+     *
+     * @param boolean $rotated
+     * @return Cycle
+     */
+    public function setRotated($rotated)
+    {
+        $this->rotated = $rotated;
+   
+        return $this;
+    }
+   
+    /**
+     * Get rotated
+     *
+     * @return boolean
+     */
+    public function getRotated()
+    {
+        return $this->rotated;
+    }
+
+
     
     /**
      * @var \Doctrine\Common\Collections\Collection
