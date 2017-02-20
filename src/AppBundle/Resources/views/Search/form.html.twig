@@ -50,8 +50,8 @@
                 <label for="is_legal">Tournament Legal</label>
                 <select class="form-control" id="is_legal" name="is_legal">
                     <option value="">Ignore</option>
-                    <option value="1"{% if is_legal %} selected="selected"{% endif %}>Yes</option>
-                    <option value="0"{% if not is_legal %} selected="selected"{% endif %}>No</option>
+                    <option value="1"{% if is_legal == '1' %} selected="selected"{% endif %}>Yes</option>
+                    <option value="0"{% if is_legal == '0' %} selected="selected"{% endif %}>No</option>
                 </select>
             </div>
             <div class="form-group">
