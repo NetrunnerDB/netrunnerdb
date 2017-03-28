@@ -19,7 +19,7 @@ class InfoController extends Controller
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
 
-        /* @var $helper \AppBundle\Helper\PersonalizationHelper */
+        /* @var $helper \AppBundle\Service\PersonalizationHelper */
         $helper = $this->get('personalization_helper');
 
         /* @var $em \Doctrine\ORM\EntityManager */

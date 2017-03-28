@@ -1,0 +1,40 @@
+AppBundle\Entity\Ruling:
+    type: entity
+    table: ruling
+    manyToOne:
+        card:
+            targetEntity: Card
+            inversedBy: rulings
+            joinColumn:
+                name: card_id
+                referencedColumnName: id
+        user:
+            targetEntity: User
+            joinColumn:
+                name: user_id
+                referencedColumnName: id
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        dateCreation:
+            type: datetime
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on:  create
+        dateUpdate:
+            type: datetime
+            column: date_update
+            gedmo:
+                timestampable:
+                    on:  update
+        rawtext:
+            type: text
+            nullable: false
+        text:
+            type: text
+            nullable: false
+

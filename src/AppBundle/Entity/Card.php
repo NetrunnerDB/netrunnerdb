@@ -876,11 +876,11 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     {
         return $this->side;
     }
+    
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $reviews;
-
 
     /**
      * Add reviews
@@ -913,6 +913,44 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     public function getReviews()
     {
         return $this->reviews;
+    }
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $rulings;
+
+    /**
+     * Add rulings
+     *
+     * @param \AppBundle\Entity\Ruling $rulings
+     * @return Card
+     */
+    public function addRuling(\AppBundle\Entity\Ruling $rulings)
+    {
+        $this->rulings[] = $rulings;
+
+        return $this;
+    }
+
+    /**
+     * Remove rulings
+     *
+     * @param \AppBundle\Entity\Ruling $rulings
+     */
+    public function removeRuling(\AppBundle\Entity\Ruling $rulings)
+    {
+        $this->rulings->removeElement($rulings);
+    }
+
+    /**
+     * Get rulings
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRulings()
+    {
+        return $this->rulings;
     }
     
     public function getAncurLink()

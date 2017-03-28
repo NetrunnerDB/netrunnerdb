@@ -315,6 +315,7 @@ class SearchController extends Controller
 				$cardinfo['available'] = $availability[$pack->getCode()];
 				if($view == "zoom") {
 				    $cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
+                                    $cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
 				}
 				$cards[] = $cardinfo;
 			}

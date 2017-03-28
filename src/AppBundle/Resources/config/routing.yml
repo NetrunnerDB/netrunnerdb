@@ -448,6 +448,18 @@ user_info:
     defaults:
         _controller: AppBundle:Info:get
     
+card_ruling_post:
+    path: /ruling/post
+    methods: [POST]
+    defaults: 
+        _controller: AppBundle:Ruling:post
+
+card_ruling_edit:
+    path: /ruling/edit
+    methods: [POST]
+    defaults: 
+        _controller: AppBundle:Ruling:edit
+
 card_review_post:
     path: /review/post
     methods: [POST]

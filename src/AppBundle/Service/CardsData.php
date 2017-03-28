@@ -763,6 +763,20 @@ class CardsData {
         return $response;
     }
 
+    public function get_rulings($card) {
+        $rulings = $this->doctrine->getRepository('AppBundle:Ruling')->findBy(array('card' => $card), array('dateCreation' => 'DESC'));
+
+        $response = array();
+        foreach ($rulings as $ruling) {
+            $response[] = array(
+                'id' => $ruling->getId(),
+                'text' => $ruling->getText()
+            );
+        }
+
+        return $response;
+    }
+
     /**
      * Searches a Identity card by its partial title
      * @return \AppBundle\Entity\Card
