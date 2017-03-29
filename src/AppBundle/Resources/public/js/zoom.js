@@ -18,7 +18,7 @@ $.when(NRDB.user.deferred).then(function () {
     }
     if(NRDB.user.data.roles.indexOf('ROLE_GURU') > -1) {
         // insert button to create ruling
-        $('.rulings-list').after('<a class="add-ruling" href="#">Add a ruling</a>');
+        $('.rulings-list').after('<a class="add-ruling" href="#rulingModal" data-toggle="modal">Add a ruling</a>');
         // add event listener for add ruling link
         $(window.document).on('click', '.add-ruling', add_ruling);
         // insert links to edit rulings
@@ -30,8 +30,7 @@ $.when(NRDB.user.deferred).then(function () {
 
 function add_ruling(event) {
     var cardId = $(this).parent('.rulings-list').data('card-id');
-    $('#rulingModal').toggle();
-
+    
     var converter = new Markdown.Converter();
     $('#ruling-form-text').on(
             'keyup',
