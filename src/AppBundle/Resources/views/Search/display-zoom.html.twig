@@ -63,14 +63,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row rulings" data-card-id="{{ card.id }}">
                         <div class="col-md-12" style="margin-top:2em">
                             <div style="line-height:34px" class="rulings-header">
                                 <span style="font-size:24px">Rulings</span>
                             </div>
-                            <ul class="rulings-list" data-card-id="{{ card.id }}">
+                            <ul class="rulings-list">
                                 {% for ruling in card.rulings %}
-                                    <li data-ruling-id="{{ ruling.id }}">{{ ruling.text | raw }}</li>
+                                    <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}">{{ ruling.text | raw }}</li>
                                     {% endfor %}
                             </ul>
                         </div>
@@ -145,7 +145,7 @@
 
 
                 <!-- Modal -->
-                <div class="modal hidden-print" id="rulingModal" tabindex="-1" role="dialog" aria-labelledby="rulingModalLabel" aria-hidden="true">
+                <div class="modal hidden-print" id="addRulingModal" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -153,19 +153,54 @@
                                 <h3 class="modal-title">Add a ruling</h3>
                             </div>
                             <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <form class="form" role="form">
+                                <form class="form" role="form" action="{{ path('card_ruling_post') }}" method="post">
+                                    <div class="row">
+                                        <div class="col-sm-12">
                                             <div class="form-group">
-                                                <input type="hidden" id="ruling-card-id" name="card_id">
-                                                <textarea class="form-control" id="ruling-form-text" name="text"></textarea>
+                                                <input type="hidden" id="add-ruling-card-id" name="card_id">
+                                                <textarea class="form-control" id="add-ruling-form-text" name="text"></textarea>
                                             </div>
-                                        </form>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="well text-muted" id="add-ruling-form-preview"><small>Preview.</small></div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-12">
-                                        <div class="well text-muted" id="ruling-form-preview"><small>Preview.</small></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+
+                <!-- Modal -->
+                <div class="modal hidden-print" id="editRulingModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title">Edit a ruling</h3>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form" role="form" action="{{ path('card_ruling_edit') }}" method="post">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <input type="hidden" id="edit-ruling-card-id" name="card_id">
+                                                <input type="hidden" id="edit-ruling-id" name="ruling_id">
+                                                <textarea class="form-control" id="edit-ruling-form-text" name="text"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="well text-muted" id="edit-ruling-form-preview"><small>Preview.</small></div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>

@@ -26,7 +26,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
 				'position',
 				'uniqueness',
 				'deck_limit',
-				'quantity'
+				'quantity',
 		];
 		if(substr($this->faction->getCode(), 0, 7) === 'neutral' && $this->type->getCode() !== 'identity') {
 			$mandatoryFields[] = 'faction_cost';

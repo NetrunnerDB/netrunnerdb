@@ -770,7 +770,8 @@ class CardsData {
         foreach ($rulings as $ruling) {
             $response[] = array(
                 'id' => $ruling->getId(),
-                'text' => $ruling->getText()
+                'text' => $ruling->getText(),
+                'rawtext' => $ruling->getRawtext(),
             );
         }
 

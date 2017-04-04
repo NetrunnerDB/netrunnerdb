@@ -18,28 +18,29 @@ $.when(NRDB.user.deferred).then(function () {
     }
     if(NRDB.user.data.roles.indexOf('ROLE_GURU') > -1) {
         // insert button to create ruling
-        $('.rulings-list').after('<a class="add-ruling" href="#rulingModal" data-toggle="modal">Add a ruling</a>');
+        $('.rulings-list').after('<a class="add-ruling" href="#addRulingModal" data-toggle="modal">Add a ruling</a>');
         // add event listener for add ruling link
         $(window.document).on('click', '.add-ruling', add_ruling);
         // insert links to edit rulings
-        $('.rulings-list li').append('<a class="edit-ruling" href="#">Edit this ruling</a>');
+        $('.rulings-list li').append('<a class="edit-ruling" href="#editRulingModal" data-toggle="modal">Edit this ruling</a>');
         // add event listener for edit ruling links
         $(window.document).on('click', '.edit-ruling', edit_ruling);
     }
 });
 
 function add_ruling(event) {
-    var cardId = $(this).parent('.rulings-list').data('card-id');
+    var cardId = $(this).closest('.rulings').data('card-id');
+    $('#add-ruling-card-id').val(cardId);
     
     var converter = new Markdown.Converter();
-    $('#ruling-form-text').on(
+    $('#add-ruling-form-text').on(
             'keyup',
             function () {
-                $('#ruling-form-preview').html(converter.makeHtml($('#ruling-form-text').val()));
+                $('#add-ruling-form-preview').html(converter.makeHtml($('#add-ruling-form-text').val()));
             }
     );
 
-    $('#ruling-form-text').textcomplete([{
+    $('#add-ruling-form-text').textcomplete([{
             match: /\B#([\-+\w]*)$/,
             search: function (term, callback) {
                 var regexp = new RegExp('\\b' + term, 'i');
@@ -79,7 +80,59 @@ function add_ruling(event) {
 }
 
 function edit_ruling(event) {
-    console.log('edit_ruling');
+    
+    var cardId = $(this).closest('.rulings').data('card-id');
+    $('#edit-ruling-card-id').val(cardId);
+    var rulingId = $(this).closest('li').data('ruling-id');
+    var rulingText = $(this).closest('li').data('ruling-text');
+    $('#edit-ruling-id').val(rulingId);
+    $('#edit-ruling-form-text').val(rulingText);
+    
+    var converter = new Markdown.Converter();
+    $('#edit-ruling-form-text').on(
+            'keyup',
+            function () {
+                $('#edit-ruling-form-preview').html(converter.makeHtml($('#edit-ruling-form-text').val()));
+            }
+    );
+
+    $('#edit-ruling-form-text').textcomplete([{
+            match: /\B#([\-+\w]*)$/,
+            search: function (term, callback) {
+                var regexp = new RegExp('\\b' + term, 'i');
+                callback(NRDB.data.cards.find({
+                    title: regexp
+                }));
+            },
+            template: function (value) {
+                return value.title;
+            },
+            replace: function (value) {
+                return '[' + value.title + ']('
+                        + Routing.generate('cards_zoom', {card_code: value.code})
+                        + ')';
+            },
+            index: 1
+        }, {
+            match: /\$([\-+\w]*)$/,
+            search: function (term, callback) {
+                var regexp = new RegExp('^' + term);
+                callback($.grep(['credit', 'recurring-credit', 'click', 'link', 'trash', 'subroutine', 'mu', '1mu', '2mu', '3mu',
+                    'anarch', 'criminal', 'shaper', 'haas-bioroid', 'weyland-consortium', 'jinteki', 'nbn'],
+                        function (symbol) {
+                            return regexp.test(symbol);
+                        }
+                ));
+            },
+            template: function (value) {
+                return value;
+            },
+            replace: function (value) {
+                return '<span class="icon icon-' + value + '"></span>';
+            },
+            index: 1
+        }]);
+    
 }
 
 function write_comment(event) {
