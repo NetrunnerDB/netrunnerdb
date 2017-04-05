@@ -460,6 +460,12 @@ card_ruling_edit:
     defaults: 
         _controller: AppBundle:Ruling:edit
 
+card_ruling_delete:
+    path: /ruling/delete
+    methods: [POST]
+    defaults: 
+        _controller: AppBundle:Ruling:delete
+
 card_review_post:
     path: /review/post
     methods: [POST]

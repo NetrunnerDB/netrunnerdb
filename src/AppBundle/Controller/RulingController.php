@@ -56,5 +56,21 @@ class RulingController extends Controller
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }
+    
+    public function deleteAction (Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_GURU');
+
+        $ruling = $this->getDoctrine()->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
+
+        if(!$ruling) {
+            throw $this->createNotFoundException();
+        }
+        
+        $this->getDoctrine()->getEntityManager()->remove($ruling);
+        $this->getDoctrine()->getEntityManager()->flush();
+
+        return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
+    }
 
 }

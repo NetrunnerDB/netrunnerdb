@@ -16,15 +16,19 @@ $.when(NRDB.user.deferred).then(function () {
             setup_write();
         }
     }
-    if(NRDB.user.data.roles.indexOf('ROLE_GURU') > -1) {
+    if(NRDB.user.data.roles && NRDB.user.data.roles.indexOf('ROLE_GURU') > -1) {
         // insert button to create ruling
         $('.rulings-list').after('<a class="add-ruling" href="#addRulingModal" data-toggle="modal">Add a ruling</a>');
         // add event listener for add ruling link
         $(window.document).on('click', '.add-ruling', add_ruling);
         // insert links to edit rulings
-        $('.rulings-list li').append('<a class="edit-ruling" href="#editRulingModal" data-toggle="modal">Edit this ruling</a>');
+        $('.rulings-list li').append('<a class="edit-ruling btn btn-default btn-xs" href="#editRulingModal" data-toggle="modal">Edit</a> ');
         // add event listener for edit ruling links
         $(window.document).on('click', '.edit-ruling', edit_ruling);
+        // insert links to edit rulings
+        $('.rulings-list li').append('<a class="delete-ruling btn btn-danger btn-xs" href="#deleteRulingModal" data-toggle="modal">Delete</a> ');
+        // add event listener for delete ruling links
+        $(window.document).on('click', '.delete-ruling', delete_ruling);
     }
 });
 
@@ -77,6 +81,11 @@ function add_ruling(event) {
             index: 1
         }]);
 
+}
+
+function delete_ruling(event) {
+    var rulingId = $(this).closest('li').data('ruling-id');
+    $('#delete-ruling-id').val(rulingId);
 }
 
 function edit_ruling(event) {

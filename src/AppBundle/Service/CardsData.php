@@ -764,7 +764,7 @@ class CardsData {
     }
 
     public function get_rulings($card) {
-        $rulings = $this->doctrine->getRepository('AppBundle:Ruling')->findBy(array('card' => $card), array('dateCreation' => 'DESC'));
+        $rulings = $this->doctrine->getRepository('AppBundle:Ruling')->findBy(array('card' => $card), array('dateCreation' => 'ASC'));
 
         $response = array();
         foreach ($rulings as $ruling) {

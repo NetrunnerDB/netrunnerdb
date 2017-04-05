@@ -63,18 +63,24 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="row rulings" data-card-id="{{ card.id }}">
                         <div class="col-md-12" style="margin-top:2em">
                             <div style="line-height:34px" class="rulings-header">
                                 <span style="font-size:24px">Rulings</span>
                             </div>
+                            {% if card.rulings|length %}
                             <ul class="rulings-list">
                                 {% for ruling in card.rulings %}
                                     <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}">{{ ruling.text | raw }}</li>
                                     {% endfor %}
                             </ul>
+                            {% else %}
+                                <p><i>No rulings yet for this card.</i></p>
+                            {% endif %}
                         </div>
                     </div>
+                    
                     <div class="row">
                         {% if card.available == true %}
                             <div class="col-md-12" style="margin-top:2em">
@@ -127,7 +133,7 @@
                                         </article>
                                     {% endfor %}
                                 {% else %}
-                                    <p><i>No review yet for this card.</i></p>
+                                    <p><i>No reviews yet for this card.</i></p>
                                 {% endif %}
                             </div>
                         {% else %}
@@ -198,6 +204,34 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+
+                <!-- Modal -->
+                <div class="modal hidden-print" id="deleteRulingModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h3 class="modal-title">Delete a ruling</h3>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form" role="form" action="{{ path('card_ruling_delete') }}" method="post">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <input type="hidden" id="delete-ruling-id" name="ruling_id">
+                                                <label>Confirm deletion?</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btn-primary">Delete</button>
                                         </div>
                                     </div>
                                 </form>
