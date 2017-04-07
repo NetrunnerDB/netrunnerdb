@@ -19,8 +19,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Filesystem\Filesystem;
-use function GuzzleHttp\json_decode;
-use function GuzzleHttp\json_encode;
 
 class ImportStdCommand extends ContainerAwareCommand
 {
