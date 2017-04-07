@@ -18,7 +18,7 @@ $.when(NRDB.user.deferred).then(function () {
     }
     if(NRDB.user.data.roles && NRDB.user.data.roles.indexOf('ROLE_GURU') > -1) {
         // insert button to create ruling
-        $('.rulings-list').after('<a class="add-ruling" href="#addRulingModal" data-toggle="modal">Add a ruling</a>');
+        $('.rulings').append('<a class="add-ruling" href="#addRulingModal" data-toggle="modal">Add a ruling</a>');
         // add event listener for add ruling link
         $(window.document).on('click', '.add-ruling', add_ruling);
         // insert links to edit rulings
