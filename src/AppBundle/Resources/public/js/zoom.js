@@ -2,7 +2,7 @@
 /* global NRDB, Markdown */
 
 $(function () {
-    $(window.document).on('click', '#review-button', write_review_open);
+    $(window.document).on('click', '.review-button', write_review_open);
     $(window.document).on('click', '.social-icon-like', like_review);
     $(window.document).on('click', '.btn-write-comment', write_comment);
     $(window.document).on('submit', 'form.form-comment', form_comment_submit);
@@ -173,12 +173,12 @@ function form_comment_submit(event) {
 }
 
 function setup_write() {
-    $('.reviews-header').prepend('<button class="pull-right btn btn-default" class="review-button"><span class="glyphicon glyphicon-pencil"></span> Write a review</button>');
+    $('.reviews-header').prepend('<button class="pull-right btn btn-default review-button"><span class="glyphicon glyphicon-pencil"></span> Write a review</button>');
 }
 
 function setup_edit() {
     var review_id = NRDB.user.data.review_id;
-    $('#review-' + review_id + ' .review-text').append('<button class="btn btn-default" class="review-button"><span class="glyphicon glyphicon-pencil"></span> Edit review</a>');
+    $('#review-' + review_id + ' .review-text').append('<button class="btn btn-default review-button"><span class="glyphicon glyphicon-pencil"></span> Edit review</a>');
     $('input[name=review_id').val(review_id);
 }
 
@@ -202,8 +202,8 @@ function write_review_open(event) {
     $(this).remove();
 
     form.append('<div><div class="form-group">'
-            + '<textarea class="review-form-text" class="form-control" rows="20" name="review" placeholder="Write your analysis of the card, in at least 200 characters. You can write a number of card reviews equal to your reputation. This is not a place for questions or comments. Type # to enter a card name. Type $ to enter a symbol."></textarea>'
-            + '</div><div class="well text-muted" class="review-form-preview"><small>Preview. Look <a href="http://daringfireball.net/projects/markdown/dingus">here</a> for a Markdown syntax reference.</small></div>'
+            + '<textarea class="form-control review-form-text" rows="20" name="review" placeholder="Write your analysis of the card, in at least 200 characters. You can write a number of card reviews equal to your reputation. This is not a place for questions or comments. Type # to enter a card name. Type $ to enter a symbol."></textarea>'
+            + '</div><div class="well text-muted review-form-preview"><small>Preview. Look <a href="http://daringfireball.net/projects/markdown/dingus">here</a> for a Markdown syntax reference.</small></div>'
             + '<button type="submit" class="btn btn-success">Submit review</button></div>');
 
     form.on('submit', function (event) {
