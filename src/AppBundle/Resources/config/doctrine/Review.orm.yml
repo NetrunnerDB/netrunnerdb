@@ -1,7 +1,6 @@
 AppBundle\Entity\Review:
     type: entity
     table: review
-    repositoryClass: ReviewRepository
     uniqueConstraints:
         usercard_index:
             columns: [ card_id, user_id ]

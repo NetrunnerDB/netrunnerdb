@@ -20,7 +20,7 @@ class RulingController extends Controller
 
         $card = $this->getDoctrine()->getRepository('AppBundle:Card')->find($request->request->get('card_id'));
 
-        if(!$card) {
+        if (!$card) {
             throw $this->createNotFoundException();
         }
 
@@ -43,10 +43,10 @@ class RulingController extends Controller
 
         $ruling = $this->getDoctrine()->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
 
-        if(!$ruling) {
+        if (!$ruling) {
             throw $this->createNotFoundException();
         }
-        
+
         $rawtext = $request->request->get('text');
         $text = $this->get('texts')->transform($rawtext);
 
@@ -56,21 +56,30 @@ class RulingController extends Controller
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }
-    
+
     public function deleteAction (Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_GURU');
 
         $ruling = $this->getDoctrine()->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
 
-        if(!$ruling) {
+        if (!$ruling) {
             throw $this->createNotFoundException();
         }
-        
+
         $this->getDoctrine()->getEntityManager()->remove($ruling);
         $this->getDoctrine()->getEntityManager()->flush();
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
+    }
+
+    public function listAction ()
+    {
+        $list = $this->getDoctrine()->getRepository('AppBundle:Card')->findAll();
+
+        return $this->render('AppBundle:Rulings:list.html.twig', array(
+                    'list' => $list
+        ));
     }
 
 }

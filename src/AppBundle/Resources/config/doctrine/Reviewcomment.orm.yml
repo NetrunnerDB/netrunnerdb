@@ -1,7 +1,6 @@
 AppBundle\Entity\Reviewcomment:
     type: entity
     table: reviewcomment
-    repositoryClass: ReviewcommentRepository
     manyToOne:
         author:
             targetEntity: User

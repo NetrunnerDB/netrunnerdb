@@ -466,6 +466,15 @@ card_ruling_delete:
     defaults: 
         _controller: AppBundle:Ruling:delete
 
+card_rulings_list:
+    path: /{_locale}/rulings
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Ruling:list
+        _locale: en
+    requirements:
+        _locale: \w\w
+    
 card_review_post:
     path: /review/post
     methods: [POST]

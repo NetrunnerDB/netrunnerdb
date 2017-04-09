@@ -1,7 +1,6 @@
 AppBundle\Entity\Deckslot:
     type: entity
     table: deckslot
-    repositoryClass: DeckslotRepository
     manyToOne:
         deck:
             targetEntity: Deck

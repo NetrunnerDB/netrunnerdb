@@ -1,7 +1,6 @@
 AppBundle\Entity\Deck:
     type: entity
     table: deck
-    repositoryClass: DeckRepository
     indexes:
         date_update_index:
             columns: [ date_update ]

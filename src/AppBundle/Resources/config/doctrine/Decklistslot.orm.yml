@@ -1,7 +1,6 @@
 AppBundle\Entity\Decklistslot:
     type: entity
     table: decklistslot
-    repositoryClass: DecklistslotRepository
     manyToOne:
         decklist:
             targetEntity: Decklist

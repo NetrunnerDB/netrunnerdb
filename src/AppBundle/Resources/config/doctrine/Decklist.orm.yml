@@ -1,7 +1,6 @@
 AppBundle\Entity\Decklist:
     type: entity
     table: decklist
-    repositoryClass: DecklistRepository
     indexes:
         date_creation_index:
             columns: [ date_creation ]

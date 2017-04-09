@@ -1,6 +1,7 @@
 AppBundle\Entity\Ruling:
     type: entity
     table: ruling
+    repositoryClass: AppBundle\Repository\RulingRepository
     manyToOne:
         card:
             targetEntity: Card

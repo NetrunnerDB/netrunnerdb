@@ -1,7 +1,6 @@
 AppBundle\Entity\User:
     type: entity
     table: user
-    repositoryClass: UserRepository
     oneToMany:
         decks:
             targetEntity: Deck

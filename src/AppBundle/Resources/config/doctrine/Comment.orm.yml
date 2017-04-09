@@ -1,7 +1,6 @@
 AppBundle\Entity\Comment:
     type: entity
     table: comment
-    repositoryClass: CommentRepository
     manyToOne:
         author:
             targetEntity: User

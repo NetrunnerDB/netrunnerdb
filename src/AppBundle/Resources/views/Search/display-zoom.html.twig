@@ -63,24 +63,24 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-12 rulings" data-card-id="{{ card.id }}" style="margin-top:2em">
                             <div style="line-height:34px" class="rulings-header">
                                 <span style="font-size:24px">Rulings</span>
                             </div>
                             {% if card.rulings|length %}
-                            <ul class="rulings-list">
-                                {% for ruling in card.rulings %}
-                                    <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}">{{ ruling.text | raw }}</li>
-                                    {% endfor %}
-                            </ul>
+                                <ul class="rulings-list">
+                                    {% for ruling in card.rulings %}
+                                        <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}">{{ ruling.text | raw }}</li>
+                                        {% endfor %}
+                                </ul>
                             {% else %}
                                 <p><i>No rulings yet for this card.</i></p>
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         {% if card.available == true %}
                             <div class="col-md-12" style="margin-top:2em">

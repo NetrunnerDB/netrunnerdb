@@ -1,0 +1,32 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block body %}
+
+    <div class="container rulings">
+        <h1>Rulings</h1>
+        <article class="rules rulings">
+            <h2>All cards with clarification and F.A.Q</h2>
+            <nav class="inner rulings">
+                <ul>
+                    {% for card in list %}
+                        {% if not card.rulings is empty %}
+                            <li><a href="#{{ card.code }}">{{ card.title }} <span class="icon icon-{{ card.pack.cycle.code }}"></span> {{card.position}}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% for card in list %}
+                {% if not card.rulings is empty %}
+                    <h4><a id="{{ card.code }}" href="{{ path('cards_zoom', {card_code: card.code}) }}">{{ card.title }}</a> (<span class="icon icon-{{ card.pack.cycle.code }}"></span> {{ card.pack.name }}, {{card.position}})</h4>
+                    <ul>
+                        {% for ruling in card.rulings %}
+                            <li>{{ ruling.text|raw }}</li>
+                            {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        </article>
+
+    </div>
+
+{% endblock %}
