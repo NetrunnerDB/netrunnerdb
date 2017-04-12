@@ -7,7 +7,7 @@
             {% for i in 0..cards|length-1 %}{% set card = cards[i] %}
                 {% if not card.rulings is empty %}
                     <h4><a id="{{ card.code }}" href="{{ path('cards_zoom', {card_code: card.code}) }}">{{ card.title }}</a> (<span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }}, {{card.position}})</h4>
-                    <ul>
+                    <ul class="rulings-list">
                         {% for ruling in card.rulings %}
                             <li>{{ ruling.text|raw }}</li>
                             {% endfor %}
