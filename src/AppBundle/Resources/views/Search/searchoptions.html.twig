@@ -14,6 +14,7 @@
 	<option value="text"    {% if view|default('list') == "text" %}selected{% endif %}>View as a Spoiler</option>
 	<option value="full"    {% if view|default('list') == "full"    %}selected{% endif %}>View as Full Cards</option>
 	<option value="images"  {% if view|default('list') == "images"    %}selected{% endif %}>View as Scans only</option>
+        <option value="rulings"  {% if view|default('list') == "rulings"    %}selected{% endif %}>View Rulings</option>
 	<option value="short"   {% if view|default('list') == "short"   %}selected{% endif %}>View as Simple List</option>
 </select>
 <input name="_locale" type="hidden" value="{{ app.request.locale }}">
