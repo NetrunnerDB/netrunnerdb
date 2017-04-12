@@ -494,6 +494,11 @@ img[data-src] {
     cursor: pointer;
 }
 
+ul.rulings-list blockquote {
+    font-size: inherit;
+    padding: 5px 10px;
+}
+
 /******** fix for twitter typehead + bootstrap input-group-btn ***********/
 
 .input-group .twitter-typeahead {
