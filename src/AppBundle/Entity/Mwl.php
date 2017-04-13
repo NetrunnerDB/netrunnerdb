@@ -25,6 +25,7 @@ class Mwl implements \Serializable
 				'name' => $this->name,
 				'active' => $this->active,
 				'date_start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
+                                'global_penalty' => $this->globalPenalty,
 				'cards' => $cards
 		];
 	}
@@ -47,6 +48,11 @@ class Mwl implements \Serializable
      * @var string
      */
     private $name;
+    
+    /**
+     * @var boolean
+     */
+    private $globalPenalty;
     
     /**
      * @var \DateTime
@@ -347,4 +353,26 @@ class Mwl implements \Serializable
     {
         return $this->dateUpdate;
     }
+    
+    /**
+     * 
+     * @return boolean
+     */
+    function getGlobalPenalty ()
+    {
+        return $this->globalPenalty;
+    }
+
+    /**
+     * 
+     * @param boolean $globalPenalty
+     * @return Mwl
+     */
+    function setGlobalPenalty ($globalPenalty)
+    {
+        $this->globalPenalty = $globalPenalty;
+        
+        return $this;
+    }
+
 }

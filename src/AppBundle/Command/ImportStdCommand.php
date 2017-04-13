@@ -372,6 +372,7 @@ class ImportStdCommand extends ContainerAwareCommand
             $mwl = $this->getEntityFromData('AppBundle\Entity\Mwl', $mwlData, [
                 'code',
                 'name',
+                'global_penalty',
                 'date_start'
                     ], [], []);
             if($mwl) {
