@@ -520,17 +520,24 @@ function get_influence_cost_of_card_in_deck(card) {
 }
 function check_influence(influenceSpent) {
     InfluenceSpent = _.reduce(
-            NRDB.data.cards.find({indeck: {'$gt': 0}, faction_code: {'$ne': Identity.faction_code}}),
-            function (acc, card) {
-                return acc + influenceSpent[card.code]
+        NRDB.data.cards.find({indeck: {'$gt': 0}}),
+        function (acc, card) {
+            var inf = influenceSpent[card.code] || 0;
+            if(MWL && !MWL.global_penalty) {
+                inf += get_influence_penalty(card, card.indeck);
             }
+            return acc + inf;
+        }
     , 0);
-    var influencePenalty = _.reduce(
+    var influencePenalty = 0;
+    if(MWL && MWL.global_penalty) {
+        influencePenalty = _.reduce(
             NRDB.data.cards.find({indeck: {'$gt': 0}}),
             function (acc, card) {
                 return acc + get_influence_penalty(card, card.indeck)
             }
-    , 0);
+        , 0);
+    }
     var displayInfluenceLimit = InfluenceLimit,
             remainingInfluence = Math.max(1, InfluenceLimit - influencePenalty),
             availableInfluence = remainingInfluence - InfluenceSpent;

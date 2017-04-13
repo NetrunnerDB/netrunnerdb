@@ -291,8 +291,13 @@ class Judge
         }
 
         $influenceLimit = $this->getInfuenceLimit($decklist);
-        $availableInfluence = max(1, $influenceLimit - $influencePenalty);
-        $spentInfluence = $this->getSpentInfluence($decklist);
+        if($mwl->getGlobalPenalty()) {
+            $availableInfluence = max(1, $influenceLimit - $influencePenalty);
+            $spentInfluence = $this->getSpentInfluence($decklist);
+        } else {
+            $availableInfluence = $influenceLimit;
+            $spentInfluence = $this->getSpentInfluence($decklist) + $influencePenalty;
+        }
         $legality->setIsLegal($availableInfluence >= $spentInfluence);
         return $legality->getIsLegal();
     }
