@@ -410,10 +410,7 @@ function on_mwl_click(event) {
 function update_mwl(mwl_code) {
     MWL = null;
     if(mwl_code) {
-        var mwl = NRDB.data.mwl.findById(mwl_code);
-        if(mwl.cards) {
-            MWL = mwl.cards;
-        }
+        MWL = NRDB.data.mwl.findById(mwl_code);
     }
     update_deck();
     $('a[href="#deck"]').tab('show');

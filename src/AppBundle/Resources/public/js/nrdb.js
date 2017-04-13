@@ -198,7 +198,7 @@ function process_deck_by_type() {
 function get_influence_penalty(card, qty) {
     if (qty == null)
         qty = 1;
-    return MWL && ((qty * MWL[card.code]) || 0);
+    return MWL && ((qty * MWL.cards[card.code]) || 0);
 }
 
 function get_influence_penalty_icons(card, qty) {

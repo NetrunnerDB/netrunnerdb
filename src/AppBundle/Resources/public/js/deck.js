@@ -648,10 +648,7 @@ function update_mwl(event) {
 	var mwl_code = $(this).val();
 	MWL = null;
 	if(mwl_code) {
-		var mwl = NRDB.data.mwl.findById(mwl_code);
-		if(mwl.cards) {
-			MWL = mwl.cards;
-		}
+		MWL = NRDB.data.mwl.findById(mwl_code);
 	}
 	CardDivs = [ null, {}, {}, {} ];
 	refresh_collection();
