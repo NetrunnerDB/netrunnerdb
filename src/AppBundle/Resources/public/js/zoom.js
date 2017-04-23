@@ -3,7 +3,7 @@
 
 $(function () {
     $(window.document).on('click', '.review-button', write_review_open);
-    $(window.document).on('click', '.social-icon-like', like_review);
+    $(window.document).on('click', '.review-social-icon-like', like_review);
     $(window.document).on('click', '.btn-write-comment', write_comment);
     $(window.document).on('submit', 'form.form-comment', form_comment_submit);
 });
