@@ -405,8 +405,9 @@ class BuilderController extends Controller
         
         /* @var $deck \AppBundle\Entity\Deck */
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
-        if (! $this->getUser() || $this->getUser()->getId() != $deck->getUser()->getId())
-            throw new UnauthorizedHttpException("You don't have access to this deck.");
+        if (! $this->getUser() || $this->getUser()->getId() != $deck->getUser()->getId()) {
+            throw $this->createAccessDeniedException();
+        }
         
         $rd = array();
         $identity = null;
@@ -473,8 +474,8 @@ class BuilderController extends Controller
         if($id) {
         	$deck = $em->getRepository('AppBundle:Deck')->find($id);
             if (!$deck || $user->getId() != $deck->getUser()->getId()) {
-                throw new UnauthorizedHttpException("You don't have access to this deck.");
-            }
+             throw $this->createAccessDeniedException();
+           }
             $source_deck = $deck;
         }
         
@@ -516,7 +517,7 @@ class BuilderController extends Controller
         if (! $deck)
             return $this->redirect($this->generateUrl('decks_list'));
         if ($this->getUser()->getId() != $deck->getUser()->getId())
-            throw new UnauthorizedHttpException("You don't have access to this deck.");
+            throw $this->createAccessDeniedException();
         
         foreach ($deck->getChildren() as $decklist) {
             $decklist->setParent(null);
@@ -587,7 +588,7 @@ class BuilderController extends Controller
         $deck = $rows[0];
 
         if($this->getUser()->getId() != $deck['user_id']) {
-            throw new UnauthorizedHttpException("You are not allowed to view this deck.");
+            throw $this->createAccessDeniedException();
         }
         
         $deck['side_name'] = mb_strtolower($deck['side_name']);
@@ -855,7 +856,7 @@ class BuilderController extends Controller
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
 
         if($this->getUser()->getId() != $deck->getUser()->getId()) {
-            throw new UnauthorizedHttpException("You are not allowed to view this deck.");
+            throw $this->createAccessDeniedException();
         }
         
         $content = array();
@@ -955,16 +956,19 @@ class BuilderController extends Controller
     public function autosaveAction($deck_id, Request $request)
     {
         $user = $this->getUser();
-        
+        if(!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
         
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
         if(!$deck) {
-            throw new BadRequestHttpException("Cannot find deck ".$deck_id);
+            throw $this->createNotFoundException();
         }
         if ($user->getId() != $deck->getUser()->getId()) {
-            throw new UnauthorizedHttpException("You don't have access to this deck.");
+            throw $this->createAccessDeniedException();
         }
         
         $diff = (array) json_decode($request->get('diff'));

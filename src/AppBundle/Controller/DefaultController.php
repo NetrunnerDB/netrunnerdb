@@ -136,16 +136,4 @@ class DefaultController extends Controller
                         ), $response);
     }
 
-    function apidocAction ()
-    {
-        $response = new Response();
-        $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('long_cache'));
-
-
-        return $this->render('AppBundle:Default:apidoc.html.twig', array(
-                    "pagetitle" => "API documentation",
-                        ), $response);
-    }
-
 }

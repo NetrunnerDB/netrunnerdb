@@ -35,7 +35,7 @@ class SocialController extends Controller
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
 
         if($this->getUser()->getId() != $deck->getUser()->getId()) {
-            throw new UnauthorizedHttpException("You don't have access to this deck.");
+            throw $this->createAccessDeniedException("Unauthorized user.");
         }
 
         $lastPack = $deck->getLastPack();
@@ -102,19 +102,19 @@ class SocialController extends Controller
                 ->getRepository('AppBundle:Deck')
                 ->find($deck_id);
         if($this->getUser()->getId() != $deck->getUser()->getId()) {
-            throw new UnauthorizedHttpException("You don't have access to this deck.");
+            throw $this->createAccessDeniedException("Unauthorized user.");
         }
 
         $lastPack = $deck->getLastPack();
         if(!$lastPack->getDateRelease() || $lastPack->getDateRelease() > new \DateTime()) {
-            throw new AccessDeniedHttpException("You cannot publish this deck yet, because it has unreleased cards.");
+            throw $this->createAccessDeniedException("Cannot publish deck because of unreleased cards.");
         }
 
         /* @var $judge \AppBundle\Service\Judge */
         $judge = $this->get('judge');
         $analyse = $judge->analyse($deck->getSlots());
         if(is_string($analyse)) {
-            throw new AccessDeniedHttpException($judge->problem($analyse));
+            throw $this->createAccessDeniedException($judge->problem($analyse));
         }
 
         $new_content = json_encode($deck->getContent());
@@ -234,7 +234,7 @@ class SocialController extends Controller
                 ))->fetchAll();
 
         if(empty($rows)) {
-            throw new NotFoundHttpException('Wrong id');
+            throw $this->createNotFoundException();
         }
 
         $decklist = $rows[0];
@@ -394,7 +394,7 @@ class SocialController extends Controller
 
         $user = $this->getUser();
         if(!$user) {
-            throw new UnauthorizedHttpException('You must be logged in to comment.');
+            throw $this->createAccessDeniedException("No user.");
         }
 
         $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
@@ -402,7 +402,7 @@ class SocialController extends Controller
         /* @var $decklist \AppBundle\Entity\Decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if(!$decklist) {
-            throw new NotFoundHttpException('Wrong id');
+            throw $this->createNotFoundException();
         }            
 
         $author = $decklist->getUser();
@@ -447,7 +447,7 @@ class SocialController extends Controller
         /* @var $user User */
         $user = $this->getUser();
         if(!$user) {
-            throw new UnauthorizedHttpException('You must be logged in to comment.');
+            throw $this->createAccessDeniedException("No user.");
         }
 
         $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
@@ -538,7 +538,7 @@ class SocialController extends Controller
         /* @var $user User */
         $user = $this->getUser();
         if(!$user) {
-            throw new UnauthorizedHttpException('You must be logged in to comment.');
+            throw $this->createAccessDeniedException("No user.");
         }
 
         /* @var $em \Doctrine\ORM\EntityManager */
@@ -546,17 +546,17 @@ class SocialController extends Controller
 
         $comment = $em->getRepository('AppBundle:Comment')->find($comment_id);
         if(!$comment) {
-            throw new BadRequestHttpException('Unable to find comment');
+            throw $this->createNotFoundException();
         }
 
         if($comment->getDecklist()->getUser()->getId() !== $user->getId()) {
-            return new Response(json_encode("You don't have permission to edit this comment."));
+            return new JsonResponse("You don't have permission to edit this comment.");
         }
 
         $comment->setHidden((boolean) $hidden);
         $em->flush();
 
-        return new Response(json_encode(TRUE));
+        return new JsonResponse(TRUE);
     }
 
     /**
@@ -569,7 +569,7 @@ class SocialController extends Controller
 
         $user = $this->getUser();
         if(!$user) {
-            throw new UnauthorizedHttpException('You must be logged in to comment.');
+            throw $this->createAccessDeniedException("No user.");
         }
 
         $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
@@ -613,7 +613,7 @@ class SocialController extends Controller
         /* @var $decklist \AppBundle\Entity\Decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if(!$decklist) {
-            throw new NotFoundHttpException("Unable to find decklist.");
+            throw $this->createNotFoundException();
         }
 
         /* @var $judge \AppBundle\Service\Judge */
@@ -684,7 +684,7 @@ class SocialController extends Controller
         /* @var $decklist \AppBundle\Entity\Decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if(!$decklist) {
-            throw new NotFoundHttpException("Unable to find decklist.");
+            throw $this->createNotFoundException();
         }
 
         $rd = array();
@@ -744,12 +744,12 @@ class SocialController extends Controller
 
         $user = $this->getUser();
         if(!$user) {
-            throw new UnauthorizedHttpException("You must be logged in for this operation.");
+            throw $this->createAccessDeniedException("No user.");
         }
         /* @var $decklist Decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if(!$decklist || $decklist->getUser()->getId() != $user->getId()) {
-            throw new UnauthorizedHttpException("You don't have access to this decklist.");
+            throw $this->createAccessDeniedException("No decklist or not authorized to edit decklist.");
         }
 
         $name = trim(filter_var($request->request->get('name'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES));
@@ -812,15 +812,15 @@ class SocialController extends Controller
 
         $user = $this->getUser();
         if(!$user) {
-            throw new UnauthorizedHttpException("You must be logged in for this operation.");
+            throw $this->createAccessDeniedException("No user.");
         }
 
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if(!$decklist || $decklist->getUser()->getId() != $user->getId()) {
-            throw new UnauthorizedHttpException("You don't have access to this decklist.");
+            throw $this->createAccessDeniedException("No decklist or not authorized to delete decklist.");
         }
         if($decklist->getNbvotes() || $decklist->getNbfavorites() || $decklist->getNbcomments()) {
-            throw new UnauthorizedHttpException("Cannot delete this decklist.");
+            throw $this->createAccessDeniedException("Decklist cannot be deleted because of votes, favorites or comments.");
         }
 
         $precedent = $decklist->getPrecedent();
@@ -860,7 +860,7 @@ class SocialController extends Controller
         /* @var $user \AppBundle\Entity\User */
         $user = $em->getRepository('AppBundle:User')->find($user_id);
         if(!$user) {
-            throw new NotFoundHttpException("No such user.");
+            throw $this->createNotFoundException();
         }            
 
         $decklists = $em->getRepository('AppBundle:Decklist')->findBy(array('user' => $user));
@@ -886,7 +886,7 @@ class SocialController extends Controller
         $following = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->find($user_id);
 
         if(!$follower) {
-            throw $this->createAccessDeniedException("Anonymous access denied");
+            throw $this->createAccessDeniedException("No user.");
         }
 
         $found = FALSE;
@@ -917,7 +917,7 @@ class SocialController extends Controller
         $following = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->find($user_id);
 
         if(!$follower) {
-            throw $this->createAccessDeniedException("Anonymous access denied");
+            throw $this->createAccessDeniedException("No user.");
         }
 
         $found = FALSE;
@@ -1162,7 +1162,7 @@ class SocialController extends Controller
         /* @var $decklist Decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if(!$decklist) {
-            throw $this->createNotFoundException('Not found');
+            throw $this->createNotFoundException();
         }
 
         $this->get('moderation_helper')->changeStatus($this->getUser(), $decklist, $status, $modflag_id);

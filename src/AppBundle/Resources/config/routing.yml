@@ -769,14 +769,6 @@ cards_about:
     requirements:
         _locale: \w\w
 
-cards_api:
-    path:  /{_locale}/apidoc
-    defaults:
-        _controller: AppBundle:Default:apidoc
-        _locale: en
-    requirements:
-        _locale: \w\w
-
 cards_rulings:
     path:  /{_locale}/rules
     defaults:

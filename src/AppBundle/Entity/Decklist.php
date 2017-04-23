@@ -675,6 +675,7 @@ class Decklist implements \Serializable
     	$this->comments = new ArrayCollection();
       	$this->favorites = new ArrayCollection();
        	$this->votes = new ArrayCollection();
+        $this->isLegal = true;
     }
     
     public function getContent()
