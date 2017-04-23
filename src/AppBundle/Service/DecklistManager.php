@@ -617,7 +617,7 @@ class DecklistManager
         $sort = $request->query->get('sort');
         $packs = $request->query->get('packs');
         $mwl_code = $request->query->get('mwl_code');
-        $is_legal = $request->query->get('is_legal');
+        $is_legal = $request->query->has('is_legal') ? boolval($request->query->get('is_legal')) : null;
 
         if(!is_array($packs)) {
             $packs = $dbh->executeQuery("select id from pack")->fetchAll(\PDO::FETCH_COLUMN);
@@ -675,9 +675,9 @@ class DecklistManager
             $params[] = $mwl_code;
             $types[] = \PDO::PARAM_INT;
         }
-        if($is_legal !== '') {
+        if($is_legal !== null) {
             $wheres[] = 'd.is_legal = ?';
-            $params[] = !!$is_legal;
+            $params[] = $is_legal;
             $types[] = \PDO::PARAM_BOOL;
         }
 
