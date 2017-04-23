@@ -26,6 +26,9 @@ AppBundle\Entity\Mwl:
         name:
             type: string
             length: 255
+        globalPenalty:
+            type: boolean
+            column: global_penalty
         dateCreation:
             type: datetime
             column: date_creation

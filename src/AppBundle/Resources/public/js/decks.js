@@ -502,7 +502,7 @@ function show_deck() {
 
 	var mwl_code = deck.mwl_code, mwl_record = mwl_code && NRDB.data.mwl.findById(mwl_code);
 	if(mwl_record) {
-		MWL = mwl_record.cards;
+		MWL = mwl_record;
 		$('#mwl').html('Built for '+mwl_record.name);
 	} else {
 		MWL = null;
