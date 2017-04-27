@@ -21,7 +21,7 @@ class PublicApi20Controller extends FOSRestController
 		$response->setMaxAge($this->container->getParameter('short_cache'));
 			
 		$dateUpdate = array_reduce($entities, function($carry, $item) {
-			if($carry || $item->getDateUpdate() > $carry) return $item->getDateUpdate();
+			if(!$carry || ($item->getDateUpdate() > $carry)) return $item->getDateUpdate();
 			else return $carry;
 		});
 		
