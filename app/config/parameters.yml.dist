@@ -31,4 +31,4 @@ parameters:
     oauth_test_client_id: ~
     oauth_test_client_secret: ~
     oauth_test_redirect_uri: ~
-    
+    images_path: ~
