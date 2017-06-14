@@ -196,9 +196,16 @@ function process_deck_by_type() {
 }
 
 function get_influence_penalty(card, qty) {
+    if (!MWL || !MWL.cards[card.code]) {
+        return 0;
+    }
     if (qty == null)
         qty = 1;
-    return MWL && ((qty * MWL.cards[card.code]) || 0);
+    if (Identity.code == "03029" && card.type_code == "program" && qty <= 1) {
+        // The Professor: first program is free
+        return 0;
+    }
+    return qty * MWL.cards[card.code];
 }
 
 function get_influence_penalty_icons(card, qty) {
