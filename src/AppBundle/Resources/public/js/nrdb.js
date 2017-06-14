@@ -201,9 +201,9 @@ function get_influence_penalty(card, qty) {
     }
     if (qty == null)
         qty = 1;
-    if (Identity.code == "03029" && card.type_code == "program" && qty <= 1) {
+    if (Identity.code == "03029" && card.type_code == "program" && qty > 0) {
         // The Professor: first program is free
-        return 0;
+        qty -= 1;
     }
     return qty * MWL.cards[card.code];
 }
