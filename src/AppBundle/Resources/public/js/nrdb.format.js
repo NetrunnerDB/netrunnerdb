@@ -15,7 +15,7 @@
         if (card.type_code == "identity" && card.side_code == "runner")
             type += ' &middot; <span class="card-prop">' + card.minimum_deck_size + '/' + (card.influence_limit || '&infin;') + ' ' + card.base_link + '<span class="icon icon-link"></span></span>';
         if (card.type_code == "operation" || card.type_code == "event")
-            type += ' &middot; <span class="card-prop">' + format.cost(card) + '<span class="icon icon-credit"></span>' + ('trash' in card ? ' ' + card.trash_cost + '<span class="icon icon-trash">' : '') + '</span>';
+            type += ' &middot; <span class="card-prop">' + format.cost(card) + '<span class="icon icon-credit"></span>' + ('trash_cost' in card ? ' ' + card.trash_cost + '<span class="icon icon-trash">' : '') + '</span>';
         if (card.type_code == "resource" || card.type_code == "hardware")
             type += ' &middot; <span class="card-prop">' + format.cost(card) + '<span class="icon icon-credit"></span></span>';
         if (card.type_code == "program")
@@ -23,7 +23,7 @@
         if (card.type_code == "asset" || card.type_code == "upgrade")
             type += ' &middot; <span class="card-prop">' + format.cost(card) + '<span class="icon icon-credit"></span> ' + card.trash_cost + '<span class="icon icon-trash"></span></span>';
         if (card.type_code == "ice")
-            type += ' &middot; <span class="card-prop">' + format.cost(card) + '<span class="icon icon-credit"></span>' + ('trash' in card ? ' ' + card.trash_cost + '<span class="icon icon-trash">' : '') + '</span></span>';
+            type += ' &middot; <span class="card-prop">' + format.cost(card) + '<span class="icon icon-credit"></span>' + ('trash_cost' in card ? ' ' + card.trash_cost + '<span class="icon icon-trash">' : '') + '</span></span>';
         return type;
     };
 
