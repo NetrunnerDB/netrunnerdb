@@ -44,7 +44,9 @@ When you update your repository (`git pull`), run the following commands:
 
 To update the deck of the week on the front page:
 
-- `php app/console highlight` 
+- `php app/console nrdb:highlight decklist_id` 
+
+where `decklist_id` is the numeric id of the deck you want to highlight.
 
 ## Setup an admin account
 

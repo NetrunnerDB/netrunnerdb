@@ -360,8 +360,10 @@ class SocialController extends Controller
         $packs = $dbh->executeQuery("SELECT DISTINCT
 				p.code code,
 				p.name name,
-        		y.code cycle_code,
-        		y.name cycle_name
+				p.position pack_position,
+				y.code cycle_code,
+				y.name cycle_name,
+				y.position cycle_position
 				from pack p
 				join cycle y on p.cycle_id=y.id
         		join card c on c.pack_id=p.id
