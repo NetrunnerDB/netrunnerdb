@@ -399,6 +399,11 @@ function update_deck(options) {
     } else {
         $('#onesies').hide();
     }
+    if (NRDB.settings && NRDB.settings.getItem('show-cacherefresh')) {
+        show_cacherefresh();
+    } else {
+        $('#cacherefresh').hide();
+    }
     check_influence(influenceSpent);
     if ($('#costChart .highcharts-container').length)
         setTimeout(make_cost_graph, 100);
@@ -409,6 +414,60 @@ function update_deck(options) {
 function show_onesies() {
     var content = test_onesies() ? '<span class="text-success glyphicon glyphicon-ok"></span> 1.1.1.1 format compliant' : '<span class="text-danger glyphicon glyphicon-remove"></span> Non 1.1.1.1 format compliant';
     $('#onesies').html(content).show();
+}
+
+function show_cacherefresh() {
+    var content = test_cacherefresh() ? '<span class="text-success glyphicon glyphicon-ok"></span> Cache Refresh format compliant' : '<span class="text-danger glyphicon glyphicon-remove"></span> Non Cache Refresh format compliant';
+    $('#cacherefresh').html(content).show();    
+}
+
+function test_cacherefresh() {
+    var all_cards = _.map(NRDB.data.cards.find({indeck: {'$gt': 0}}), 'code'),
+        accepted_cards = [];
+
+    // core set check
+    NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: 'core'}).forEach(function (card) {
+        if (card.indeck <= card.quantity) {
+            accepted_cards.push(card.code);
+        }
+    });
+
+    // terminal directive check
+    NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: 'td'}).forEach(function (card) {
+        if (card.indeck <= card.quantity) {
+            accepted_cards.push(card.code);
+        }
+    });
+
+    // deluxe and last-two-cycles check   
+    var remaining_cards = NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: {'$ne': 'core'}, code: {'$nin': accepted_cards}});
+    var packs = _.values(_.reduce(remaining_cards, function (acc, card) {
+        if (!acc[card.pack.code])
+            acc[card.pack.code] = {pack: card.pack, count: 0};
+        acc[card.pack.code].count++;
+        return acc;
+    }, {})).sort(function (a, b) {
+        return b.count - a.count;
+    });
+    var deluxe = _.find(packs, function (element) {
+        return element.pack.cycle.size === 1;
+    });
+
+    var cycles = _.map(NRDB.data.cycles.find({code: {'$nin': ['core','creation-and-control','honor-and-profit','order-and-chaos',
+                                             'data-and-destiny','terminal-directive','draft']}}).reverse().slice(0, 2), 'code');
+
+    remaining_cards.forEach(function (card) {
+        if (deluxe && card.pack.code === deluxe.pack.code)
+            accepted_cards.push(card.code);
+        if (cycles.indexOf(card.pack.cycle_code) > -1)
+            accepted_cards.push(card.code);
+    });
+
+    // all cards must match -- even identities
+    if (all_cards.length === accepted_cards.length)
+        return true;
+
+    return false;    
 }
 
 function test_onesies() {
