@@ -453,8 +453,14 @@ function test_cacherefresh() {
         return element.pack.cycle.size === 1;
     });
 
-    var cycles = _.map(NRDB.data.cycles.find({code: {'$nin': ['core','creation-and-control','honor-and-profit','order-and-chaos',
-                                             'data-and-destiny','terminal-directive','draft']}}).reverse().slice(0, 2), 'code');
+    var lastCycle = NRDB.data.packs.find({'date_release':{'$nee':null}},{'$orderBy':{'date_release':-1}})[0].cycle;
+    var allCycles = NRDB.data.cycles.find({size: {'$gt': 1}}, {'$orderBy':{'position':-1}});
+    var cycle = allCycles.shift();
+    while (cycle.code !== lastCycle.code) {
+        cycle = allCycles.shift();
+    }
+    var penultimateCycle = allCycles.shift();
+    var cycles = [lastCycle.code, penultimateCycle.code];
 
     remaining_cards.forEach(function (card) {
         if (deluxe && card.pack.code === deluxe.pack.code)
