@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.3.0/introjs.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
     <link rel="stylesheet" href="{{ asset('/bundles/app/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('/bundles/app/latofonts.css') }}">
     <link rel="stylesheet" href="{{ asset('/bundles/app/netrunnerfont.css') }}">
@@ -43,7 +44,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.3.0/intro.js"></script>
     <script src="{{ asset('/bundles/app/lib/bootstrap-toggle-checklist.js') }}"></script>
     <script src="{{ asset('/bundles/app/lib/jquery-persistence.js') }}"></script>
-    <script type="text/javascript">
+      <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+      <script>
+        window.addEventListener("load", function(){
+          window.cookieconsent.initialise({
+            "palette": {
+              "popup": {
+                "background": "#000"
+              },
+              "button": {
+                "background": "#f1d600"
+              }
+            }
+          })});
+      </script>
+      <script type="text/javascript">
 	var NRDB = {
 		data_loaded: $.Callbacks(),
 		api_url: {
@@ -75,7 +90,8 @@ ga('send', 'pageview');
     <script src="{{ asset('/bundles/app/js/nrdb.format.js') }}"></script>
     <script src="{{ asset('/bundles/app/js/nrdb.tip.js') }}"></script>
     <script src="{{ asset('/bundles/app/js/nrdb.ui.js') }}"></script>
-  {% block head %}{% endblock %}
+
+      {% block head %}{% endblock %}
 
   </head>
   <body>
