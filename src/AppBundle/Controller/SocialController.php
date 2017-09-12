@@ -222,7 +222,8 @@ class SocialController extends Controller
 				d.nbfavorites,
 				d.nbcomments,
                                 d.moderation_status,
-                                d.is_legal
+                                d.is_legal,
+                                d.rotation_id
 				from decklist d
 				join user u on d.user_id=u.id
 				join card c on d.identity_id=c.id
@@ -346,6 +347,10 @@ class SocialController extends Controller
             $mwl = $mwl['code'];
         }
 
+        $rotation = $decklist['rotation_id']
+            ? $dbh->executeQuery("SELECT r.name FROM rotation r WHERE r.id=?", [$decklist['rotation_id']])->fetch()['name']
+            : null;
+
         $claims = $dbh->executeQuery("SELECT "
                 . "c.url, "
                 . "c.rank, "
@@ -383,6 +388,7 @@ class SocialController extends Controller
                     'legalities' => $legalities,
                     'claims' => $claims,
                     'mwl' => $mwl,
+                    'rotation' => $rotation,
                     'packs' => $packs,
                         ), $response);
     }

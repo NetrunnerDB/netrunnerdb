@@ -131,6 +131,24 @@ NRDB.user.params.decklist_id = Decklist.id;
 </tbody>
 </table>
 
+<!-- Rotation -->
+<table class="table table-condensed" id="table-rotation">
+	<thead>
+	<tr><th colspan="1"><span class="glyphicon glyphicon-repeat"></span> Rotation</th></tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td>
+			{% if rotation %}
+			Deck valid after {{ rotation }}
+			{% else %}
+			Pre-rotation decklist
+			{% endif %}
+		</td>
+	</tr>
+	</tbody>
+</table>
+
 <!-- Claims -->
 {% if claims|length %}
 <table class="table table-condensed" id="table-claims">
