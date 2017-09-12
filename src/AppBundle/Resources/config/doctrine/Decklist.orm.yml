@@ -68,6 +68,13 @@ AppBundle\Entity\Decklist:
             joinColumn:
                 name: modflag_id
                 referencedColumnName: id
+        rotation:
+            targetEntity: Rotation
+            nullable: true
+            inversedBy: decklists
+            joinColumn:
+                name: rotation_id
+                referencedColumnName: id
     oneToMany:
         slots:
             targetEntity: Decklistslot

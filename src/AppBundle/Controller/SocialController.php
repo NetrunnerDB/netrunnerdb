@@ -165,6 +165,7 @@ class SocialController extends Controller
             $decklist->setPrecedent($deck->getParent());
         }
         $decklist->setParent($deck);
+        $decklist->setRotation($this->get('rotation_service')->findCompatibleRotation($decklist));
 
         $em->persist($decklist);
 

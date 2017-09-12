@@ -154,7 +154,12 @@ class Decklist implements \Serializable
      * @var User[]
      */
     private $votes;
-    
+
+    /**
+     * @var Rotation
+     */
+    private $rotation;
+
     /**
      * @var integer
      */
@@ -531,7 +536,7 @@ class Decklist implements \Serializable
     /**
      * Get slots
      *
-     * @return string
+     * @return Deckslot[]
      */
     public function getSlots()
     {
@@ -1086,5 +1091,16 @@ class Decklist implements \Serializable
         $this->isLegal = $isLegal;
     }
 
+    public function getRotation ()
+    {
+        return $this->rotation;
+    }
+
+    public function setRotation ($rotation)
+    {
+        $this->rotation = $rotation;
+
+        return $this;
+    }
 
 }

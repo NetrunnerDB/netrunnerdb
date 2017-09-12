@@ -67,6 +67,59 @@ class Rotation implements \Serializable
     private $dateUpdate;
 
     /**
+     * @var Collection|Decklist[]
+     * @ORM\OneToMany(targetEntity="Decklist", mappedBy="rotation")
+     */
+    private $decklists;
+
+    /** @param Collection|Decklist[] $decklists */
+    public function setDecklists (Collection $decklists)
+    {
+        $this->clearDecklists();
+        foreach ($decklists as $decklist) {
+            $this->addDecklist($decklist);
+        }
+
+        return $this;
+    }
+
+    public function addDecklist (Decklist $decklist)
+    {
+        if ($this->decklists->contains($decklist) === false) {
+            $this->decklists->add($decklist);
+            $decklist->setRotation($this);
+        }
+
+        return $this;
+    }
+
+    /** @return Collection|Decklist[] */
+    public function getDecklists ()
+    {
+        return $this->decklists;
+    }
+
+    public function removeDecklist (Decklist $decklist)
+    {
+        if ($this->decklists->contains($decklist)) {
+            $this->decklists->removeElement($decklist);
+            $decklist->setRotation(null);
+        }
+
+        return $this;
+    }
+
+    public function clearDecklists ()
+    {
+        foreach ($this->getDecklists() as $decklist) {
+            $this->removeDecklist($decklist);
+        }
+        $this->decklists->clear();
+
+        return $this;
+    }
+
+    /**
      * @var Collection|Cycle[]
      * @ORM\ManyToMany(targetEntity="Cycle", inversedBy="rotations")
      * @ORM\JoinTable(

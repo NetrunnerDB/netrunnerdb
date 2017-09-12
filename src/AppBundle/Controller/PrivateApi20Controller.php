@@ -290,7 +290,8 @@ class PrivateApi20Controller extends FOSRestController
 			}
 		}
 		$decklist->setParent($deck);
-		
+		$decklist->setRotation($this->get('rotation_service')->findCompatibleRotation($decklist));
+
 		$entityManager->persist($decklist);
 		$entityManager->flush();
 		

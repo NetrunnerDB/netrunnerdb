@@ -29,3 +29,6 @@ services:
     personalization_helper:
         class: AppBundle\Service\PersonalizationHelper
         arguments: ["@doctrine", "@activity_helper", "@security.authorization_checker"]
+    rotation_service:
+        class: AppBundle\Service\RotationService
+        arguments: ["@doctrine.orm.entity_manager"]
