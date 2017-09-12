@@ -3,7 +3,7 @@
 (function (data, $) {
 
     var force_update = false;
-    var dbNames = ['cycles', 'packs', 'cards', 'prebuilts', 'factions', 'types', 'sides', 'mwl'];
+    var dbNames = ['cycles', 'packs', 'cards', 'factions', 'types', 'sides', 'mwl'];
 
     /**
      * Promise interface to forerunnerdb's load method

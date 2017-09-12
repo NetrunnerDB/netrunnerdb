@@ -140,7 +140,6 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	});
 
 	var initialPackSelection = {};
-	var initialPrebuiltSelection = {};
 	var promises = [];
 	
 	NRDB.data.packs.find().forEach(function (pack) {
@@ -148,20 +147,14 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 			 if(value) initialPackSelection[pack.code] = (value === "on");
 		 }));
 	});
-	
-	NRDB.data.prebuilts.find().map(function (prebuilt) {
-		promises.push(localforage.getItem('prebuilt_code_'+ prebuilt.code).then(function (value) {
-			if(value) initialPrebuiltSelection[prebuilt.code] = (value === "on");
-		}));
-	});
-	
+
 	Promise.all(promises).then(function () {
-		create_collection_tab(initialPackSelection, initialPrebuiltSelection);
+		create_collection_tab(initialPackSelection);
 	});
 	
 });
 
-function create_collection_tab(initialPackSelection, initialPrebuiltSelection) {
+function create_collection_tab(initialPackSelection) {
 	
 
 	var sets_in_deck = {};
@@ -197,16 +190,6 @@ function create_collection_tab(initialPackSelection, initialPrebuiltSelection) {
 		}
 	});
 
-	$('#prebuilt_code').empty();
-	NRDB.data.prebuilts.find().sort(function (a, b) {
-		return (a.position - b.position);
-	}).forEach(function(prebuilt) {
-		var checked = (prebuilt.date_release !== "" && initialPrebuiltSelection[prebuilt.code] !== false) ? ' checked="checked"' : '';
-		$('#prebuilt_code').append(
-			'<div class="checkbox"><label><input type="checkbox" name="' + prebuilt.code + '"' + checked + '>' + prebuilt.name + '</label></div>');
-	});
-
-
 	$('.filter').each(function(index, div) {
 		var columnName = $(div).attr('id');
 		var arr = [];
@@ -231,27 +214,6 @@ function create_collection_tab(initialPackSelection, initialPrebuiltSelection) {
 
 function get_filter_query(Filters) {
 	var FilterQuery = _.pickBy(Filters);
-	
-	// we're including some packs and some prebuilts (normal situation)
-	// it's an OR situation: cards are available if they are in the packs selected OR in the prebuilt selected
-	if(FilterQuery.prebuilt_code && FilterQuery.pack_code) {
-
-		var cards_in_prebuilts = _.flatten(FilterQuery.prebuilt_code.map(function (prebuilt_code) {
-			var prebuilt = NRDB.data.prebuilts.findById(prebuilt_code);
-			return _.keys(prebuilt.cards)
-		}));
-		
-		FilterQuery['$or'] = [{
-			pack_code: FilterQuery.pack_code
-		}, {
-			code: {
-				'$in': cards_in_prebuilts
-			}
-		}];
-		
-		delete(FilterQuery.pack_code);
-		delete(FilterQuery.prebuilt_code);
-	}
 
 	return FilterQuery;
 }
@@ -291,7 +253,7 @@ $(function() {
 		}
 	});
 
-	$('#pack_code,#prebuilt_code,.search-buttons').on('change', 'label', handle_input_change);
+	$('#pack_code,.search-buttons').on('change', 'label', handle_input_change);
 	
 	$('.search-buttons').on('click', 'label', function(event) {
 		var dropdown = $(this).closest('ul').hasClass('dropdown-menu');
@@ -523,12 +485,6 @@ function handle_input_change(event) {
 		
 		if (columnName == "pack_code") {
 			var key = 'pack_code_' + name,
-				value = $(elt).prop('checked') ? "on" : "off";
-			localforage.setItem(key, value);
-		}
-			
-		if (columnName == "prebuilt_code") {
-			var key = 'prebuilt_code_' + name,
 				value = $(elt).prop('checked') ? "on" : "off";
 			localforage.setItem(key, value);
 		}
