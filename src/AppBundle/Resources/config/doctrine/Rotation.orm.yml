@@ -1,0 +1,45 @@
+AppBundle\Entity\Rotation:
+    type: entity
+    table: rotation
+    manyToMany:
+        cycles:
+            targetEntity: Cycle
+            inversedBy: rotations
+            joinTable:
+                name: rotation_cycle
+                joinColumns:
+                    rotation_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    cycle_id:
+                        referencedColumnName: id
+            cascade: ["persist"]
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        code:
+            type: string
+            length: 255
+        name:
+            type: string
+            length: 255
+        dateCreation:
+            type: datetime
+            column: date_creation
+            gedmo:
+                timestampable:
+                    on:  create
+        dateUpdate:
+            type: datetime
+            column: date_update
+            gedmo:
+                timestampable:
+                    on:  update
+        dateStart:
+            type: date
+            nullable: true
+            column: date_start
+

@@ -2,6 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Cycle
  */
@@ -59,7 +62,60 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
      * @var string
      */
     private $locale = 'en';
-    
+
+    /**
+     * @var Collection|Rotation[]
+     * @ORM\ManyToMany(targetEntity="Rotation", mappedBy="cycles")
+     */
+    protected $rotations;
+
+    /** @param Collection|Rotation[] $rotations */
+    public function setRotations(Collection $rotations)
+    {
+        $this->clearRotations();
+        foreach ($rotations as $rotation) {
+            $this->addRotation($rotation);
+        }
+
+        return $this;
+    }
+
+    public function addRotation(Rotation $rotation)
+    {
+        if ($this->rotations->contains($rotation) === false) {
+            $this->rotations->add($rotation);
+            $rotation->addCycle($this);
+        }
+
+        return $this;
+    }
+
+    /** @return Collection|Rotation[] */
+    public function getRotations()
+    {
+        return $this->rotations;
+    }
+
+    public function removeRotation(Rotation $rotation)
+    {
+        if ($this->rotations->contains($rotation)) {
+            $this->rotations->removeElement($rotation);
+            $rotation->removeCycle($this);
+        }
+
+        return $this;
+    }
+
+    public function clearRotations()
+    {
+        foreach ($this->getRotations() as $rotation) {
+            $this->removeRotation($rotation);
+        }
+        $this->rotations->clear();
+
+        return $this;
+    }
+
 
     /**
      * Get id
@@ -199,6 +255,7 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     public function __construct()
     {
         $this->packs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->rotations = new ArrayCollection();
     }
     
     /**

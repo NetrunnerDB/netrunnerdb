@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Mwlslot;
 use AppBundle\Entity\Prebuiltslot;
+use AppBundle\Entity\Rotation;
 use DateTime;
 use Doctrine\ORM\EntityManager;
 use Exception;
@@ -162,6 +163,20 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing MWL...");
         $mwlFileInfo = $this->getFileInfo($path, 'mwl.json');
         $imported = $this->importMwlJsonFile($mwlFileInfo);
+        if(!$force && count($imported)) {
+            $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
+            if(!$helper->ask($input, $output, $question)) {
+                die();
+            }
+        }
+        $this->em->flush();
+        $output->writeln("Done.");
+
+        // rotation
+
+        $output->writeln("Importing Rotation...");
+        $mwlFileInfo = $this->getFileInfo($path, 'rotations.json');
+        $imported = $this->importRotationJsonFile($mwlFileInfo);
         if(!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
             if(!$helper->ask($input, $output, $question)) {
@@ -389,6 +404,33 @@ class ImportStdCommand extends ContainerAwareCommand
                     $mwlslot->setMwl($mwl);
                     $this->em->persist($mwlslot);
                 }
+            }
+        }
+
+        return $result;
+    }
+
+    protected function importRotationJsonFile (SplFileInfo $fileinfo)
+    {
+        $result = [];
+
+        $data = $this->getDataFromFile($fileinfo);
+        foreach($data as $rotationData) {
+            /** @var Rotation $rotation */
+            $rotation = $this->getEntityFromData('AppBundle\Entity\Rotation', $rotationData, [
+                'code',
+                'name',
+                'date_start'
+            ], [], []);
+            if($rotation) {
+                $result[] = $rotation;
+                foreach($rotationData['cycles'] as $cycle_code) {
+                    $cycle = $this->em->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
+                    if(!$cycle)
+                        continue;
+                    $rotation->addCycle($cycle);
+                }
+                $this->em->persist($rotation);
             }
         }
 

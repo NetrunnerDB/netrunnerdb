@@ -13,6 +13,11 @@ AppBundle\Entity\Cycle:
             orderBy: { 'position': 'ASC' }
             targetEntity: Pack
             mappedBy: cycle
+    manyToMany:
+        rotations:
+            targetEntity: Rotation
+            mappedBy: cycles
+            cascade: ["remove"]
     fields:
         id:
             type: integer
