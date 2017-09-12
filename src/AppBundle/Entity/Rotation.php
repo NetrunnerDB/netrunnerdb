@@ -196,7 +196,7 @@ class Rotation implements \Serializable
         return $this->code;
     }
 
-    public function setCode ($code): self
+    public function setCode ($code)
     {
         $this->code = $code;
 
@@ -232,7 +232,7 @@ class Rotation implements \Serializable
         return $this->dateCreation;
     }
 
-    public function setDateCreation ($dateCreation): self
+    public function setDateCreation ($dateCreation)
     {
         $this->dateCreation = $dateCreation;
 
@@ -244,7 +244,7 @@ class Rotation implements \Serializable
         return $this->dateUpdate;
     }
 
-    public function setDateUpdate ($dateUpdate): self
+    public function setDateUpdate ($dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
 
