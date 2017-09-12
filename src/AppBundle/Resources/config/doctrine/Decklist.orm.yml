@@ -4,6 +4,8 @@ AppBundle\Entity\Decklist:
     indexes:
         date_creation_index:
             columns: [ date_creation ]
+        rotation_index:
+            columns: [ rotation_id ]
     manyToOne:
         user:
             targetEntity: User
