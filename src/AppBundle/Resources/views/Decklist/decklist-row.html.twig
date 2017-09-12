@@ -34,6 +34,9 @@
 				<div class="col-sm-4">{% if decklist.tournament %}
 					<span class="text-success">
 			            <span class="glyphicon glyphicon-certificate"></span> {{ decklist.tournament }}
+			        </span>{% endif %}{% if decklist.rotation %}
+					<span class="text-info">
+			            <span class="glyphicon glyphicon-repeat"></span> {{ decklist.rotation }}
 			        </span>
 				{% endif %}</div>
 				<div class="col-sm-3 hidden-xs">

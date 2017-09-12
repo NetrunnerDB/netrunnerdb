@@ -35,6 +35,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -51,6 +52,7 @@ class DecklistManager
                 join pack p on d.last_pack_id=p.id
                 join favorite f on f.decklist_id=d.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where f.user_id=?
                 and d.moderation_status<2
                 order by date_creation desc
@@ -87,6 +89,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -102,6 +105,7 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where d.user_id=?
                 and d.moderation_status<3
                 order by date_creation desc
@@ -136,6 +140,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -152,6 +157,7 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
                 and d.moderation_status<2
                 order by 2*nbvotes/(1+nbjours*nbjours) DESC, nbvotes desc, nbcomments desc
@@ -184,6 +190,7 @@ class DecklistManager
     			d.user_id,
     			d.tournament_id,
     			t.description tournament,
+                r.name rotation,
     			u.username,
     			u.faction usercolor,
     			u.reputation,
@@ -199,6 +206,7 @@ class DecklistManager
     			join card c on d.identity_id=c.id
     			join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
     			where dotw > 0
     			order by dotw desc
     			limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
@@ -230,6 +238,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -245,6 +254,7 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where nbvotes > 10
                 and d.moderation_status<2
                 order by nbvotes desc, date_creation desc
@@ -277,6 +287,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -293,6 +304,7 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where d.nbcomments > 1
                 and d.moderation_status<2
                 order by nbrecentcomments desc, date_creation desc
@@ -325,6 +337,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -340,6 +353,7 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where d.tournament_id is not null
                 and d.moderation_status<2
                 order by date_creation desc
@@ -372,6 +386,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -388,6 +403,7 @@ class DecklistManager
                 join pack p on d.last_pack_id=p.id
                 join faction f on d.faction_id=f.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where f.code=?
                 and d.moderation_status<2
                 order by date_creation desc
@@ -422,6 +438,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -437,6 +454,7 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where p.code=?
                 and d.moderation_status<2
                 order by date_creation desc
@@ -473,6 +491,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -488,6 +507,7 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
                 and d.moderation_status<2
                 $additional_clause
@@ -521,6 +541,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -536,6 +557,7 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where d.moderation_status=2
                 order by date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
@@ -567,6 +589,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 u.username,
                 u.faction usercolor,
                 u.reputation,
@@ -582,6 +605,7 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where d.moderation_status=1
                 order by date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
@@ -722,6 +746,7 @@ class DecklistManager
                 d.user_id,
                 d.tournament_id,
                 t.description tournament,
+                r.name rotation,
                 $extra_select
                 u.username,
                 u.faction usercolor,
@@ -740,6 +765,7 @@ class DecklistManager
                 join pack p on d.last_pack_id=p.id
                 join faction f on d.faction_id=f.id
                 left join tournament t on d.tournament_id=t.id
+                left join rotation r on d.rotation_id=r.id
                 where $where
                 and d.moderation_status<2
                 order by $order desc
