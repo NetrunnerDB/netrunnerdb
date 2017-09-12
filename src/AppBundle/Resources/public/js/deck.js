@@ -30,7 +30,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	
 	NRDB.data.cards.find().forEach(function(card) {
 		var max_qty = card.deck_limit;
-		if(card.pack_code == 'core') {
+		if(card.pack_code == 'core' || card.pack_code == 'core2') {
 			max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
 		}
 		if(Identity.pack_code == "draft") {
@@ -589,7 +589,7 @@ function handle_quantity_change(event) {
 function update_core_sets() {
 	CardDivs = [ null, {}, {}, {} ];
 	NRDB.data.cards.find({
-		pack_code : 'core'
+		pack_code : ['core', 'core2']
 	}).forEach(function(card) {
 		var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), card.deck_limit);
 		if(Identity.pack_code == "draft") {
