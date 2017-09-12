@@ -97,7 +97,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
 		var regexp = new RegExp(q, 'i');
-		cb(NRDB.data.cards.find({title: regexp}));
+		cb(NRDB.data.cards.find({title: regexp, pack_code: Filters.pack_code || []}));
 	}
 
 	$('#filter-text').typeahead({
