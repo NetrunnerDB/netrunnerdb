@@ -34,6 +34,17 @@
                     <option value="reputation"{{ sort_reputation|default('') }}>by Reputation of Author</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label for="rotation_id">Rotation</label>
+                <select class="form-control" id="rotation_id" name="rotation_id">
+                    <option value="">Ignore</option>
+                    {% for rotation in list_rotations %}
+                        <option value="{{ rotation.id }}"{% if rotation.id == rotation_id %} selected="selected"{% endif %}>
+                            {{ rotation.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
         <div class="col-sm-4">
             <div class="form-group">

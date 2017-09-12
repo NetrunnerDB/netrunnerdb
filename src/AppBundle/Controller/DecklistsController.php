@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Rotation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -217,6 +218,7 @@ class DecklistsController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
+        $list_rotations = $em->getRepository(Rotation::class)->findBy(array(), array('dateStart' => 'DESC'));
 
         return $this->render('AppBundle:Search:search.html.twig', array(
                     'pagetitle' => 'Decklist Search',
@@ -231,6 +233,8 @@ class DecklistsController extends Controller
                         'title' => '',
                         'list_mwl' => $list_mwl,
                         'mwl_code' => '',
+                        'list_rotations' => $list_rotations,
+                        'rotation_id' => '',
                         'is_legal' => ''
                             )
                     ),
@@ -248,6 +252,7 @@ class DecklistsController extends Controller
         $sort = $request->query->get('sort');
         $packs = $request->query->get('packs');
         $mwl_code = $request->query->get('mwl_code');
+        $rotation_id = $request->query->get('rotation_id');
         $is_legal = $request->query->get('is_legal');
 
         if(!is_array($packs)) {
@@ -292,8 +297,9 @@ class DecklistsController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
+        $list_rotations = $em->getRepository(Rotation::class)->findBy(array(), array('dateStart' => 'DESC'));
 
-        
+
         $params = array(
             'allowed' => $categories,
             'on' => $on,
@@ -302,6 +308,8 @@ class DecklistsController extends Controller
             'title' => $decklist_title,
             'list_mwl' => $list_mwl,
             'mwl_code' => $mwl_code,
+            'list_rotations' => $list_rotations,
+            'rotation_id' => $rotation_id,
             'is_legal' => $is_legal
         );
         $params['sort_' . $sort] = ' selected="selected"';

@@ -641,6 +641,7 @@ class DecklistManager
         $sort = $request->query->get('sort');
         $packs = $request->query->get('packs');
         $mwl_code = $request->query->get('mwl_code');
+        $rotation_id = $request->query->get('rotation_id');
         $is_legal = $request->query->get('is_legal');
         if($is_legal === null || $is_legal === '') {
             $is_legal = null;
@@ -702,6 +703,11 @@ class DecklistManager
         if(!empty($mwl_code)) {
             $wheres[] = 'exists(select * from legality join mwl on legality.mwl_id=mwl.id where legality.decklist_id=d.id and mwl.code=? and legality.is_legal=1)';
             $params[] = $mwl_code;
+            $types[] = \PDO::PARAM_INT;
+        }
+        if(!empty($rotation_id)) {
+            $wheres[] = 'd.rotation_id=?';
+            $params[] = $rotation_id;
             $types[] = \PDO::PARAM_INT;
         }
         if($is_legal !== null) {
