@@ -197,7 +197,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   			}
   		} else if(card.code === '10038') {
   			// PAD Factory: 3 PAD Campaign
-  			if(decklist.cards['01109'] === 3) {
+  			if(decklist.cards['01109'] === 3 || decklist.cards['20128'] === 3) {
   				inf = 0;
   			}
   		} else if(card.code === '10076') {
