@@ -110,7 +110,8 @@ class Judge
         if ($card->getCode() === '10038') {
             // PAD Factory: 3 PAD Campaign => 0 inf
             $targets = array_filter($arraySlots, function ($potentialTarget) {
-                return $potentialTarget->getCard()->getCode() === '01109';
+                $code = $potentialTarget->getCard()->getCode();
+                return $code === '01109' || $code === '20128';
             });
             if ($this->countCards($targets) === 3) {
                 return 0;

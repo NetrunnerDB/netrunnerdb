@@ -566,7 +566,7 @@ function get_influence_cost_of_card_in_deck(card) {
             }
         } else if (card.code === '10038') {
             // PAD Factory: 3 PAD Campaign
-            if (count_card_copies(NRDB.data.cards.find({indeck: {'$gt': 0}, code: '01109'})) === 3) {
+            if (count_card_copies(NRDB.data.cards.find({indeck: {'$gt': 0}, code: ['01109', '20128']})) === 3) {
                 inf = 0;
             }
         } else if (card.code === '10076') {
