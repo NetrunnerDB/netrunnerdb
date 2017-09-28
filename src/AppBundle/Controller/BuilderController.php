@@ -842,7 +842,7 @@ class BuilderController extends Controller
                 array(
                         'name' => $decklist->getName(),
                         'content' => json_encode($content),
-                        'decklist_id' => $decklist_id
+                        'decklist_id' => $decklist_id,
                 ));
     
     }
@@ -863,13 +863,16 @@ class BuilderController extends Controller
         foreach ($deck->getSlots() as $slot) {
             $content[$slot->getCard()->getCode()] = $slot->getQuantity();
         }
+        $description = strlen($deck->getDescription()) > 0 ? ("Original deck notes:\n\n" . $deck->getDescription()) : '';
+
         return $this->forward('AppBundle:Builder:save',
                 array(
                         'name' => $deck->getName().' (copy)',
                         'content' => json_encode($content),
-                        'deck_id' => $deck->getParent() ? $deck->getParent()->getId() : null
+                        'description' => $description,
+                        'deck_id' => $deck->getParent() ? $deck->getParent()->getId() : null,
+                        'mwl_code' => $deck->getMwl()->getCode(),
                 ));
-    
     }
     
     public function downloadallAction()
