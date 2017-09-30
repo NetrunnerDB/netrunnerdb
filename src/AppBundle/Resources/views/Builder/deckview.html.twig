@@ -40,7 +40,7 @@ var Identity = null,
 
 <!-- Buttons -->
 <div class="btn-actions text-center">
-	{% if is_owner %}
+	{% if deck.is_owner %}
 	<div class="btn-group" role="group" style="margin-bottom:5px">
     	<button type="button" id="btn-print" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-print"></span> Print</button>
     </div>
@@ -53,8 +53,6 @@ var Identity = null,
 	<div class="btn-group" role="group" style="margin-bottom:5px">
 		<button type="button" id="btn-delete" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span> Delete</button>
 	</div>
-	{% else %}
-	This is a private deck shared by {{ deck.user_name }}
 	{% endif %}
 </div>
 

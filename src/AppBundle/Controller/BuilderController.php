@@ -717,12 +717,10 @@ class BuilderController extends Controller
 				m.code,
                 d.problem,
         		d.date_update,
-                u.id user_id,
-        		u.username user_name,
-                u.share_decks shared,
 				s.name side_name,
 				c.code identity_code,
-				f.code faction_code
+				f.code faction_code,
+				CASE WHEN u.id=? THEN 1 ELSE 0 END is_owner
                 from deck d
         		left join mwl m  on d.mwl_id=m.id
                 left join user u on d.user_id=u.id
@@ -730,8 +728,11 @@ class BuilderController extends Controller
 				left join card c on d.identity_id=c.id
 				left join faction f on c.faction_id=f.id
                 where d.id=?
+                and (u.id=? or u.share_decks=1)
 				", array(
-                $deck_id
+            $this->getUser() ? $this->getUser()->getId() : null,
+                $deck_id,
+            $this->getUser() ? $this->getUser()->getId() : null,
         ))->fetchAll();
 				
         if(!count($rows)) 
@@ -739,13 +740,7 @@ class BuilderController extends Controller
         	throw $this->createNotFoundException("Deck not found");
         }
         $deck = $rows[0];
-        
-        $is_owner = $this->getUser() && $this->getUser()->getId() == $deck['user_id'];
-        if(!$deck['shared'] && !$is_owner) 
-        {
-        	throw $this->createAccessDeniedException("Access denied");
-        }
-        
+
         $deck['side_name'] = mb_strtolower($deck['side_name']);
         
         $rows = $dbh->executeQuery("SELECT
@@ -793,7 +788,6 @@ class BuilderController extends Controller
                         'pagetitle' => "Deckbuilder",
                         'deck' => $deck,
                         'published_decklists' => $published_decklists,
-                        'is_owner' => $is_owner,
                         'tournaments' => $tournaments,
                 ));
     
