@@ -230,7 +230,7 @@ class SocialController extends Controller
 				join faction f on d.faction_id=f.id
                                 left join tournament t on d.tournament_id=t.id
 				where d.id=?
-                                and d.moderation_status<3
+                                and d.moderation_status in (0,1,2)
 				", array(
                     $decklist_id
                 ))->fetchAll();
@@ -286,7 +286,7 @@ class SocialController extends Controller
 					d.nbcomments
 					from decklist d
 					where d.id=?
-                                        and d.moderation_status<2
+                                        and d.moderation_status in (0,1)
 					order by d.date_creation asc", array(
                     $decklist['precedent']
                 ))->fetchAll();
@@ -301,7 +301,7 @@ class SocialController extends Controller
 					d.nbcomments
 					from decklist d
 					where d.precedent_decklist_id=?
-                                        and d.moderation_status<2
+                                        and d.moderation_status in (0,1)
 					order by d.date_creation asc", array(
                     $decklist_id
                 ))->fetchAll();
@@ -314,7 +314,7 @@ class SocialController extends Controller
 					from decklist d
 					where d.signature=?
 					and d.date_creation<?
-                                        and d.moderation_status<2
+                                        and d.moderation_status in (0,1)
 					order by d.date_creation asc
 					limit 0,1", array(
                     $decklist['signature'],

@@ -54,7 +54,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where f.user_id=?
-                and d.moderation_status<2
+                and d.moderation_status in (0,1)
                 order by date_creation desc
                 limit $start, $limit", array(
                     $user_id
@@ -107,7 +107,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where d.user_id=?
-                and d.moderation_status<3
+                and d.moderation_status in (0,1,2)
                 order by date_creation desc
                 limit $start, $limit", array(
                     $user_id
@@ -159,7 +159,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
-                and d.moderation_status<2
+                and d.moderation_status in (0,1)
                 order by 2*nbvotes/(1+nbjours*nbjours) DESC, nbvotes desc, nbcomments desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -256,7 +256,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where nbvotes > 10
-                and d.moderation_status<2
+                and d.moderation_status in (0,1)
                 order by nbvotes desc, date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -306,7 +306,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where d.nbcomments > 1
-                and d.moderation_status<2
+                and d.moderation_status in (0,1)
                 order by nbrecentcomments desc, date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -355,7 +355,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where d.tournament_id is not null
-                and d.moderation_status<2
+                and d.moderation_status in (0,1)
                 order by date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -405,7 +405,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where f.code=?
-                and d.moderation_status<2
+                and d.moderation_status in (0,1)
                 order by date_creation desc
                 limit $start, $limit", array(
                     $faction_code
@@ -456,7 +456,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where p.code=?
-                and d.moderation_status<2
+                and d.moderation_status in (0,1)
                 order by date_creation desc
                 limit $start, $limit", array(
                     $pack_code
@@ -509,7 +509,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
-                and d.moderation_status<2
+                and d.moderation_status in (0,1)
                 $additional_clause
                 order by date_creation desc
                 limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
@@ -773,7 +773,7 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where $where
-                and d.moderation_status<2
+                and d.moderation_status in (0,1)
                 order by $order desc
                 limit $start, $limit", $params, $types)->fetchAll(\PDO::FETCH_ASSOC);
 
