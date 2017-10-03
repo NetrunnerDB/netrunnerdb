@@ -23,8 +23,6 @@ class Deck implements \Serializable
 				'date_update' => $this->dateUpdate->format('c'),
 				'name' => $this->name,
 				'description' => $this->description,
-				'user_id' => $this->user->getId(),
-				'user_name' => $this->user->getUsername(),
 				'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
 				'cards' => $cards
 		];
