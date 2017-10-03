@@ -74,7 +74,7 @@ class HighlightCommand extends ContainerAwareCommand
     				join faction f on d.faction_id=f.id
     				where d.date_creation > date_sub( current_date, interval 7 day )
             		and u.enabled=1
-                        and d.moderation_status<1
+                        and d.moderation_status=0
                     order by nbvotes desc , nbcomments desc
                     limit 0,1
     				", array())->fetchAll();
