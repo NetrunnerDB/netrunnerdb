@@ -715,6 +715,7 @@ class BuilderController extends Controller
         $dbh = $this->get('doctrine')->getConnection();
         $rows = $dbh->executeQuery("SELECT
 				d.id,
+				d.salt,
 				d.name,
 				d.description,
 				m.code,
@@ -745,10 +746,8 @@ class BuilderController extends Controller
         }
         $deck = $rows[0];
 
-		$Datecreation = $deck->getDatecreation();
-		$strDate = $Datecreation->format('Ymd');
 		$strId = (string) $deck_id;
-		if($hash != hash('sha256', $strId . $strDate ) )
+		if($hash != hash('sha256', $strId . $deck['salt']))
 			throw $this->createNotFoundException("Deck not shared");
 		
         $deck['side_name'] = mb_strtolower($deck['side_name']);

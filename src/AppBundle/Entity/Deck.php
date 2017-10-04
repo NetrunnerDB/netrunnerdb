@@ -40,6 +40,11 @@ class Deck implements \Serializable
     /**
      * @var string
      */
+    private $salt;
+	
+    /**
+     * @var string
+     */
     private $name;
 
     /**
@@ -117,6 +122,7 @@ class Deck implements \Serializable
         $this->slots = new \Doctrine\Common\Collections\ArrayCollection();
         $this->descendants = new \Doctrine\Common\Collections\ArrayCollection();
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->salt = uniqid();
     }
     
     /**
@@ -129,6 +135,29 @@ class Deck implements \Serializable
         return $this->id;
     }
 
+	/**
+     * Set salt
+     *
+     * @param string $salt
+     * @return Deck
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+    
+        return $this;
+    }
+
+    /**
+     * Get salt
+     *
+     * @return string
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+	
     /**
      * Set name
      *

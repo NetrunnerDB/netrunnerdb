@@ -398,10 +398,8 @@ class PublicApi20Controller extends FOSRestController
 			throw $this->createAccessDeniedException("Deck not shared");
 		}
 		
-		$Datecreation = $deck->getDatecreation();
-		$strDate = $Datecreation->format('Ymd');
 		$strId = (string) $deck_id;
-		if($hash != hash('sha256', $strId . $strDate ) )
+		if($hash != hash('sha256', $strId . $deck->getSalt() ) )
 			throw $this->createNotFoundException("Deck not shared");
 		
 		return $this->prepareResponse([$deck], $request);

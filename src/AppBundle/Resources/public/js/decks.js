@@ -219,8 +219,7 @@ function do_action_deck(event) {
 	if(!deck) return;
 	var action_id = $(this).attr('id');
 	if(!action_id) return;
-	var strDate = moment(deck.date_creation).format('YYYYMMDD');
-	var hash = sha256(String(deck_id)+StrDate);
+	var hash = sha256(String(deck_id)+deck.salt);
 	switch(action_id) {
 		case 'btn-view': location.href=Routing.generate('deck_view', {deck_id:deck.id,hash:hash,_locale:NRDB.locale}); break;
 		case 'btn-edit': location.href=Routing.generate('deck_edit', {deck_id:deck.id,_locale:NRDB.locale}); break;
