@@ -65,6 +65,9 @@ AppBundle\Entity\Deck:
             id: true
             generator:
                 strategy: AUTO
+        salt:
+            type: string
+            length: 255
         name:
             type: string
             length: 255
