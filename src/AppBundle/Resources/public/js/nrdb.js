@@ -426,7 +426,7 @@ function test_cacherefresh() {
         accepted_cards = [];
 
     // core set check
-    NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: 'core'}).forEach(function (card) {
+    NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: 'core2'}).forEach(function (card) {
         if (card.indeck <= card.quantity) {
             accepted_cards.push(card.code);
         }
@@ -440,7 +440,7 @@ function test_cacherefresh() {
     });
 
     // deluxe and last-two-cycles check   
-    var remaining_cards = NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: {'$ne': 'core'}, code: {'$nin': accepted_cards}});
+    var remaining_cards = NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: {'$ne': 'core2'}, code: {'$nin': accepted_cards}});
     var packs = _.values(_.reduce(remaining_cards, function (acc, card) {
         if (!acc[card.pack.code])
             acc[card.pack.code] = {pack: card.pack, count: 0};
@@ -449,8 +449,14 @@ function test_cacherefresh() {
     }, {})).sort(function (a, b) {
         return b.count - a.count;
     });
+    var all_deluxes = [
+        'creation-and-control',
+        'honor-and-profit',
+        'order-and-chaos',
+        'data-and-destiny'
+    ];
     var deluxe = _.find(packs, function (element) {
-        return element.pack.cycle.size === 1;
+        return _.includes(all_deluxes, element.pack.cycle.code);
     });
 
     var lastCycle = NRDB.data.packs.find({'date_release':{'$nee':null}},{'$orderBy':{'date_release':-1}})[0].cycle;
