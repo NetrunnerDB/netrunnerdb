@@ -45,7 +45,7 @@ deck_edit:
         deck_id: \d+
 
 deck_view:
-    path: /{_locale}/deck/view/{deck_id}
+    path: /{_locale}/deck/view/{deck_id}/{hash}
     methods: [GET]
     defaults:
         _controller: AppBundle:Builder:view
@@ -655,7 +655,7 @@ api_public_decklists_by_date:
         date: "\\d\\d\\d\\d-\\d\\d-\\d\\d"
 
 api_public_deck:
-    path: /api/2.0/public/deck/{deck_id}
+    path: /api/2.0/public/deck/{deck_id}/{hash}
     methods: [GET]
     defaults:
         _controller: AppBundle:PublicApi20:deck

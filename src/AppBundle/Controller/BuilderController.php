@@ -706,9 +706,12 @@ class BuilderController extends Controller
     
     }
 
-    public function viewAction ($deck_id)
+    public function viewAction ($deck_id,$hash)
     {
-
+		if(!$hash) {
+			throw $this->createNotFoundException("Deck not shared");
+		}
+	
         $dbh = $this->get('doctrine')->getConnection();
         $rows = $dbh->executeQuery("SELECT
 				d.id,
@@ -716,6 +719,7 @@ class BuilderController extends Controller
 				d.description,
 				m.code,
                 d.problem,
+				d.date_creation,
         		d.date_update,
 				s.name side_name,
 				c.code identity_code,
@@ -741,6 +745,12 @@ class BuilderController extends Controller
         }
         $deck = $rows[0];
 
+		$Datecreation = $deck->getDatecreation();
+		$strDate = $Datecreation->format('Ymd');
+		$strId = (string) $deck_id;
+		if($hash != hash('sha256', $strId . $strDate ) )
+			throw $this->createNotFoundException("Deck not shared");
+		
         $deck['side_name'] = mb_strtolower($deck['side_name']);
         
         $rows = $dbh->executeQuery("SELECT

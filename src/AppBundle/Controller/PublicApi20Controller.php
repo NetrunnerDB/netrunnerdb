@@ -381,7 +381,7 @@ class PublicApi20Controller extends FOSRestController
 	 *  },
 	 * )
 	 */
-	public function deckAction($deck_id, Request $request)
+	public function deckAction($deck_id, $hash, Request $request)
 	{
 		/* @var $deck \AppBundle\Entity\Deck */
 		$deck = $this->getDoctrine()->getManager()->getRepository('AppBundle:Deck')->find($deck_id);
@@ -390,9 +390,19 @@ class PublicApi20Controller extends FOSRestController
 			throw $this->createNotFoundException("Deck not found");
 		}
 		
+		if(!$hash) {
+			throw $this->createNotFoundException("Deck not shared");
+		}
+		
 		if(!$deck->getUser()->getShareDecks()) {
 			throw $this->createAccessDeniedException("Deck not shared");
 		}
+		
+		$Datecreation = $deck->getDatecreation();
+		$strDate = $Datecreation->format('Ymd');
+		$strId = (string) $deck_id;
+		if($hash != hash('sha256', $strId . $strDate ) )
+			throw $this->createNotFoundException("Deck not shared");
 		
 		return $this->prepareResponse([$deck], $request);
 	}

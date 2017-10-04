@@ -36,7 +36,7 @@ class Deck implements \Serializable
      * @var integer
      */
     private $id;
-
+	
     /**
      * @var string
      */
