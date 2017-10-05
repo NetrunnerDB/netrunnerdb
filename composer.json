@@ -5,7 +5,7 @@
 	"license" : "MIT",
 	"require" : {
 		"symfony/symfony" : "2.8.2",
-		"friendsofsymfony/oauth-server-bundle" : "dev-master",
+		"friendsofsymfony/oauth-server-bundle" : "1.4.2",
 		"gedmo/doctrine-extensions" : "2.3.*",
 		"symfony/swiftmailer-bundle" : "~2.3",
 		"friendsofsymfony/user-bundle" : "~2.0@dev",
@@ -30,11 +30,10 @@
 		"jms/serializer": "^1.1",
 		"friendsofsymfony/rest-bundle": "^1.7",
 		"jms/serializer-bundle": "^1.1",
-		"guzzlehttp/guzzle": "^6.2"
+		"guzzlehttp/guzzle": "^6.2",
+		"twig/twig": "^1.0"
 	},
 	"require-dev" : {
-		"phpunit/phpunit" : "3.7.30",
-		"doctrine/doctrine-fixtures-bundle": "^2.3"
 	},
 	"autoload" : {
 		"psr-0" : {
