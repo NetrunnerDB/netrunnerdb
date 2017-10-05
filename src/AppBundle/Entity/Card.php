@@ -1013,4 +1013,73 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     {
         return $this->dateCreation;
     }
+
+    /** @var integer */
+    private $globalPenalty;
+
+    /** @var integer */
+    private $universalFactionCost;
+
+    /** @var boolean */
+    private $isRestricted;
+
+    /**
+     * @return int
+     */
+    public function getGlobalPenalty()
+    {
+        return $this->globalPenalty;
+    }
+
+    /**
+     * @param int $globalPenalty
+     *
+     * @return self
+     */
+    public function setGlobalPenalty($globalPenalty)
+    {
+        $this->globalPenalty = $globalPenalty;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUniversalFactionCost()
+    {
+        return $this->universalFactionCost;
+    }
+
+    /**
+     * @param int $universalFactionCost
+     *
+     * @return self
+     */
+    public function setUniversalFactionCost($universalFactionCost)
+    {
+        $this->universalFactionCost = $universalFactionCost;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRestricted()
+    {
+        return $this->isRestricted;
+    }
+
+    /**
+     * @param bool $isRestricted
+     *
+     * @return self
+     */
+    public function setIsRestricted($isRestricted)
+    {
+        $this->isRestricted = $isRestricted;
+
+        return $this;
+    }
 }
