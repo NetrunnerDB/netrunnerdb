@@ -2,10 +2,12 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\SlotInterface;
+
 /**
  * Decklistslot
  */
-class Decklistslot
+class Decklistslot implements SlotInterface
 {
     /**
      * @var integer
@@ -18,19 +20,19 @@ class Decklistslot
     private $quantity;
 
     /**
-     * @var AppBundle\Entity\Decklist
+     * @var \AppBundle\Entity\Decklist
      */
     private $decklist;
 
     /**
-     * @var AppBundle\Entity\Card
+     * @var \AppBundle\Entity\Card
      */
     private $card;
-    
+
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -41,19 +43,19 @@ class Decklistslot
      * Set quantity
      *
      * @param integer $quantity
-     * @return Deckcontent
+     * @return Decklistslot
      */
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
-    
+
         return $this;
     }
 
     /**
      * Get quantity
      *
-     * @return integer 
+     * @return integer
      */
     public function getQuantity()
     {
@@ -64,15 +66,15 @@ class Decklistslot
      * Set deck
      *
      * @param string $decklist
-     * @return Deck
+     * @return Decklistslot
      */
     public function setDecklist($decklist)
     {
-    	$this->decklist = $decklist;
-    
-    	return $this;
+        $this->decklist = $decklist;
+
+        return $this;
     }
-    
+
     /**
      * Get decklist
      *
@@ -80,7 +82,7 @@ class Decklistslot
      */
     public function getDecklist()
     {
-    	return $this->decklist;
+        return $this->decklist;
     }
 
     /**
@@ -91,11 +93,11 @@ class Decklistslot
      */
     public function setCard($card)
     {
-    	$this->card = $card;
-    
-    	return $this;
+        $this->card = $card;
+
+        return $this;
     }
-    
+
     /**
      * Get card
      *
@@ -103,7 +105,6 @@ class Decklistslot
      */
     public function getCard()
     {
-    	return $this->card;
+        return $this->card;
     }
-    
 }
