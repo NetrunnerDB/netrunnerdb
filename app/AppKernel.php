@@ -19,7 +19,6 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
-            new Liuggio\ExcelBundle\LiuggioExcelBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
        		new JMS\SerializerBundle\JMSSerializerBundle(),
         	new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
