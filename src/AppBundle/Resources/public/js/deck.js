@@ -5,6 +5,24 @@ var Deck_changed_since_last_autosave = false;
 var Autosave_running = false;
 var Autosave_period = 60;
 
+function update_max_qty() {
+
+    NRDB.data.cards.find().forEach(function(card) {
+        var modifiedCard = get_mwl_modified_card(card);
+        var max_qty = modifiedCard.deck_limit;
+        if(card.pack_code == 'core' || card.pack_code == 'core2') {
+            max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
+        }
+        if(Identity.pack_code == "draft") {
+            max_qty = 9;
+        }
+        NRDB.data.cards.updateById(card.code, {
+            maxqty : max_qty
+        });
+    });
+
+}
+
 Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	
 	NRDB.data.cards.remove({
@@ -27,20 +45,8 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	find_identity();
 	
 	NRDB.draw_simulator.init();
-	
-	NRDB.data.cards.find().forEach(function(card) {
-		var max_qty = card.deck_limit;
-		if(card.pack_code == 'core' || card.pack_code == 'core2') {
-			max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
-		}
-		if(Identity.pack_code == "draft") {
-			max_qty = 9;
-		}
-		NRDB.data.cards.updateById(card.code, {
-			maxqty : max_qty
-		});
-	});
-	
+	update_max_qty();
+
 	$('#faction_code').empty();
 	
 	var factions = NRDB.data.factions.find({side_code: Side}).sort(function(a, b) {
@@ -591,7 +597,8 @@ function update_core_sets() {
 	NRDB.data.cards.find({
 		pack_code : ['core', 'core2']
 	}).forEach(function(card) {
-		var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), card.deck_limit);
+        var modifiedCard = get_mwl_modified_card(card);
+		var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), modifiedCard.deck_limit);
 		if(Identity.pack_code == "draft") {
 			max_qty = 9;
 		}
@@ -608,6 +615,7 @@ function update_mwl(event) {
 		MWL = NRDB.data.mwl.findById(mwl_code);
 	}
 	CardDivs = [ null, {}, {}, {} ];
+	update_max_qty();
 	refresh_collection();
 	update_deck();
 }

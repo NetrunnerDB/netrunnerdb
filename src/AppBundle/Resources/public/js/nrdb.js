@@ -21,112 +21,112 @@ function getDisplayDescriptions(sort) {
                 {
                     id: 'event',
                     label: 'Event',
-                    image: '/bundles/app/images/types/event.png'
+                    image: '/bundles/app/images/types/event.png',
                 }, {
-                    id: 'hardware',
-                    label: 'Hardware',
-                    image: '/bundles/app/images/types/hardware.png'
-                }, {
-                    id: 'resource',
-                    label: 'Resource',
-                    image: '/bundles/app/images/types/resource.png'
-                }, {
-                    id: 'agenda',
-                    label: 'Agenda',
-                    image: '/bundles/app/images/types/agenda.png'
-                }, {
-                    id: 'asset',
-                    label: 'Asset',
-                    image: '/bundles/app/images/types/asset.png'
-                }, {
-                    id: 'upgrade',
-                    label: 'Upgrade',
-                    image: '/bundles/app/images/types/upgrade.png'
-                }, {
-                    id: 'operation',
-                    label: 'Operation',
-                    image: '/bundles/app/images/types/operation.png'
-                },
+                id: 'hardware',
+                label: 'Hardware',
+                image: '/bundles/app/images/types/hardware.png',
+            }, {
+                id: 'resource',
+                label: 'Resource',
+                image: '/bundles/app/images/types/resource.png',
+            }, {
+                id: 'agenda',
+                label: 'Agenda',
+                image: '/bundles/app/images/types/agenda.png',
+            }, {
+                id: 'asset',
+                label: 'Asset',
+                image: '/bundles/app/images/types/asset.png',
+            }, {
+                id: 'upgrade',
+                label: 'Upgrade',
+                image: '/bundles/app/images/types/upgrade.png',
+            }, {
+                id: 'operation',
+                label: 'Operation',
+                image: '/bundles/app/images/types/operation.png',
+            },
             ],
             [// second column
                 {
                     id: 'icebreaker',
                     label: 'Icebreaker',
-                    image: '/bundles/app/images/types/program.png'
+                    image: '/bundles/app/images/types/program.png',
                 }, {
-                    id: 'program',
-                    label: 'Program',
-                    image: '/bundles/app/images/types/program.png'
-                }, {
-                    id: 'barrier',
-                    label: 'Barrier',
-                    image: '/bundles/app/images/types/ice.png'
-                }, {
-                    id: 'code-gate',
-                    label: 'Code Gate',
-                    image: '/bundles/app/images/types/ice.png'
-                }, {
-                    id: 'sentry',
-                    label: 'Sentry',
-                    image: '/bundles/app/images/types/ice.png'
-                }, {
-                    id: 'multi',
-                    label: 'Multi',
-                    image: '/bundles/app/images/types/ice.png'
-                }, {
-                    id: 'none',
-                    label: 'Other',
-                    image: '/bundles/app/images/types/ice.png'
-                }
-            ]
+                id: 'program',
+                label: 'Program',
+                image: '/bundles/app/images/types/program.png',
+            }, {
+                id: 'barrier',
+                label: 'Barrier',
+                image: '/bundles/app/images/types/ice.png',
+            }, {
+                id: 'code-gate',
+                label: 'Code Gate',
+                image: '/bundles/app/images/types/ice.png',
+            }, {
+                id: 'sentry',
+                label: 'Sentry',
+                image: '/bundles/app/images/types/ice.png',
+            }, {
+                id: 'multi',
+                label: 'Multi',
+                image: '/bundles/app/images/types/ice.png',
+            }, {
+                id: 'none',
+                label: 'Other',
+                image: '/bundles/app/images/types/ice.png',
+            },
+            ],
         ],
         'faction': [
             [],
             [{
-                    id: 'anarch',
-                    label: 'Anarch'
-                }, {
-                    id: 'criminal',
-                    label: 'Criminal'
-                }, {
-                    id: 'haas-bioroid',
-                    label: 'Haas-Bioroid'
-                }, {
-                    id: 'jinteki',
-                    label: 'Jinteki'
-                }, {
-                    id: 'nbn',
-                    label: 'NBN'
-                }, {
-                    id: 'shaper',
-                    label: 'Shaper'
-                }, {
-                    id: 'weyland-consortium',
-                    label: 'Weyland Consortium'
-                }, {
-                    id: 'neutral-corp',
-                    label: 'Neutral'
-                }, {
-                    id: 'neutral-runner',
-                    label: 'Neutral'
-                }, {
-                    id: 'adam',
-                    label: 'Adam'
-                }, {
-                    id: 'apex',
-                    label: 'Apex'
-                }, {
-                    id: 'sunny-lebeau',
-                    label: 'Sunny Lebeau'
-                }]
+                id: 'anarch',
+                label: 'Anarch',
+            }, {
+                id: 'criminal',
+                label: 'Criminal',
+            }, {
+                id: 'haas-bioroid',
+                label: 'Haas-Bioroid',
+            }, {
+                id: 'jinteki',
+                label: 'Jinteki',
+            }, {
+                id: 'nbn',
+                label: 'NBN',
+            }, {
+                id: 'shaper',
+                label: 'Shaper',
+            }, {
+                id: 'weyland-consortium',
+                label: 'Weyland Consortium',
+            }, {
+                id: 'neutral-corp',
+                label: 'Neutral',
+            }, {
+                id: 'neutral-runner',
+                label: 'Neutral',
+            }, {
+                id: 'adam',
+                label: 'Adam',
+            }, {
+                id: 'apex',
+                label: 'Apex',
+            }, {
+                id: 'sunny-lebeau',
+                label: 'Sunny Lebeau',
+            }],
         ],
         'number': [],
         'title': [
             [{
-                    id: 'cards',
-                    label: 'Cards'
-                }]
-        ]
+                id: 'cards',
+                label: 'Cards',
+            }],
+        ],
     };
     return dd[sort];
 }
@@ -135,12 +135,15 @@ function getDisplayDescriptions(sort) {
 function process_deck_by_type() {
 
     var bytype = {};
-    Identity = NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: 'identity'}).pop();
+    Identity = NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'identity' }).pop();
     if (!Identity) {
         return;
     }
 
-    NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: {'$ne': 'identity'}}, {type: 1, title: 1}).forEach(function (card) {
+    NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: { '$ne': 'identity' } }, {
+        type: 1,
+        title: 1,
+    }).forEach(function (card) {
         var type = card.type_code, keywords = card.keywords ? card.keywords.toLowerCase().split(" - ") : [];
         if (type == "ice") {
             var ice_type = [];
@@ -182,34 +185,59 @@ function process_deck_by_type() {
             card: card,
             qty: card.indeck,
             influence: influence,
-            faction: faction_code
+            faction: faction_code,
         });
     });
     bytype.identity = [{
-            card: Identity,
-            qty: 1,
-            influence: 0,
-            faction: ''
-        }];
+        card: Identity,
+        qty: 1,
+        influence: 0,
+        faction: '',
+    }];
 
     return bytype;
 }
 
+function get_mwl_modified_card(card) {
+    if (MWL && MWL.cards[card.code]) {
+        return Object.assign(card, MWL.cards[card.code]);
+    }
+
+    return card;
+}
+
 function get_influence_penalty(card, qty) {
-    if (!MWL || !MWL.cards[card.code]) {
-        return 0;
-    }
-    if (qty == null)
+    if (typeof qty === "undefined") {
         qty = 1;
-    if (Identity.code == "03029" && card.type_code == "program" && qty > 0) {
-        // The Professor: first program is free
-        qty -= 1;
     }
-    return qty * MWL.cards[card.code];
+
+    if (card.global_penalty && qty) {
+        if (Identity.code === "03029" && card.type_code === "program") {
+            // The Professor: first program is free
+            qty -= 1;
+        }
+
+        return qty * card.global_penalty;
+    }
+
+    return 0;
+}
+
+function get_universal_faction_cost(card, qty) {
+    if (typeof qty === "undefined") {
+        qty = 1;
+    }
+
+    if (card.universal_faction_cost && qty) {
+        return qty * card.universal_faction_cost;
+    }
+
+    return 0;
 }
 
 function get_influence_penalty_icons(card, qty) {
-    var penalty = get_influence_penalty(card, qty);
+    var modifiedCard = get_mwl_modified_card(card);
+    var penalty = get_influence_penalty(modifiedCard, qty) + get_universal_faction_cost(modifiedCard, qty);
     var icons = '';
     if (!penalty) {
         return '';
@@ -221,7 +249,7 @@ function get_influence_penalty_icons(card, qty) {
 }
 
 function find_identity() {
-    Identity = NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: 'identity'}).pop();
+    Identity = NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'identity' }).pop();
 }
 
 function update_deck(options) {
@@ -255,7 +283,7 @@ function update_deck(options) {
     if (DisplaySort === 'number' && displayDescription.length === 0) {
         var rows = [];
         NRDB.data.packs.find().forEach(function (pack) {
-            rows.push({id: pack.code, label: pack.name});
+            rows.push({ id: pack.code, label: pack.name });
         });
         displayDescription.push(rows);
     }
@@ -284,7 +312,7 @@ function update_deck(options) {
     InfluenceLimit = 0;
     var cabinet = {};
     var parts = Identity.title.split(/: /);
-    $('#identity').html('<a href="' + Routing.generate('cards_zoom', {card_code: Identity.code}) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>');
+    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>');
     $('#img_identity').prop('src', Identity.imageUrl);
     InfluenceLimit = Identity.influence_limit;
     if (typeof InfluenceLimit === "undefined")
@@ -323,15 +351,18 @@ function update_deck(options) {
     var latestpack = Identity.pack;
     var influenceSpent = {};
 
-    NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: {'$ne': 'identity'}}, {'$orderBy': orderBy}).forEach(function (card) {
+    NRDB.data.cards.find({
+        indeck: { '$gt': 0 },
+        type_code: { '$ne': 'identity' },
+    }, { '$orderBy': orderBy }).forEach(function (card) {
         if (latestpack.cycle.position < card.pack.cycle.position
-                || (latestpack.cycle.position == card.pack.cycle.position && latestpack.position < card.pack.position)) {
+            || (latestpack.cycle.position == card.pack.cycle.position && latestpack.position < card.pack.position)) {
             latestpack = card.pack;
         }
 
         var influence = '';
         if (card.faction_code != Identity.faction_code) {
-            var theorical_influence_spent = card.indeck * card.faction_cost
+            var theorical_influence_spent = card.indeck * card.faction_cost;
             influenceSpent[card.code] = get_influence_cost_of_card_in_deck(card);
             for (var i = 0; i < theorical_influence_spent; i++) {
                 if (i && i % 5 == 0)
@@ -385,7 +416,7 @@ function update_deck(options) {
             additional_info = '(<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ') ' + alert_number_of_sets + influence;
         }
 
-        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', {card_code: card.code}) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a> ' + additional_info + '</div>');
+        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a> ' + additional_info + '</div>');
         item.appendTo($('#deck-content .deck-' + criteria));
 
         cabinet[criteria] |= 0;
@@ -405,6 +436,8 @@ function update_deck(options) {
         $('#cacherefresh').hide();
     }
     check_influence(influenceSpent);
+    check_restricted();
+    check_deck_limit();
     if ($('#costChart .highcharts-container').length)
         setTimeout(make_cost_graph, 100);
     if ($('#strengthChart .highcharts-container').length)
@@ -418,32 +451,36 @@ function show_onesies() {
 
 function show_cacherefresh() {
     var content = test_cacherefresh() ? '<span class="text-success glyphicon glyphicon-ok"></span> Cache Refresh format compliant' : '<span class="text-danger glyphicon glyphicon-remove"></span> Non Cache Refresh format compliant';
-    $('#cacherefresh').html(content).show();    
+    $('#cacherefresh').html(content).show();
 }
 
 function test_cacherefresh() {
-    var all_cards = _.map(NRDB.data.cards.find({indeck: {'$gt': 0}}), 'code'),
+    var all_cards = _.map(NRDB.data.cards.find({ indeck: { '$gt': 0 } }), 'code'),
         accepted_cards = [];
 
     // core set check
-    NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: 'core2'}).forEach(function (card) {
+    NRDB.data.cards.find({ indeck: { '$gt': 0 }, pack_code: 'core2' }).forEach(function (card) {
         if (card.indeck <= card.quantity) {
             accepted_cards.push(card.code);
         }
     });
 
     // terminal directive check
-    NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: 'td'}).forEach(function (card) {
+    NRDB.data.cards.find({ indeck: { '$gt': 0 }, pack_code: 'td' }).forEach(function (card) {
         if (card.indeck <= card.quantity) {
             accepted_cards.push(card.code);
         }
     });
 
-    // deluxe and last-two-cycles check   
-    var remaining_cards = NRDB.data.cards.find({indeck: {'$gt': 0}, pack_code: {'$ne': 'core2'}, code: {'$nin': accepted_cards}});
+    // deluxe and last-two-cycles check
+    var remaining_cards = NRDB.data.cards.find({
+        indeck: { '$gt': 0 },
+        pack_code: { '$ne': 'core2' },
+        code: { '$nin': accepted_cards },
+    });
     var packs = _.values(_.reduce(remaining_cards, function (acc, card) {
         if (!acc[card.pack.code])
-            acc[card.pack.code] = {pack: card.pack, count: 0};
+            acc[card.pack.code] = { pack: card.pack, count: 0 };
         acc[card.pack.code].count++;
         return acc;
     }, {})).sort(function (a, b) {
@@ -453,14 +490,14 @@ function test_cacherefresh() {
         'creation-and-control',
         'honor-and-profit',
         'order-and-chaos',
-        'data-and-destiny'
+        'data-and-destiny',
     ];
     var deluxe = _.find(packs, function (element) {
         return _.includes(all_deluxes, element.pack.cycle.code);
     });
 
-    var lastCycle = NRDB.data.packs.find({'date_release':{'$nee':null}},{'$orderBy':{'date_release':-1}})[0].cycle;
-    var allCycles = NRDB.data.cycles.find({size: {'$gt': 1}}, {'$orderBy':{'position':-1}});
+    var lastCycle = NRDB.data.packs.find({ 'date_release': { '$nee': null } }, { '$orderBy': { 'date_release': -1 } })[0].cycle;
+    var allCycles = NRDB.data.cycles.find({ size: { '$gt': 1 } }, { '$orderBy': { 'position': -1 } });
     var cycle = allCycles.shift();
     while (cycle.code !== lastCycle.code) {
         cycle = allCycles.shift();
@@ -479,25 +516,34 @@ function test_cacherefresh() {
     if (all_cards.length === accepted_cards.length)
         return true;
 
-    return false;    
+    return false;
 }
 
 function test_onesies() {
-    var all_cards = _.map(NRDB.data.cards.find({type_code: {'$ne': 'identity'}, indeck: {'$gt': 0}}), 'code'),
+    var all_cards = _.map(NRDB.data.cards.find({ type_code: { '$ne': 'identity' }, indeck: { '$gt': 0 } }), 'code'),
         accepted_cards = [];
 
     // core set check
-    NRDB.data.cards.find({type_code: {'$ne': 'identity'}, indeck: {'$gt': 0}, pack_code: 'core'}).forEach(function (card) {
+    NRDB.data.cards.find({
+        type_code: { '$ne': 'identity' },
+        indeck: { '$gt': 0 },
+        pack_code: 'core',
+    }).forEach(function (card) {
         if (card.indeck <= card.quantity) {
             accepted_cards.push(card.code);
         }
     });
 
     // deluxe and datapack check
-    var remaining_cards = NRDB.data.cards.find({type_code: {'$ne': 'identity'}, indeck: {'$gt': 0}, pack_code: {'$ne': 'core'}, code: {'$nin': accepted_cards}});
+    var remaining_cards = NRDB.data.cards.find({
+        type_code: { '$ne': 'identity' },
+        indeck: { '$gt': 0 },
+        pack_code: { '$ne': 'core' },
+        code: { '$nin': accepted_cards },
+    });
     var packs = _.values(_.reduce(remaining_cards, function (acc, card) {
         if (!acc[card.pack.code])
-            acc[card.pack.code] = {pack: card.pack, count: 0};
+            acc[card.pack.code] = { pack: card.pack, count: 0 };
         acc[card.pack.code].count++;
         return acc;
     }, {})).sort(function (a, b) {
@@ -525,20 +571,20 @@ function test_onesies() {
 
 function check_decksize() {
     DeckSize = _.reduce(
-            NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: {'$ne': 'identity'}}),
-            function (acc, card) {
-                return acc + card.indeck
-            },
-            0);
+        NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: { '$ne': 'identity' } }),
+        function (acc, card) {
+            return acc + card.indeck;
+        },
+        0);
     MinimumDeckSize = Identity.minimum_deck_size;
     $('#cardcount').html(DeckSize + " cards (min " + MinimumDeckSize + ")")[DeckSize < MinimumDeckSize ? 'addClass' : 'removeClass']("text-danger");
     if (Identity.side_code == 'corp') {
         AgendaPoints = _.reduce(
-                NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: 'agenda'}),
-                function (acc, card) {
-                    return acc + card.indeck * card.agenda_points
-                },
-                0);
+            NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'agenda' }),
+            function (acc, card) {
+                return acc + card.indeck * card.agenda_points;
+            },
+            0);
         var min = Math.floor(Math.max(DeckSize, MinimumDeckSize) / 5) * 2 + 2, max = min + 1;
         $('#agendapoints').html(AgendaPoints + " agenda points (between " + min + " and " + max + ")")[AgendaPoints < min || AgendaPoints > max ? 'addClass' : 'removeClass']("text-danger");
     } else {
@@ -562,7 +608,7 @@ function get_influence_cost_of_card_in_deck(card) {
             inf = (card.indeck - 1) * card.faction_cost;
         } else if (card.code === '10018') {
             // Mumba Temple: 15 or fewer ice
-            if (count_card_copies(NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: 'ice'})) <= 15) {
+            if (count_card_copies(NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'ice' })) <= 15) {
                 inf = 0;
             }
         } else if (card.code === '10019') {
@@ -572,17 +618,17 @@ function get_influence_cost_of_card_in_deck(card) {
             }
         } else if (card.code === '10038') {
             // PAD Factory: 3 PAD Campaign
-            if (count_card_copies(NRDB.data.cards.find({indeck: {'$gt': 0}, code: ['01109', '20128']})) === 3) {
+            if (count_card_copies(NRDB.data.cards.find({ indeck: { '$gt': 0 }, code: ['01109', '20128'] })) === 3) {
                 inf = 0;
             }
         } else if (card.code === '10076') {
             // Mumbad Virtual Tour: 7 or more assets
-            if (count_card_copies(NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: 'asset'})) >= 7) {
+            if (count_card_copies(NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'asset' })) >= 7) {
                 inf = 0;
             }
         } else if (card.keywords && card.keywords.match(/Alliance/)) {
             // 6 or more non-alliance cards of the same faction
-            var same_faction_cards = NRDB.data.cards.find({indeck: {'$gt': 0}, faction_code: card.faction_code});
+            var same_faction_cards = NRDB.data.cards.find({ indeck: { '$gt': 0 }, faction_code: card.faction_code });
             var alliance_count = 0;
             same_faction_cards.forEach(function (same_faction_card) {
                 if (same_faction_card.keywords && same_faction_card.keywords.match(/Alliance/))
@@ -596,30 +642,28 @@ function get_influence_cost_of_card_in_deck(card) {
     }
     return inf;
 }
+
 function check_influence(influenceSpent) {
+    var deckContent = NRDB.data.cards.find({ indeck: { '$gt': 0 } });
+
     InfluenceSpent = _.reduce(
-        NRDB.data.cards.find({indeck: {'$gt': 0}}),
+        deckContent,
         function (acc, card) {
-            var inf = influenceSpent[card.code] || 0;
-            if(MWL && !MWL.global_penalty) {
-                inf += get_influence_penalty(card, card.indeck);
-            }
-            return acc + inf;
+            return acc + (influenceSpent[card.code] || 0) + get_universal_faction_cost(get_mwl_modified_card(card), card.indeck);
         }
-    , 0);
-    var influencePenalty = 0;
-    if(MWL && MWL.global_penalty) {
-        influencePenalty = _.reduce(
-            NRDB.data.cards.find({indeck: {'$gt': 0}}),
-            function (acc, card) {
-                return acc + get_influence_penalty(card, card.indeck)
-            }
         , 0);
-    }
+
+    var influencePenalty = _.reduce(
+        deckContent,
+        function (acc, card) {
+            return acc + get_influence_penalty(get_mwl_modified_card(card), card.indeck);
+        }
+        , 0);
+
     var displayInfluenceLimit = InfluenceLimit,
-            remainingInfluence = Math.max(1, InfluenceLimit - influencePenalty),
-            availableInfluence = remainingInfluence - InfluenceSpent;
-    if (InfluenceLimit != remainingInfluence) {
+        remainingInfluence = Math.max(1, InfluenceLimit - influencePenalty),
+        availableInfluence = remainingInfluence - InfluenceSpent;
+    if (InfluenceLimit !== remainingInfluence) {
         displayInfluenceLimit = InfluenceLimit + '-' + influencePenalty + '★=' + (InfluenceLimit - influencePenalty);
     }
     if (InfluenceLimit === Number.POSITIVE_INFINITY) {
@@ -627,6 +671,38 @@ function check_influence(influenceSpent) {
     }
     var isOver = remainingInfluence < InfluenceSpent;
     $('#influence').html(InfluenceSpent + " influence spent (max " + displayInfluenceLimit + ", available " + availableInfluence + ")")[isOver ? 'addClass' : 'removeClass']("text-danger");
+}
+
+function check_restricted() {
+    var nb_restricted = 0;
+    NRDB.data.cards.find({ indeck: { '$gt': 0 } }).forEach(function (card) {
+        var modified_card = get_mwl_modified_card(card);
+        if(modified_card.is_restricted) {
+            nb_restricted++;
+        }
+    });
+
+    if(nb_restricted > 1) {
+        $('#restricted').text('More than 1 restricted card included').show();
+    } else {
+        $('#restricted').text('').hide();
+    }
+}
+
+function check_deck_limit() {
+    var nb_violations = 0;
+    NRDB.data.cards.find({ indeck: { '$gt': 0 } }).forEach(function (card) {
+        var modified_card = get_mwl_modified_card(card);
+        if(modified_card.deck_limit < card.indeck) {
+            nb_violations++;
+        }
+    });
+
+    if(nb_violations > 0) {
+        $('#restricted').text('Too many copies of a limited card').show();
+    } else {
+        $('#restricted').text('').hide();
+    }
 }
 
 $(function () {
@@ -639,13 +715,14 @@ $(function () {
             return;
         var head = table.find('thead tr th');
         var toggle = $('<a href="#" class="pull-right small">hide</a>');
-        toggle.on({click: toggle_table});
+        toggle.on({ click: toggle_table });
         head.prepend(toggle);
     });
 
-    $('#oddsModal').on({change: oddsModalCalculator}, 'input');
+    $('#oddsModal').on({ change: oddsModalCalculator }, 'input');
 
-    $('body').on({click: function (event) {
+    $('body').on({
+        click: function (event) {
             var element = $(this);
             if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) {
                 event.stopPropagation();
@@ -653,14 +730,15 @@ $(function () {
             }
             if (NRDB.card_modal)
                 NRDB.card_modal.display_modal(event, element);
-        }}, '.card');
+        },
+    }, '.card');
 
     $('#filter-text-button').tooltip({
         html: true,
         container: 'body',
         placement: 'bottom',
         trigger: 'click',
-        title: "<h5>Smart filter syntax</h5><ul style=\"text-align:left\"><li>x: filters on text</li><li>a: flavor text</li><li>s: subtype</li><li>o: cost</li><li>v: agenda points</li><li>n: faction cost</li><li>p: strength</li><li>g: advancement cost</li><li>h: trash cost</li><li>u: uniqueness</li><li>y: quantity in pack</li></ul><code>s:\"code gate\" x:trace</code> to find code gates with trace<h5>In-text symbols</h5><ul style=\"text-align:left\"><li>[subroutine]</li><li>[credit]</li><li>[trash]</li><li>[click]</li><li>[recurring-credit]</li><li>[mu]</li><li>[link]</li><li>[anarch]</li><li>[criminal]</li><li>[shaper]</li><li>[jinteki]</li><li>[haas-bioroid]</li><li>[nbn]</li><li>[weyland-consortium]</li><li>&lt;trace&gt;</li><li>&lt;errata&gt;</li></ul>"
+        title: "<h5>Smart filter syntax</h5><ul style=\"text-align:left\"><li>x: filters on text</li><li>a: flavor text</li><li>s: subtype</li><li>o: cost</li><li>v: agenda points</li><li>n: faction cost</li><li>p: strength</li><li>g: advancement cost</li><li>h: trash cost</li><li>u: uniqueness</li><li>y: quantity in pack</li></ul><code>s:\"code gate\" x:trace</code> to find code gates with trace<h5>In-text symbols</h5><ul style=\"text-align:left\"><li>[subroutine]</li><li>[credit]</li><li>[trash]</li><li>[click]</li><li>[recurring-credit]</li><li>[mu]</li><li>[link]</li><li>[anarch]</li><li>[criminal]</li><li>[shaper]</li><li>[jinteki]</li><li>[haas-bioroid]</li><li>[nbn]</li><li>[weyland-consortium]</li><li>&lt;trace&gt;</li><li>&lt;errata&gt;</li></ul>",
     });
 });
 
@@ -691,7 +769,7 @@ var FactionColors = {
     "jinteki": "#DC143C",
     "nbn": "#FF8C00",
     "weyland-consortium": "#006400",
-    "neutral-corp": "#708090"
+    "neutral-corp": "#708090",
 };
 
 function build_bbcode(deck) {
@@ -700,12 +778,12 @@ function build_bbcode(deck) {
     lines.push("[b]" + SelectedDeck.name + "[/b]");
     lines.push("");
     lines.push('[url=https://netrunnerdb.com/' + NRDB.locale + '/card/'
-            + Identity.code
-            + ']'
-            + Identity.title
-            + '[/url] ('
-            + Identity.pack.name
-            + ")");
+        + Identity.code
+        + ']'
+        + Identity.title
+        + '[/url] ('
+        + Identity.pack.name
+        + ")");
 
     $('#deck-content > div > h5:visible, #deck-content > div > div > div').each(function (i, line) {
         switch ($(line).prop("tagName")) {
@@ -718,14 +796,14 @@ function build_bbcode(deck) {
                 var inf = $(line).find("span").text().trim();
                 var card = NRDB.data.cards.findById($(line).find('a.card').data('index'));
                 lines.push(qty + ' [url=https://netrunnerdb.com/' + NRDB.locale + '/card/'
-                        + card.code
-                        + ']'
-                        + card.title
-                        + '[/url] [i]('
-                        + card.pack.name
-                        + ")[/i] "
-                        + (inf ? '[color=' + FactionColors[card.faction_code] + ']' + inf + '[/color]' : '')
-                        );
+                    + card.code
+                    + ']'
+                    + card.title
+                    + '[/url] [i]('
+                    + card.pack.name
+                    + ")[/i] "
+                    + (inf ? '[color=' + FactionColors[card.faction_code] + ']' + inf + '[/color]' : '')
+                );
         }
     });
 
@@ -755,12 +833,12 @@ function build_markdown(deck) {
     lines.push("## " + SelectedDeck.name);
     lines.push("");
     lines.push('['
-            + Identity.title
-            + '](https://netrunnerdb.com/' + NRDB.locale + '/card/'
-            + Identity.code
-            + ') _('
-            + Identity.pack.name
-            + ")_");
+        + Identity.title
+        + '](https://netrunnerdb.com/' + NRDB.locale + '/card/'
+        + Identity.code
+        + ') _('
+        + Identity.pack.name
+        + ")_");
 
     $('#deck-content > div > h5:visible, #deck-content > div > div > div').each(function (i, line) {
         switch ($(line).prop("tagName")) {
@@ -773,14 +851,14 @@ function build_markdown(deck) {
                 var inf = $(line).find("span").text().trim();
                 var card = NRDB.data.cards.findById($(line).find('a.card').data('index'));
                 lines.push('* ' + qty + ' ['
-                        + card.title
-                        + '](https://netrunnerdb.com/' + NRDB.locale + '/card/'
-                        + card.code
-                        + ') _('
-                        + card.pack.name
-                        + ")_ "
-                        + inf
-                        );
+                    + card.title
+                    + '](https://netrunnerdb.com/' + NRDB.locale + '/card/'
+                    + card.code
+                    + ') _('
+                    + card.pack.name
+                    + ")_ "
+                    + inf
+                );
         }
     });
 
@@ -866,7 +944,7 @@ function export_jintekinet() {
 function make_cost_graph() {
     var costs = [];
 
-    NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: {'$ne': 'identity'}}).forEach(function (card) {
+    NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: { '$ne': 'identity' } }).forEach(function (card) {
         if (card.cost != null) {
             if (costs[card.cost] == null)
                 costs[card.cost] = [];
@@ -878,8 +956,14 @@ function make_cost_graph() {
 
     // costChart
     var cost_series = Identity.side_code === 'runner' ?
-            [{name: 'Event', data: []}, {name: 'Resource', data: []}, {name: 'Hardware', data: []}, {name: 'Program', data: []}]
-            : [{name: 'Operation', data: []}, {name: 'Upgrade', data: []}, {name: 'Asset', data: []}, {name: 'ICE', data: []}];
+        [{ name: 'Event', data: [] }, { name: 'Resource', data: [] }, { name: 'Hardware', data: [] }, {
+            name: 'Program',
+            data: [],
+        }]
+        : [{ name: 'Operation', data: [] }, { name: 'Upgrade', data: [] }, { name: 'Asset', data: [] }, {
+            name: 'ICE',
+            data: [],
+        }];
     var xAxis = [];
 
     for (var j = 0; j < costs.length; j++) {
@@ -894,36 +978,36 @@ function make_cost_graph() {
     $('#costChart').highcharts({
         colors: Identity.side_code === 'runner' ? ['#FFE66F', '#316861', '#97BF63', '#5863CC'] : ['#FFE66F', '#B22A95', '#FF55DA', '#30CCC8'],
         title: {
-            text: null
+            text: null,
         },
         credits: {
-            enabled: false
+            enabled: false,
         },
         chart: {
             type: 'column',
-            animation: false
+            animation: false,
         },
         xAxis: {
-            categories: xAxis
+            categories: xAxis,
         },
         yAxis: {
             title: {
-                text: null
+                text: null,
             },
             allowDecimals: false,
             minTickInterval: 1,
             minorTickInterval: 1,
-            endOnTick: false
+            endOnTick: false,
         },
         plotOptions: {
             column: {
-                stacking: 'normal'
+                stacking: 'normal',
             },
             series: {
-                animation: false
-            }
+                animation: false,
+            },
         },
-        series: cost_series
+        series: cost_series,
     });
 
 }
@@ -932,7 +1016,7 @@ function make_strength_graph() {
     var strengths = [];
     var ice_types = ['Barrier', 'Code Gate', 'Sentry', 'Other'];
 
-    NRDB.data.cards.find({indeck: {'$gt': 0}, type_code: {'$ne': 'identity'}}).forEach(function (card) {
+    NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: { '$ne': 'identity' } }).forEach(function (card) {
         if (card.strength != null) {
             if (strengths[card.strength] == null)
                 strengths[card.strength] = [];
@@ -952,7 +1036,7 @@ function make_strength_graph() {
     // strengthChart
     var strength_series = [];
     for (var i = 0; i < ice_types.length; i++)
-        strength_series.push({name: ice_types[i], data: []});
+        strength_series.push({ name: ice_types[i], data: [] });
     var xAxis = [];
 
     for (var j = 0; j < strengths.length; j++) {
@@ -967,36 +1051,36 @@ function make_strength_graph() {
     $('#strengthChart').highcharts({
         colors: ['#487BCC', '#B8EB59', '#FF6251', '#CCCCCC'],
         title: {
-            text: null
+            text: null,
         },
         credits: {
-            enabled: false
+            enabled: false,
         },
         chart: {
             type: 'column',
-            animation: false
+            animation: false,
         },
         xAxis: {
-            categories: xAxis
+            categories: xAxis,
         },
         yAxis: {
             title: {
-                text: null
+                text: null,
             },
             allowDecimals: false,
             minTickInterval: 1,
             minorTickInterval: 1,
-            endOnTick: false
+            endOnTick: false,
         },
         plotOptions: {
             column: {
-                stacking: 'normal'
+                stacking: 'normal',
             },
             series: {
-                animation: false
-            }
+                animation: false,
+            },
         },
-        series: strength_series
+        series: strength_series,
     });
 
 }
@@ -1019,7 +1103,7 @@ var binomial = {};
             return get_memo(n, k);
         }
         var r = 1,
-                n_o = n;
+            n_o = n;
         for (var d = 1; d <= k; d++) {
             if (memo_exists(n_o, d)) {
                 n--;
@@ -1032,12 +1116,15 @@ var binomial = {};
         }
         return r;
     };
+
     function memo_exists(n, k) {
         return (memo[n] != undefined && memo[n][k] != undefined);
     }
+
     function get_memo(n, k) {
         return memo[n][k];
     }
+
     function memoize(n, k, val) {
         if (memo[n] === undefined) {
             memo[n] = [];
@@ -1079,14 +1166,17 @@ var hypergeometric = {};
         }
         return r;
     };
+
     function memo_exists(k, N, K, n) {
         return (memo[k] != undefined && memo[k][N] != undefined && memo[k][N][K] != undefined && memo[k][N][K][n] != undefined);
     }
     ;
+
     function get_memo(k, N, K, n) {
         return memo[k][N][K][n];
     }
     ;
+
     function memoize(k, N, K, n, val) {
         if (memo[k] === undefined) {
             memo[k] = [];
@@ -1101,9 +1191,6 @@ var hypergeometric = {};
     }
     ;
 })(hypergeometric);
-
-
-
 
 
 /* my version of button.js, overriding twitter's */
@@ -1121,7 +1208,7 @@ var hypergeometric = {};
     };
 
     Button.DEFAULTS = {
-        loadingText: 'loading...'
+        loadingText: 'loading...',
     };
 
     Button.prototype.setState = function (state) {
