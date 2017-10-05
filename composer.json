@@ -4,11 +4,11 @@
 	"type" : "project",
 	"license" : "MIT",
 	"require" : {
-		"symfony/symfony" : "2.8.2",
+		"symfony/symfony" : "2.8.*",
 		"friendsofsymfony/oauth-server-bundle" : "1.4.2",
 		"gedmo/doctrine-extensions" : "2.3.*",
 		"symfony/swiftmailer-bundle" : "~2.3",
-		"friendsofsymfony/user-bundle" : "~2.0@dev",
+		"friendsofsymfony/user-bundle" : "2.0.*",
 		"doctrine/orm" : "~2.2,>=2.2.3",
 		"stof/doctrine-extensions-bundle" : "^1.2",
 		"symfony/assetic-bundle" : "^2.7",

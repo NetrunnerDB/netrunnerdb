@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2007705be5ad0257890fa5c8cd6c4e86",
+    "content-hash": "ac43aa03d0995214eb23cd17079ac350",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1144,16 +1144,16 @@
         },
         {
             "name": "friendsofsymfony/user-bundle",
-            "version": "dev-master",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "3fc7e36b37dda4bd41b5a5628c41afac26bcb6f4"
+                "reference": "4f92bfbb8742ac8cc195d0b34bf8ecd83b62404a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/3fc7e36b37dda4bd41b5a5628c41afac26bcb6f4",
-                "reference": "3fc7e36b37dda4bd41b5a5628c41afac26bcb6f4",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/4f92bfbb8742ac8cc195d0b34bf8ecd83b62404a",
+                "reference": "4f92bfbb8742ac8cc195d0b34bf8ecd83b62404a",
                 "shasum": ""
             },
             "require": {
@@ -1217,7 +1217,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2017-10-04T06:31:38+00:00"
+            "time": "2017-05-31T11:50:14+00:00"
         },
         {
             "name": "gedmo/doctrine-extensions",
@@ -2964,6 +2964,59 @@
             "time": "2017-01-02T19:04:26+00:00"
         },
         {
+            "name": "symfony/polyfill-apcu",
+            "version": "v1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-apcu.git",
+                "reference": "cec32398a973a9bfe9d2f94f4b5d5e186b40b698"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-apcu/zipball/cec32398a973a9bfe9d2f94f4b5d5e186b40b698",
+                "reference": "cec32398a973a9bfe9d2f94f4b5d5e186b40b698",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.5-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting apcu_* functions to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "apcu",
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2017-07-05T15:09:33+00:00"
+        },
+        {
             "name": "symfony/polyfill-intl-icu",
             "version": "v1.5.0",
             "source": {
@@ -3363,27 +3416,27 @@
         },
         {
             "name": "symfony/security-acl",
-            "version": "v2.8.0",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-acl.git",
-                "reference": "4a3f7327ad215242c78f6564ad4ea6d2db1b8347"
+                "reference": "053b49bf4aa333a392c83296855989bcf88ddad1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security-acl/zipball/4a3f7327ad215242c78f6564ad4ea6d2db1b8347",
-                "reference": "4a3f7327ad215242c78f6564ad4ea6d2db1b8347",
+                "url": "https://api.github.com/repos/symfony/security-acl/zipball/053b49bf4aa333a392c83296855989bcf88ddad1",
+                "reference": "053b49bf4aa333a392c83296855989bcf88ddad1",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.9",
-                "symfony/security-core": "~2.4|~3.0.0"
+                "php": ">=5.5.9",
+                "symfony/security-core": "~2.8|~3.0"
             },
             "require-dev": {
                 "doctrine/common": "~2.2",
                 "doctrine/dbal": "~2.2",
                 "psr/log": "~1.0",
-                "symfony/phpunit-bridge": "~2.7|~3.0.0"
+                "symfony/phpunit-bridge": "~2.8|~3.0"
             },
             "suggest": {
                 "doctrine/dbal": "For using the built-in ACL implementation",
@@ -3393,7 +3446,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "3.0-dev"
                 }
             },
             "autoload": {
@@ -3420,7 +3473,7 @@
             ],
             "description": "Symfony Security Component - ACL (Access Control List)",
             "homepage": "https://symfony.com",
-            "time": "2015-12-28T09:39:09+00:00"
+            "time": "2015-12-28T09:39:46+00:00"
         },
         {
             "name": "symfony/swiftmailer-bundle",
@@ -3483,22 +3536,24 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v2.8.2",
+            "version": "v2.8.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "f3e6a82bcbea4db3b56df08e491e20a1faae82b5"
+                "reference": "d512cc1c2c418f42c07b82d8b029e7a487be007f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/f3e6a82bcbea4db3b56df08e491e20a1faae82b5",
-                "reference": "f3e6a82bcbea4db3b56df08e491e20a1faae82b5",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/d512cc1c2c418f42c07b82d8b029e7a487be007f",
+                "reference": "d512cc1c2c418f42c07b82d8b029e7a487be007f",
                 "shasum": ""
             },
             "require": {
                 "doctrine/common": "~2.4",
+                "ext-xml": "*",
                 "php": ">=5.3.9",
                 "psr/log": "~1.0",
+                "symfony/polyfill-apcu": "~1.1",
                 "symfony/polyfill-intl-icu": "~1.0",
                 "symfony/polyfill-mbstring": "~1.0",
                 "symfony/polyfill-php54": "~1.0",
@@ -3506,11 +3561,12 @@
                 "symfony/polyfill-php56": "~1.0",
                 "symfony/polyfill-php70": "~1.0",
                 "symfony/polyfill-util": "~1.0",
-                "symfony/security-acl": "~2.7",
-                "twig/twig": "~1.23|~2.0"
+                "symfony/security-acl": "~2.7|~3.0.0",
+                "twig/twig": "~1.34|~2.4"
             },
             "conflict": {
-                "phpdocumentor/reflection": "<1.0.7"
+                "phpdocumentor/reflection": "<1.0.7",
+                "phpunit/phpunit": "<4.8.35|<5.4.3,>=5.0"
             },
             "replace": {
                 "symfony/asset": "self.version",
@@ -3565,10 +3621,12 @@
                 "doctrine/dbal": "~2.4",
                 "doctrine/doctrine-bundle": "~1.2",
                 "doctrine/orm": "~2.4,>=2.4.5",
-                "egulias/email-validator": "~1.2",
+                "egulias/email-validator": "~1.2,>=1.2.1",
                 "monolog/monolog": "~1.11",
-                "ocramius/proxy-manager": "~0.4|~1.0",
-                "phpdocumentor/reflection": "^1.0.7"
+                "ocramius/proxy-manager": "~0.4|~1.0|~2.0",
+                "phpdocumentor/reflection": "^1.0.7",
+                "sensio/framework-extra-bundle": "^3.0.2",
+                "symfony/phpunit-bridge": "~3.2"
             },
             "type": "library",
             "extra": {
@@ -3612,7 +3670,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2016-01-14T12:01:11+00:00"
+            "time": "2017-08-28T19:21:56+00:00"
         },
         {
             "name": "twig/extensions",
@@ -3828,9 +3886,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "friendsofsymfony/user-bundle": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
