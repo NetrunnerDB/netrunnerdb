@@ -499,6 +499,10 @@ ul.rulings-list blockquote {
     padding: 5px 10px;
 }
 
+#restricted {
+	color: red;
+}
+
 /******** fix for twitter typehead + bootstrap input-group-btn ***********/
 
 .input-group .twitter-typeahead {
