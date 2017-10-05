@@ -3,7 +3,6 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Card;
-use AppBundle\Entity\Mwlslot;
 use AppBundle\Entity\Prebuiltslot;
 use AppBundle\Entity\Rotation;
 use DateTime;
@@ -29,23 +28,23 @@ class ImportStdCommand extends ContainerAwareCommand
 
     /* @var $output OutputInterface */
     private $output;
+
     private $collections = [];
 
-    protected function configure ()
+    protected function configure()
     {
         $this
-                ->setName('nrdb:import:std')
-                ->setDescription('Import std data file in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
-                ->addArgument('path', InputArgument::REQUIRED, 'Path to the repository')
-                ->addOption('force', 'f', InputOption::VALUE_NONE, "Yes to all questions")
-        ;
+            ->setName('nrdb:import:std')
+            ->setDescription('Import std data file in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
+            ->addArgument('path', InputArgument::REQUIRED, 'Path to the repository')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, "Yes to all questions");
     }
 
-    protected function execute (InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $path = $input->getArgument('path');
         $force = $input->getOption('force');
-        
+
         $this->em = $this->getContainer()->get('doctrine')->getEntityManager();
         $this->output = $output;
 
@@ -57,9 +56,9 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing Sides...");
         $sidesFileInfo = $this->getFileInfo($path, 'sides.json');
         $imported = $this->importSidesJsonFile($sidesFileInfo);
-        if(!$force && count($imported)) {
+        if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-            if(!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question)) {
                 die();
             }
         }
@@ -72,9 +71,9 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing Factions...");
         $factionsFileInfo = $this->getFileInfo($path, 'factions.json');
         $imported = $this->importFactionsJsonFile($factionsFileInfo);
-        if(!$force && count($imported)) {
+        if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-            if(!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question)) {
                 die();
             }
         }
@@ -87,9 +86,9 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing Types...");
         $typesFileInfo = $this->getFileInfo($path, 'types.json');
         $imported = $this->importTypesJsonFile($typesFileInfo);
-        if(!$force && count($imported)) {
+        if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-            if(!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question)) {
                 die();
             }
         }
@@ -102,9 +101,9 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing Cycles...");
         $cyclesFileInfo = $this->getFileInfo($path, 'cycles.json');
         $imported = $this->importCyclesJsonFile($cyclesFileInfo);
-        if(!$force && count($imported)) {
+        if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-            if(!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question)) {
                 die();
             }
         }
@@ -117,9 +116,9 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing Packs...");
         $packsFileInfo = $this->getFileInfo($path, 'packs.json');
         $imported = $this->importPacksJsonFile($packsFileInfo);
-        if(!$force && count($imported)) {
+        if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-            if(!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question)) {
                 die();
             }
         }
@@ -132,12 +131,12 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing Cards...");
         $fileSystemIterator = $this->getFileSystemIterator($path);
         $imported = [];
-        foreach($fileSystemIterator as $fileinfo) {
+        foreach ($fileSystemIterator as $fileinfo) {
             $imported = array_merge($imported, $this->importCardsJsonFile($fileinfo));
         }
-        if(!$force && count($imported)) {
+        if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-            if(!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question)) {
                 die();
             }
         }
@@ -149,9 +148,9 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing Prebuilts...");
         $prebuiltFileInfo = $this->getFileInfo($path, 'prebuilts.json');
         $imported = $this->importPrebuiltJsonFile($prebuiltFileInfo);
-        if(!$force && count($imported)) {
+        if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-            if(!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question)) {
                 die();
             }
         }
@@ -163,9 +162,9 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing MWL...");
         $mwlFileInfo = $this->getFileInfo($path, 'mwl.json');
         $imported = $this->importMwlJsonFile($mwlFileInfo);
-        if(!$force && count($imported)) {
+        if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-            if(!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question)) {
                 die();
             }
         }
@@ -177,9 +176,9 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Importing Rotation...");
         $mwlFileInfo = $this->getFileInfo($path, 'rotations.json');
         $imported = $this->importRotationJsonFile($mwlFileInfo);
-        if(!$force && count($imported)) {
+        if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
-            if(!$helper->ask($input, $output, $question)) {
+            if (!$helper->ask($input, $output, $question)) {
                 die();
             }
         }
@@ -187,17 +186,17 @@ class ImportStdCommand extends ContainerAwareCommand
         $output->writeln("Done.");
     }
 
-    protected function importSidesJsonFile (SplFileInfo $fileinfo)
+    protected function importSidesJsonFile(SplFileInfo $fileinfo)
     {
         $result = [];
 
         $list = $this->getDataFromFile($fileinfo);
-        foreach($list as $data) {
+        foreach ($list as $data) {
             $side = $this->getEntityFromData('AppBundle\\Entity\\Side', $data, [
                 'code',
-                'name'
-                    ], [], []);
-            if($side) {
+                'name',
+            ], [], []);
+            if ($side) {
                 $result[] = $side;
                 $this->em->persist($side);
             }
@@ -206,21 +205,21 @@ class ImportStdCommand extends ContainerAwareCommand
         return $result;
     }
 
-    protected function importFactionsJsonFile (SplFileInfo $fileinfo)
+    protected function importFactionsJsonFile(SplFileInfo $fileinfo)
     {
         $result = [];
 
         $list = $this->getDataFromFile($fileinfo);
-        foreach($list as $data) {
+        foreach ($list as $data) {
             $faction = $this->getEntityFromData('AppBundle\\Entity\\Faction', $data, [
                 'code',
                 'name',
                 'color',
-                'is_mini'
-                    ], [
-                'side_code'
-                    ], []);
-            if($faction) {
+                'is_mini',
+            ], [
+                'side_code',
+            ], []);
+            if ($faction) {
                 $result[] = $faction;
                 $this->em->persist($faction);
             }
@@ -229,21 +228,21 @@ class ImportStdCommand extends ContainerAwareCommand
         return $result;
     }
 
-    protected function importTypesJsonFile (SplFileInfo $fileinfo)
+    protected function importTypesJsonFile(SplFileInfo $fileinfo)
     {
         $result = [];
 
         $list = $this->getDataFromFile($fileinfo);
-        foreach($list as $data) {
+        foreach ($list as $data) {
             $type = $this->getEntityFromData('AppBundle\\Entity\\Type', $data, [
                 'code',
                 'name',
                 'position',
-                'is_subtype'
-                    ], [
-                'side_code'
-                    ], []);
-            if($type) {
+                'is_subtype',
+            ], [
+                'side_code',
+            ], []);
+            if ($type) {
                 $result[] = $type;
                 $this->em->persist($type);
             }
@@ -252,20 +251,20 @@ class ImportStdCommand extends ContainerAwareCommand
         return $result;
     }
 
-    protected function importCyclesJsonFile (SplFileInfo $fileinfo)
+    protected function importCyclesJsonFile(SplFileInfo $fileinfo)
     {
         $result = [];
 
         $cyclesData = $this->getDataFromFile($fileinfo);
-        foreach($cyclesData as $cycleData) {
+        foreach ($cyclesData as $cycleData) {
             $cycle = $this->getEntityFromData('AppBundle\Entity\Cycle', $cycleData, [
                 'code',
                 'name',
                 'position',
                 'size',
-                'rotated'
-                    ], [], []);
-            if($cycle) {
+                'rotated',
+            ], [], []);
+            if ($cycle) {
                 $result[] = $cycle;
                 $this->em->persist($cycle);
             }
@@ -274,22 +273,22 @@ class ImportStdCommand extends ContainerAwareCommand
         return $result;
     }
 
-    protected function importPacksJsonFile (SplFileInfo $fileinfo)
+    protected function importPacksJsonFile(SplFileInfo $fileinfo)
     {
         $result = [];
 
         $packsData = $this->getDataFromFile($fileinfo);
-        foreach($packsData as $packData) {
+        foreach ($packsData as $packData) {
             $pack = $this->getEntityFromData('AppBundle\Entity\Pack', $packData, [
                 'code',
                 'name',
                 'position',
                 'size',
-                'date_release'
-                    ], [
-                'cycle_code'
-                    ], []);
-            if($pack) {
+                'date_release',
+            ], [
+                'cycle_code',
+            ], []);
+            if ($pack) {
                 $result[] = $pack;
                 $this->em->persist($pack);
             }
@@ -298,40 +297,40 @@ class ImportStdCommand extends ContainerAwareCommand
         return $result;
     }
 
-    protected function importCardsJsonFile (SplFileInfo $fileinfo)
+    protected function importCardsJsonFile(SplFileInfo $fileinfo)
     {
         $result = [];
 
         $code = $fileinfo->getBasename('.json');
 
         $pack = $this->em->getRepository('AppBundle:Pack')->findOneBy(['code' => $code]);
-        if(!$pack)
+        if (!$pack)
             throw new Exception("Unable to find Pack [$code]");
 
         $cardsData = $this->getDataFromFile($fileinfo);
-        foreach($cardsData as $cardData) {
+        foreach ($cardsData as $cardData) {
             $card = $this->getEntityFromData('AppBundle\Entity\Card', $cardData, [
                 'code',
                 'deck_limit',
                 'position',
                 'quantity',
                 'title',
-                'uniqueness'
-                    ], [
+                'uniqueness',
+            ], [
                 'faction_code',
                 'pack_code',
                 'side_code',
-                'type_code'
-                    ], [
+                'type_code',
+            ], [
                 'illustrator',
                 'flavor',
                 'keywords',
                 'text',
                 'cost',
                 'faction_cost',
-                'trash_cost'
+                'trash_cost',
             ]);
-            if($card) {
+            if ($card) {
                 $result[] = $card;
                 $this->em->persist($card);
             }
@@ -340,25 +339,24 @@ class ImportStdCommand extends ContainerAwareCommand
         return $result;
     }
 
-    protected function importPrebuiltJsonFile (SplFileInfo $fileinfo)
+    protected function importPrebuiltJsonFile(SplFileInfo $fileinfo)
     {
         $result = [];
 
-        $prebuiltData = $this->getDataFromFile($fileinfo);
-        foreach($prebuiltData as $prebuiltData) {
+        foreach ($this->getDataFromFile($fileinfo) as $prebuiltData) {
             $prebuilt = $this->getEntityFromData('AppBundle\Entity\Prebuilt', $prebuiltData, [
                 'code',
                 'name',
                 'date_release',
-                'position'
-                    ], [], []);
-            if($prebuilt) {
+                'position',
+            ], [], []);
+            if ($prebuilt) {
                 $result[] = $prebuilt;
                 $this->em->persist($prebuilt);
 
-                foreach($prebuiltData['cards'] as $card_code => $quantity) {
+                foreach ($prebuiltData['cards'] as $card_code => $quantity) {
                     $card = $this->em->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
-                    if(!$card)
+                    if (!$card)
                         continue;
                     $prebuiltslot = new Prebuiltslot();
                     $prebuiltslot->setCard($card);
@@ -366,7 +364,7 @@ class ImportStdCommand extends ContainerAwareCommand
                     $prebuiltslot->setPrebuilt($prebuilt);
                     $this->em->persist($prebuiltslot);
 
-                    if($card->getType()->getCode() === 'identity') {
+                    if ($card->getType()->getCode() === 'identity') {
                         $prebuilt->setIdentity($card);
                         $prebuilt->setFaction($card->getFaction());
                         $prebuilt->setSide($card->getFaction()->getSide());
@@ -378,55 +376,42 @@ class ImportStdCommand extends ContainerAwareCommand
         return $result;
     }
 
-    protected function importMwlJsonFile (SplFileInfo $fileinfo)
+    protected function importMwlJsonFile(SplFileInfo $fileinfo)
     {
         $result = [];
 
-        $mwlData = $this->getDataFromFile($fileinfo);
-        foreach($mwlData as $mwlData) {
+        foreach ($this->getDataFromFile($fileinfo) as $mwlData) {
             $mwl = $this->getEntityFromData('AppBundle\Entity\Mwl', $mwlData, [
                 'code',
                 'name',
-                'global_penalty',
-                'date_start'
-                    ], [], []);
-            if($mwl) {
+                'cards',
+            ], [], []);
+            if ($mwl) {
                 $result[] = $mwl;
                 $this->em->persist($mwl);
-
-                foreach($mwlData['cards'] as $card_code => $penalty) {
-                    $card = $this->em->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
-                    if(!$card)
-                        continue;
-                    $mwlslot = new Mwlslot();
-                    $mwlslot->setCard($card);
-                    $mwlslot->setPenalty($penalty);
-                    $mwlslot->setMwl($mwl);
-                    $this->em->persist($mwlslot);
-                }
             }
         }
 
         return $result;
     }
 
-    protected function importRotationJsonFile (SplFileInfo $fileinfo)
+    protected function importRotationJsonFile(SplFileInfo $fileinfo)
     {
         $result = [];
 
         $data = $this->getDataFromFile($fileinfo);
-        foreach($data as $rotationData) {
+        foreach ($data as $rotationData) {
             /** @var Rotation $rotation */
             $rotation = $this->getEntityFromData('AppBundle\Entity\Rotation', $rotationData, [
                 'code',
                 'name',
-                'date_start'
+                'date_start',
             ], [], []);
-            if($rotation) {
+            if ($rotation) {
                 $result[] = $rotation;
-                foreach($rotationData['cycles'] as $cycle_code) {
+                foreach ($rotationData['cycles'] as $cycle_code) {
                     $cycle = $this->em->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
-                    if(!$cycle)
+                    if (!$cycle)
                         continue;
                     $rotation->addCycle($cycle);
                 }
@@ -437,7 +422,7 @@ class ImportStdCommand extends ContainerAwareCommand
         return $result;
     }
 
-    protected function copyFieldValueToEntity ($entity, $entityName, $fieldName, $newJsonValue)
+    protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
     {
         $metadata = $this->em->getClassMetadata($entityName);
         $type = $metadata->fieldMappings[$fieldName]['type'];
@@ -446,53 +431,51 @@ class ImportStdCommand extends ContainerAwareCommand
         $newTypedValue = $newJsonValue;
 
         // current value, by default the json, serialized value is the same as what's in the entity
-        $getter = 'get' . ucfirst($fieldName);
+        $getter = 'get'.ucfirst($fieldName);
         $currentJsonValue = $currentTypedValue = $entity->$getter();
 
         // if the field is a data, the default assumptions above are wrong
-        if(in_array($type, ['date', 'datetime'])) {
-            if($newJsonValue !== null) {
+        if (in_array($type, ['date', 'datetime'])) {
+            if ($newJsonValue !== null) {
                 $newTypedValue = new DateTime($newJsonValue);
             }
-            if($currentTypedValue !== null) {
-                switch($type) {
+            if ($currentTypedValue !== null) {
+                switch ($type) {
                     case 'date': {
-                            $currentJsonValue = $currentTypedValue->format('Y-m-d');
-                            break;
-                        }
+                        $currentJsonValue = $currentTypedValue->format('Y-m-d');
+                        break;
+                    }
                     case 'datetime': {
-                            $currentJsonValue = $currentTypedValue->format('Y-m-d H:i:s');
-                        }
+                        $currentJsonValue = $currentTypedValue->format('Y-m-d H:i:s');
+                    }
                 }
             }
         }
 
         $different = ($currentJsonValue !== $newJsonValue);
-        if($different) {
-            $this->output->writeln("Changing the <info>$fieldName</info> of <info>" . $entity->toString() . "</info>");
-            $this->output->writeln("    from: " . $currentJsonValue);
-            $this->output->writeln("     to : " . $newJsonValue);
+        if ($different) {
+            $this->output->writeln("Changing the <info>$fieldName</info> of <info>".$entity->toString()."</info>");
 
-            $setter = 'set' . ucfirst($fieldName);
+            $setter = 'set'.ucfirst($fieldName);
             $entity->$setter($newTypedValue);
         }
     }
 
-    protected function copyKeyToEntity ($entity, $entityName, $data, $key, $isMandatory = TRUE)
+    protected function copyKeyToEntity($entity, $entityName, $data, $key, $isMandatory = true)
     {
         $metadata = $this->em->getClassMetadata($entityName);
 
-        if(!key_exists($key, $data)) {
-            if($isMandatory) {
-                throw new Exception("Missing key [$key] in " . json_encode($data));
+        if (!key_exists($key, $data)) {
+            if ($isMandatory) {
+                throw new Exception("Missing key [$key] in ".json_encode($data));
             } else {
                 $data[$key] = null;
             }
         }
         $value = $data[$key];
 
-        if(!key_exists($key, $metadata->fieldNames)) {
-            throw new Exception("Invalid key [$key] in " . json_encode($data));
+        if (!key_exists($key, $metadata->fieldNames)) {
+            throw new Exception("Invalid key [$key] in ".json_encode($data));
         }
         $fieldName = $metadata->fieldNames[$key];
 
@@ -500,79 +483,79 @@ class ImportStdCommand extends ContainerAwareCommand
     }
 
     /**
-     * 
+     *
      * @param string $entityName
-     * @param array $data
-     * @param array $mandatoryKeys
-     * @param array $foreignKeys
-     * @param array $optionalKeys
+     * @param array  $data
+     * @param array  $mandatoryKeys
+     * @param array  $foreignKeys
+     * @param array  $optionalKeys
      * @throws Exception
      * @return object
      */
-    protected function getEntityFromData ($entityName, $data, $mandatoryKeys, $foreignKeys, $optionalKeys)
+    protected function getEntityFromData($entityName, $data, $mandatoryKeys, $foreignKeys, $optionalKeys)
     {
-        if(!key_exists('code', $data)) {
-            throw new Exception("Missing key [code] in " . json_encode($data));
+        if (!key_exists('code', $data)) {
+            throw new Exception("Missing key [code] in ".json_encode($data));
         }
 
         $entity = $this->em->getRepository($entityName)->findOneBy(['code' => $data['code']]);
-        if(!$entity) {
+        if (!$entity) {
             $entity = new $entityName();
         }
         $orig = $entity->serialize();
 
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($entity, $entityName, $data, $key, TRUE);
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($entity, $entityName, $data, $key, true);
         }
 
-        foreach($optionalKeys as $key) {
-            $this->copyKeyToEntity($entity, $entityName, $data, $key, FALSE);
+        foreach ($optionalKeys as $key) {
+            $this->copyKeyToEntity($entity, $entityName, $data, $key, false);
         }
 
-        foreach($foreignKeys as $key) {
+        foreach ($foreignKeys as $key) {
             $foreignEntityShortName = ucfirst(str_replace('_code', '', $key));
 
-            if(!key_exists($key, $data)) {
-                throw new Exception("Missing key [$key] in " . json_encode($data));
+            if (!key_exists($key, $data)) {
+                throw new Exception("Missing key [$key] in ".json_encode($data));
             }
 
             $foreignCode = $data[$key];
-            if($foreignCode === null) {
+            if ($foreignCode === null) {
                 continue;
             }
-            if(!key_exists($foreignEntityShortName, $this->collections)) {
-                throw new Exception("No collection for [$foreignEntityShortName] in " . json_encode($data));
+            if (!key_exists($foreignEntityShortName, $this->collections)) {
+                throw new Exception("No collection for [$foreignEntityShortName] in ".json_encode($data));
             }
-            if(!key_exists($foreignCode, $this->collections[$foreignEntityShortName])) {
-                throw new Exception("Invalid code [$foreignCode] for key [$key] in " . json_encode($data));
+            if (!key_exists($foreignCode, $this->collections[$foreignEntityShortName])) {
+                throw new Exception("Invalid code [$foreignCode] for key [$key] in ".json_encode($data));
             }
             $foreignEntity = $this->collections[$foreignEntityShortName][$foreignCode];
 
-            $getter = 'get' . $foreignEntityShortName;
-            if(!$entity->$getter() || $entity->$getter()->getId() !== $foreignEntity->getId()) {
-                $this->output->writeln("Changing the <info>$key</info> of <info>" . $entity->toString() . "</info>");
-                $setter = 'set' . $foreignEntityShortName;
+            $getter = 'get'.$foreignEntityShortName;
+            if (!$entity->$getter() || $entity->$getter()->getId() !== $foreignEntity->getId()) {
+                $this->output->writeln("Changing the <info>$key</info> of <info>".$entity->toString()."</info>");
+                $setter = 'set'.$foreignEntityShortName;
                 $entity->$setter($foreignEntity);
             }
         }
 
         // special case for Card
-        if($entityName === 'AppBundle\Entity\Card') {
+        if ($entityName === 'AppBundle\Entity\Card') {
             // calling a function whose name depends on the type_code
-            $functionName = 'import' . $entity->getType()->getName() . 'Data';
+            $functionName = 'import'.$entity->getType()->getName().'Data';
             $this->$functionName($entity, $data);
         }
 
         $newer = $entity->serialize();
 
         // special case for Mwl
-        if($entityName === 'AppBundle\Entity\Mwl') {
+        if ($entityName === 'AppBundle\Entity\Mwl') {
             $newer['cards'] = $data['cards'];
             unset($newer['active']);
             unset($orig['active']);
         }
 
-        if(!$this->deepArrayEquality($newer, $orig))
+        if (!$this->deepArrayEquality($newer, $orig))
             return $entity;
     }
 
@@ -581,9 +564,10 @@ class ImportStdCommand extends ContainerAwareCommand
      * @param array $data
      * @return string
      */
-    protected function uniquelyEncodeJson ($data)
+    protected function uniquelyEncodeJson($data)
     {
         ksort($data);
+
         return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
@@ -593,215 +577,215 @@ class ImportStdCommand extends ContainerAwareCommand
      * @param unknown $array2
      * @return boolean
      */
-    protected function deepArrayEquality ($array1, $array2)
+    protected function deepArrayEquality($array1, $array2)
     {
         return $this->uniquelyEncodeJson($array1) === $this->uniquelyEncodeJson($array2);
     }
 
-    protected function importAgendaData (Card $card, $data)
+    protected function importAgendaData(Card $card, $data)
     {
         $mandatoryKeys = [
             'advancement_cost',
-            'agenda_points'
+            'agenda_points',
         ];
 
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
         }
     }
 
-    protected function importAssetData (Card $card, $data)
+    protected function importAssetData(Card $card, $data)
     {
         $mandatoryKeys = [
             'cost',
             'faction_cost',
-            'trash_cost'
+            'trash_cost',
         ];
 
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
         }
     }
 
-    protected function importEventData (Card $card, $data)
-    {
-        $mandatoryKeys = [
-            'cost',
-            'faction_cost'
-        ];
-
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
-        }
-    }
-
-    protected function importHardwareData (Card $card, $data)
-    {
-        $mandatoryKeys = [
-            'cost',
-            'faction_cost'
-        ];
-
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
-        }
-    }
-
-    protected function importICEData (Card $card, $data)
+    protected function importEventData(Card $card, $data)
     {
         $mandatoryKeys = [
             'cost',
             'faction_cost',
-            'strength'
         ];
 
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
         }
     }
 
-    protected function importIdentityData (Card $card, $data)
+    protected function importHardwareData(Card $card, $data)
     {
         $mandatoryKeys = [
-            'minimum_deck_size'
+            'cost',
+            'faction_cost',
         ];
 
-        if($card->getPack()->getCode() !== 'draft') {
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
+        }
+    }
+
+    protected function importICEData(Card $card, $data)
+    {
+        $mandatoryKeys = [
+            'cost',
+            'faction_cost',
+            'strength',
+        ];
+
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
+        }
+    }
+
+    protected function importIdentityData(Card $card, $data)
+    {
+        $mandatoryKeys = [
+            'minimum_deck_size',
+        ];
+
+        if ($card->getPack()->getCode() !== 'draft') {
             $mandatoryKeys[] = 'influence_limit';
         }
 
-        if($card->getSide()->getCode() === 'runner') {
+        if ($card->getSide()->getCode() === 'runner') {
             $mandatoryKeys[] = 'base_link';
         }
 
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
         }
     }
 
-    protected function importOperationData (Card $card, $data)
+    protected function importOperationData(Card $card, $data)
     {
         $mandatoryKeys = [
             'cost',
-            'faction_cost'
+            'faction_cost',
         ];
 
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
         }
     }
 
-    protected function importProgramData (Card $card, $data)
+    protected function importProgramData(Card $card, $data)
     {
         $mandatoryKeys = [
             'cost',
             'memory_cost',
-            'faction_cost'
+            'faction_cost',
         ];
 
-        if(strstr($card->getKeywords(), 'Icebreaker') !== FALSE) {
+        if (strstr($card->getKeywords(), 'Icebreaker') !== false) {
             $mandatoryKeys[] = 'strength';
         }
 
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
         }
     }
 
-    protected function importResourceData (Card $card, $data)
-    {
-        $mandatoryKeys = [
-            'cost',
-            'faction_cost'
-        ];
-
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
-        }
-    }
-
-    protected function importUpgradeData (Card $card, $data)
+    protected function importResourceData(Card $card, $data)
     {
         $mandatoryKeys = [
             'cost',
             'faction_cost',
-            'trash_cost'
         ];
 
-        foreach($mandatoryKeys as $key) {
-            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, TRUE);
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
         }
     }
 
-    protected function getDataFromFile (SplFileInfo $fileinfo)
+    protected function importUpgradeData(Card $card, $data)
+    {
+        $mandatoryKeys = [
+            'cost',
+            'faction_cost',
+            'trash_cost',
+        ];
+
+        foreach ($mandatoryKeys as $key) {
+            $this->copyKeyToEntity($card, 'AppBundle\Entity\Card', $data, $key, true);
+        }
+    }
+
+    protected function getDataFromFile(SplFileInfo $fileinfo)
     {
 
         $file = $fileinfo->openFile('r');
         $file->setFlags(SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
 
         $lines = [];
-        foreach($file as $line) {
-            if($line !== false)
+        foreach ($file as $line) {
+            if ($line !== false)
                 $lines[] = $line;
         }
         $content = implode('', $lines);
 
         $data = json_decode($content, true);
 
-        if($data === null) {
-            throw new Exception("File [" . $fileinfo->getPathname() . "] contains incorrect JSON (error code " . json_last_error() . ")");
+        if ($data === null) {
+            throw new Exception("File [".$fileinfo->getPathname()."] contains incorrect JSON (error code ".json_last_error().")");
         }
 
         return $data;
     }
 
-    protected function getFileInfo ($path, $filename)
+    protected function getFileInfo($path, $filename)
     {
         $fs = new Filesystem();
 
-        if(!$fs->exists($path)) {
+        if (!$fs->exists($path)) {
             throw new Exception("No repository found at [$path]");
         }
 
         $filepath = "$path/$filename";
 
-        if(!$fs->exists($filepath)) {
+        if (!$fs->exists($filepath)) {
             throw new Exception("No $filename file found at [$path]");
         }
 
         return new SplFileInfo($filepath);
     }
 
-    protected function getFileSystemIterator ($path)
+    protected function getFileSystemIterator($path)
     {
         $fs = new Filesystem();
 
-        if(!$fs->exists($path)) {
+        if (!$fs->exists($path)) {
             throw new Exception("No repository found at [$path]");
         }
 
         $directory = 'pack';
 
-        if(!$fs->exists("$path/$directory")) {
+        if (!$fs->exists("$path/$directory")) {
             throw new Exception("No '$directory' directory found at [$path]");
         }
 
         $iterator = new GlobIterator("$path/$directory/*.json");
 
-        if(!$iterator->count()) {
+        if (!$iterator->count()) {
             throw new Exception("No json file found at [$path/set]");
         }
 
         return $iterator;
     }
 
-    protected function loadCollection ($entityShortName)
+    protected function loadCollection($entityShortName)
     {
         $this->collections[$entityShortName] = [];
 
-        $entities = $this->em->getRepository('AppBundle:' . $entityShortName)->findAll();
+        $entities = $this->em->getRepository('AppBundle:'.$entityShortName)->findAll();
 
-        foreach($entities as $entity) {
+        foreach ($entities as $entity) {
             $this->collections[$entityShortName][$entity->getCode()] = $entity;
         }
     }

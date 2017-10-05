@@ -2,13 +2,6 @@ AppBundle\Entity\Mwl:
     type: entity
     table: mwl
     oneToMany:
-        slots:
-            targetEntity: Mwlslot
-            mappedBy: mwl
-            cascade: ["persist","remove"]
-        decks:
-            targetEntity: Deck
-            mappedBy: mwl
         legalities:
             targetEntity: Legality
             mappedBy: mwl
@@ -26,9 +19,6 @@ AppBundle\Entity\Mwl:
         name:
             type: string
             length: 255
-        globalPenalty:
-            type: boolean
-            column: global_penalty
         dateCreation:
             type: datetime
             column: date_creation
@@ -47,4 +37,6 @@ AppBundle\Entity\Mwl:
             column: date_start
         active:
             type: boolean
+        cards:
+            type: json_array
     lifecycleCallbacks: {  }

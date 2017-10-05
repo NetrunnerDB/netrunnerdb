@@ -7,33 +7,6 @@ namespace AppBundle\Entity;
  */
 class Mwl implements \Serializable
 {
-	public function toString() {
-		return $this->name;
-	}
-	
-	public function serialize() {
-		$cards = [];
-		foreach($this->slots as $slot) {
-			$cards[$slot->getCard()->getCode()] = $slot->getPenalty();
-		}
-	
-		return  [
-				'id' => $this->id,
-				'date_creation' => $this->dateCreation ? $this->dateCreation->format('c') : null,
-				'date_update' => $this->dateUpdate ? $this->dateUpdate->format('c') : null,
-				'code' => $this->code,
-				'name' => $this->name,
-				'active' => $this->active,
-				'date_start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
-                                'global_penalty' => $this->globalPenalty,
-				'cards' => $cards
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
     /**
      * @var integer
      */
@@ -48,12 +21,7 @@ class Mwl implements \Serializable
      * @var string
      */
     private $name;
-    
-    /**
-     * @var boolean
-     */
-    private $globalPenalty;
-    
+
     /**
      * @var \DateTime
      */
@@ -64,6 +32,57 @@ class Mwl implements \Serializable
      */
     private $active;
 
+    /**
+     * @var array
+     */
+    private $cards;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $legalities;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateCreation;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateUpdate;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->active = false;
+    }
+
+    public function toString()
+    {
+        return $this->name;
+    }
+
+    public function serialize()
+    {
+        return [
+            'id'            => $this->id,
+            'date_creation' => $this->dateCreation ? $this->dateCreation->format('c') : null,
+            'date_update'   => $this->dateUpdate ? $this->dateUpdate->format('c') : null,
+            'code'          => $this->code,
+            'name'          => $this->name,
+            'active'        => $this->active,
+            'date_start'    => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
+            'cards'         => $this->cards,
+        ];
+    }
+
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
+    }
 
     /**
      * Get id
@@ -76,6 +95,16 @@ class Mwl implements \Serializable
     }
 
     /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
      * Set code
      *
      * @param string $code
@@ -84,21 +113,21 @@ class Mwl implements \Serializable
      */
     public function setCode($code)
     {
-    	$this->code = $code;
-    
-    	return $this;
+        $this->code = $code;
+
+        return $this;
     }
-    
+
     /**
-     * Get code
+     * Get name
      *
      * @return string
      */
-    public function getCode()
+    public function getName()
     {
-    	return $this->code;
+        return $this->name;
     }
-    
+
     /**
      * Set name
      *
@@ -114,13 +143,13 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get name
+     * Get dateStart
      *
-     * @return string
+     * @return \DateTime
      */
-    public function getName()
+    public function getDateStart()
     {
-        return $this->name;
+        return $this->dateStart;
     }
 
     /**
@@ -138,13 +167,13 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get dateStart
+     * Get active
      *
-     * @return \DateTime
+     * @return boolean
      */
-    public function getDateStart()
+    public function getActive()
     {
-        return $this->dateStart;
+        return $this->active;
     }
 
     /**
@@ -160,107 +189,6 @@ class Mwl implements \Serializable
 
         return $this;
     }
-
-    /**
-     * Get active
-     *
-     * @return boolean
-     */
-    public function getActive()
-    {
-        return $this->active;
-    }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $slots;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    	$this->active = false;
-        $this->slots = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Add slot
-     *
-     * @param \AppBundle\Entity\Mwlslot $slot
-     *
-     * @return Mwl
-     */
-    public function addSlot(\AppBundle\Entity\Mwlslot $slot)
-    {
-        $this->slots[] = $slot;
-
-        return $this;
-    }
-
-    /**
-     * Remove slot
-     *
-     * @param \AppBundle\Entity\Mwlslot $slot
-     */
-    public function removeSlot(\AppBundle\Entity\Mwlslot $slot)
-    {
-        $this->slots->removeElement($slot);
-    }
-
-    /**
-     * Get slots
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getSlots()
-    {
-        return $this->slots;
-    }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $decks;
-
-
-    /**
-     * Add deck
-     *
-     * @param \AppBundle\Entity\Deck $deck
-     *
-     * @return Mwl
-     */
-    public function addDeck(\AppBundle\Entity\Deck $deck)
-    {
-        $this->decks[] = $deck;
-
-        return $this;
-    }
-
-    /**
-     * Remove deck
-     *
-     * @param \AppBundle\Entity\Deck $deck
-     */
-    public function removeDeck(\AppBundle\Entity\Deck $deck)
-    {
-        $this->decks->removeElement($deck);
-    }
-
-    /**
-     * Get decks
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getDecks()
-    {
-        return $this->decks;
-    }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $legalities;
-
 
     /**
      * Add legality
@@ -295,16 +223,16 @@ class Mwl implements \Serializable
     {
         return $this->legalities;
     }
-    /**
-     * @var \DateTime
-     */
-    private $dateCreation;
 
     /**
-     * @var \DateTime
+     * Get dateCreation
+     *
+     * @return \DateTime
      */
-    private $dateUpdate;
-
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
+    }
 
     /**
      * Set dateCreation
@@ -321,13 +249,13 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get dateCreation
+     * Get dateUpdate
      *
      * @return \DateTime
      */
-    public function getDateCreation()
+    public function getDateUpdate()
     {
-        return $this->dateCreation;
+        return $this->dateUpdate;
     }
 
     /**
@@ -345,34 +273,22 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get dateUpdate
-     *
-     * @return \DateTime
+     * @return array
      */
-    public function getDateUpdate()
+    public function getCards()
     {
-        return $this->dateUpdate;
-    }
-    
-    /**
-     * 
-     * @return boolean
-     */
-    function getGlobalPenalty ()
-    {
-        return $this->globalPenalty;
+        return $this->cards;
     }
 
     /**
-     * 
-     * @param boolean $globalPenalty
-     * @return Mwl
+     * @param array $cards
+     *
+     * @return self
      */
-    function setGlobalPenalty ($globalPenalty)
+    public function setCards($cards): self
     {
-        $this->globalPenalty = $globalPenalty;
-        
+        $this->cards = $cards;
+
         return $this;
     }
-
 }
