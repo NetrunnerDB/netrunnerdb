@@ -285,7 +285,7 @@ class Mwl implements \Serializable
      *
      * @return self
      */
-    public function setCards($cards): self
+    public function setCards($cards)
     {
         $this->cards = $cards;
 

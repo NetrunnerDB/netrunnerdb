@@ -40,6 +40,11 @@ class Deck implements \Serializable
     /**
      * @var string
      */
+    private $hash;
+
+    /**
+     * @var string
+     */
     private $name;
 
     /**
