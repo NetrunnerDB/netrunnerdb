@@ -252,7 +252,7 @@ class Judge
             if ($card->getType()->getCode() == "agenda") {
                 if ($card->getFaction()->getCode() !== "neutral"
                     && $card->getFaction() !== $identity->getFaction()
-                    && $identity->getFaction()->getCode() !== "Neutral"
+                    && $identity->getFaction()->getCode() !== "neutral"
                 ) {
                     return 'agendas';
                 }
