@@ -699,9 +699,9 @@ function check_deck_limit() {
     });
 
     if(nb_violations > 0) {
-        $('#restricted').text('Too many copies of a limited card').show();
+        $('#limited').text('Too many copies of a limited card').show();
     } else {
-        $('#restricted').text('').hide();
+        $('#limited').text('').hide();
     }
 }
 
