@@ -101,6 +101,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 		<div id="cardcount"></div>
 		<div id="latestpack"></div>
 		<div id="restricted"></div>
+		<div id="limited"></div>
 		{% if decklist.tournament %}
         <a class="btn btn-ghost btn-success btn-sm" href="{{ path('decklists_list', {type:'tournament'}) }}">
             <span class="glyphicon glyphicon-certificate"></span> {{ decklist.tournament }}
