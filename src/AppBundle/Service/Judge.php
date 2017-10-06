@@ -249,10 +249,10 @@ class Judge
                 return 'forbidden';
             }
 
-            if ($card->getType()->getCode() == "agenda") {
-                if ($card->getFaction()->getCode() !== "neutral"
+            if ($card->getType()->getCode() === "agenda") {
+                if ($card->getFaction()->getCode() !== "neutral-corp"
                     && $card->getFaction() !== $identity->getFaction()
-                    && $identity->getFaction()->getCode() !== "neutral"
+                    && $identity->getFaction()->getCode() !== "neutral-corp"
                 ) {
                     return 'agendas';
                 }
