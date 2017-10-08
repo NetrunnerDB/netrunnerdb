@@ -107,6 +107,9 @@
                                                 <div class="review-date">
                                                     <time datetime="{{ review.date_creation|date('c') }}">{{ review.date_creation|date('j M Y') }}</time>
                                                 </div>
+                                                <div class="review-latestpack">
+                                                    (<i>{{ review.latestpack }}</i> era)
+                                                </div>
                                                 <div class="review-author">
                                                     <a href="{{ path('user_profile_view', {user_id:review.author_id,user_name:review.author_name|e('url')}) }}" rel="author" class="username {{ review.author_color }}">{{ review.author_name }}</a>
                                                     {% if review.author_donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
