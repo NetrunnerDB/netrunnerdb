@@ -13,6 +13,7 @@ AppBundle\Entity\Cycle:
             orderBy: { 'position': 'ASC' }
             targetEntity: Pack
             mappedBy: cycle
+            fetch: EAGER
     manyToMany:
         rotations:
             targetEntity: Rotation
