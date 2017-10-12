@@ -315,7 +315,6 @@ class SearchController extends Controller
 				}
 				$cardinfo['available'] = $availability[$pack->getCode()];
 				if($view == "zoom") {
-					$allsetsdata = $this->get('cards_data')->allsetsdata();
 						$cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
 						$sets = $this->get('cards_data')->allsetsnocycledata();
 						foreach ($cardinfo['reviews'] as $key => $review) {
