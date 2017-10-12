@@ -316,16 +316,18 @@ class SearchController extends Controller
 				$cardinfo['available'] = $availability[$pack->getCode()];
 				if($view == "zoom") {
 					$cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
-					$sets = $this->get('cards_data')->allsetsnocycledata();
+					$dbh = $this->get('doctrine')->getConnection();
 					foreach ($cardinfo['reviews'] as $key => $review) {
 						// Trouvez le dernier pack publié au moment de la création de l'avis
-						foreach (array_reverse($sets) as $set) {
-							if ($set['available'] < $review['date_creation']) {
-								$cardinfo['reviews'][$key]['latestpack'] = $set['name'];
-								// Ne continue pas aux ensembles plus anciens
-								break;
-							}
-						}
+						$rows = $dbh->executeQuery(
+							"SELECT name
+							FROM pack
+							WHERE date_release > ?
+							ORDER by date_release DESC
+							LIMIT 1",
+							array($review['date_creation']->format('U'))
+							)->fetchAll(\PDO::FETCH_ASSOC);
+						$cardinfo['reviews'][$key]['latestpack'] = $rows[0]['name'];
 					}
 					$cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
 				}
