@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\AppBundle;
 use Symfony\Component\HttpFoundation\Request;
+use DateTime;
 
 class SearchController extends Controller 
 {
@@ -317,18 +318,16 @@ class SearchController extends Controller
 				if($view == "zoom") {
 					$allsetsdata = $this->get('cards_data')->allsetsdata();
 				    $cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
-					$dbh = $this->get('doctrine')->getConnection();
+                    $sets = $this->get('cards_data')->allsetsnocycledata();
 					foreach ($cardinfo['reviews'] as $key => $review) {
 						// Trouvez le dernier pack publié au moment de la création de l'avis
-						$rows = $dbh->executeQuery(
-							"SELECT name
-							FROM pack
-							WHERE date_release > ?
-							ORDER by date_release DESC
-							LIMIT 1",
-							array($review['date_creation']->format('U'))
-							)->fetchAll(\PDO::FETCH_ASSOC);
-						$cardinfo['reviews'][$key]['latestpack'] = $rows[0]['name'];
+                        foreach (array_reverse($sets) as $set) {
+                            if ($set['available'] < $review['date_creation']) {
+                                $cardinfo['reviews'][$key]['latestpack'] = $set['name'];
+                                break;
+                            }
+                            // Ne continue pas aux ensembles plus anciens
+                        }
 					}
 					$cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
 				}
