@@ -317,17 +317,17 @@ class SearchController extends Controller
 				$cardinfo['available'] = $availability[$pack->getCode()];
 				if($view == "zoom") {
 					$allsetsdata = $this->get('cards_data')->allsetsdata();
-				    $cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
-                    $sets = $this->get('cards_data')->allsetsnocycledata();
-					foreach ($cardinfo['reviews'] as $key => $review) {
-						// Trouvez le dernier pack publié au moment de la création de l'avis
-                        foreach (array_reverse($sets) as $set) {
-                            if ($set['available'] < $review['date_creation']) {
-                                $cardinfo['reviews'][$key]['latestpack'] = $set['name'];
-                                break;
-                            }
-                            // Ne continue pas aux ensembles plus anciens
-                        }
+						$cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
+						$sets = $this->get('cards_data')->allsetsnocycledata();
+						foreach ($cardinfo['reviews'] as $key => $review) {
+							// Trouvez le dernier pack publié au moment de la création de l'avis
+							foreach (array_reverse($sets) as $set) {
+								if ($set['available'] < $review['date_creation']) {
+									$cardinfo['reviews'][$key]['latestpack'] = $set['name'];
+									// Ne continue pas aux ensembles plus anciens
+									break;
+								}
+							}
 					}
 					$cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
 				}
