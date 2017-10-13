@@ -255,8 +255,8 @@ class SearchController extends Controller
 			'full' => 20,
 			'images' => 20,
 			'short' => 1000,
-                        'rulings' => 200,
-		    'zoom' => 1,
+			'rulings' => 200,
+			'zoom' => 1,
 		];
 		
 		$synonyms = [
@@ -315,12 +315,12 @@ class SearchController extends Controller
 				}
 				$cardinfo['available'] = $availability[$pack->getCode()];
 				if($view == "zoom") {
-				    $cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
-                                    $cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
+					$cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
+					$cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
 				}
-                                if($view == "rulings") {
-                                    $cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
-                                }
+				if($view == "rulings") {
+					$cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
+				}
 				$cards[] = $cardinfo;
 			}
 
