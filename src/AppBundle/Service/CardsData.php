@@ -742,20 +742,11 @@ class CardsData {
         $reviews = $this->doctrine->getRepository('AppBundle:Review')->findBy(array('card' => $card), array('nbvotes' => 'DESC'));
 
         $response = array();
-        $sets = $this->allsetsnocycledata();
+        $packs = $this->doctrine->getRepository('AppBundle:Pack')->findBy(array(), array("dateRelease" => "ASC"));
         foreach ($reviews as $review) {
             /* @var $review \AppBundle\Entity\Review */
             $user = $review->getUser();
-            $date_creation = $review->getDatecreation();
-            // Trouvez le dernier pack publié au moment de la création de l'avis
-            $latest_pack = 'Unknown';
-            foreach (array_reverse($sets) as $set) {
-                if ($set['available'] < $date_creation) {
-                    $latest_pack = $set['name'];
-                    // Ne continue pas aux ensembles plus anciens
-                    break;
-                }
-            }
+
             $response[] = array(
                 'id' => $review->getId(),
                 'text' => $review->getText(),
@@ -764,14 +755,25 @@ class CardsData {
                 'author_reputation' => $user->getReputation(),
                 'author_donation' => $user->getDonation(),
                 'author_color' => $user->getFaction(),
-                'date_creation' => $date_creation,
+                'date_creation' => $review->getDatecreation(),
                 'nbvotes' => $review->getNbvotes(),
                 'comments' => $review->getComments(),
-                'latestpack' => $latest_pack,
+                'latestpack' => $this->last_pack_for_review($packs, $review),
             );
         }
 
         return $response;
+    }
+
+    public function last_pack_for_review($packs, $review) {
+        foreach (array_reverse($packs) as $pack) {
+            if ($pack->getDateRelease() instanceof \DateTime
+                && $pack->getDateRelease() < $review->getDatecreation()) {
+                return $pack->getName();
+            }
+        }
+
+        return 'Unknown';
     }
 
     public function get_rulings($card) {
