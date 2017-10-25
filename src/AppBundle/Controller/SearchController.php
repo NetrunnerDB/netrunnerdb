@@ -317,6 +317,7 @@ class SearchController extends Controller
 				if($view == "zoom") {
 					$cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
 					$cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
+					$cardinfo['mwl_info'] = $this->get('cards_data')->get_mwl_info($card);
 				}
 				if($view == "rulings") {
 					$cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
