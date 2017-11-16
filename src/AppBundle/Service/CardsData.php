@@ -738,14 +738,40 @@ class CardsData {
         ));
     }
 
+    public function get_mwl_info($card) {
+        $response = array();
+        $card_code = $card->getCode();
+        $mwls = $this->doctrine->getRepository('AppBundle:Mwl')->findBy(array(), array("dateStart" => "DESC"));
+        foreach ($mwls as $mwl) {
+            $mwl_cards = $mwl->getCards();
+            if (isset($mwl_cards[$card_code])) {
+                $card_mwl = $mwl_cards[$card_code];
+                $is_restricted = $card_mwl['is_restricted'] ?? 0;
+                $deck_limit = $card_mwl['deck_limit'] ?? null;
+                // Ceux-ci signifient la même chose
+                $universal_faction_cost = $card_mwl['universal_faction_cost'] ?? $card_mwl['global_penalty'] ?? 0;
+                $response[] = array(
+                    'mwl_name' => $mwl->getName(),
+                    'active' => $mwl->getActive(),
+                    'is_restricted' => $is_restricted,
+                    'deck_limit' => $deck_limit,
+                    'universal_faction_cost' => $universal_faction_cost,
+                );
+            }
+        }
+
+        return $response;
+    }
+
     public function get_reviews($card) {
         $reviews = $this->doctrine->getRepository('AppBundle:Review')->findBy(array('card' => $card), array('nbvotes' => 'DESC'));
 
         $response = array();
+        $packs = $this->doctrine->getRepository('AppBundle:Pack')->findBy(array(), array("dateRelease" => "ASC"));
         foreach ($reviews as $review) {
             /* @var $review \AppBundle\Entity\Review */
             $user = $review->getUser();
-            $date_creation = $review->getDatecreation();
+
             $response[] = array(
                 'id' => $review->getId(),
                 'text' => $review->getText(),
@@ -754,13 +780,25 @@ class CardsData {
                 'author_reputation' => $user->getReputation(),
                 'author_donation' => $user->getDonation(),
                 'author_color' => $user->getFaction(),
-                'date_creation' => $date_creation,
+                'date_creation' => $review->getDatecreation(),
                 'nbvotes' => $review->getNbvotes(),
                 'comments' => $review->getComments(),
+                'latestpack' => $this->last_pack_for_review($packs, $review),
             );
         }
 
         return $response;
+    }
+
+    public function last_pack_for_review($packs, $review) {
+        foreach (array_reverse($packs) as $pack) {
+            if ($pack->getDateRelease() instanceof \DateTime
+                && $pack->getDateRelease() < $review->getDatecreation()) {
+                return $pack->getName();
+            }
+        }
+
+        return 'Unknown';
     }
 
     public function get_rulings($card) {

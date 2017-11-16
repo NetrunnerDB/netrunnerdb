@@ -637,7 +637,7 @@ class DecklistManager
         }
         $faction_code = filter_var($request->query->get('faction'), FILTER_SANITIZE_STRING);
         $author_name = filter_var($request->query->get('author'), FILTER_SANITIZE_STRING);
-//        $decklist_title = filter_var($request->query->get('title'), FILTER_SANITIZE_STRING);
+        $decklist_title = filter_var($request->query->get('title'), FILTER_SANITIZE_STRING);
         $sort = $request->query->get('sort');
         $packs = $request->query->get('packs');
         $mwl_code = $request->query->get('mwl_code');
@@ -676,11 +676,11 @@ class DecklistManager
             $params[] = $author_name;
             $types[] = \PDO::PARAM_STR;
         }
-//        if(!empty($decklist_title)) {
-//            $wheres[] = 'd.name like ?';
-//            $params[] = '%' . $decklist_title . '%';
-//            $types[] = \PDO::PARAM_STR;
-//        }
+        if(!empty($decklist_title)) {
+            $wheres[] = 'd.name like ?';
+            $params[] = '%' . $decklist_title . '%';
+            $types[] = \PDO::PARAM_STR;
+        }
         if(count($cards_code)) {
             foreach($cards_code as $card_code) {
                 /* @var $card \AppBundle\Entity\Card */
