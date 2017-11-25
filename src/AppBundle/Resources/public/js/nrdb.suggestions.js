@@ -129,10 +129,10 @@
 					+ Routing.generate('cards_zoom', {card_code:record.code})
 					+ '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
 					+ record.title + '</a></td><td class="influence influence-' + faction
-					+ '">' + influ + '</td><td class="type" title="' + record.type
+					+ '">' + influ + '</td><td class="type" title="' + record.type.name
 					+ '"><img src="/bundles/app/images/types/'
-					+ record.type_code + '.png" alt="'+record.type+'">'
-					+ '</td><td class="faction" title="' + record.faction + '">'
+					+ record.type_code + '.png" alt="'+record.type.name+'">'
+					+ '</td><td class="faction" title="' + record.faction.name + '">'
 					+ imgsrc + '</td></tr>');
 
 		return div;
