@@ -859,13 +859,18 @@ class BuilderController extends Controller
         }
         $description = strlen($deck->getDescription()) > 0 ? ("Original deck notes:\n\n" . $deck->getDescription()) : '';
 
+        $mwl = $deck->getMwl();
+        if ($mwl != null) {
+            $mwl = $mwl->getCode();
+        }
+
         return $this->forward('AppBundle:Builder:save',
                 array(
                         'name' => $deck->getName().' (copy)',
                         'content' => json_encode($content),
                         'description' => $description,
                         'deck_id' => $deck->getParent() ? $deck->getParent()->getId() : null,
-                        'mwl_code' => $deck->getMwl()->getCode(),
+                        'mwl_code' => $mwl,
                 ));
     }
     
