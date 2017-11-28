@@ -97,9 +97,15 @@ class BuilderController extends Controller
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
         
+        /* @var $em \Doctrine\ORM\EntityManager */
+        $em = $this->get('doctrine')->getManager();
+		
+        $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
+		
         return $this->render('AppBundle:Builder:directimport.html.twig',
                 array(
                         'pagetitle' => "Import a deck",
+						'list_mwl' => $list_mwl
                 ), $response);
     
     }
