@@ -19,7 +19,6 @@ $(function () {
     $('a.btn').click(function (event) {
         event.preventDefault();
         var href = $(this).attr('href');
-        NRDB.user.wipe();
         setTimeout(function () {
             location.href = href;
         }, 100);
