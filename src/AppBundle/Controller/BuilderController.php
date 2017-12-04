@@ -97,9 +97,15 @@ class BuilderController extends Controller
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
         
+        /* @var $em \Doctrine\ORM\EntityManager */
+        $em = $this->get('doctrine')->getManager();
+		
+        $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
+		
         return $this->render('AppBundle:Builder:directimport.html.twig',
                 array(
                         'pagetitle' => "Import a deck",
+						'list_mwl' => $list_mwl
                 ), $response);
     
     }
@@ -806,6 +812,10 @@ class BuilderController extends Controller
 					t.description
                 FROM tournament t
                 ORDER BY t.description desc")->fetchAll();
+					
+        $em = $this->get('doctrine')->getManager();
+
+        $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
         
         return $this->render('AppBundle:Builder:decks.html.twig',
                 array(
@@ -816,6 +826,7 @@ class BuilderController extends Controller
                         'nbdecks' => count($decks),
                         'cannotcreate' => $user->getMaxNbDecks() <= count($decks),
                         'tournaments' => $tournaments,
+						'list_mwl' => $list_mwl,
                 ));
     
     }
