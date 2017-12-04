@@ -4,7 +4,7 @@
 	"type" : "project",
 	"license" : "MIT",
 	"require" : {
-		"symfony/symfony" : "3.2.*",
+		"symfony/symfony" : "3.3.*",
 		"friendsofsymfony/oauth-server-bundle" : "^1.4.2",
 		"gedmo/doctrine-extensions" : "2.3.*",
 		"symfony/swiftmailer-bundle" : "~2.3",
@@ -32,7 +32,8 @@
 		"symfony/framework-bundle": "~3.0",
 		"friendsofsymfony/oauth2-php": "^1.2",
 		"symfony/assetic-bundle": "^2.8",
-		"stof/doctrine-extensions-bundle": "^1.2"
+		"stof/doctrine-extensions-bundle": "^1.2",
+		"symfony/web-server-bundle": "~3.0"
 	},
 	"require-dev" : {
 	},
