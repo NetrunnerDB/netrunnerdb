@@ -133,7 +133,7 @@ services:
 
 fos_rest: ~
        
-nelmio_api_doc: 
+nelmio_api_doc:
     sandbox:
         request_format:
               method: accept_header
