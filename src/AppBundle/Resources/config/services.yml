@@ -1,4 +1,14 @@
 services:
+    _defaults:
+        autowire: false
+        autoconfigure: false
+        public: true
+
+    AppBundle\Command\:
+        resource: '../../Command/*'
+        tags:
+          - 'console.command'
+
     cards_data:
         class: AppBundle\Service\CardsData
         arguments: ["@doctrine", "@request_stack", "@router"]
