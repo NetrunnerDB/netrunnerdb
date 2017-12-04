@@ -4,7 +4,7 @@
 	"type" : "project",
 	"license" : "MIT",
 	"require" : {
-		"symfony/symfony" : "~3.1.0",
+		"symfony/symfony" : "3.2.*",
 		"friendsofsymfony/oauth-server-bundle" : "^1.4.2",
 		"gedmo/doctrine-extensions" : "2.3.*",
 		"symfony/swiftmailer-bundle" : "~2.3",
