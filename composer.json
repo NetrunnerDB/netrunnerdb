@@ -19,7 +19,7 @@
 		"sensio/framework-extra-bundle" : "~3.0",
 		"sensio/distribution-bundle" : "^5.0",
 		"doctrine/doctrine-bundle" : "^1.8",
-		"ezyang/htmlpurifier": "~4.6",
+		"ezyang/htmlpurifier": "^4.9",
 		"kriswallsmith/assetic": "^1.4",
 		"nelmio/api-doc-bundle": "^2.13",
 		"willdurand/jsonp-callback-validator": "^1.1",
