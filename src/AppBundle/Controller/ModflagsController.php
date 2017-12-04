@@ -19,7 +19,7 @@ class ModflagsController extends Controller
             throw $this->createAccessDeniedException('Access denied');
         }
         
-        $modflags = $this->getDoctrine()->getEntityManager()->getRepository('AppBundle:Modflag')->findAll();
+        $modflags = $this->getDoctrine()->getManager()->getRepository('AppBundle:Modflag')->findAll();
         
         $content = [
             'count' => count($modflags),

@@ -26,7 +26,7 @@ class PublicApi20Controller extends FOSRestController
 		});
 		
 		$response->setLastModified($dateUpdate);
-		if($response->isNotModified($this->getRequest())) {
+		if($response->isNotModified($request)) {
 			return $response;
 		}
 

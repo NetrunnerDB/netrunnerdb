@@ -87,7 +87,7 @@ class PrivateApi20Controller extends FOSRestController
 		if($includeHistory) 
 		{
 			$qb = $this->getDoctrine()->getManager()->getRepository('AppBundle:Deckchange')->createQueryBuilder('h');
-			$qb = $this->getDoctrine()->getEntityManager()->createQueryBuilder();
+			$qb = $this->getDoctrine()->getManager()->createQueryBuilder();
 			$qb->select('h')
 				->from('AppBundle:Deckchange', 'h')
 				->where('h.deck = :deck')

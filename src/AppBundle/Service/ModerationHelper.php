@@ -39,7 +39,7 @@ class ModerationHelper
     
     public function __construct(Registry $doctrine, Swift_Mailer $mailer, Twig_Environment $twig, Router $router, Logger $logger)
     {
-        $this->em = $doctrine->getEntityManager();
+        $this->em = $doctrine->getManager();
         $this->mailer = $mailer;
         $this->twig = $twig;
         $this->router = $router;

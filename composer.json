@@ -5,7 +5,7 @@
 	"license" : "MIT",
 	"require" : {
 		"symfony/symfony" : "2.8.*",
-		"friendsofsymfony/oauth-server-bundle" : "1.4.2",
+		"friendsofsymfony/oauth-server-bundle" : "^1.4.2",
 		"gedmo/doctrine-extensions" : "2.3.*",
 		"symfony/swiftmailer-bundle" : "~2.3",
 		"friendsofsymfony/user-bundle" : "2.0.*",
@@ -20,7 +20,7 @@
 		"sensio/generator-bundle" : "~2.3",
 		"symfony/monolog-bundle" : "~2.4",
 		"sensio/framework-extra-bundle" : "~2.3",
-		"sensio/distribution-bundle" : "4.0.5",
+		"sensio/distribution-bundle" : "^5.0",
 		"doctrine/doctrine-bundle" : "~1.2",
 		"ezyang/htmlpurifier": "~4.6",
 		"kriswallsmith/assetic": "^1.3",

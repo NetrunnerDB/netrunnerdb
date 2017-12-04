@@ -44,7 +44,7 @@ class ImportTransCommand extends ContainerAwareCommand
 
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$this->em = $this->getContainer()->get('doctrine')->getEntityManager();
+		$this->em = $this->getContainer()->get('doctrine')->getManager();
 		$this->output = $output;
 		
 		$supported_locales = $this->getContainer()->getParameter('supported_locales');

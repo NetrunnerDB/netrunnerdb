@@ -15,7 +15,7 @@ class ActivityHelper
 
     public function __construct (Registry $doctrine)
     {
-        $this->em = $doctrine->getEntityManager();
+        $this->em = $doctrine->getManager();
     }
 
     public function getItems (User $user, $max_items = 30, $nb_days = 7)

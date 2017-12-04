@@ -19,7 +19,7 @@ monolog:
             type:  stream
             path:  %kernel.logs_dir%/%kernel.environment%.log
             level: debug
-            channels: !event
+            channels: [!event,!doctrine]
 
 assetic:
     use_controller: true

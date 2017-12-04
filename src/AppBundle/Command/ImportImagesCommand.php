@@ -58,7 +58,7 @@ class ImportImagesCommand extends \Symfony\Bundle\FrameworkBundle\Command\Contai
         $packCode = $input->getArgument("code");
         $position = $input->getArgument("position");
 
-        $this->em = $this->getContainer()->get('doctrine')->getEntityManager();
+        $this->em = $this->getContainer()->get('doctrine')->getManager();
         $this->client = new \GuzzleHttp\Client(['base_uri' => $baseUri]);
         $this->prefix = $prefix;
         $this->position = $position;

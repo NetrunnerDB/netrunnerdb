@@ -31,8 +31,8 @@ class RulingController extends Controller
         $ruling->setCard($card);
         $ruling->setRawtext($rawtext);
         $ruling->setText($text);
-        $this->getDoctrine()->getEntityManager()->persist($ruling);
-        $this->getDoctrine()->getEntityManager()->flush();
+        $this->getDoctrine()->getManager()->persist($ruling);
+        $this->getDoctrine()->getManager()->flush();
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $card->getCode()]);
     }
@@ -52,7 +52,7 @@ class RulingController extends Controller
 
         $ruling->setRawtext($rawtext);
         $ruling->setText($text);
-        $this->getDoctrine()->getEntityManager()->flush();
+        $this->getDoctrine()->getManager()->flush();
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }
@@ -67,8 +67,8 @@ class RulingController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->getDoctrine()->getEntityManager()->remove($ruling);
-        $this->getDoctrine()->getEntityManager()->flush();
+        $this->getDoctrine()->getManager()->remove($ruling);
+        $this->getDoctrine()->getManager()->flush();
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }

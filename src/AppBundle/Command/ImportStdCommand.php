@@ -45,7 +45,7 @@ class ImportStdCommand extends ContainerAwareCommand
         $path = $input->getArgument('path');
         $force = $input->getOption('force');
 
-        $this->em = $this->getContainer()->get('doctrine')->getEntityManager();
+        $this->em = $this->getContainer()->get('doctrine')->getManager();
         $this->output = $output;
 
         /* @var $helper QuestionHelper */

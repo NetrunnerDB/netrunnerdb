@@ -11,7 +11,7 @@ class RulingRepository extends \Doctrine\ORM\EntityRepository
 {
     public function findAllSortedByCardCode()
     {
-        return $this->getEntityManager()
+        return $this->getManager()
             ->createQuery(
                 'SELECT r FROM AppBundle:Ruling r JOIN r.card c ORDER BY c.code ASC'
             )
