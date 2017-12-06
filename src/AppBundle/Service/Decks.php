@@ -36,6 +36,7 @@ class Decks
                 d.problem,
 				c.title identity_title,
                 c.code identity_code,
+                c.image_url identity_url,
 				f.code faction_code,
         		LPAD(y.position * 10 + p.position, 6, '0') lastpack_global_position,
                 p.cycle_id cycle_id,

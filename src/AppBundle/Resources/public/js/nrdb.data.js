@@ -92,7 +92,7 @@
 
                                 if (dbName === 'cards') {
                                     response.data.forEach(function (card) {
-                                        card.imageUrl = response.imageUrlTemplate.replace(/{code}/, card.code);
+                                      card.imageUrl = card.image_url || response.imageUrlTemplate.replace(/{code}/, card.code);
                                     });
                                 }
 
@@ -120,7 +120,7 @@
                                 });
                             })
                             .catch(function (jqXHR, textStatus, errorThrown) {
-                                console.log('error when requesting packs', errorThrown);
+                                console.log('error when requesting packs', errorThrown || jqXHR);
                                 reject(false);
                             });
                         });

@@ -39,7 +39,8 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
 				'text',
 				'cost',
 				'faction_cost',
-				'trash_cost'
+				'trash_cost',
+				'image_url'
 		];
 
 		$externalFields = [
