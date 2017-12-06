@@ -158,4 +158,8 @@ AppBundle\Entity\Card:
             type: smallint
             column: deck_limit
             nullable: false
+        imageUrl:
+            type: string
+            column: image_url
+            nullable: true
     lifecycleCallbacks: {  }

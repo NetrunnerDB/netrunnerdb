@@ -47,6 +47,10 @@ AppBundle\Entity\Pack:
         size:
             type: smallint
             nullable: true
+        ffgId:
+            type: integer
+            column: ffg_id
+            nullable: true
         position:
             type: smallint
             nullable: false

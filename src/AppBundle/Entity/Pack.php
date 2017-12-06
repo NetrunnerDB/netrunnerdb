@@ -56,6 +56,14 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
      */
     private $position;
 
+    /**
+     * @var integer
+     */
+    private $ffgId;
+
+    /**
+     * @var string 
+     */
     private $locale = 'en';
     
     /**
@@ -163,6 +171,29 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     public function getSize()
     {
         return $this->size;
+    }
+
+    /**
+     * Set ffgId
+     *
+     * @param integer $ffgId
+     * @return Pack
+     */
+    public function setFfgId($ffgId)
+    {
+        $this->ffgId = $ffgId;
+
+        return $this;
+    }
+
+    /**
+     * Get ffgId
+     *
+     * @return integer
+     */
+    public function getFfgId()
+    {
+        return $this->ffgId;
     }
 
     /**
@@ -359,4 +390,6 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     {
         return $this->dateUpdate;
     }
+    
+    
 }

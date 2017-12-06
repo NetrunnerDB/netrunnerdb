@@ -599,6 +599,7 @@ class CardsData {
             "cycle_name" => $card->getPack()->getCycle()->getName(),
             "cycle_code" => $card->getPack()->getCycle()->getCode(),
             "ancur_link" => $card->getAncurLink(),
+            "imageUrl" => $card->getImageUrl(),
         );
 
         // setting the card cost to X if the cost is null and the card is not of a costless type
@@ -612,7 +613,7 @@ class CardsData {
         }
 
         $cardinfo['url'] = $this->router->generate('cards_zoom', array('card_code' => $card->getCode(), '_locale' => $locale), UrlGeneratorInterface::ABSOLUTE_URL);
-        $cardinfo['imageUrl'] = $this->request_stack->getCurrentRequest()->getSchemeAndHttpHost() . "/card_image/" . $card->getCode() . ".png";
+        $cardinfo['imageUrl'] = $cardinfo['imageUrl'] ?: $this->request_stack->getCurrentRequest()->getSchemeAndHttpHost() . "/card_image/" . $card->getCode() . ".png";
 
         // replacing <trace>
         $cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1<sup>\2</sup></strong>–', $cardinfo['text']);

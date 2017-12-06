@@ -251,6 +251,11 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     private $side;
 
     /**
+     * @var string|null
+     */
+    private $imageUrl;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -1079,6 +1084,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     public function setIsRestricted($isRestricted)
     {
         $this->isRestricted = $isRestricted;
+
+        return $this;
+    }
+
+    public function getImageUrl ()
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl ($imageUrl = null)
+    {
+        $this->imageUrl = $imageUrl;
 
         return $this;
     }

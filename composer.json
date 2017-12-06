@@ -4,6 +4,7 @@
 	"type" : "project",
 	"license" : "MIT",
 	"require" : {
+		"php": "7.1.*",
 		"symfony/symfony" : "3.4.*",
 		"friendsofsymfony/oauth-server-bundle" : "^1.5",
 		"gedmo/doctrine-extensions" : "^2.4",
@@ -14,7 +15,6 @@
 		"friendsofsymfony/jsrouting-bundle" : "^2.0",
 		"twig/extensions" : "^1.5",
 		"michelf/php-markdown" : "^1.7",
-		"php" : ">=5.3.3",
 		"symfony/monolog-bundle" : "^3.1",
 		"sensio/framework-extra-bundle" : "~3.0",
 		"sensio/distribution-bundle" : "^5.0",
