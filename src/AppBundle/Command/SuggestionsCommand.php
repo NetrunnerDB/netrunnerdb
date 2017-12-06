@@ -43,6 +43,12 @@ class SuggestionsCommand extends ContainerAwareCommand
     {
     	$card_index_1 = $cardIndexById[$card_id_1];
     	$card_index_2 = $cardIndexById[$card_id_2];
+    	if(!isset($matrix[$card_index_1])) {
+            $matrix[$card_index_1] = [];
+        }
+        if(!isset($matrix[$card_index_1][$card_index_2])) {
+            $matrix[$card_index_1][$card_index_2] = 0;
+        }
     	$matrix[$card_index_1][$card_index_2] += 1;
     }
     
