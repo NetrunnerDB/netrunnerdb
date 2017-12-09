@@ -274,7 +274,7 @@ font-size: 18px;
 }
 #deck_browser div {
 	width: 10px;
-overflow: show;
+overflow: visible;
 display: inline-block;
 position: relative;
 }

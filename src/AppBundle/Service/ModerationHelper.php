@@ -82,7 +82,7 @@ class ModerationHelper
         $moderation->setStatusAfter($status);
         $moderation->setModerator($user);
         $moderation->setDecklist($decklist);
-        $moderation->getDateCreation(new DateTime);
+        $moderation->setDateCreation(new DateTime);
         $this->em->persist($moderation);
     }
     

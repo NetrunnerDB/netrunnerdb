@@ -4,6 +4,7 @@
 
   namespace AppBundle\Provider;
 
+  use Doctrine\ORM\Query;
   use Symfony\Component\Security\Core\User\UserInterface;
   use Symfony\Component\Security\Core\User\UserProviderInterface;
   use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -21,6 +22,7 @@
 
       public function loadUserByUsername($username)
       {
+          /** @var Query $q */
           $q = $this->userRepository
               ->createQueryBuilder('u')
               ->where('u.username = :username OR u.email = :email')

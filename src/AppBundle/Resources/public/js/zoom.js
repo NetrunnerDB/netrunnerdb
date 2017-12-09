@@ -179,7 +179,7 @@ function setup_write() {
 function setup_edit() {
     var review_id = NRDB.user.data.review_id;
     $('#review-' + review_id + ' .review-text').append('<button class="btn btn-default review-button"><span class="glyphicon glyphicon-pencil"></span> Edit review</a>');
-    $('input[name=review_id').val(review_id);
+    $('input[name=review_id]').val(review_id);
 }
 
 function like_review(event) {

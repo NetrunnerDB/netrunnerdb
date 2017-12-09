@@ -1170,12 +1170,10 @@ var hypergeometric = {};
     function memo_exists(k, N, K, n) {
         return (memo[k] != undefined && memo[k][N] != undefined && memo[k][N][K] != undefined && memo[k][N][K][n] != undefined);
     }
-    ;
 
     function get_memo(k, N, K, n) {
         return memo[k][N][K][n];
     }
-    ;
 
     function memoize(k, N, K, n, val) {
         if (memo[k] === undefined) {
@@ -1189,7 +1187,6 @@ var hypergeometric = {};
         }
         memo[k][N][K][n] = val;
     }
-    ;
 })(hypergeometric);
 
 

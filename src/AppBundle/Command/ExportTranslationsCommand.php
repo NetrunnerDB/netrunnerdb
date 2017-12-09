@@ -75,7 +75,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 				$subOutput = new BufferedOutput();
 				$returnCode = $command->run($subInput, $subOutput);
 				if($returnCode == 0) {
-					$fs->dumpFile($filepath, $subOutput->fetch(), 0644);
+					$fs->dumpFile($filepath, $subOutput->fetch());
 				} else {
 					throw new \Exception("An error occured (code $returnCode)");
 				}
@@ -93,7 +93,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 				$returnCode = $command->run($subInput, $subOutput);
 				
 				if($returnCode == 0) {
-					$fs->dumpFile($filepath, $subOutput->fetch(), 0644);
+					$fs->dumpFile($filepath, $subOutput->fetch());
 				} else {
 					throw new \Exception("An error occured (code $returnCode)");
 				}

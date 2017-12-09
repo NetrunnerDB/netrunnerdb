@@ -111,7 +111,7 @@ class EmailCommand extends ContainerAwareCommand
                 $output->writeln("  Sent.");
             }
             $user->setLocked(TRUE);
-            $em->flush($user);
+            $em->flush();
             $output->writeln("  Locked.");
             $em->detach($user);
             if($nb-- == 0) break;
