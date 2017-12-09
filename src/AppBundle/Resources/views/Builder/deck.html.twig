@@ -104,7 +104,7 @@ var Filters = {},
 				{{ mwl.name }}{% if not mwl.active %}{% if mwl.dateStart %} (after {{ mwl.dateStart|date('Y-m-d') }}){% endif %}{% else %} (active){% endif %}
 			</option>
 		    {% endfor %}
-		    <option value="">Casual Play</option>
+		    <option value=""{% if deck.mwl_code == null %} selected="selected"{% endif %}>Casual Play</option>
 		</select>
 	</div>
 	<button type="submit" class="btn btn-warning">Save</button>
