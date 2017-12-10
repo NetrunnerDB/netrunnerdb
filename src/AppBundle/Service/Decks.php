@@ -219,6 +219,8 @@ class Decks
             if ($mwl) {
             	$deck->setMwl($mwl);
             }
+        } else {
+        	$deck->setMwl(null);
         }
         
         $deck->setName($name);
