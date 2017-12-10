@@ -16,7 +16,7 @@
 		</ul>
 </p>
   <div class="form">
-<form action="{{ path('fos_oauth_server_authorize') }}" method="POST" class="fos_oauth_server_authorize" {{ form_enctype(form) }}>
+  {{ form_start(form) }}
     <input type="submit" class="btn btn-primary" name="accepted" value="{{ 'authorize.accept'|trans({}, 'FOSOAuthServerBundle') }}" />
     <input type="submit" class="btn btn-danger" name="rejected" value="{{ 'authorize.reject'|trans({}, 'FOSOAuthServerBundle') }}" />
     {{ form_row(form.client_id) }}
@@ -25,9 +25,8 @@
     {{ form_row(form.state) }}
     {{ form_row(form.scope) }}
     {{ form_rest(form) }}
-</form>
+  {{ form_end(form) }}
   </div>
-  
 </div>
 </div>
 </div>  
