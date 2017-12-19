@@ -36,7 +36,8 @@ class Decklist implements \Serializable
                             'user_id' => $this->user->getId(),
                             'user_name' => $this->user->getUsername(),
                             'tournament_badge' => $this->tournament ? true : false,
-                            'cards' => $cards
+                            'cards' => $cards,
+							'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
             ];
     }
 
@@ -1103,4 +1104,33 @@ class Decklist implements \Serializable
         return $this;
     }
 
+    /**
+     * @var \AppBundle\Entity\Mwl
+     */
+    private $mwl;
+
+
+    /**
+     * Set mwl
+     *
+     * @param \AppBundle\Entity\Mwl $mwl
+     *
+     * @return Decklist
+     */
+    public function setMwl(\AppBundle\Entity\Mwl $mwl = null)
+    {
+        $this->mwl = $mwl;
+
+        return $this;
+    }
+
+    /**
+     * Get mwl
+     *
+     * @return \AppBundle\Entity\Mwl
+     */
+    public function getMwl()
+    {
+        return $this->mwl;
+    }
 }

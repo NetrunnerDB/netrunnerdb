@@ -843,11 +843,13 @@ class BuilderController extends Controller
         foreach ($decklist->getSlots() as $slot) {
             $content[$slot->getCard()->getCode()] = $slot->getQuantity();
         }
+		$mwl = $decklist->getMwl();
         return $this->forward('AppBundle:Builder:save',
                 array(
                         'name' => $decklist->getName(),
                         'content' => json_encode($content),
                         'decklist_id' => $decklist_id,
+						'mwl_code' => $mwl == null ? null : $mwl->getCode(),
                 ));
     
     }

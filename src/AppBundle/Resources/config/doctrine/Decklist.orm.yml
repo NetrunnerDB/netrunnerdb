@@ -79,6 +79,12 @@ AppBundle\Entity\Decklist:
             joinColumn:
                 name: rotation_id
                 referencedColumnName: id
+        mwl:
+            targetEntity: Mwl
+            nullable: true
+            joinColumn:
+                name: mwl_id
+                referencedColumnName: id
     oneToMany:
         slots:
             targetEntity: Decklistslot
