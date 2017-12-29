@@ -416,7 +416,9 @@ function update_deck(options) {
             additional_info = '(<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ') ' + alert_number_of_sets + influence;
         }
 
-        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a> ' + additional_info + '</div>');
+        var mwlCard = get_mwl_modified_card(card)
+        var unicorn = mwlCard.is_restricted ? "🦄 " : ""
+        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a> ' + unicorn + additional_info + '</div>');
         item.appendTo($('#deck-content .deck-' + criteria));
 
         cabinet[criteria] |= 0;
