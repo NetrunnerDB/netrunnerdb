@@ -72,7 +72,7 @@ class SocialController extends Controller
                 ));
                 $response->setData([
                     'allowed' => TRUE,
-                    'message' => 'This deck is <a href="' + $url + '">already published</a>. Are you sure you want to publish a duplicate?',
+                    'message' => 'This deck is <a href="' . $url . '">already published</a>. Are you sure you want to publish a duplicate?',
                 ]);
                 return $response;
             }
@@ -150,6 +150,7 @@ class SocialController extends Controller
         $decklist->setModerationStatus(Decklist::MODERATION_PUBLISHED);
         $decklist->setTournament($tournament);
         $decklist->setIsLegal(true);
+		$decklist->setMwl($deck->getMwl());
         foreach($deck->getSlots() as $slot) {
             $card = $slot->getCard();
             $decklistslot = new Decklistslot();
