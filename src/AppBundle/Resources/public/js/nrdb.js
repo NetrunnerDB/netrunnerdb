@@ -496,14 +496,16 @@ function test_cacherefresh() {
         return _.includes(all_deluxes, element.pack.cycle.code);
     });
 
-    var lastCycle = NRDB.data.packs.find({ 'date_release': { '$nee': null } }, { '$orderBy': { 'date_release': -1 } })[0].cycle;
-    var allCycles = NRDB.data.cycles.find({ size: { '$gt': 1 } }, { '$orderBy': { 'position': -1 } });
-    var cycle = allCycles.shift();
-    while (cycle.code !== lastCycle.code) {
-        cycle = allCycles.shift();
+    var allCycles = NRDB.data.cycles.find({ 'size': { '$gt': 1 } }, { '$orderBy': { 'position': -1 } } );
+
+    // check if the last cycle already has released packs, skip it if not
+    let lastCycleCode = allCycles[0].code;
+    var packs = NRDB.data.packs.find( { 'cycle_code': lastCycleCode, 'date_release': { '$nee': null} } );
+    if (packs.length == 0) {
+        allCycles.shift();
     }
-    var penultimateCycle = allCycles.shift();
-    var cycles = [lastCycle.code, penultimateCycle.code];
+
+    var cycles = [ allCycles[0].code, allCycles[1].code ];
 
     remaining_cards.forEach(function (card) {
         if (deluxe && card.pack.code === deluxe.pack.code)
