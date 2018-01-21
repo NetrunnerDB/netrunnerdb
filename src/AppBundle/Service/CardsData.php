@@ -714,13 +714,21 @@ class CardsData {
         foreach ($conditions as $i => $l) {
             if (in_array($l[1], $numeric) && !in_array($l[0], $canDoNumeric))
                 unset($conditions[$i]);
-            if ($l[0] == 'f' && strlen($l[2]) === 1) {
-                $keys = array_keys(self::$faction_letters, $l[2]);
-                unset($conditions[$i]);
-                if (count($keys)) {
-                    array_unshift($keys, 'f', ':');
-                    array_unshift($conditions, $keys);
+            if ($l[0] == 'f') {
+                $factions = Array();
+                for ($j=1; $j<count($l); ++$j) {
+                    if (strlen($l[$j]) === 1) {
+                        // replace faction letter with full name
+                        $keys = array_keys(self::$faction_letters, $l[$j]);
+                        if (count($keys)) {
+                            array_push($factions, $keys[0]);
+                        }
+                    } else {
+                        array_push($factions, $l[$j]);
+                    }
                 }
+                array_unshift($factions, 'f', $l[1]);
+                $conditions[$i] = $factions;
             }
         }
     }
