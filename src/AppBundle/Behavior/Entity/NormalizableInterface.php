@@ -14,4 +14,9 @@ interface NormalizableInterface
      * @return array
      */
     public function normalize();
+
+    /**
+     * @return int
+     */
+    public function getId();
 }

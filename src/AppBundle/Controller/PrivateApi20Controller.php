@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Service\Decks;
 use AppBundle\Service\Judge;
 use AppBundle\Service\RotationService;
@@ -28,10 +29,10 @@ class PrivateApi20Controller extends FOSRestController
         $content = [ 'version_number' => '2.0' ];
         
         $content['data'] = array_map(function ($entity) {
-            return (is_object($entity) && $entity instanceof \Serializable) ? $entity->serialize() : $entity;
+            return (is_object($entity) && $entity instanceof NormalizableInterface) ? $entity->normalize() : $entity;
         }, $data);
         
-        $content['total'] = count($content['data']);
+        $content['total'] = count($data);
         
         $content['success'] = true;
         

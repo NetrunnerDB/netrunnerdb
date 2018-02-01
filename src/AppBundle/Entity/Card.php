@@ -26,9 +26,9 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
     
     public function normalize()
     {
-        $serialized = [];
+        $normalized = [];
         if (empty($this->code)) {
-            return $serialized;
+            return $normalized;
         }
         
         $mandatoryFields = [
@@ -103,24 +103,24 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
 
         foreach ($optionalFields as $optionalField) {
             $getter = 'get' . $this->snakeToCamel($optionalField);
-            $serialized[$optionalField] = $this->$getter();
-            if (!isset($serialized[$optionalField]) || $serialized[$optionalField] === '') {
-                unset($serialized[$optionalField]);
+            $normalized[$optionalField] = $this->$getter();
+            if (!isset($normalized[$optionalField]) || $normalized[$optionalField] === '') {
+                unset($normalized[$optionalField]);
             }
         }
         
         foreach ($mandatoryFields as $mandatoryField) {
             $getter = 'get' . $this->snakeToCamel($mandatoryField);
-            $serialized[$mandatoryField] = $this->$getter();
+            $normalized[$mandatoryField] = $this->$getter();
         }
 
         foreach ($externalFields as $externalField) {
             $getter = 'get' . $this->snakeToCamel($externalField);
-            $serialized[$externalField.'_code'] = $this->$getter()->getCode();
+            $normalized[$externalField.'_code'] = $this->$getter()->getCode();
         }
         
-        ksort($serialized);
-        return $serialized;
+        ksort($normalized);
+        return $normalized;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Prebuilt;
@@ -442,7 +443,7 @@ class ImportStdCommand extends ContainerAwareCommand
         $newTypedValue = $newJsonValue;
 
         // current value, by default the json, serialized value is the same as what's in the entity
-        $getter = 'get'.ucfirst($fieldName);
+        $getter = 'get' . ucfirst($fieldName);
         $currentJsonValue = $currentTypedValue = $entity->$getter();
 
         // if the field is a data, the default assumptions above are wrong
@@ -452,22 +453,24 @@ class ImportStdCommand extends ContainerAwareCommand
             }
             if ($currentTypedValue instanceof \DateTime) {
                 switch ($type) {
-                    case 'date': {
-                        $currentJsonValue = $currentTypedValue->format('Y-m-d');
-                        break;
-                    }
-                    case 'datetime': {
-                        $currentJsonValue = $currentTypedValue->format('Y-m-d H:i:s');
-                    }
+                    case 'date':
+                        {
+                            $currentJsonValue = $currentTypedValue->format('Y-m-d');
+                            break;
+                        }
+                    case 'datetime':
+                        {
+                            $currentJsonValue = $currentTypedValue->format('Y-m-d H:i:s');
+                        }
                 }
             }
         }
 
         $different = ($currentJsonValue !== $newJsonValue);
         if ($different) {
-            $this->output->writeln("Changing the <info>$fieldName</info> of <info>".$entity."</info>");
+            $this->output->writeln("Changing the <info>$fieldName</info> of <info>" . $entity . "</info>");
 
-            $setter = 'set'.ucfirst($fieldName);
+            $setter = 'set' . ucfirst($fieldName);
             $entity->$setter($newTypedValue);
         }
     }
@@ -478,7 +481,7 @@ class ImportStdCommand extends ContainerAwareCommand
 
         if (!key_exists($key, $data)) {
             if ($isMandatory) {
-                throw new Exception("Missing key [$key] in ".json_encode($data));
+                throw new Exception("Missing key [$key] in " . json_encode($data));
             } else {
                 $data[$key] = null;
             }
@@ -486,7 +489,7 @@ class ImportStdCommand extends ContainerAwareCommand
         $value = $data[$key];
 
         if (!key_exists($key, $metadata->fieldNames)) {
-            throw new Exception("Invalid key [$key] in ".json_encode($data));
+            throw new Exception("Invalid key [$key] in " . json_encode($data));
         }
         $fieldName = $metadata->fieldNames[$key];
 
@@ -496,24 +499,27 @@ class ImportStdCommand extends ContainerAwareCommand
     /**
      *
      * @param string $entityName
-     * @param array  $data
-     * @param array  $mandatoryKeys
-     * @param array  $foreignKeys
-     * @param array  $optionalKeys
+     * @param array $data
+     * @param array $mandatoryKeys
+     * @param array $foreignKeys
+     * @param array $optionalKeys
      * @throws Exception
      * @return object|null
      */
     protected function getEntityFromData($entityName, $data, $mandatoryKeys, $foreignKeys, $optionalKeys)
     {
         if (!key_exists('code', $data)) {
-            throw new Exception("Missing key [code] in ".json_encode($data));
+            throw new Exception("Missing key [code] in " . json_encode($data));
         }
 
         $entity = $this->entityManager->getRepository($entityName)->findOneBy(['code' => $data['code']]);
         if (!$entity) {
             $entity = new $entityName();
         }
-        $orig = $entity->serialize();
+        if (!$entity instanceof NormalizableInterface) {
+            throw new \Exception('Entity non-normalizable');
+        }
+        $orig = $entity->normalize();
 
         foreach ($mandatoryKeys as $key) {
             $this->copyKeyToEntity($entity, $entityName, $data, $key, true);
@@ -527,7 +533,7 @@ class ImportStdCommand extends ContainerAwareCommand
             $foreignEntityShortName = ucfirst(str_replace('_code', '', $key));
 
             if (!key_exists($key, $data)) {
-                throw new Exception("Missing key [$key] in ".json_encode($data));
+                throw new Exception("Missing key [$key] in " . json_encode($data));
             }
 
             $foreignCode = $data[$key];
@@ -535,29 +541,32 @@ class ImportStdCommand extends ContainerAwareCommand
                 continue;
             }
             if (!key_exists($foreignEntityShortName, $this->collections)) {
-                throw new Exception("No collection for [$foreignEntityShortName] in ".json_encode($data));
+                throw new Exception("No collection for [$foreignEntityShortName] in " . json_encode($data));
             }
             if (!key_exists($foreignCode, $this->collections[$foreignEntityShortName])) {
-                throw new Exception("Invalid code [$foreignCode] for key [$key] in ".json_encode($data));
+                throw new Exception("Invalid code [$foreignCode] for key [$key] in " . json_encode($data));
             }
             $foreignEntity = $this->collections[$foreignEntityShortName][$foreignCode];
 
-            $getter = 'get'.$foreignEntityShortName;
+            $getter = 'get' . $foreignEntityShortName;
             if (!$entity->$getter() || $entity->$getter()->getId() !== $foreignEntity->getId()) {
-                $this->output->writeln("Changing the <info>$key</info> of <info>".$entity->toString()."</info>");
-                $setter = 'set'.$foreignEntityShortName;
+                $this->output->writeln("Changing the <info>$key</info> of <info>" . $entity . "</info>");
+                $setter = 'set' . $foreignEntityShortName;
                 $entity->$setter($foreignEntity);
             }
         }
 
         // special case for Card
-        if ($entityName === 'AppBundle\Entity\Card') {
+        if ($entity instanceof Card) {
             // calling a function whose name depends on the type_code
-            $functionName = 'import'.$entity->getType()->getName().'Data';
+            $functionName = 'import' . $entity->getType()->getName() . 'Data';
             $this->$functionName($entity, $data);
         }
 
-        $newer = $entity->serialize();
+        if (!$entity instanceof NormalizableInterface) {
+            throw new \Exception('Entity non-normalizable');
+        }
+        $newer = $entity->normalize();
 
         // special case for Mwl
         if ($entityName === 'AppBundle\Entity\Mwl') {
@@ -746,7 +755,7 @@ class ImportStdCommand extends ContainerAwareCommand
         $data = json_decode($content, true);
 
         if ($data === null) {
-            throw new Exception("File [".$fileinfo->getPathname()."] contains incorrect JSON (error code ".json_last_error().")");
+            throw new Exception("File [" . $fileinfo->getPathname() . "] contains incorrect JSON (error code " . json_last_error() . ")");
         }
 
         return $data;
@@ -796,7 +805,7 @@ class ImportStdCommand extends ContainerAwareCommand
     {
         $this->collections[$entityShortName] = [];
 
-        $entities = $this->entityManager->getRepository('AppBundle:'.$entityShortName)->findAll();
+        $entities = $this->entityManager->getRepository('AppBundle:' . $entityShortName)->findAll();
 
         foreach ($entities as $entity) {
             $this->collections[$entityShortName][$entity->getCode()] = $entity;
