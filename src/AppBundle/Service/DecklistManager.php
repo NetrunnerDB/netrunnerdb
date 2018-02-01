@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Card;
 use AppBundle\Entity\Decklist;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,13 +21,13 @@ class DecklistManager
     /**
      * returns the list of decklist favorited by user
      *
-     * @param     $user_id
+     * @param int $user_id
      * @param int $start
      * @param int $limit
      * @return array
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function favorites($user_id, $start = 0, $limit = 30)
+    public function favorites(int $user_id, int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -79,13 +80,13 @@ class DecklistManager
     /**
      * returns the list of decklists published by user
      *
-     * @param     $user_id
+     * @param int $user_id
      * @param int $start
      * @param int $limit
      * @return array
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function by_author($user_id, $start = 0, $limit = 30)
+    public function by_author(int $user_id, int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -705,7 +706,7 @@ class DecklistManager
         }
         if (count($cards_code)) {
             foreach ($cards_code as $card_code) {
-                /* @var $card \AppBundle\Entity\Card */
+                /** @var Card $card */
                 $card = $cardRepository->findOneBy(array('code' => $card_code));
                 if (!$card) {
                     continue;

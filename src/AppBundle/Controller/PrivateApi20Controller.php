@@ -110,7 +110,7 @@ class PrivateApi20Controller extends FOSRestController
                 foreach ($variation[1] as $card_code => $substraction) {
                     $changes[$card_code] = - $substraction;
                 }
-                $history[$deckchange->getDatecreation()->format('c')] = $changes;
+                $history[$deckchange->getDateCreation()->format('c')] = $changes;
             }
         }
         

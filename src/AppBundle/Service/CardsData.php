@@ -140,7 +140,7 @@ class CardsData
         $i = 0;
 
         // construction de la requete sql
-        $qb = $this->entityManager->getRepository('AppBundle:Card')->createQueryBuilder('c');
+        $qb = $this->entityManager->createQueryBuilder()->from(Card::class, 'c');
         $qb->select('c', 'p', 'y', 't', 'f', 's');
         $qb->leftJoin('c.pack', 'p')
                 ->leftJoin('p.cycle', 'y')
@@ -217,14 +217,14 @@ class CardsData
                                 break;
                             case '<':
                                 if (!isset($qb2)) {
-                                    $qb2 = $this->entityManager->getRepository('AppBundle:Pack')->createQueryBuilder('p2');
-                                    $or[] = $qb->expr()->lt('p.dateRelease', '(' . $qb2->select('p2.dateRelease')->where("p2.code = ?$i")->getDql() . ')');
+                                    $qb2 = $this->entityManager->createQueryBuilder()->select('p2')->from(Pack::class, 'p2');
+                                    $or[] = $qb->expr()->lt('p.dateRelease', '(' . $qb2->select('p2.dateRelease')->where("p2.code = ?$i")->getDQL() . ')');
                                 }
                                 break;
                             case '>':
                                 if (!isset($qb3)) {
-                                    $qb3 = $this->entityManager->getRepository('AppBundle:Pack')->createQueryBuilder('p3');
-                                    $or[] = $qb->expr()->gt('p.dateRelease', '(' . $qb3->select('p3.dateRelease')->where("p3.code = ?$i")->getDql() . ')');
+                                    $qb3 = $this->entityManager->createQueryBuilder()->select('p3')->from(Pack::class, 'p3');
+                                    $or[] = $qb->expr()->gt('p.dateRelease', '(' . $qb3->select('p3.dateRelease')->where("p3.code = ?$i")->getDQL() . ')');
                                 }
                                 break;
                         }
@@ -551,7 +551,7 @@ class CardsData
     }
 
     /**
-     * @param $card
+     * @param Card $card
      * @return array
      */
     public function getCardInfo(Card $card)
@@ -795,7 +795,7 @@ class CardsData
                 'author_reputation' => $user->getReputation(),
                 'author_donation' => $user->getDonation(),
                 'author_color' => $user->getFaction(),
-                'date_creation' => $review->getDatecreation(),
+                'date_creation' => $review->getDateCreation(),
                 'nbvotes' => $review->getNbvotes(),
                 'comments' => $review->getComments(),
                 'latestpack' => $this->last_pack_for_review($packs, $review),
@@ -810,7 +810,7 @@ class CardsData
         /** @var Pack $pack */
         foreach (array_reverse($packs) as $pack) {
             if ($pack->getDateRelease() instanceof \DateTime
-                && $pack->getDateRelease() < $review->getDatecreation()) {
+                && $pack->getDateRelease() < $review->getDateCreation()) {
                 return $pack->getName();
             }
         }

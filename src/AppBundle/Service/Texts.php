@@ -65,7 +65,7 @@ class Texts
     /**
      * removes any dangerous code from a HTML string
      *
-     * @param $string
+     * @param string $string
      * @return string
      */
     public function purify($string)
@@ -76,7 +76,7 @@ class Texts
     /**
      * turns a Markdown string into a HTML string
      *
-     * @param $string
+     * @param string $string
      * @return string
      */
     public function transform($string)
@@ -87,7 +87,7 @@ class Texts
     /**
      * adds class="img-responsive" to every <img> tag
      *
-     * @param $string
+     * @param string $string
      * @return null|string|string[]
      */
     public function img_responsive($string)

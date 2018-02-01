@@ -1089,7 +1089,7 @@ class BuilderController extends Controller
             $em->persist($change);
             $em->flush();
 
-            return new Response($change->getDatecreation()->format('c'));
+            return new Response($change->getDateCreation()->format('c'));
         }
 
         return new Response('');

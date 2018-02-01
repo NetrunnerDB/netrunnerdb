@@ -66,7 +66,7 @@ class Reviewcomment
      *
      * @return \DateTime
      */
-    public function getDatecreation()
+    public function getDateCreation()
     {
         return $this->dateCreation;
     }

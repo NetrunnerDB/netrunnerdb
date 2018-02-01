@@ -119,7 +119,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     private $side;
 
     /**
-     * @var Card
+     * @var Card|null
      */
     private $identity;
 
@@ -134,22 +134,22 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     private $lastPack;
     
     /**
-     * @var Decklistslot[]
+     * @var Collection|Decklistslot[]
      */
     private $slots;
     
     /**
-     * @var Comment[]
+     * @var Collection|Comment[]
      */
     private $comments;
     
     /**
-     * @var User[]
+     * @var Collection|User[]
      */
     private $favorites;
 
     /**
-     * @var User[]
+     * @var Collection|User[]
      */
     private $votes;
 
@@ -505,11 +505,9 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     
         return $this;
     }
-    
+
     /**
-     * Get identity
-     *
-     * @return Card
+     * @return Card|null
      */
     public function getIdentity()
     {

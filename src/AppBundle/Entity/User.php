@@ -52,37 +52,37 @@ class User extends BaseUser
     private $donation;
     
     /**
-     * @var Deck[]
+     * @var Collection|Deck[]
      */
     private $decks;
 
     /**
-     * @var Decklist[]
+     * @var Collection|Decklist[]
      */
     private $decklists;
     
     /**
-     * @var Comment[]
+     * @var Collection|Comment[]
      */
     private $comments;
     
     /**
-     * @var Decklist[]
+     * @var Collection|Decklist[]
      */
     private $favorites;
     
     /**
-     * @var Decklist[]
+     * @var Collection|Decklist[]
      */
     private $votes;
     
     /**
-     * @var User[]
+     * @var Collection|User[]
      */
     private $following;
     
     /**
-     * @var User[]
+     * @var Collection|User[]
      */
     private $followers;
     
@@ -317,10 +317,8 @@ class User extends BaseUser
     }
 
     /**
-     * Add to favorites
-     *
-     * @param Decklist $favorites
-     * @return User
+     * @param Decklist $decklist
+     * @return $this
      */
     public function addFavorite(Decklist $decklist)
     {
@@ -331,10 +329,8 @@ class User extends BaseUser
     }
 
     /**
-     * Remove from favorites
-     *
-     * @param Decklist $favorites
-     * @return User
+     * @param Decklist $decklist
+     * @return $this
      */
     public function removeFavorite(Decklist $decklist)
     {
@@ -351,12 +347,10 @@ class User extends BaseUser
     {
         return $this->favorites;
     }
-    
+
     /**
-     * Set votes
-     *
-     * @param Decklist $votes
-     * @return User
+     * @param Decklist $decklist
+     * @return $this
      */
     public function addVote(Decklist $decklist)
     {
@@ -375,10 +369,8 @@ class User extends BaseUser
     }
 
     /**
-     * Set following
-     *
-     * @param User $following
-     * @return User
+     * @param User $user
+     * @return $this
      */
     public function addFollowing(User $user)
     {
@@ -409,14 +401,12 @@ class User extends BaseUser
          
         return $this;
     }
-    
+
     /**
-     * Add follower
-     *
-     * @param User $follower
-     * @return User
+     * @param User $user
+     * @return $this
      */
-    public function addFollower($user)
+    public function addFollower(User $user)
     {
         $this->followers[] = $user;
     
@@ -729,10 +719,8 @@ class User extends BaseUser
     }
 
     /**
-     * Add reviewvotes
-     *
-     * @param Review $reviewvotes
-     * @return User
+     * @param Review $review
+     * @return $this
      */
     public function addReviewvote(Review $review)
     {

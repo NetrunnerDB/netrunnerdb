@@ -63,7 +63,7 @@ class CommentizeCommand extends ContainerAwareCommand
         
         $comment = new Reviewcomment();
         $comment->setAuthor($review_orig->getUser());
-        $comment->setDatecreation($review_orig->getDatecreation());
+        $comment->setDatecreation($review_orig->getDateCreation());
         $comment->setDateupdate($review_orig->getDateupdate());
         $comment->setReview($review_dest);
         $comment->setText($text);

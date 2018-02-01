@@ -295,6 +295,7 @@ class Decks
             $deck->setIdentity($identity);
         } else {
             $deck->setSide(current($cards)->getSide());
+            /** @var Card $identity */
             $identity = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(array(
                     "side" => $deck->getSide()
             ));

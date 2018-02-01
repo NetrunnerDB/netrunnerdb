@@ -37,7 +37,7 @@ class ActivityHelper
         $qb->from('AppBundle:Decklist', 'd');
         $qb->where('d.dateCreation>:date');
         $qb->setParameter('date', $dateinf);
-        if (isset($following)) {
+        if (count($following)) {
             $qb->andWhere('d.user in (:following)');
             $qb->setParameter('following', $following);
         }
@@ -61,7 +61,7 @@ class ActivityHelper
         $qb->from('AppBundle:Comment', 'c');
         $qb->where('c.dateCreation>:date');
         $qb->setParameter('date', $dateinf);
-        if (isset($following)) {
+        if (count($following)) {
             $qb->andWhere('c.author in (:following)');
             $qb->setParameter('following', $following);
         }
@@ -85,7 +85,7 @@ class ActivityHelper
         $qb->from('AppBundle:Review', 'r');
         $qb->where('r.dateCreation>:date');
         $qb->setParameter('date', $dateinf);
-        if (isset($following)) {
+        if (count($following)) {
             $qb->andWhere('r.user in (:following)');
             $qb->setParameter('following', $following);
         }
@@ -109,7 +109,7 @@ class ActivityHelper
         $qb->from('AppBundle:Reviewcomment', 'c');
         $qb->where('c.dateCreation>:date');
         $qb->setParameter('date', $dateinf);
-        if (isset($following)) {
+        if (count($following)) {
             $qb->andWhere('c.author in (:following)');
             $qb->setParameter('following', $following);
         }

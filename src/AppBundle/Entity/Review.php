@@ -91,7 +91,7 @@ class Review
      *
      * @return \DateTime
      */
-    public function getDatecreation()
+    public function getDateCreation()
     {
         return $this->dateCreation;
     }
@@ -235,10 +235,8 @@ class Review
     }
 
     /**
-     * Add votes
-     *
-     * @param User $votes
-     * @return Review
+     * @param User $user
+     * @return $this
      */
     public function addVote(User $user)
     {
