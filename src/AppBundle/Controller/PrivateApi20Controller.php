@@ -2,8 +2,11 @@
 
 namespace AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Service\Decks;
+use AppBundle\Service\Judge;
+use AppBundle\Service\RotationService;
+use AppBundle\Service\Texts;
+
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -184,7 +187,7 @@ class PrivateApi20Controller extends FOSRestController
             return $this->prepareFailedResponse("Empty parameter 'content'.");
         }
         
-        $deck_id = $this->get('decks')->saveDeck($user, $deck, $decklist_id, $name, $description, $tags, null, $content, $deck_id ? $deck : null);
+        $deck_id = $this->get(Decks::class)->saveDeck($user, $deck, $decklist_id, $name, $description, $tags, null, $content, $deck_id ? $deck : null);
         
         if (isset($deck_id)) {
             return $this->prepareResponse([$deck]);
@@ -236,7 +239,7 @@ class PrivateApi20Controller extends FOSRestController
             throw $this->createNotFoundException("Deck not found");
         }
         
-        $judge = $this->get('judge');
+        $judge = $this->get(Judge::class);
         $analyse = $judge->analyse($deck->getSlots());
         if (is_string($analyse)) {
             return $this->prepareFailedResponse($judge->problem($analyse));
@@ -261,7 +264,7 @@ class PrivateApi20Controller extends FOSRestController
         if (empty($rawdescription)) {
             $rawdescription = $deck->getDescription();
         }
-        $description = $this->get('texts')->markdown($rawdescription);
+        $description = $this->get(Texts::class)->markdown($rawdescription);
         
         $decklist = new Decklist();
         $decklist->setName($name);
@@ -295,7 +298,7 @@ class PrivateApi20Controller extends FOSRestController
             }
         }
         $decklist->setParent($deck);
-        $decklist->setRotation($this->get('rotation_service')->findCompatibleRotation($decklist));
+        $decklist->setRotation($this->get(RotationService::class)->findCompatibleRotation($decklist));
 
         $entityManager->persist($decklist);
         $entityManager->flush();

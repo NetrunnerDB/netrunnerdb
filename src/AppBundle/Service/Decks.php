@@ -3,18 +3,28 @@
 
 namespace AppBundle\Service;
 
-use Doctrine\ORM\EntityManager;
-use AppBundle\Service\Judge;
-use AppBundle\Entity\Deck;
 use AppBundle\Entity\Deckslot;
-use Symfony\Bridge\Monolog\Logger;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Deckchange;
 
 class Decks
 {
-    public function __construct(EntityManager $doctrine, Judge $judge, Diff $diff, Logger $logger)
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    /** @var Judge $judge */
+    private $judge;
+
+    /** @var Diff $diff */
+    private $diff;
+
+    /** @var LoggerInterface $logger */
+    private $logger;
+
+    public function __construct(EntityManagerInterface $entityManager, Judge $judge, Diff $diff, LoggerInterface $logger)
     {
-        $this->doctrine = $doctrine;
+        $this->entityManager = $entityManager;
         $this->judge = $judge;
         $this->diff = $diff;
         $this->logger = $logger;
@@ -23,7 +33,7 @@ class Decks
 
     public function getByUser($user, $decode_variation = false)
     {
-        $dbh = $this->doctrine->getConnection();
+        $dbh = $this->entityManager->getConnection();
         $decks = $dbh->executeQuery(
                 "SELECT
 				d.id,
@@ -145,7 +155,7 @@ class Decks
 
     public function getById($deck_id, $decode_variation = false)
     {
-        $dbh = $this->doctrine->getConnection();
+        $dbh = $this->entityManager->getConnection();
         $deck = $dbh->executeQuery(
                 "SELECT
 				d.id,
@@ -234,13 +244,13 @@ class Decks
     {
         $deck_content = array();
         if ($decklist_id) {
-            $decklist = $this->doctrine->getRepository('AppBundle:Decklist')->find($decklist_id);
+            $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
             if ($decklist) {
                 $deck->setParent($decklist);
             }
         }
         if ($mwl_code) {
-            $mwl = $this->doctrine->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
+            $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
             if ($mwl) {
                 $deck->setMwl($mwl);
             }
@@ -256,7 +266,7 @@ class Decks
         /* @var $latestPack \AppBundle\Entity\Pack */
         $latestPack = null;
         foreach ($content as $card_code => $qty) {
-            $card = $this->doctrine->getRepository('AppBundle:Card')->findOneBy(array(
+            $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(array(
                     "code" => $card_code
             ));
             if (!$card) {
@@ -281,7 +291,7 @@ class Decks
             $deck->setIdentity($identity);
         } else {
             $deck->setSide(current($cards)->getSide());
-            $identity = $this->doctrine->getRepository('AppBundle:Card')->findOneBy(array(
+            $identity = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(array(
                     "side" => $deck->getSide()
             ));
             $cards[$identity->getCode()] = $identity;
@@ -297,7 +307,7 @@ class Decks
             $tags = implode(' ', $tags);
         }
         $deck->setTags($tags);
-        $this->doctrine->persist($deck);
+        $this->entityManager->persist($deck);
         
         // on the deck content
         
@@ -307,7 +317,7 @@ class Decks
             // remove all change (autosave) since last deck update (changes are sorted)
             $changes = $this->getUnsavedChanges($deck);
             foreach ($changes as $change) {
-                $this->doctrine->remove($change);
+                $this->entityManager->remove($change);
             }
             // save new change unless empty
             if (count($listings[0]) || count($listings[1])) {
@@ -315,12 +325,12 @@ class Decks
                 $change->setDeck($deck);
                 $change->setVariation(json_encode($listings));
                 $change->setSaved(true);
-                $this->doctrine->persist($change);
+                $this->entityManager->persist($change);
             }
         }
         foreach ($deck->getSlots() as $slot) {
             $deck->removeSlot($slot);
-            $this->doctrine->remove($slot);
+            $this->entityManager->remove($slot);
         }
        
         foreach ($content as $card_code => $qty) {
@@ -349,7 +359,7 @@ class Decks
             $deck->setAgendaPoints($analyse['agendaPoints']);
         }
         $deck->setDateUpdate(new \DateTime());
-        $this->doctrine->flush();
+        $this->entityManager->flush();
         return $deck->getId();
     }
 
@@ -357,13 +367,13 @@ class Decks
     {
         $changes = $this->getUnsavedChanges($deck);
         foreach ($changes as $change) {
-            $this->doctrine->remove($change);
+            $this->entityManager->remove($change);
         }
-        $this->doctrine->flush();
+        $this->entityManager->flush();
     }
     
     public function getUnsavedChanges($deck)
     {
-        return $this->doctrine->getRepository('AppBundle:Deckchange')->findBy(array('deck' => $deck, 'saved' => false));
+        return $this->entityManager->getRepository('AppBundle:Deckchange')->findBy(array('deck' => $deck, 'saved' => false));
     }
 }

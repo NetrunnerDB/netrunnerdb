@@ -38,7 +38,7 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     globals:
-        texts: "@texts"
+        texts: '@AppBundle\Service\Texts'
         supported_locales: "%supported_locales%"
     form_themes:
         - 'bootstrap_3_layout.html.twig'

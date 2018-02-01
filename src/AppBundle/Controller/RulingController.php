@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Ruling;
+use AppBundle\Service\Texts;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -24,7 +25,7 @@ class RulingController extends Controller
         }
 
         $rawtext = $request->request->get('text');
-        $text = $this->get('texts')->transform($rawtext);
+        $text = $this->get(Texts::class)->transform($rawtext);
 
         $ruling = new Ruling();
         $ruling->setCard($card);
@@ -47,7 +48,7 @@ class RulingController extends Controller
         }
 
         $rawtext = $request->request->get('text');
-        $text = $this->get('texts')->transform($rawtext);
+        $text = $this->get(Texts::class)->transform($rawtext);
 
         $ruling->setRawtext($rawtext);
         $ruling->setText($text);

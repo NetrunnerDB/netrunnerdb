@@ -3,7 +3,7 @@
 namespace AppBundle\Command\Moderation;
 
 use AppBundle\Entity\Moderation;
-use AppBundle\Helper\ModerationHelper;
+use AppBundle\Service\ModerationHelper;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\Table;
@@ -33,16 +33,13 @@ class ModerationLogCommand extends ContainerAwareCommand
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
-     
-        $this->em = $this->getContainer()->get('doctrine')->getManager();
+        $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $this->helper = $this->getContainer()->get('moderation_helper');
+        $helper = $this->getContainer()->get(ModerationHelper::class);
         
         $limit = $input->getArgument('limit');
                 
-        $moderationList = $this->em->getRepository('AppBundle:Moderation')->findBy([], ['dateCreation' => 'DESC'], $limit);
+        $moderationList = $em->getRepository('AppBundle:Moderation')->findBy([], ['dateCreation' => 'DESC'], $limit);
         
         $table = new Table($output);
         $table->setHeaders(['Date','Mod','Before','After','Id','Deck']);
@@ -51,8 +48,8 @@ class ModerationLogCommand extends ContainerAwareCommand
             $table->addRow([
                 $moderation->getDateCreation()->format('Y-m-d'),
                 $moderation->getModerator()->getUsername(),
-                $this->helper->getLabel($moderation->getStatusBefore()),
-                $this->helper->getLabel($moderation->getStatusAfter()),
+                $helper->getLabel($moderation->getStatusBefore()),
+                $helper->getLabel($moderation->getStatusAfter()),
                 $moderation->getDecklist()->getId(),
                 $moderation->getDecklist()->getName()
             ]);

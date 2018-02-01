@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Translatable\Translatable;
+
 /**
  * Type
  */
-class Type implements \Gedmo\Translatable\Translatable, \Serializable
+class Type implements Translatable, \Serializable
 {
     public function toString()
     {
@@ -44,7 +47,7 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     private $name;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
 
@@ -80,7 +83,7 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function __construct()
     {
-        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->cards = new ArrayCollection();
     }
     
     /**
@@ -239,10 +242,10 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Set side
      *
-     * @param \AppBundle\Entity\Side $side
+     * @param Side $side
      * @return Card
      */
-    public function setSide(\AppBundle\Entity\Side $side = null)
+    public function setSide(Side $side = null)
     {
         $this->side = $side;
     
@@ -252,7 +255,7 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get side
      *
-     * @return \AppBundle\Entity\Side
+     * @return Side
      */
     public function getSide()
     {
@@ -262,10 +265,10 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Add cards
      *
-     * @param \AppBundle\Entity\Card $cards
+     * @param Card $cards
      * @return Type
      */
-    public function addCard(\AppBundle\Entity\Card $cards)
+    public function addCard(Card $cards)
     {
         $this->cards[] = $cards;
     
@@ -275,9 +278,9 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove cards
      *
-     * @param \AppBundle\Entity\Card $cards
+     * @param Card $cards
      */
-    public function removeCard(\AppBundle\Entity\Card $cards)
+    public function removeCard(Card $cards)
     {
         $this->cards->removeElement($cards);
     }

@@ -4,9 +4,6 @@ namespace AppBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
-use AppBundle\Entity\Deck;
-use AppBundle\Entity\Decklist;
-use AppBundle\Entity\Comment;
 
 /**
  * User
@@ -64,7 +61,7 @@ class User extends BaseUser
     private $decklists;
     
     /**
-     * @var Comments[]
+     * @var Comment[]
      */
     private $comments;
     
@@ -265,7 +262,7 @@ class User extends BaseUser
     /**
      * Get deck
      *
-     * @return \AppBundle\Entity\Deck[]
+     * @return Deck[]
      */
     public function getDecks()
     {
@@ -624,10 +621,10 @@ class User extends BaseUser
     /**
      * Add decks
      *
-     * @param \AppBundle\Entity\Deck $decks
+     * @param Deck $decks
      * @return User
      */
-    public function addDeck(\AppBundle\Entity\Deck $decks)
+    public function addDeck(Deck $decks)
     {
         $this->decks[] = $decks;
     
@@ -637,9 +634,9 @@ class User extends BaseUser
     /**
      * Remove decks
      *
-     * @param \AppBundle\Entity\Deck $decks
+     * @param Deck $decks
      */
-    public function removeDeck(\AppBundle\Entity\Deck $decks)
+    public function removeDeck(Deck $decks)
     {
         $this->decks->removeElement($decks);
     }
@@ -647,10 +644,10 @@ class User extends BaseUser
     /**
      * Add decklists
      *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      * @return User
      */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function addDecklist(Decklist $decklists)
     {
         $this->decklists[] = $decklists;
     
@@ -660,9 +657,9 @@ class User extends BaseUser
     /**
      * Remove decklists
      *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function removeDecklist(Decklist $decklists)
     {
         $this->decklists->removeElement($decklists);
     }
@@ -670,10 +667,10 @@ class User extends BaseUser
     /**
      * Add comments
      *
-     * @param \AppBundle\Entity\Comment $comments
+     * @param Comment $comments
      * @return User
      */
-    public function addComment(\AppBundle\Entity\Comment $comments)
+    public function addComment(Comment $comments)
     {
         $this->comments[] = $comments;
     
@@ -683,9 +680,9 @@ class User extends BaseUser
     /**
      * Remove comments
      *
-     * @param \AppBundle\Entity\Comment $comments
+     * @param Comment $comments
      */
-    public function removeComment(\AppBundle\Entity\Comment $comments)
+    public function removeComment(Comment $comments)
     {
         $this->comments->removeElement($comments);
     }
@@ -693,9 +690,9 @@ class User extends BaseUser
     /**
      * Remove votes
      *
-     * @param \AppBundle\Entity\Decklist $votes
+     * @param Decklist $votes
      */
-    public function removeVote(\AppBundle\Entity\Decklist $votes)
+    public function removeVote(Decklist $votes)
     {
         $this->votes->removeElement($votes);
     }
@@ -742,10 +739,10 @@ class User extends BaseUser
     /**
      * Add reviewvotes
      *
-     * @param \AppBundle\Entity\Review $reviewvotes
+     * @param Review $reviewvotes
      * @return User
      */
-    public function addReviewvote(\AppBundle\Entity\Review $review)
+    public function addReviewvote(Review $review)
     {
         $review->addVote($this);
         $this->reviewvotes[] = $review;
@@ -756,9 +753,9 @@ class User extends BaseUser
     /**
      * Remove reviewvotes
      *
-     * @param \AppBundle\Entity\Review $reviewvotes
+     * @param Review $reviewvotes
      */
-    public function removeReviewvote(\AppBundle\Entity\Review $reviewvotes)
+    public function removeReviewvote(Review $reviewvotes)
     {
         $this->reviewvotes->removeElement($reviewvotes);
     }
@@ -782,10 +779,10 @@ class User extends BaseUser
     /**
      * Add reviews
      *
-     * @param \AppBundle\Entity\Review $reviews
+     * @param Review $reviews
      * @return User
      */
-    public function addReview(\AppBundle\Entity\Review $reviews)
+    public function addReview(Review $reviews)
     {
         $this->reviews[] = $reviews;
 
@@ -795,9 +792,9 @@ class User extends BaseUser
     /**
      * Remove reviews
      *
-     * @param \AppBundle\Entity\Review $reviews
+     * @param Review $reviews
      */
-    public function removeReview(\AppBundle\Entity\Review $reviews)
+    public function removeReview(Review $reviews)
     {
         $this->reviews->removeElement($reviews);
     }
@@ -954,9 +951,7 @@ class User extends BaseUser
     }
 
     /**
-     * Get introductions
-     *
-     * @return \json
+     * @return array
      */
     public function getIntroductions()
     {

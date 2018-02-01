@@ -4,8 +4,11 @@ namespace AppBundle\Command\Moderation;
 
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Moderation;
+use AppBundle\Service\ModerationHelper;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -13,6 +16,21 @@ use Symfony\Component\Console\Question\Question;
 
 class ModerationActionCommand extends ContainerAwareCommand
 {
+    /** @var InputInterface $input */
+    private $input;
+
+    /** @var OutputInterface $output */
+    private $output;
+
+    /** @var Helper */
+    private $helper;
+
+    /** @var EntityManagerInterface $em */
+    private $em;
+
+    /** @var ModerationHelper $moderationHelper */
+    private $moderationHelper;
+
     protected function configure()
     {
         $this
@@ -32,9 +50,8 @@ class ModerationActionCommand extends ContainerAwareCommand
         $this->em = $this->getContainer()->get('doctrine')->getManager();
 
         $user = $this->em->getRepository('AppBundle:User')->find(1);
-        
-        /* @var $moderationHelper Moderation */
-        $this->moderationHelper = $this->getContainer()->get('moderation_helper');
+
+        $this->moderationHelper = $this->getContainer()->get(ModerationHelper::class);
         
         $decklistId = $this->helper->ask($input, $output, new Question('Please enter the id of the decklist: '));
         $decklist = $this->getDecklist($decklistId);

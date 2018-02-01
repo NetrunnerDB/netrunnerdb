@@ -28,12 +28,12 @@ class Reviewcomment
     private $text;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      */
     private $author;
 
     /**
-     * @var \AppBundle\Entity\Review
+     * @var Review
      */
     private $review;
 
@@ -120,10 +120,10 @@ class Reviewcomment
     /**
      * Set author
      *
-     * @param \AppBundle\Entity\User $author
+     * @param User $author
      * @return Reviewcomment
      */
-    public function setAuthor(\AppBundle\Entity\User $author = null)
+    public function setAuthor(User $author = null)
     {
         $this->author = $author;
 
@@ -133,7 +133,7 @@ class Reviewcomment
     /**
      * Get author
      *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getAuthor()
     {
@@ -143,10 +143,10 @@ class Reviewcomment
     /**
      * Set review
      *
-     * @param \AppBundle\Entity\Review $review
+     * @param Review $review
      * @return Reviewcomment
      */
-    public function setReview(\AppBundle\Entity\Review $review = null)
+    public function setReview(Review $review = null)
     {
         $this->review = $review;
 
@@ -156,7 +156,7 @@ class Reviewcomment
     /**
      * Get review
      *
-     * @return \AppBundle\Entity\Review
+     * @return Review
      */
     public function getReview()
     {

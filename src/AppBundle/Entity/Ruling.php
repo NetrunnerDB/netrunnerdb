@@ -33,12 +33,12 @@ class Ruling
     private $text;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $card;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      */
     private $user;
 
@@ -102,12 +102,12 @@ class Ruling
         $this->text = $text;
     }
 
-    public function setCard(\AppBundle\Entity\Card $card)
+    public function setCard(Card $card)
     {
         $this->card = $card;
     }
 
-    public function setUser(\AppBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     }

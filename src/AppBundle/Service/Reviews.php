@@ -3,19 +3,22 @@
 
 namespace AppBundle\Service;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class Reviews
 {
-    public function __construct(EntityManager $doctrine)
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->doctrine = $doctrine;
+        $this->entityManager = $entityManager;
     }
     
     public function recent($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->doctrine->getConnection();
+        $dbh = $this->entityManager->getConnection();
     
         $rows = $dbh->executeQuery(
                 "SELECT SQL_CALC_FOUND_ROWS
@@ -55,7 +58,7 @@ class Reviews
     public function by_author($user_id, $start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->doctrine->getConnection();
+        $dbh = $this->entityManager->getConnection();
     
         $rows = $dbh->executeQuery(
                 "SELECT SQL_CALC_FOUND_ROWS

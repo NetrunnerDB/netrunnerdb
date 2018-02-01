@@ -3,9 +3,6 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use AppBundle\Entity\User;
-use AppBundle\Entity\Decklistslot;
-use AppBundle\Entity\Comment;
 
 /**
  * Decklist
@@ -115,37 +112,37 @@ class Decklist implements \Serializable
     private $dotw;
     
     /**
-     * @var AppBundle\Entity\User
+     * @var User
      */
     private $user;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
 
     /**
-     * @var AppBundle\Entity\Card
+     * @var Card
      */
     private $identity;
 
     /**
-     * @var AppBundle\Entity\Faction
+     * @var Faction
      */
     private $faction;
     
     /**
-     * @var AppBundle\Entity\Pack
+     * @var Pack
      */
     private $lastPack;
     
     /**
-     * @var Deckslots[]
+     * @var Decklistslot[]
      */
     private $slots;
     
     /**
-     * @var Comments[]
+     * @var Comment[]
      */
     private $comments;
     
@@ -206,7 +203,7 @@ class Decklist implements \Serializable
      * Set name
      *
      * @param string $name
-     * @return List
+     * @return $this
      */
     public function setName($name)
     {
@@ -229,7 +226,7 @@ class Decklist implements \Serializable
      * Set prettyname
      *
      * @param string $prettyname
-     * @return List
+     * @return $this
      */
     public function setPrettyname($prettyname)
     {
@@ -252,7 +249,7 @@ class Decklist implements \Serializable
      * Set summary
      *
      * @param string $summary
-     * @return List
+     * @return $this
      */
     public function setSummary($summary)
     {
@@ -275,7 +272,7 @@ class Decklist implements \Serializable
      * Set rawdescription
      *
      * @param string $rawdescription
-     * @return List
+     * @return $this
      */
     public function setRawdescription($rawdescription)
     {
@@ -298,7 +295,7 @@ class Decklist implements \Serializable
      * Set description
      *
      * @param string $description
-     * @return List
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -321,7 +318,7 @@ class Decklist implements \Serializable
      * Set dateCreation
      *
      * @param \DateTime $dateCreation
-     * @return List
+     * @return $this
      */
     public function setDateCreation($dateCreation)
     {
@@ -402,7 +399,7 @@ class Decklist implements \Serializable
     /**
      * Get nbfavorites
      *
-     * @return string
+     * @return int
      */
     public function getNbfavorites()
     {
@@ -471,7 +468,7 @@ class Decklist implements \Serializable
     /**
      * Get user
      *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
@@ -481,10 +478,10 @@ class Decklist implements \Serializable
     /**
      * Set side
      *
-     * @param \AppBundle\Entity\Side $side
+     * @param Side $side
      * @return Deck
      */
-    public function setSide(\AppBundle\Entity\Side $side = null)
+    public function setSide(Side $side = null)
     {
         $this->side = $side;
     
@@ -494,7 +491,7 @@ class Decklist implements \Serializable
     /**
      * Get side
      *
-     * @return \AppBundle\Entity\Side
+     * @return Side
      */
     public function getSide()
     {
@@ -504,7 +501,7 @@ class Decklist implements \Serializable
     /**
      * Set identity
      *
-     * @param \AppBundle\Entity\Card $identity
+     * @param Card $identity
      * @return Deck
      */
     public function setIdentity($identity)
@@ -517,7 +514,7 @@ class Decklist implements \Serializable
     /**
      * Get identity
      *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getIdentity()
     {
@@ -550,7 +547,7 @@ class Decklist implements \Serializable
     /**
      * Get cards
      *
-     * @return Cards[]
+     * @return Card[]
      */
     public function getCards()
     {
@@ -565,7 +562,7 @@ class Decklist implements \Serializable
     /**
      * Set lastPack
      *
-     * @param \AppBundle\Entity\Pack $lastPack
+     * @param Pack $lastPack
      * @return Deck
      */
     public function setLastPack($lastPack)
@@ -578,7 +575,7 @@ class Decklist implements \Serializable
     /**
      * Get lastPack
      *
-     * @return \AppBundle\Entity\Pack
+     * @return Pack
      */
     public function getLastPack()
     {
@@ -588,7 +585,7 @@ class Decklist implements \Serializable
     /**
      * Set faction
      *
-     * @param \AppBundle\Entity\Faction $faction
+     * @param Faction $faction
      * @return Deck
      */
     public function setFaction($faction)
@@ -601,7 +598,7 @@ class Decklist implements \Serializable
     /**
      * Get faction
      *
-     * @return \AppBundle\Entity\Faction
+     * @return Faction
      */
     public function getFaction()
     {
@@ -705,10 +702,10 @@ class Decklist implements \Serializable
     /**
      * Add slots
      *
-     * @param \AppBundle\Entity\Decklistslot $slots
+     * @param Decklistslot $slots
      * @return Decklist
      */
-    public function addSlot(\AppBundle\Entity\Decklistslot $slots)
+    public function addSlot(Decklistslot $slots)
     {
         $this->slots[] = $slots;
     
@@ -718,9 +715,9 @@ class Decklist implements \Serializable
     /**
      * Remove slots
      *
-     * @param \AppBundle\Entity\Decklistslot $slots
+     * @param Decklistslot $slots
      */
-    public function removeSlot(\AppBundle\Entity\Decklistslot $slots)
+    public function removeSlot(Decklistslot $slots)
     {
         $this->slots->removeElement($slots);
     }
@@ -728,10 +725,10 @@ class Decklist implements \Serializable
     /**
      * Add comments
      *
-     * @param \AppBundle\Entity\Comment $comments
+     * @param Comment $comments
      * @return Decklist
      */
-    public function addComment(\AppBundle\Entity\Comment $comments)
+    public function addComment(Comment $comments)
     {
         $this->comments[] = $comments;
     
@@ -741,9 +738,9 @@ class Decklist implements \Serializable
     /**
      * Remove comments
      *
-     * @param \AppBundle\Entity\Comment $comments
+     * @param Comment $comments
      */
-    public function removeComment(\AppBundle\Entity\Comment $comments)
+    public function removeComment(Comment $comments)
     {
         $this->comments->removeElement($comments);
     }
@@ -751,9 +748,9 @@ class Decklist implements \Serializable
     /**
      * Remove favorites
      *
-     * @param \AppBundle\Entity\User $favorites
+     * @param User $favorites
      */
-    public function removeFavorite(\AppBundle\Entity\User $favorites)
+    public function removeFavorite(User $favorites)
     {
         $this->favorites->removeElement($favorites);
     }
@@ -761,14 +758,14 @@ class Decklist implements \Serializable
     /**
      * Remove votes
      *
-     * @param \AppBundle\Entity\User $votes
+     * @param User $votes
      */
-    public function removeVote(\AppBundle\Entity\User $votes)
+    public function removeVote(User $votes)
     {
         $this->votes->removeElement($votes);
     }
     /**
-     * @var \AppBundle\Entity\Deck
+     * @var Deck
      */
     private $parent;
 
@@ -776,10 +773,10 @@ class Decklist implements \Serializable
     /**
      * Set parent
      *
-     * @param \AppBundle\Entity\Deck $parent
+     * @param Deck $parent
      * @return Decklist
      */
-    public function setParent(\AppBundle\Entity\Deck $parent = null)
+    public function setParent(Deck $parent = null)
     {
         $this->parent = $parent;
     
@@ -789,7 +786,7 @@ class Decklist implements \Serializable
     /**
      * Get parent
      *
-     * @return \AppBundle\Entity\Deck
+     * @return Deck
      */
     public function getParent()
     {
@@ -801,7 +798,7 @@ class Decklist implements \Serializable
     private $successors;
 
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @var Decklist
      */
     private $precedent;
 
@@ -809,10 +806,10 @@ class Decklist implements \Serializable
     /**
      * Add successors
      *
-     * @param \AppBundle\Entity\Decklist $successors
+     * @param Decklist $successors
      * @return Decklist
      */
-    public function addSuccessor(\AppBundle\Entity\Decklist $successors)
+    public function addSuccessor(Decklist $successors)
     {
         $this->successors[] = $successors;
     
@@ -822,9 +819,9 @@ class Decklist implements \Serializable
     /**
      * Remove successors
      *
-     * @param \AppBundle\Entity\Decklist $successors
+     * @param Decklist $successors
      */
-    public function removeSuccessor(\AppBundle\Entity\Decklist $successors)
+    public function removeSuccessor(Decklist $successors)
     {
         $this->successors->removeElement($successors);
     }
@@ -842,10 +839,10 @@ class Decklist implements \Serializable
     /**
      * Set precedent
      *
-     * @param \AppBundle\Entity\Decklist $precedent
+     * @param Decklist $precedent
      * @return Decklist
      */
-    public function setPrecedent(\AppBundle\Entity\Decklist $precedent = null)
+    public function setPrecedent(Decklist $precedent = null)
     {
         $this->precedent = $precedent;
     
@@ -855,7 +852,7 @@ class Decklist implements \Serializable
     /**
      * Get precedent
      *
-     * @return \AppBundle\Entity\Decklist
+     * @return Decklist
      */
     public function getPrecedent()
     {
@@ -870,10 +867,10 @@ class Decklist implements \Serializable
     /**
      * Add children
      *
-     * @param \AppBundle\Entity\Deck $children
+     * @param Deck $children
      * @return Decklist
      */
-    public function addChildren(\AppBundle\Entity\Deck $children)
+    public function addChildren(Deck $children)
     {
         $this->children[] = $children;
     
@@ -883,9 +880,9 @@ class Decklist implements \Serializable
     /**
      * Remove children
      *
-     * @param \AppBundle\Entity\Deck $children
+     * @param Deck $children
      */
-    public function removeChildren(\AppBundle\Entity\Deck $children)
+    public function removeChildren(Deck $children)
     {
         $this->children->removeElement($children);
     }
@@ -900,7 +897,7 @@ class Decklist implements \Serializable
         return $this->children;
     }
     /**
-     * @var \AppBundle\Entity\Tournament
+     * @var Tournament
      */
     private $tournament;
 
@@ -908,10 +905,10 @@ class Decklist implements \Serializable
     /**
      * Add children
      *
-     * @param \AppBundle\Entity\Deck $children
+     * @param Deck $children
      * @return Decklist
      */
-    public function addChild(\AppBundle\Entity\Deck $children)
+    public function addChild(Deck $children)
     {
         $this->children[] = $children;
 
@@ -921,9 +918,9 @@ class Decklist implements \Serializable
     /**
      * Remove children
      *
-     * @param \AppBundle\Entity\Deck $children
+     * @param Deck $children
      */
-    public function removeChild(\AppBundle\Entity\Deck $children)
+    public function removeChild(Deck $children)
     {
         $this->children->removeElement($children);
     }
@@ -931,10 +928,10 @@ class Decklist implements \Serializable
     /**
      * Set tournament
      *
-     * @param \AppBundle\Entity\Tournament $tournament
+     * @param Tournament $tournament
      * @return Decklist
      */
-    public function setTournament(\AppBundle\Entity\Tournament $tournament = null)
+    public function setTournament(Tournament $tournament = null)
     {
         $this->tournament = $tournament;
 
@@ -944,7 +941,7 @@ class Decklist implements \Serializable
     /**
      * Get tournament
      *
-     * @return \AppBundle\Entity\Tournament
+     * @return Tournament
      */
     public function getTournament()
     {
@@ -959,11 +956,11 @@ class Decklist implements \Serializable
     /**
      * Add legality
      *
-     * @param \AppBundle\Entity\Legality $legality
+     * @param Legality $legality
      *
      * @return Decklist
      */
-    public function addLegality(\AppBundle\Entity\Legality $legality)
+    public function addLegality(Legality $legality)
     {
         $this->legalities[] = $legality;
 
@@ -973,9 +970,9 @@ class Decklist implements \Serializable
     /**
      * Remove legality
      *
-     * @param \AppBundle\Entity\Legality $legality
+     * @param Legality $legality
      */
-    public function removeLegality(\AppBundle\Entity\Legality $legality)
+    public function removeLegality(Legality $legality)
     {
         $this->legalities->removeElement($legality);
     }
@@ -1015,7 +1012,7 @@ class Decklist implements \Serializable
     }
     
     /**
-     * @var \AppBundle\Entity\Modflag
+     * @var Modflag
      */
     private $modflag;
 
@@ -1023,11 +1020,11 @@ class Decklist implements \Serializable
     /**
      * Set modflag
      *
-     * @param \AppBundle\Entity\Modflag $modflag
+     * @param Modflag $modflag
      *
      * @return Decklist
      */
-    public function setModflag(\AppBundle\Entity\Modflag $modflag = null)
+    public function setModflag(Modflag $modflag = null)
     {
         $this->modflag = $modflag;
 
@@ -1037,7 +1034,7 @@ class Decklist implements \Serializable
     /**
      * Get modflag
      *
-     * @return \AppBundle\Entity\Modflag
+     * @return Modflag
      */
     public function getModflag()
     {
@@ -1052,11 +1049,11 @@ class Decklist implements \Serializable
     /**
      * Add claim
      *
-     * @param \AppBundle\Entity\Claim $claim
+     * @param Claim $claim
      *
      * @return Decklist
      */
-    public function addClaim(\AppBundle\Entity\Claim $claim)
+    public function addClaim(Claim $claim)
     {
         $this->claims[] = $claim;
 
@@ -1066,9 +1063,9 @@ class Decklist implements \Serializable
     /**
      * Remove claim
      *
-     * @param \AppBundle\Entity\Claim $claim
+     * @param Claim $claim
      */
-    public function removeClaim(\AppBundle\Entity\Claim $claim)
+    public function removeClaim(Claim $claim)
     {
         $this->claims->removeElement($claim);
     }
@@ -1108,7 +1105,7 @@ class Decklist implements \Serializable
     }
 
     /**
-     * @var \AppBundle\Entity\Mwl
+     * @var Mwl
      */
     private $mwl;
 
@@ -1116,11 +1113,11 @@ class Decklist implements \Serializable
     /**
      * Set mwl
      *
-     * @param \AppBundle\Entity\Mwl $mwl
+     * @param Mwl $mwl
      *
      * @return Decklist
      */
-    public function setMwl(\AppBundle\Entity\Mwl $mwl = null)
+    public function setMwl(Mwl $mwl = null)
     {
         $this->mwl = $mwl;
 
@@ -1130,7 +1127,7 @@ class Decklist implements \Serializable
     /**
      * Get mwl
      *
-     * @return \AppBundle\Entity\Mwl
+     * @return Mwl
      */
     public function getMwl()
     {

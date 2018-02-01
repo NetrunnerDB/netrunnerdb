@@ -4,7 +4,8 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Rotation;
-use Doctrine\ORM\EntityManager;
+
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Description of RotationService
@@ -13,10 +14,10 @@ use Doctrine\ORM\EntityManager;
  */
 class RotationService
 {
-    /** @var EntityManager */
+    /** @var EntityManagerInterface $entityManager */
     private $entityManager;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }

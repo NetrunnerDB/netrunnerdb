@@ -42,11 +42,11 @@ class Client extends BaseClient
     /**
      * Add claim
      *
-     * @param \AppBundle\Entity\Claim $claim
+     * @param Claim $claim
      *
      * @return Client
      */
-    public function addClaim(\AppBundle\Entity\Claim $claim)
+    public function addClaim(Claim $claim)
     {
         $this->claims[] = $claim;
 
@@ -56,9 +56,9 @@ class Client extends BaseClient
     /**
      * Remove claim
      *
-     * @param \AppBundle\Entity\Claim $claim
+     * @param Claim $claim
      */
-    public function removeClaim(\AppBundle\Entity\Claim $claim)
+    public function removeClaim(Claim $claim)
     {
         $this->claims->removeElement($claim);
     }

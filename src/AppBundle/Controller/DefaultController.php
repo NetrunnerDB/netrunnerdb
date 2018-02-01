@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Service\CardsData;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -117,7 +118,7 @@ class DefaultController extends Controller
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        $page = $this->get('cards_data')->replaceSymbols($this->renderView('/Default/rules.html.twig', array("pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game.")));
+        $page = $this->get(CardsData::class)->replaceSymbols($this->renderView('/Default/rules.html.twig', array("pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game.")));
 
         $response->setContent($page);
         return $response;

@@ -3,13 +3,16 @@
 
 namespace AppBundle\Service;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class Diff
 {
-    public function __construct(EntityManager $doctrine)
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->em = $doctrine;
+        $this->entityManager = $entityManager;
     }
     
     public function diffContents($decks)

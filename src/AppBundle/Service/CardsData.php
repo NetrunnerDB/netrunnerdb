@@ -2,14 +2,13 @@
 
 namespace AppBundle\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
+use Gedmo\Translatable\TranslatableListener;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-/*
- *
- */
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 class CardsData
 {
@@ -28,18 +27,18 @@ class CardsData
         'sunny-lebeau' => 'u',
     ];
 
-    /* @var Registry */
-    private $doctrine;
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
-    /* @var RequestStack */
+    /** @var RequestStack $request_stack */
     private $request_stack;
 
-    /* @var Router */
+    /** @var RouterInterface $router */
     private $router;
 
-    public function __construct(Registry $doctrine, RequestStack $request_stack, Router $router)
+    public function __construct(EntityManagerInterface $entityManager, RequestStack $request_stack, RouterInterface $router)
     {
-        $this->doctrine = $doctrine;
+        $this->entityManager = $entityManager;
         $this->request_stack = $request_stack;
         $this->router = $router;
     }
@@ -88,7 +87,7 @@ class CardsData
 
     public function allsetsnocycledata()
     {
-        $list_packs = $this->doctrine->getRepository('AppBundle:Pack')->findBy(array(), array("dateRelease" => "ASC", "position" => "ASC"));
+        $list_packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy(array(), array("dateRelease" => "ASC", "position" => "ASC"));
         $packs = array();
         foreach ($list_packs as $pack) {
             $real = count($pack->getCards());
@@ -108,7 +107,7 @@ class CardsData
 
     public function allsetsdata()
     {
-        $list_cycles = $this->doctrine->getRepository('AppBundle:Cycle')->findBy(array(), array("position" => "ASC"));
+        $list_cycles = $this->entityManager->getRepository('AppBundle:Cycle')->findBy(array(), array("position" => "ASC"));
         $cycles = array();
         foreach ($list_cycles as $cycle) {
             $packs = array();
@@ -153,7 +152,7 @@ class CardsData
         $i = 0;
 
         // construction de la requete sql
-        $qb = $this->doctrine->getRepository('AppBundle:Card')->createQueryBuilder('c');
+        $qb = $this->entityManager->getRepository('AppBundle:Card')->createQueryBuilder('c');
         $qb->select('c', 'p', 'y', 't', 'f', 's');
         $qb->leftJoin('c.pack', 'p')
                 ->leftJoin('p.cycle', 'y')
@@ -230,13 +229,13 @@ class CardsData
                                 break;
                             case '<':
                                 if (!isset($qb2)) {
-                                    $qb2 = $this->doctrine->getRepository('AppBundle:Pack')->createQueryBuilder('p2');
+                                    $qb2 = $this->entityManager->getRepository('AppBundle:Pack')->createQueryBuilder('p2');
                                     $or[] = $qb->expr()->lt('p.dateRelease', '(' . $qb2->select('p2.dateRelease')->where("p2.code = ?$i")->getDql() . ')');
                                 }
                                 break;
                             case '>':
                                 if (!isset($qb3)) {
-                                    $qb3 = $this->doctrine->getRepository('AppBundle:Pack')->createQueryBuilder('p3');
+                                    $qb3 = $this->entityManager->getRepository('AppBundle:Pack')->createQueryBuilder('p3');
                                     $or[] = $qb->expr()->gt('p.dateRelease', '(' . $qb3->select('p3.dateRelease')->where("p3.code = ?$i")->getDql() . ')');
                                 }
                                 break;
@@ -519,7 +518,7 @@ class CardsData
         }
 
         if (count($clauses) === 0 && !$forceempty) {
-            return;
+            return [];
         }
 
         foreach ($clauses as $clause) {
@@ -546,15 +545,15 @@ class CardsData
         $query = $qb->getQuery();
 
         $query->setHint(
-                \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
+                Query::HINT_CUSTOM_OUTPUT_WALKER,
             'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
         );
         $query->setHint(
-                \Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE,
+                TranslatableListener::HINT_TRANSLATABLE_LOCALE,
             $locale
         );
         $query->setHint(
-                \Gedmo\Translatable\TranslatableListener::HINT_FALLBACK,
+                TranslatableListener::HINT_FALLBACK,
             1
         );
 
@@ -564,9 +563,8 @@ class CardsData
     }
 
     /**
-     *
-     * @param \AppBundle\Entity\Card $card
-     * @return multitype:multitype: string number mixed NULL unknown
+     * @param $card
+     * @return array
      */
     public function getCardInfo($card)
     {
@@ -769,7 +767,7 @@ class CardsData
     {
         $response = array();
         $card_code = $card->getCode();
-        $mwls = $this->doctrine->getRepository('AppBundle:Mwl')->findBy(array(), array("dateStart" => "DESC"));
+        $mwls = $this->entityManager->getRepository('AppBundle:Mwl')->findBy(array(), array("dateStart" => "DESC"));
         foreach ($mwls as $mwl) {
             $mwl_cards = $mwl->getCards();
             if (isset($mwl_cards[$card_code])) {
@@ -793,10 +791,10 @@ class CardsData
 
     public function get_reviews($card)
     {
-        $reviews = $this->doctrine->getRepository('AppBundle:Review')->findBy(array('card' => $card), array('nbvotes' => 'DESC'));
+        $reviews = $this->entityManager->getRepository('AppBundle:Review')->findBy(array('card' => $card), array('nbvotes' => 'DESC'));
 
         $response = array();
-        $packs = $this->doctrine->getRepository('AppBundle:Pack')->findBy(array(), array("dateRelease" => "ASC"));
+        $packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy(array(), array("dateRelease" => "ASC"));
         foreach ($reviews as $review) {
             /* @var $review \AppBundle\Entity\Review */
             $user = $review->getUser();
@@ -833,7 +831,7 @@ class CardsData
 
     public function get_rulings($card)
     {
-        $rulings = $this->doctrine->getRepository('AppBundle:Ruling')->findBy(array('card' => $card), array('dateCreation' => 'ASC'));
+        $rulings = $this->entityManager->getRepository('AppBundle:Ruling')->findBy(array('card' => $card), array('dateCreation' => 'ASC'));
 
         $response = array();
         foreach ($rulings as $ruling) {
@@ -853,7 +851,7 @@ class CardsData
      */
     public function find_identity($partialTitle)
     {
-        $qb = $this->doctrine->getManager()->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $qb->select('c')->from('AppBundle:Card', 'c')->join('AppBundle:Type', 't', 'WITH', 'c.type = t');
         $qb->where($qb->expr()->eq('t.name', ':typeName'));
         $qb->andWhere($qb->expr()->like('c.title', ':title'));

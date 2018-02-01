@@ -2,18 +2,19 @@
 
 namespace AppBundle\Service;
 
-use Doctrine\ORM\EntityManager;
 use AppBundle\Entity\Decklist;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class DecklistManager
 {
-    /** var EntityManager */
-    private $em;
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
     
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -24,7 +25,7 @@ class DecklistManager
     public function favorites($user_id, $start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -81,7 +82,7 @@ class DecklistManager
     {
 
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -135,7 +136,7 @@ class DecklistManager
     public function popular($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -187,7 +188,7 @@ class DecklistManager
     public function dotw($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -237,7 +238,7 @@ class DecklistManager
     public function halloffame($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -288,7 +289,7 @@ class DecklistManager
     public function hottopics($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -340,7 +341,7 @@ class DecklistManager
     public function tournaments($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -391,7 +392,7 @@ class DecklistManager
     public function faction($faction_code, $start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -446,7 +447,7 @@ class DecklistManager
     public function lastpack($pack_code, $start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -500,7 +501,7 @@ class DecklistManager
     public function recent($start = 0, $limit = 30, $includeEmptyDesc = true)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $additional_clause = $includeEmptyDesc ? "" : "and d.rawdescription!=''";
 
@@ -554,7 +555,7 @@ class DecklistManager
     public function trashed($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -604,7 +605,7 @@ class DecklistManager
     public function restored($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -655,9 +656,9 @@ class DecklistManager
     {
 
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->em->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
-        $cardRepository = $this->em->getRepository('AppBundle:Card');
+        $cardRepository = $this->entityManager->getRepository('AppBundle:Card');
 
         $cards_code = $request->query->get('cards');
         if (!is_array($cards_code)) {
@@ -727,7 +728,7 @@ class DecklistManager
         if (count($packs)) {
             $wheres[] = 'not exists(select * from decklistslot join card on decklistslot.card_id=card.id where decklistslot.decklist_id=d.id and card.pack_id not in (?))';
             $params[] = array_unique($packs);
-            $types[] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
+            $types[] = Connection::PARAM_INT_ARRAY;
         }
         if (!empty($mwl_code)) {
             $wheres[] = 'exists(select * from legality join mwl on legality.mwl_id=mwl.id where legality.decklist_id=d.id and mwl.code=? and legality.is_legal=1)';
@@ -820,13 +821,13 @@ class DecklistManager
 
     public function removeConstraints(Decklist $decklist)
     {
-        $successors = $this->em->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
+        $successors = $this->entityManager->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
         foreach ($successors as $successor) {
             /* @var $successor \AppBundle\Entity\Decklist */
             $successor->setPrecedent(null);
         }
 
-        $children = $this->em->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
+        $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
         foreach ($children as $child) {
             /* @var $child \AppBundle\Entity\Deck */
             $child->setParent(null);
@@ -835,19 +836,19 @@ class DecklistManager
 
     public function remove(Decklist $decklist)
     {
-        $successors = $this->em->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
+        $successors = $this->entityManager->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
         foreach ($successors as $successor) {
             /* @var $successor \AppBundle\Entity\Decklist */
             $successor->setPrecedent(null);
         }
 
-        $children = $this->em->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
+        $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
         foreach ($children as $child) {
             /* @var $child \AppBundle\Entity\Deck */
             $child->setParent(null);
         }
 
-        $this->em->remove($decklist);
+        $this->entityManager->remove($decklist);
     }
     
     public function isDecklistLegal(Decklist $decklist)
@@ -858,7 +859,7 @@ class DecklistManager
                 . " JOIN AppBundle:Card c WITH s.card=c"
                 . " WHERE s.quantity>c.deckLimit"
                 . " AND s.decklist=?1";
-        $countQuery = $this->em->createQuery($countDql)->setParameter(1, $decklist);
+        $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $decklist);
         $count = $countQuery->getSingleResult()[1];
         if ($count) {
             return false;
@@ -872,7 +873,7 @@ class DecklistManager
                 . " JOIN AppBundle:Cycle y WITH p.cycle=y"
                 . " WHERE y.rotated=true"
                 . " AND s.decklist=?1";
-        $countQuery = $this->em->createQuery($countDql)->setParameter(1, $decklist);
+        $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $decklist);
         $count = $countQuery->getSingleResult()[1];
         if ($count) {
             return false;
@@ -885,7 +886,7 @@ class DecklistManager
                 . " WHERE m.active=true"
                 . " AND l.isLegal=false"
                 . " AND l.decklist=?1";
-        $countQuery = $this->em->createQuery($countDql)->setParameter(1, $decklist);
+        $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $decklist);
         $count = $countQuery->getSingleResult()[1];
         if ($count) {
             return false;

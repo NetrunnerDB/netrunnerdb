@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Translatable\Translatable;
+
 /**
  * Pack
  */
-class Pack implements \Gedmo\Translatable\Translatable, \Serializable
+class Pack implements Translatable, \Serializable
 {
     public function toString()
     {
@@ -228,7 +231,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     private $cards;
 
     /**
-     * @var \AppBundle\Entity\Cycle
+     * @var Cycle
      */
     private $cycle;
 
@@ -237,18 +240,17 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function __construct()
     {
-        $this->ts = new \DateTime();
-        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->cards = new ArrayCollection();
+        $this->decklists = new ArrayCollection();
     }
     
     /**
      * Add cards
      *
-     * @param \AppBundle\Entity\Card $cards
+     * @param Card $cards
      * @return Pack
      */
-    public function addCard(\AppBundle\Entity\Card $cards)
+    public function addCard(Card $cards)
     {
         $this->cards[] = $cards;
     
@@ -258,9 +260,9 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove cards
      *
-     * @param \AppBundle\Entity\Card $cards
+     * @param Card $cards
      */
-    public function removeCard(\AppBundle\Entity\Card $cards)
+    public function removeCard(Card $cards)
     {
         $this->cards->removeElement($cards);
     }
@@ -278,10 +280,10 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Set cycle
      *
-     * @param \AppBundle\Entity\Cycle $cycle
+     * @param Cycle $cycle
      * @return Pack
      */
-    public function setCycle(\AppBundle\Entity\Cycle $cycle = null)
+    public function setCycle(Cycle $cycle = null)
     {
         $this->cycle = $cycle;
     
@@ -291,7 +293,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get cycle
      *
-     * @return \AppBundle\Entity\Cycle
+     * @return Cycle
      */
     public function getCycle()
     {
@@ -311,10 +313,10 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Add decklists
      *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      * @return Pack
      */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function addDecklist(Decklist $decklists)
     {
         $this->decklists[] = $decklists;
 
@@ -324,9 +326,9 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove decklists
      *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function removeDecklist(Decklist $decklists)
     {
         $this->decklists->removeElement($decklists);
     }

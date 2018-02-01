@@ -2,7 +2,6 @@
 
 namespace AppBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -46,7 +45,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         
         if (count($locales) > 1) {
             // when multiple locales, the hint fallback = 0 doesn't work in translations:dump:cards
-            //throw new \Exception("Sorry but multiple locales are not supported yet");
+            throw new \Exception("Sorry but multiple locales are not supported yet");
         }
         
         $path = $input->getArgument('path');

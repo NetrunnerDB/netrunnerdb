@@ -9,11 +9,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Client;
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Serializer as Serializer2;
 
 /**
  * Description of AbstractOauthController
@@ -70,7 +70,7 @@ abstract class AbstractOauthController extends Controller
         /* @var $serializer Serializer */
         $serializer = $this->get('jms_serializer');
 
-        $context = new \JMS\Serializer\SerializationContext();
+        $context = new SerializationContext();
         $context->setSerializeNull(true);
 
         $content = $serializer->serialize($data, 'json', $context);

@@ -2,7 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Service\PersonalizationHelper;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,8 +19,7 @@ class InfoController extends Controller
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
 
-        /* @var $helper \AppBundle\Service\PersonalizationHelper */
-        $helper = $this->get('personalization_helper');
+        $helper = $this->get(PersonalizationHelper::class);
 
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();

@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Translatable\Translatable;
+
 /**
  * Side
  */
-class Side implements \Gedmo\Translatable\Translatable, \Serializable
+class Side implements Translatable, \Serializable
 {
     public function toString()
     {
@@ -95,19 +98,19 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function __construct()
     {
-        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->factions = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->decks = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->cards = new ArrayCollection();
+        $this->factions = new ArrayCollection();
+        $this->decks = new ArrayCollection();
+        $this->decklists = new ArrayCollection();
     }
     
     /**
      * Add cards
      *
-     * @param \AppBundle\Entity\Card $cards
+     * @param Card $cards
      * @return Side
      */
-    public function addCard(\AppBundle\Entity\Card $cards)
+    public function addCard(Card $cards)
     {
         $this->cards[] = $cards;
     
@@ -117,9 +120,9 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove cards
      *
-     * @param \AppBundle\Entity\Card $cards
+     * @param Card $cards
      */
-    public function removeCard(\AppBundle\Entity\Card $cards)
+    public function removeCard(Card $cards)
     {
         $this->cards->removeElement($cards);
     }
@@ -137,10 +140,10 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Add decks
      *
-     * @param \AppBundle\Entity\Deck $decks
+     * @param Deck $decks
      * @return Side
      */
-    public function addDeck(\AppBundle\Entity\Deck $decks)
+    public function addDeck(Deck $decks)
     {
         $this->decks[] = $decks;
     
@@ -150,9 +153,9 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove decks
      *
-     * @param \AppBundle\Entity\Deck $decks
+     * @param Deck $decks
      */
-    public function removeDeck(\AppBundle\Entity\Deck $decks)
+    public function removeDeck(Deck $decks)
     {
         $this->decks->removeElement($decks);
     }
@@ -190,10 +193,10 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Add factions
      *
-     * @param \AppBundle\Entity\Faction $factions
+     * @param Faction $factions
      * @return Side
      */
-    public function addFaction(\AppBundle\Entity\Faction $factions)
+    public function addFaction(Faction $factions)
     {
         $this->factions[] = $factions;
 
@@ -203,9 +206,9 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove factions
      *
-     * @param \AppBundle\Entity\Faction $factions
+     * @param Faction $factions
      */
-    public function removeFaction(\AppBundle\Entity\Faction $factions)
+    public function removeFaction(Faction $factions)
     {
         $this->factions->removeElement($factions);
     }
@@ -213,10 +216,10 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Add decklists
      *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      * @return Side
      */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function addDecklist(Decklist $decklists)
     {
         $this->decklists[] = $decklists;
 
@@ -226,9 +229,9 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove decklists
      *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function removeDecklist(Decklist $decklists)
     {
         $this->decklists->removeElement($decklists);
     }

@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Translatable\Translatable;
+
 /**
  * Card
  */
-class Card implements \Gedmo\Translatable\Translatable, \Serializable
+class Card implements Translatable, \Serializable
 {
     public function toString()
     {
@@ -240,22 +243,22 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     private $decklists;
 
     /**
-     * @var \AppBundle\Entity\Pack
+     * @var Pack
      */
     private $pack;
 
     /**
-     * @var \AppBundle\Entity\Type
+     * @var Type
      */
     private $type;
 
     /**
-     * @var \AppBundle\Entity\Faction
+     * @var Faction
      */
     private $faction;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
 
@@ -269,7 +272,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function __construct()
     {
-        $this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->decklists = new ArrayCollection();
         $this->dateUpdate = new \DateTime();
     }
 
@@ -769,10 +772,10 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Add decklists
      *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      * @return Card
      */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function addDecklist(Decklist $decklists)
     {
         $this->decklists[] = $decklists;
 
@@ -782,9 +785,9 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove decklists
      *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function removeDecklist(Decklist $decklists)
     {
         $this->decklists->removeElement($decklists);
     }
@@ -802,10 +805,10 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Set pack
      *
-     * @param \AppBundle\Entity\Pack $pack
+     * @param Pack $pack
      * @return Card
      */
-    public function setPack(\AppBundle\Entity\Pack $pack = null)
+    public function setPack(Pack $pack = null)
     {
         $this->pack = $pack;
 
@@ -815,7 +818,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get pack
      *
-     * @return \AppBundle\Entity\Pack
+     * @return Pack
      */
     public function getPack()
     {
@@ -825,10 +828,10 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Set type
      *
-     * @param \AppBundle\Entity\Type $type
+     * @param Type $type
      * @return Card
      */
-    public function setType(\AppBundle\Entity\Type $type = null)
+    public function setType(Type $type = null)
     {
         $this->type = $type;
 
@@ -838,7 +841,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get type
      *
-     * @return \AppBundle\Entity\Type
+     * @return Type
      */
     public function getType()
     {
@@ -848,10 +851,10 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Set faction
      *
-     * @param \AppBundle\Entity\Faction $faction
+     * @param Faction $faction
      * @return Card
      */
-    public function setFaction(\AppBundle\Entity\Faction $faction = null)
+    public function setFaction(Faction $faction = null)
     {
         $this->faction = $faction;
 
@@ -861,7 +864,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get faction
      *
-     * @return \AppBundle\Entity\Faction
+     * @return Faction
      */
     public function getFaction()
     {
@@ -871,10 +874,10 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Set side
      *
-     * @param \AppBundle\Entity\Side $side
+     * @param Side $side
      * @return Card
      */
-    public function setSide(\AppBundle\Entity\Side $side = null)
+    public function setSide(Side $side = null)
     {
         $this->side = $side;
 
@@ -884,7 +887,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get side
      *
-     * @return \AppBundle\Entity\Side
+     * @return Side
      */
     public function getSide()
     {
@@ -899,10 +902,10 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Add reviews
      *
-     * @param \AppBundle\Entity\Review $reviews
+     * @param Review $reviews
      * @return Card
      */
-    public function addReview(\AppBundle\Entity\Review $reviews)
+    public function addReview(Review $reviews)
     {
         $this->reviews[] = $reviews;
 
@@ -912,9 +915,9 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove reviews
      *
-     * @param \AppBundle\Entity\Review $reviews
+     * @param Review $reviews
      */
-    public function removeReview(\AppBundle\Entity\Review $reviews)
+    public function removeReview(Review $reviews)
     {
         $this->reviews->removeElement($reviews);
     }
@@ -937,10 +940,10 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Add rulings
      *
-     * @param \AppBundle\Entity\Ruling $rulings
+     * @param Ruling $rulings
      * @return Card
      */
-    public function addRuling(\AppBundle\Entity\Ruling $rulings)
+    public function addRuling(Ruling $rulings)
     {
         $this->rulings[] = $rulings;
 
@@ -950,9 +953,9 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove rulings
      *
-     * @param \AppBundle\Entity\Ruling $rulings
+     * @param Ruling $rulings
      */
-    public function removeRuling(\AppBundle\Entity\Ruling $rulings)
+    public function removeRuling(Ruling $rulings)
     {
         $this->rulings->removeElement($rulings);
     }

@@ -2,9 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Service\CardsData;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use AppBundle\AppBundle;
+
 use Symfony\Component\HttpFoundation\Request;
 
 class SearchController extends Controller
@@ -70,7 +71,7 @@ class SearchController extends Controller
         ]);
         
         $allsets = $this->renderView('/Default/allsets.html.twig', [
-            "data" => $this->get('cards_data')->allsetsdata(),
+            "data" => $this->get(CardsData::class)->allsetsdata(),
         ]);
     
         return $this->render('/Search/searchform.html.twig', [
@@ -217,7 +218,7 @@ class SearchController extends Controller
         $request->setLocale($locale);
 
         // we may be able to redirect to a better url if the search is on a single set
-        $conditions = $this->get('cards_data')->syntax($q);
+        $conditions = $this->get(CardsData::class)->syntax($q);
         if (count($conditions) == 1 && count($conditions[0]) == 3 && $conditions[0][1] == ":") {
             if ($conditions[0][0] == "e") {
                 $url = $this->get('router')->generate('cards_list', array('pack_code' => $conditions[0][2], 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()));
@@ -289,13 +290,13 @@ class SearchController extends Controller
             $view = 'list';
         }
         
-        $conditions = $this->get('cards_data')->syntax($q);
+        $conditions = $this->get(CardsData::class)->syntax($q);
 
-        $this->get('cards_data')->validateConditions($conditions);
+        $this->get(CardsData::class)->validateConditions($conditions);
 
         // reconstruction de la bonne chaine de recherche pour affichage
-        $q = $this->get('cards_data')->buildQueryFromConditions($conditions);
-        if ($q && $rows = $this->get('cards_data')->get_search_rows($conditions, $sort)) {
+        $q = $this->get(CardsData::class)->buildQueryFromConditions($conditions);
+        if ($q && $rows = $this->get(CardsData::class)->get_search_rows($conditions, $sort)) {
             if (count($rows) == 1) {
                 $view = 'zoom';
             }
@@ -331,7 +332,7 @@ class SearchController extends Controller
             for ($rowindex = $first; $rowindex < $last && $rowindex < count($rows); $rowindex++) {
                 $card = $rows[$rowindex];
                 $pack = $card->getPack();
-                $cardinfo = $this->get('cards_data')->getCardInfo($card);
+                $cardinfo = $this->get(CardsData::class)->getCardInfo($card);
                 if (empty($availability[$pack->getCode()])) {
                     $availability[$pack->getCode()] = false;
                     if ($pack->getDateRelease() && $pack->getDateRelease() <= new \DateTime()) {
@@ -340,12 +341,12 @@ class SearchController extends Controller
                 }
                 $cardinfo['available'] = $availability[$pack->getCode()];
                 if ($view == "zoom") {
-                    $cardinfo['reviews'] = $this->get('cards_data')->get_reviews($card);
-                    $cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
-                    $cardinfo['mwl_info'] = $this->get('cards_data')->get_mwl_info($card);
+                    $cardinfo['reviews'] = $this->get(CardsData::class)->get_reviews($card);
+                    $cardinfo['rulings'] = $this->get(CardsData::class)->get_rulings($card);
+                    $cardinfo['mwl_info'] = $this->get(CardsData::class)->get_mwl_info($card);
                 }
                 if ($view == "rulings") {
-                    $cardinfo['rulings'] = $this->get('cards_data')->get_rulings($card);
+                    $cardinfo['rulings'] = $this->get(CardsData::class)->get_rulings($card);
                 }
                 $cards[] = $cardinfo;
             }
@@ -418,9 +419,9 @@ class SearchController extends Controller
         $prev = $em->getRepository('AppBundle:Card')->findOneBy(array("pack" => $card->getPack(), "position" => $card->getPosition()-1));
         $next = $em->getRepository('AppBundle:Card')->findOneBy(array("pack" => $card->getPack(), "position" => $card->getPosition()+1));
         return $this->renderView('/Search/setnavigation.html.twig', array(
-                "prevtitle" => $prev ? $prev->getTitle($locale) : "",
+                "prevtitle" => $prev ? $prev->getTitle() : "",
                 "prevhref" => $prev ? $this->get('router')->generate('cards_zoom', array('card_code' => $prev->getCode(), "_locale" => $locale)) : "",
-                "nexttitle" => $next ? $next->getTitle($locale) : "",
+                "nexttitle" => $next ? $next->getTitle() : "",
                 "nexthref" => $next ? $this->get('router')->generate('cards_zoom', array('card_code' => $next->getCode(), "_locale" => $locale)) : "",
                 "settitle" => $card->getPack()->getName(),
                 "sethref" => $this->get('router')->generate('cards_list', array('pack_code' => $card->getPack()->getCode(), "_locale" => $locale)),

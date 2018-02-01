@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Review
@@ -59,7 +59,7 @@ class Review
      */
     public function __construct()
     {
-        $this->votes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->votes = new ArrayCollection();
     }
 
     /**
@@ -193,7 +193,7 @@ class Review
      * @param \AppBundle\Entity\Card $card
      * @return Review
      */
-    public function setCard(\AppBundle\Entity\Card $card = null)
+    public function setCard(Card $card = null)
     {
         $this->card = $card;
 
@@ -239,7 +239,7 @@ class Review
      * @param \AppBundle\Entity\User $votes
      * @return Review
      */
-    public function addVote(\AppBundle\Entity\User $user)
+    public function addVote(User $user)
     {
         $this->votes[] = $user;
 
@@ -251,7 +251,7 @@ class Review
      *
      * @param \AppBundle\Entity\User $votes
      */
-    public function removeVote(\AppBundle\Entity\User $votes)
+    public function removeVote(User $votes)
     {
         $this->votes->removeElement($votes);
     }
@@ -277,7 +277,7 @@ class Review
      * @param \AppBundle\Entity\Reviewcomment $comments
      * @return Review
      */
-    public function addComment(\AppBundle\Entity\Reviewcomment $comments)
+    public function addComment(Reviewcomment $comments)
     {
         $this->comments[] = $comments;
 
@@ -289,7 +289,7 @@ class Review
      *
      * @param \AppBundle\Entity\Reviewcomment $comments
      */
-    public function removeComment(\AppBundle\Entity\Reviewcomment $comments)
+    public function removeComment(Reviewcomment $comments)
     {
         $this->comments->removeElement($comments);
     }

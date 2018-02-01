@@ -3,6 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Rotation;
+use AppBundle\Service\DecklistManager;
+use AppBundle\Service\Diff;
+use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -35,7 +38,7 @@ class DecklistsController extends Controller
 
         switch ($type) {
             case 'find':
-                $result = $this->get('decklists')->find($start, $limit, $request);
+                $result = $this->get(DecklistManager::class)->find($start, $limit, $request);
                 $pagetitle = "Decklist search results";
                 $header = $this->searchForm($request);
                 break;
@@ -45,7 +48,7 @@ class DecklistsController extends Controller
                 if (!$user) {
                     $result = array('decklists' => array(), 'count' => 0);
                 } else {
-                    $result = $this->get('decklists')->favorites($user->getId(), $start, $limit);
+                    $result = $this->get(DecklistManager::class)->favorites($user->getId(), $start, $limit);
                 }
                 $pagetitle = "Favorite Decklists";
                 break;
@@ -55,47 +58,47 @@ class DecklistsController extends Controller
                 if (!$user) {
                     $result = array('decklists' => array(), 'count' => 0);
                 } else {
-                    $result = $this->get('decklists')->by_author($user->getId(), $start, $limit);
+                    $result = $this->get(DecklistManager::class)->by_author($user->getId(), $start, $limit);
                 }
                 $pagetitle = "My Decklists";
                 break;
             case 'recent':
-                $result = $this->get('decklists')->recent($start, $limit);
+                $result = $this->get(DecklistManager::class)->recent($start, $limit);
                 $pagetitle = "Recent Decklists";
                 break;
             case 'dotw':
-                $result = $this->get('decklists')->dotw($start, $limit);
+                $result = $this->get(DecklistManager::class)->dotw($start, $limit);
                 $pagetitle = "Decklist of the week";
                 break;
             case 'halloffame':
-                $result = $this->get('decklists')->halloffame($start, $limit);
+                $result = $this->get(DecklistManager::class)->halloffame($start, $limit);
                 $pagetitle = "Hall of Fame";
                 break;
             case 'hottopics':
-                $result = $this->get('decklists')->hottopics($start, $limit);
+                $result = $this->get(DecklistManager::class)->hottopics($start, $limit);
                 $pagetitle = "Hot Topics";
                 break;
             case 'tournament':
-                $result = $this->get('decklists')->tournaments($start, $limit);
+                $result = $this->get(DecklistManager::class)->tournaments($start, $limit);
                 $pagetitle = "Tournaments";
                 break;
             case 'trashed':
                 if (!$securityContext->isGranted('ROLE_MODERATOR')) {
                     throw $this->createAccessDeniedException('Access denied');
                 }
-                $result = $this->get('decklists')->trashed($start, $limit);
+                $result = $this->get(DecklistManager::class)->trashed($start, $limit);
                 $pagetitle = "Trashed decklists";
                 break;
             case 'restored':
                 if (!$securityContext->isGranted('ROLE_MODERATOR')) {
                     throw $this->createAccessDeniedException('Access denied');
                 }
-                $result = $this->get('decklists')->restored($start, $limit);
+                $result = $this->get(DecklistManager::class)->restored($start, $limit);
                 $pagetitle = "Restored decklists";
                 break;
             case 'popular':
             default:
-                $result = $this->get('decklists')->popular($start, $limit);
+                $result = $this->get(DecklistManager::class)->popular($start, $limit);
                 $pagetitle = "Popular Decklists";
                 break;
         }
@@ -333,7 +336,7 @@ class DecklistsController extends Controller
                                 where c.code in (?)
     				order by c.code desc",
                 array($cards_code),
-                array(\Doctrine\DBAL\Connection::PARAM_INT_ARRAY)
+                array(Connection::PARAM_INT_ARRAY)
             )
                     ->fetchAll();
 
@@ -368,7 +371,7 @@ class DecklistsController extends Controller
 
         $decks = [$d1->getContent(), $d2->getContent()];
 
-        list($listings, $intersect) = $this->get('diff')->diffContents($decks);
+        list($listings, $intersect) = $this->get(Diff::class)->diffContents($decks);
 
         $content1 = [];
         foreach ($listings[0] as $code => $qty) {

@@ -51,12 +51,12 @@ class Moderation
         return $this->dateCreation;
     }
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @var Decklist
      */
     private $decklist;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      */
     private $moderator;
 
@@ -64,11 +64,11 @@ class Moderation
     /**
      * Set decklist
      *
-     * @param \AppBundle\Entity\Decklist $decklist
+     * @param Decklist $decklist
      *
      * @return Moderation
      */
-    public function setDecklist(\AppBundle\Entity\Decklist $decklist = null)
+    public function setDecklist(Decklist $decklist = null)
     {
         $this->decklist = $decklist;
 
@@ -78,7 +78,7 @@ class Moderation
     /**
      * Get decklist
      *
-     * @return \AppBundle\Entity\Decklist
+     * @return Decklist
      */
     public function getDecklist()
     {
@@ -88,11 +88,11 @@ class Moderation
     /**
      * Set moderator
      *
-     * @param \AppBundle\Entity\User $moderator
+     * @param User $moderator
      *
      * @return Moderation
      */
-    public function setModerator(\AppBundle\Entity\User $moderator = null)
+    public function setModerator(User $moderator = null)
     {
         $this->moderator = $moderator;
 
@@ -102,7 +102,7 @@ class Moderation
     /**
      * Get moderator
      *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getModerator()
     {

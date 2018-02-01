@@ -4,11 +4,12 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Gedmo\Translatable\Translatable;
 
 /**
  * Cycle
  */
-class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
+class Cycle implements Translatable, \Serializable
 {
     public function toString()
     {
@@ -257,17 +258,17 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function __construct()
     {
-        $this->packs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->packs = new ArrayCollection();
         $this->rotations = new ArrayCollection();
     }
     
     /**
      * Add packs
      *
-     * @param \AppBundle\Entity\Pack $packs
+     * @param Pack $packs
      * @return Cycle
      */
-    public function addPack(\AppBundle\Entity\Pack $packs)
+    public function addPack(Pack $packs)
     {
         $this->packs[] = $packs;
     
@@ -277,9 +278,9 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove packs
      *
-     * @param \AppBundle\Entity\Pack $packs
+     * @param Pack $packs
      */
-    public function removePack(\AppBundle\Entity\Pack $packs)
+    public function removePack(Pack $packs)
     {
         $this->packs->removeElement($packs);
     }

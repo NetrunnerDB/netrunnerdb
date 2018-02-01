@@ -7,6 +7,7 @@ use AppBundle\Entity\Decklist;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -19,14 +20,12 @@ class ClaimsController extends AbstractOauthController
 {
     private function deserializeClaim(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        
         /* @var $serializer \JMS\Serializer\Serializer */
         $serializer = $this->get('jms_serializer');
 
         $data = json_decode($request->getContent(), true);
         if ($data === null) {
-            throw new \Symfony\Component\HttpKernel\Exception\BadRequestHttpException("Malformed JSON");
+            throw new BadRequestHttpException("Malformed JSON");
         }
         
         /* @var $claim Claim */

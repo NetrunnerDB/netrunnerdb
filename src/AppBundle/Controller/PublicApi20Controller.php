@@ -2,9 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use Doctrine\DBAL\Types\Type;
 use Gedmo\Translatable\Entity\Translation;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
+
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -367,8 +367,8 @@ class PublicApi20Controller extends FOSRestController
         
         $qb = $this->getDoctrine()->getManager()->getRepository('AppBundle:Decklist')->createQueryBuilder('d');
         $qb->where($qb->expr()->between('d.dateCreation', ':date_from', ':date_to'));
-        $qb->setParameter('date_from', $date_from, \Doctrine\DBAL\Types\Type::DATETIME);
-        $qb->setParameter('date_to', $date_to, \Doctrine\DBAL\Types\Type::DATETIME);
+        $qb->setParameter('date_from', $date_from, Type::DATETIME);
+        $qb->setParameter('date_to', $date_to, Type::DATETIME);
         
         $data = $qb->getQuery()->execute();
     

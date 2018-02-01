@@ -18,12 +18,12 @@ class Legality
     private $isLegal;
 
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @var Decklist
      */
     private $decklist;
 
     /**
-     * @var \AppBundle\Entity\Mwl
+     * @var Mwl
      */
     private $mwl;
 
@@ -65,11 +65,11 @@ class Legality
     /**
      * Set decklist
      *
-     * @param \AppBundle\Entity\Decklist $decklist
+     * @param Decklist $decklist
      *
      * @return Legality
      */
-    public function setDecklist(\AppBundle\Entity\Decklist $decklist = null)
+    public function setDecklist(Decklist $decklist = null)
     {
         $this->decklist = $decklist;
 
@@ -79,7 +79,7 @@ class Legality
     /**
      * Get decklist
      *
-     * @return \AppBundle\Entity\Decklist
+     * @return Decklist
      */
     public function getDecklist()
     {
@@ -89,11 +89,11 @@ class Legality
     /**
      * Set mwl
      *
-     * @param \AppBundle\Entity\Mwl $mwl
+     * @param Mwl $mwl
      *
      * @return Legality
      */
-    public function setMwl(\AppBundle\Entity\Mwl $mwl = null)
+    public function setMwl(Mwl $mwl = null)
     {
         $this->mwl = $mwl;
 
@@ -103,7 +103,7 @@ class Legality
     /**
      * Get mwl
      *
-     * @return \AppBundle\Entity\Mwl
+     * @return Mwl
      */
     public function getMwl()
     {

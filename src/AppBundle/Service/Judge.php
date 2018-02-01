@@ -9,20 +9,19 @@ use AppBundle\Entity\Legality;
 use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Card;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 
 class Judge
 {
-    /** @var \Doctrine\ORM\EntityManager */
-    private $em;
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
-    /**
-     * @var array
-     */
+    /** @var array $mwlCards */
     private $mwlCards;
 
-    public function __construct(\Doctrine\ORM\EntityManager $em)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
         $this->mwlCards = [];
     }
 
@@ -311,6 +310,8 @@ class Judge
                 return $card->getInfluenceLimit();
             }
         }
+
+        return 0;
     }
 
     public function getSpentInfluence(Decklist $decklist)
@@ -363,6 +364,8 @@ class Judge
                 return "The deck has too many copies of a card.";
                 break;
         }
+
+        return null;
     }
 
     /**

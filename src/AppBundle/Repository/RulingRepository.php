@@ -2,12 +2,14 @@
 
 namespace AppBundle\Repository;
 
+use Doctrine\ORM\EntityRepository;
+
 /**
  * Description of RulingRepository
  *
  * @author Alsciende <alsciende@icloud.com>
  */
-class RulingRepository extends \Doctrine\ORM\EntityRepository
+class RulingRepository extends EntityRepository
 {
     public function findAllSortedByCardCode()
     {

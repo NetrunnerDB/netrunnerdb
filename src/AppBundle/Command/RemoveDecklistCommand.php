@@ -2,7 +2,7 @@
 
 namespace AppBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
+use AppBundle\Service\DecklistManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,8 +30,7 @@ class RemoveDecklistCommand extends ContainerAwareCommand
         /* @var $em \Doctrine\ORM\EntityManager */
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
-        /* @var $decklistManager \AppBundle\Service\Decklists */
-        $decklistManager = $this->getContainer()->get('decklists');
+        $decklistManager = $this->getContainer()->get(DecklistManager::class);
 
         $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         

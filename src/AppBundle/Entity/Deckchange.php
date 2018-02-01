@@ -23,7 +23,7 @@ class Deckchange
     private $variation;
 
     /**
-     * @var \AppBundle\Entity\Deck
+     * @var Deck
      */
     private $deck;
 
@@ -42,7 +42,7 @@ class Deckchange
      * Set dateCreation
      *
      * @param \DateTime $dateCreation
-     * @return Change
+     * @return $this
      */
     public function setDatecreation($dateCreation)
     {
@@ -65,7 +65,7 @@ class Deckchange
      * Set variation
      *
      * @param string $variation
-     * @return Change
+     * @return $this
      */
     public function setVariation($variation)
     {
@@ -87,10 +87,10 @@ class Deckchange
     /**
      * Set deck
      *
-     * @param \AppBundle\Entity\Deck $deck
-     * @return Change
+     * @param Deck $deck
+     * @return $this
      */
-    public function setDeck(\AppBundle\Entity\Deck $deck = null)
+    public function setDeck(Deck $deck = null)
     {
         $this->deck = $deck;
 
@@ -100,7 +100,7 @@ class Deckchange
     /**
      * Get deck
      *
-     * @return \AppBundle\Entity\Deck
+     * @return Deck
      */
     public function getDeck()
     {

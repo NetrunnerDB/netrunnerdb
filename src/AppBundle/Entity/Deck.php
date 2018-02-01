@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Deck
  */
@@ -98,22 +100,22 @@ class Deck implements \Serializable
     private $slots;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      */
     private $user;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
 
     /**
-     * @var AppBundle\Entity\Card
+     * @var Card
      */
     private $identity;
     
     /**
-     * @var AppBundle\Entity\Pack
+     * @var Pack
      */
     private $lastPack;
     
@@ -122,9 +124,8 @@ class Deck implements \Serializable
      */
     public function __construct()
     {
-        $this->slots = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->descendants = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->slots = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
     
     /**
@@ -210,7 +211,7 @@ class Deck implements \Serializable
      * Set description
      *
      * @param string $description
-     * @return List
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -255,10 +256,10 @@ class Deck implements \Serializable
     /**
      * Add slots
      *
-     * @param \AppBundle\Entity\Deckslot $slots
+     * @param Deckslot $slots
      * @return Deck
      */
-    public function addSlot(\AppBundle\Entity\Deckslot $slots)
+    public function addSlot(Deckslot $slots)
     {
         $this->slots[] = $slots;
     
@@ -268,9 +269,9 @@ class Deck implements \Serializable
     /**
      * Remove slots
      *
-     * @param \AppBundle\Entity\Deckslot $slots
+     * @param Deckslot $slots
      */
-    public function removeSlot(\AppBundle\Entity\Deckslot $slots)
+    public function removeSlot(Deckslot $slots)
     {
         $this->slots->removeElement($slots);
     }
@@ -278,7 +279,7 @@ class Deck implements \Serializable
     /**
      * Get slots
      *
-     * @return \AppBundle\Entity\Deckslot[]
+     * @return Deckslot[]
      */
     public function getSlots()
     {
@@ -288,10 +289,10 @@ class Deck implements \Serializable
     /**
      * Set user
      *
-     * @param \AppBundle\Entity\User $user
+     * @param User $user
      * @return Deck
      */
-    public function setUser(\AppBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
     
@@ -301,7 +302,7 @@ class Deck implements \Serializable
     /**
      * Get user
      *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
@@ -311,10 +312,10 @@ class Deck implements \Serializable
     /**
      * Set side
      *
-     * @param \AppBundle\Entity\Side $side
+     * @param Side $side
      * @return Deck
      */
-    public function setSide(\AppBundle\Entity\Side $side = null)
+    public function setSide(Side $side = null)
     {
         $this->side = $side;
     
@@ -324,7 +325,7 @@ class Deck implements \Serializable
     /**
      * Get side
      *
-     * @return \AppBundle\Entity\Side
+     * @return Side
      */
     public function getSide()
     {
@@ -334,7 +335,7 @@ class Deck implements \Serializable
     /**
      * Set identity
      *
-     * @param \AppBundle\Entity\Card $identity
+     * @param Card $identity
      * @return Deck
      */
     public function setIdentity($identity)
@@ -347,7 +348,7 @@ class Deck implements \Serializable
     /**
      * Get identity
      *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getIdentity()
     {
@@ -357,7 +358,7 @@ class Deck implements \Serializable
     /**
      * Set lastPack
      *
-     * @param \AppBundle\Entity\Pack $lastPack
+     * @param Pack $lastPack
      * @return Deck
      */
     public function setLastPack($lastPack)
@@ -370,7 +371,7 @@ class Deck implements \Serializable
     /**
      * Get lastPack
      *
-     * @return \AppBundle\Entity\Pack
+     * @return Pack
      */
     public function getLastPack()
     {
@@ -472,7 +473,7 @@ class Deck implements \Serializable
     /**
      * Get cards
      *
-     * @return Cards[]
+     * @return Card[]
      */
     public function getCards()
     {
@@ -511,7 +512,7 @@ class Deck implements \Serializable
     private $children;
 
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @var Decklist
      */
     private $parent;
 
@@ -519,10 +520,10 @@ class Deck implements \Serializable
     /**
      * Add children
      *
-     * @param \AppBundle\Entity\Decklist $children
+     * @param Decklist $children
      * @return Deck
      */
-    public function addChildren(\AppBundle\Entity\Decklist $children)
+    public function addChildren(Decklist $children)
     {
         $this->children[] = $children;
     
@@ -532,9 +533,9 @@ class Deck implements \Serializable
     /**
      * Remove children
      *
-     * @param \AppBundle\Entity\Decklist $children
+     * @param Decklist $children
      */
-    public function removeChildren(\AppBundle\Entity\Decklist $children)
+    public function removeChildren(Decklist $children)
     {
         $this->children->removeElement($children);
     }
@@ -552,10 +553,10 @@ class Deck implements \Serializable
     /**
      * Set parent
      *
-     * @param \AppBundle\Entity\Decklist $parent
+     * @param Decklist $parent
      * @return Deck
      */
-    public function setParent(\AppBundle\Entity\Decklist $parent = null)
+    public function setParent(Decklist $parent = null)
     {
         $this->parent = $parent;
     
@@ -565,7 +566,7 @@ class Deck implements \Serializable
     /**
      * Get parent
      *
-     * @return \AppBundle\Entity\Decklist
+     * @return Decklist
      */
     public function getParent()
     {
@@ -580,10 +581,10 @@ class Deck implements \Serializable
     /**
      * Add children
      *
-     * @param \AppBundle\Entity\Decklist $children
+     * @param Decklist $children
      * @return Deck
      */
-    public function addChild(\AppBundle\Entity\Decklist $children)
+    public function addChild(Decklist $children)
     {
         $this->children[] = $children;
 
@@ -593,9 +594,9 @@ class Deck implements \Serializable
     /**
      * Remove children
      *
-     * @param \AppBundle\Entity\Decklist $children
+     * @param Decklist $children
      */
-    public function removeChild(\AppBundle\Entity\Decklist $children)
+    public function removeChild(Decklist $children)
     {
         $this->children->removeElement($children);
     }
@@ -603,10 +604,10 @@ class Deck implements \Serializable
     /**
      * Add changes
      *
-     * @param \AppBundle\Entity\Deckchange $changes
+     * @param Deckchange $changes
      * @return Deck
      */
-    public function addChange(\AppBundle\Entity\Deckchange $changes)
+    public function addChange(Deckchange $changes)
     {
         $this->changes[] = $changes;
 
@@ -616,9 +617,9 @@ class Deck implements \Serializable
     /**
      * Remove changes
      *
-     * @param \AppBundle\Entity\Deckchange $changes
+     * @param Deckchange $changes
      */
-    public function removeChange(\AppBundle\Entity\Deckchange $changes)
+    public function removeChange(Deckchange $changes)
     {
         $this->changes->removeElement($changes);
     }
@@ -633,7 +634,7 @@ class Deck implements \Serializable
         return $this->changes;
     }
     /**
-     * @var \AppBundle\Entity\Mwl
+     * @var Mwl
      */
     private $mwl;
 
@@ -641,11 +642,11 @@ class Deck implements \Serializable
     /**
      * Set mwl
      *
-     * @param \AppBundle\Entity\Mwl $mwl
+     * @param Mwl $mwl
      *
      * @return Deck
      */
-    public function setMwl(\AppBundle\Entity\Mwl $mwl = null)
+    public function setMwl(Mwl $mwl = null)
     {
         $this->mwl = $mwl;
 
@@ -655,7 +656,7 @@ class Deck implements \Serializable
     /**
      * Get mwl
      *
-     * @return \AppBundle\Entity\Mwl
+     * @return Mwl
      */
     public function getMwl()
     {

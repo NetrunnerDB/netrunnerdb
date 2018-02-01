@@ -6,7 +6,8 @@ use AppBundle\Entity\Card;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Registry;
+
+use Doctrine\ORM\EntityManagerInterface;
 use PDO;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -18,18 +19,18 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class PersonalizationHelper
 {
 
-    /** @var Registry */
-    private $doctrine;
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
     
-    /** @var ActivityHelper */
+    /** @var ActivityHelper $activityHelper */
     private $activityHelper;
     
-    /** @var AuthorizationCheckerInterface */
+    /** @var AuthorizationCheckerInterface $authorizationChecker */
     private $authorizationChecker;
     
-    public function __construct(Registry $doctrine, ActivityHelper $activityHelper, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(EntityManagerInterface $entityManager, ActivityHelper $activityHelper, AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->doctrine = $doctrine;
+        $this->entityManager = $entityManager;
         $this->activityHelper = $activityHelper;
         $this->authorizationChecker = $authorizationChecker;
     }
@@ -60,7 +61,7 @@ class PersonalizationHelper
 
     public function decklistBlock(User $user, Decklist $decklist)
     {
-        $dbh = $this->doctrine->getConnection();
+        $dbh = $this->entityManager->getConnection();
 
         $content = [];
 

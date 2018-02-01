@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Service\DecklistManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +20,7 @@ class IndexController extends Controller
         $decklist = count($rows) ? json_decode($rows[0]['decklist']) : null;
         
         // recent decklists
-        $decklists_recent = $this->get('decklists')->recent(0, 10, false)['decklists'];
+        $decklists_recent = $this->get(DecklistManager::class)->recent(0, 10, false)['decklists'];
         
         return $this->render(
         

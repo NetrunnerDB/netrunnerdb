@@ -3,14 +3,22 @@
 
 namespace AppBundle\Service;
 
+use Michelf\Markdown;
+
 class Texts
 {
-    public function __construct($root_dir)
+    /** @var \HTMLPurifier $purifier */
+    private $purifier;
+
+    /** @var \Michelf\Markdown $transformer */
+    private $transformer;
+
+    public function __construct($tempDir)
     {
-        $config = \HTMLPurifier_Config::create(array('Cache.SerializerPath' => $root_dir));
+        $config = \HTMLPurifier_Config::create(array('Cache.SerializerPath' => $tempDir));
         $this->purifier = new \HTMLPurifier($config);
 
-        $this->transformer = new \Michelf\Markdown();
+        $this->transformer = new Markdown();
     }
 
     /**
@@ -56,7 +64,8 @@ class Texts
 
     /**
      * removes any dangerous code from a HTML string
-     * @param unknown $string
+     *
+     * @param $string
      * @return string
      */
     public function purify($string)
@@ -66,7 +75,8 @@ class Texts
 
     /**
      * turns a Markdown string into a HTML string
-     * @param unknown $string
+     *
+     * @param $string
      * @return string
      */
     public function transform($string)
@@ -76,8 +86,9 @@ class Texts
 
     /**
      * adds class="img-responsive" to every <img> tag
-     * @param unknown $string
-     * @return string
+     *
+     * @param $string
+     * @return null|string|string[]
      */
     public function img_responsive($string)
     {

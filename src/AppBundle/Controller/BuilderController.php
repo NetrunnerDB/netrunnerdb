@@ -1,37 +1,37 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Service\Decks;
+use AppBundle\Service\Judge;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Deck;
 use AppBundle\Entity\Deckslot;
 use AppBundle\Entity\Card;
-use Doctrine\ORM\EntityManager;
+
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Deckchange;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BuilderController extends Controller
 {
-    public function buildformAction($side_text, Request $request)
+    public function buildformAction($side_text, Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
-        
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-        
-        $side = $em->getRepository('AppBundle:Side')->findOneBy(array(
+
+        $side = $entityManager->getRepository('AppBundle:Side')->findOneBy(array(
                 "name" => $side_text
         ));
-        $type = $em->getRepository('AppBundle:Type')->findOneBy(array(
+        $type = $entityManager->getRepository('AppBundle:Type')->findOneBy(array(
                 "code" => "identity"
         ));
         
-        $identities = $em->getRepository('AppBundle:Card')->findBy(array(
+        $identities = $entityManager->getRepository('AppBundle:Card')->findBy(array(
                 "side" => $side,
                 "type" => $type
         ), array(
@@ -336,7 +336,7 @@ class BuilderController extends Controller
             
             /* @var $deck Deck */
             $deck = new Deck();
-            $this->get('decks')->saveDeck($this->getUser(), $deck, null, $meteor_deck['name'], "", $tags, null, $content);
+            $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $meteor_deck['name'], "", $tags, null, $content);
         }
         
         $this->get('session')
@@ -357,8 +357,7 @@ class BuilderController extends Controller
             throw $this->createAccessDeniedException("Access denied");
         }
         
-        /* @var $judge \AppBundle\Service\Judge */
-        $judge = $this->get('judge');
+        $judge = $this->get(Judge::class);
         $classement = $judge->classe($deck->getSlots(), $deck->getIdentity());
         
         $lines = array();
@@ -462,7 +461,7 @@ class BuilderController extends Controller
     public function octgnexport($filename, $identity, $rd, $description)
     {
         $content = $this->renderView(
-            'AppBundle::octgn.xml.twig',
+            '/octgn.xml.twig',
                 array(
                         "identity" => $identity,
                         "rd" => $rd,
@@ -504,7 +503,7 @@ class BuilderController extends Controller
         $cancel_edits = (boolean) filter_var($request->get('cancel_edits'), FILTER_SANITIZE_NUMBER_INT);
         if ($cancel_edits) {
             if ($deck) {
-                $this->get('decks')->revertDeck($deck);
+                $this->get(Decks::class)->revertDeck($deck);
             }
             return $this->redirect($this->generateUrl('decks_list'));
         }
@@ -525,7 +524,7 @@ class BuilderController extends Controller
         $tags = filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
         $mwl_code = $request->get('mwl_code');
 
-        $this->get('decks')->saveDeck($this->getUser(), $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck ? $source_deck : null);
+        $this->get(Decks::class)->saveDeck($this->getUser(), $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck ? $source_deck : null);
 
         return $this->redirect($this->generateUrl('decks_list'));
     }
@@ -862,7 +861,7 @@ class BuilderController extends Controller
         )->fetchAll();
                         
         $problem = $deck['problem'];
-        $deck['message'] = isset($problem) ? $this->get('judge')->problem($problem) : '';
+        $deck['message'] = isset($problem) ? $this->get(Judge::class)->problem($problem) : '';
         
         return $this->render(
         
@@ -883,7 +882,7 @@ class BuilderController extends Controller
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
         
-        $decks = $this->get('decks')->getByUser($user, false);
+        $decks = $this->get(Decks::class)->getByUser($user, false);
 
         $tournaments = $this->getDoctrine()->getConnection()->executeQuery(
                 "SELECT
@@ -980,7 +979,7 @@ class BuilderController extends Controller
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
         
-        $decks = $this->get('decks')->getByUser($user, false);
+        $decks = $this->get(Decks::class)->getByUser($user, false);
 
         $file = tempnam("tmp", "zip");
         $zip = new \ZipArchive();
@@ -1045,7 +1044,7 @@ class BuilderController extends Controller
                 $parse = $this->parseTextImport($zip->getFromIndex($i));
                  
                 $deck = new Deck();
-                $this->get('decks')->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content']);
+                $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content']);
             }
         }
         $zip->close();
@@ -1087,8 +1086,10 @@ class BuilderController extends Controller
             $change->setSaved(false);
             $em->persist($change);
             $em->flush();
+
+            return new Response($change->getDatecreation()->format('c'));
         }
-        
-        return new Response($change->getDatecreation()->format('c'));
+
+        return new Response('');
     }
 }

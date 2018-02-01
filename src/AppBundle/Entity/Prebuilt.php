@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Translatable\Translatable;
+
 /**
  * Prebuilt
  */
-class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
+class Prebuilt implements Translatable, \Serializable
 {
     public function toString()
     {
@@ -74,17 +77,17 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     private $slots;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $identity;
 
     /**
-     * @var \AppBundle\Entity\Faction
+     * @var Faction
      */
     private $faction;
 
@@ -98,7 +101,7 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function __construct()
     {
-        $this->slots = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->slots = new ArrayCollection();
     }
 
     /**
@@ -258,11 +261,11 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Add slot
      *
-     * @param \AppBundle\Entity\Prebuiltslot $slot
+     * @param Prebuiltslot $slot
      *
      * @return Prebuilt
      */
-    public function addSlot(\AppBundle\Entity\Prebuiltslot $slot)
+    public function addSlot(Prebuiltslot $slot)
     {
         $this->slots[] = $slot;
 
@@ -272,9 +275,9 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Remove slot
      *
-     * @param \AppBundle\Entity\Prebuiltslot $slot
+     * @param Prebuiltslot $slot
      */
-    public function removeSlot(\AppBundle\Entity\Prebuiltslot $slot)
+    public function removeSlot(Prebuiltslot $slot)
     {
         $this->slots->removeElement($slot);
     }
@@ -292,11 +295,11 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Set side
      *
-     * @param \AppBundle\Entity\Side $side
+     * @param Side $side
      *
      * @return Prebuilt
      */
-    public function setSide(\AppBundle\Entity\Side $side = null)
+    public function setSide(Side $side = null)
     {
         $this->side = $side;
 
@@ -306,7 +309,7 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get side
      *
-     * @return \AppBundle\Entity\Side
+     * @return Side
      */
     public function getSide()
     {
@@ -316,11 +319,11 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Set identity
      *
-     * @param \AppBundle\Entity\Card $identity
+     * @param Card $identity
      *
      * @return Prebuilt
      */
-    public function setIdentity(\AppBundle\Entity\Card $identity = null)
+    public function setIdentity(Card $identity = null)
     {
         $this->identity = $identity;
 
@@ -330,7 +333,7 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get identity
      *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getIdentity()
     {
@@ -340,11 +343,11 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Set faction
      *
-     * @param \AppBundle\Entity\Faction $faction
+     * @param Faction $faction
      *
      * @return Prebuilt
      */
-    public function setFaction(\AppBundle\Entity\Faction $faction = null)
+    public function setFaction(Faction $faction = null)
     {
         $this->faction = $faction;
 
@@ -354,7 +357,7 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get faction
      *
-     * @return \AppBundle\Entity\Faction
+     * @return Faction
      */
     public function getFaction()
     {
@@ -369,5 +372,7 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     public function setTranslatableLocale($locale)
     {
         $this->locale = $locale;
+
+        return $this;
     }
 }

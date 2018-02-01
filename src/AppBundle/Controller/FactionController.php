@@ -5,8 +5,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\Decklist;
-use AppBundle\Entity\Faction;
 
 class FactionController extends Controller
 {

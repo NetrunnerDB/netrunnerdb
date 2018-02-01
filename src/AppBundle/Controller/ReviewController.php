@@ -1,16 +1,17 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Service\Texts;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\Card;
-use Doctrine\ORM\EntityManager;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use AppBundle\Entity\Comment;
+
 use AppBundle\Entity\Reviewcomment;
 use \Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -58,7 +59,7 @@ class ReviewController extends Controller
         
         );
         
-        $review_html = $this->get('texts')->markdown($review_raw);
+        $review_html = $this->get(Texts::class)->markdown($review_raw);
         if (!$review_html) {
             return new Response(json_encode("Your review is empty."));
         }
@@ -109,7 +110,7 @@ class ReviewController extends Controller
         
         );
         
-        $review_html = $this->get('texts')->markdown($review_raw);
+        $review_html = $this->get(Texts::class)->markdown($review_raw);
         if (!$review_html) {
             return new Response('Your review is empty.');
         }

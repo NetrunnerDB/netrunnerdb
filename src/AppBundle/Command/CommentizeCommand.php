@@ -2,7 +2,6 @@
 
 namespace AppBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,7 +41,7 @@ class CommentizeCommand extends ContainerAwareCommand
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->getContainer()->get('doctrine')->getManager();
-        /* @var $repo \AppBundle\Entity\ReviewRepository */
+
         $repo = $em->getRepository('AppBundle:Review');
         /* @var $review_orig Review */
         $review_orig = $repo->find($review_orig_id);
@@ -71,6 +70,7 @@ class CommentizeCommand extends ContainerAwareCommand
         $em->persist($comment);
         $em->remove($review_orig);
         $em->flush();
-        return;
+
+        return null;
     }
 }

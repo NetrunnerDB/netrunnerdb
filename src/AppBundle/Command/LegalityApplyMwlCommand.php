@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Service\Judge;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,7 +39,7 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
         /* @var $judge \AppBundle\Service\Judge */
-        $judge = $this->getContainer()->get('judge');
+        $judge = $this->getContainer()->get(Judge::class);
 
         $mwl_code = $input->getArgument('mwl_code');
         $mwl = $entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);

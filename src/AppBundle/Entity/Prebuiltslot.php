@@ -18,12 +18,12 @@ class Prebuiltslot
     private $quantity;
 
     /**
-     * @var \AppBundle\Entity\Prebuilt
+     * @var Prebuilt
      */
     private $prebuilt;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $card;
 
@@ -65,11 +65,11 @@ class Prebuiltslot
     /**
      * Set prebuilt
      *
-     * @param \AppBundle\Entity\Prebuilt $prebuilt
+     * @param Prebuilt $prebuilt
      *
      * @return Prebuiltslot
      */
-    public function setPrebuilt(\AppBundle\Entity\Prebuilt $prebuilt = null)
+    public function setPrebuilt(Prebuilt $prebuilt = null)
     {
         $this->prebuilt = $prebuilt;
 
@@ -79,7 +79,7 @@ class Prebuiltslot
     /**
      * Get prebuilt
      *
-     * @return \AppBundle\Entity\Prebuilt
+     * @return Prebuilt
      */
     public function getPrebuilt()
     {
@@ -89,11 +89,11 @@ class Prebuiltslot
     /**
      * Set card
      *
-     * @param \AppBundle\Entity\Card $card
+     * @param Card $card
      *
      * @return Prebuiltslot
      */
-    public function setCard(\AppBundle\Entity\Card $card = null)
+    public function setCard(Card $card = null)
     {
         $this->card = $card;
 
@@ -103,7 +103,7 @@ class Prebuiltslot
     /**
      * Get card
      *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getCard()
     {

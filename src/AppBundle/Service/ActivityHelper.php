@@ -5,17 +5,18 @@ namespace AppBundle\Service;
 use AppBundle\Entity\User;
 use DateInterval;
 use DateTime;
-use Doctrine\Bundle\DoctrineBundle\Registry;
+
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class ActivityHelper
 {
     /** @var EntityManager */
-    private $em;
+    private $entityManager;
 
-    public function __construct(Registry $doctrine)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->em = $doctrine->getManager();
+        $this->entityManager = $entityManager;
     }
 
     public function getItems(User $user, $max_items = 30, $nb_days = 7)
@@ -30,7 +31,7 @@ class ActivityHelper
         $dateinf->sub(new DateInterval("P${nb_days}D"));
 
         // DECKLIST_PUBLISH
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $qb->select('d');
         $qb->from('AppBundle:Decklist', 'd');
         $qb->where('d.dateCreation>:date');
@@ -53,7 +54,7 @@ class ActivityHelper
         }
 
         // DECKLIST_COMMENT
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $qb->select('c');
         $qb->from('AppBundle:Comment', 'c');
         $qb->where('c.dateCreation>:date');
@@ -76,7 +77,7 @@ class ActivityHelper
         }
 
         // REVIEW_PUBLISH
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $qb->select('r');
         $qb->from('AppBundle:Review', 'r');
         $qb->where('r.dateCreation>:date');
@@ -99,7 +100,7 @@ class ActivityHelper
         }
 
         // REVIEW_COMMENT
-        $qb = $this->em->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $qb->select('c');
         $qb->from('AppBundle:Reviewcomment', 'c');
         $qb->where('c.dateCreation>:date');

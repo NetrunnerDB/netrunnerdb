@@ -2,7 +2,6 @@
 
 namespace AppBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,7 +34,7 @@ class DonatorCommand extends ContainerAwareCommand
         
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->getContainer()->get('doctrine')->getManager();
-        /* @var $repo \AppBundle\Entity\ReviewRepository */
+
         $repo = $em->getRepository('AppBundle:User');
         /* @var $user \AppBundle\Entity\User */
         $user = $repo->findOneBy(array('email' => $email));

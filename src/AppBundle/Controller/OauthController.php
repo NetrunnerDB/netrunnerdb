@@ -22,7 +22,7 @@ class OauthController extends Controller
      * Display the API explorer
      * @Route("/explorer")
      * @Method("GET")
-     * @Template
+     * @Template("/Oauth/explorer.html.twig")
      */
     public function explorerAction(Request $request)
     {
@@ -45,7 +45,7 @@ class OauthController extends Controller
      * @param Request $request
      * @Route("/initiate")
      * @Method("GET")
-     * @Template
+     * @Template("/Oauth/initiate.html.twig")
      */
     public function initiateAction()
     {

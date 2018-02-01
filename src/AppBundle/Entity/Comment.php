@@ -2,9 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\User;
-use AppBundle\Entity\Decklist;
-
 /**
  * Comment
  */

@@ -6,13 +6,15 @@ use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Moderation;
 use AppBundle\Entity\User;
 use DateTime;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Swift_Message;
-use Symfony\Bridge\Monolog\Logger;
+
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\Router;
+
+use Symfony\Component\Routing\RouterInterface;
 use Twig_Environment;
 
 /**
@@ -22,24 +24,24 @@ use Twig_Environment;
  */
 class ModerationHelper
 {
-    /** @var EntityManager */
-    private $em;
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
     
-    /** @var Swift_Mailer */
+    /** @var Swift_Mailer $mailer */
     private $mailer;
     
-    /** @var Twig_Environment */
+    /** @var Twig_Environment $twig */
     private $twig;
     
-    /** @var Router */
+    /** @var RouterInterface $router */
     private $router;
     
-    /** @var Logger */
+    /** @var LoggerInterface $logger */
     private $logger;
     
-    public function __construct(Registry $doctrine, Swift_Mailer $mailer, Twig_Environment $twig, Router $router, Logger $logger)
+    public function __construct(EntityManagerInterface $entityManager, Swift_Mailer $mailer, Twig_Environment $twig, RouterInterface $router, LoggerInterface $logger)
     {
-        $this->em = $doctrine->getManager();
+        $this->entityManager = $entityManager;
         $this->mailer = $mailer;
         $this->twig = $twig;
         $this->router = $router;
@@ -63,7 +65,7 @@ class ModerationHelper
         $previousStatus = $decklist->getModerationStatus();
 
         if (isset($modflag_id)) {
-            $modflag = $this->em->getRepository('AppBundle:Modflag')->find($modflag_id);
+            $modflag = $this->entityManager->getRepository('AppBundle:Modflag')->find($modflag_id);
             if (!$modflag) {
                 throw new \RuntimeException("Unknown modflag_id");
             }
@@ -83,7 +85,7 @@ class ModerationHelper
         $moderation->setModerator($user);
         $moderation->setDecklist($decklist);
         $moderation->setDateCreation(new DateTime);
-        $this->em->persist($moderation);
+        $this->entityManager->persist($moderation);
     }
     
     public function sendEmail(Decklist $decklist)
@@ -93,9 +95,11 @@ class ModerationHelper
         if ($status === Decklist::MODERATION_RESTORED) {
             return;
         }
-        
+
+        $name = "/Emails/decklist-moderation-$status.html.twig";
+
         $body = $this->twig->render(
-            "/Emails/decklist-moderation-$status.html.twig",
+            $name,
             [
                 'username' => $decklist->getUser()->getUsername(),
                 'decklist_name' => $decklist->getName(),

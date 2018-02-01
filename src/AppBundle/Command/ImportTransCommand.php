@@ -2,7 +2,6 @@
 
 namespace AppBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -10,9 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Filesystem\Filesystem;
 use Doctrine\ORM\EntityManager;
-use AppBundle\Entity\Cycle;
-use AppBundle\Entity\Pack;
-use AppBundle\Entity\Card;
+
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class ImportTransCommand extends ContainerAwareCommand
@@ -248,12 +245,11 @@ class ImportTransCommand extends ContainerAwareCommand
         
         return new \SplFileInfo($filepath);
     }
-    
+
     /**
-     *
-     * @param unknown $path
-     * @throws \Exception
+     * @param $path
      * @return \GlobIterator
+     * @throws \Exception
      */
     protected function getFileSystemIterator($path)
     {

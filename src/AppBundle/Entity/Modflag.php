@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\Exclude;
 
 /**
@@ -65,17 +66,17 @@ class Modflag
      */
     public function __construct()
     {
-        $this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->decklists = new ArrayCollection();
     }
 
     /**
      * Add decklist
      *
-     * @param \AppBundle\Entity\Decklist $decklist
+     * @param Decklist $decklist
      *
      * @return Modflag
      */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklist)
+    public function addDecklist(Decklist $decklist)
     {
         $this->decklists[] = $decklist;
 
@@ -85,9 +86,9 @@ class Modflag
     /**
      * Remove decklist
      *
-     * @param \AppBundle\Entity\Decklist $decklist
+     * @param Decklist $decklist
      */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklist)
+    public function removeDecklist(Decklist $decklist)
     {
         $this->decklists->removeElement($decklist);
     }

@@ -2,18 +2,22 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Service\ActivityHelper;
+use AppBundle\Service\DecklistManager;
+use AppBundle\Service\Judge;
+use AppBundle\Service\ModerationHelper;
+use AppBundle\Service\RotationService;
+use AppBundle\Service\Texts;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use AppBundle\Entity\Deck;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Decklistslot;
 use AppBundle\Entity\Comment;
 use AppBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Legality;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -46,7 +50,7 @@ class SocialController extends Controller
             ]);
             return $response;
         }
-        $judge = $this->get('judge');
+        $judge = $this->get(Judge::class);
         $analyse = $judge->analyse($deck->getSlots());
 
         if (is_string($analyse)) {
@@ -93,8 +97,7 @@ class SocialController extends Controller
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
 
-        /* @var $manager \AppBundle\Service\DecklistManager */
-        $manager = $this->get('decklists');
+        $manager = $this->get(DecklistManager::class);
         
         $deck_id = filter_var($request->request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         /* @var $deck \AppBundle\Entity\Deck */
@@ -110,8 +113,7 @@ class SocialController extends Controller
             throw $this->createAccessDeniedException("Cannot publish deck because of unreleased cards.");
         }
 
-        /* @var $judge \AppBundle\Service\Judge */
-        $judge = $this->get('judge');
+        $judge = $this->get(Judge::class);
         $analyse = $judge->analyse($deck->getSlots());
         if (is_string($analyse)) {
             throw $this->createAccessDeniedException($judge->problem($analyse));
@@ -126,7 +128,7 @@ class SocialController extends Controller
         }
 
         $rawdescription = \trim($request->request->get('description'));
-        $description = $this->get('texts')->markdown($rawdescription);
+        $description = $this->get(Texts::class)->markdown($rawdescription);
 
         $tournament_id = filter_var($request->request->get('tournament'), FILTER_SANITIZE_NUMBER_INT);
         $tournament = $em->getRepository('AppBundle:Tournament')->find($tournament_id);
@@ -165,7 +167,7 @@ class SocialController extends Controller
             $decklist->setPrecedent($deck->getParent());
         }
         $decklist->setParent($deck);
-        $decklist->setRotation($this->get('rotation_service')->findCompatibleRotation($decklist));
+        $decklist->setRotation($this->get(RotationService::class)->findCompatibleRotation($decklist));
 
         $em->persist($decklist);
 
@@ -492,7 +494,7 @@ class SocialController extends Controller
                 $mentionned_usernames = array_unique($matches[1]);
             }
 
-            $comment_html = $this->get('texts')->markdown($comment_text);
+            $comment_html = $this->get(Texts::class)->markdown($comment_text);
 
             $comment = new Comment();
             $comment->setText($comment_html);
@@ -642,8 +644,7 @@ class SocialController extends Controller
             throw $this->createNotFoundException();
         }
 
-        /* @var $judge \AppBundle\Service\Judge */
-        $judge = $this->get('judge');
+        $judge = $this->get(Judge::class);
         $classement = $judge->classe($decklist->getSlots(), $decklist->getIdentity());
 
         $lines = array();
@@ -783,7 +784,7 @@ class SocialController extends Controller
             $name = "Untitled";
         }
         $rawdescription = trim($request->request->get('description'));
-        $description = $this->get('texts')->markdown($rawdescription);
+        $description = $this->get(Texts::class)->markdown($rawdescription);
 
         $tournament_id = filter_var($request->request->get('tournament'), FILTER_SANITIZE_NUMBER_INT);
         $tournament = $em->getRepository('AppBundle:Tournament')->find($tournament_id);
@@ -815,7 +816,7 @@ class SocialController extends Controller
         $decklist->setTournament($tournament);
         
         if ($decklist->getModerationStatus() === Decklist::MODERATION_TRASHED) {
-            $this->get('moderation_helper')->changeStatus($this->getUser(), $decklist, Decklist::MODERATION_RESTORED);
+            $this->get(ModerationHelper::class)->changeStatus($this->getUser(), $decklist, Decklist::MODERATION_RESTORED);
         }
         
         $em->flush();
@@ -1154,8 +1155,8 @@ class SocialController extends Controller
         // max number of displayed items for each category
         $max_items = 30;
 
-        $items = $this->get('activity_helper')->getItems($this->getUser(), $max_items, $days);
-        $items_by_day = $this->get('activity_helper')->sortByDay($items);
+        $items = $this->get(ActivityHelper::class)->getItems($this->getUser(), $max_items, $days);
+        $items_by_day = $this->get(ActivityHelper::class)->sortByDay($items);
 
         // recording date of activity check
         $this->getUser()->setLastActivityCheck(new \DateTime());
@@ -1193,7 +1194,7 @@ class SocialController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->get('moderation_helper')->changeStatus($this->getUser(), $decklist, $status, $modflag_id);
+        $this->get(ModerationHelper::class)->changeStatus($this->getUser(), $decklist, $status, $modflag_id);
 
         $em->flush();
 

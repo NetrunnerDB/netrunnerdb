@@ -2,7 +2,7 @@
 
 namespace AppBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
+use AppBundle\Entity\User;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -26,7 +26,7 @@ class DeleteInactiveCommand extends ContainerAwareCommand
         
         $users = $em->getRepository('AppBundle:User')->findBy(array('enabled' => false));
         foreach ($users as $user) {
-            /* @var $user AppBundle\Entity\User */
+            /* @var $user User */
             if ($user->getDateCreation() < $limit) {
                 $count++;
                 $em->remove($user);

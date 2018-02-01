@@ -4,13 +4,16 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Card;
 use GuzzleHttp\Client;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Description of ImportImagesCommand
  *
  * @author Alsciende <alsciende@icloud.com>
  */
-class ImportImagesCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand
+class ImportImagesCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
@@ -19,7 +22,7 @@ class ImportImagesCommand extends \Symfony\Bundle\FrameworkBundle\Command\Contai
             ->setDescription('Import missing images from cardgamedb.com');
     }
 
-    protected function execute(\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
         $client = new Client([

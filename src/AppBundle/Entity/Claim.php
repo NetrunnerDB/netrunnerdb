@@ -41,19 +41,19 @@ class Claim
     private $participants;
 
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @var Decklist
      * @Serializer\Exclude
      */
     private $decklist;
 
     /**
-     * @var \AppBundle\Entity\Client
+     * @var Client
      * @Serializer\Exclude
      */
     private $client;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      * @Serializer\Exclude
      */
     private $user;
@@ -167,11 +167,11 @@ class Claim
     /**
      * Set decklist
      *
-     * @param \AppBundle\Entity\Decklist $decklist
+     * @param Decklist $decklist
      *
      * @return Claim
      */
-    public function setDecklist(\AppBundle\Entity\Decklist $decklist = null)
+    public function setDecklist(Decklist $decklist = null)
     {
         $this->decklist = $decklist;
 
@@ -181,7 +181,7 @@ class Claim
     /**
      * Get decklist
      *
-     * @return \AppBundle\Entity\Decklist
+     * @return Decklist
      */
     public function getDecklist()
     {
@@ -191,11 +191,11 @@ class Claim
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client $client
      *
      * @return Claim
      */
-    public function setClient(\AppBundle\Entity\Client $client = null)
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -205,7 +205,7 @@ class Claim
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
     public function getClient()
     {
@@ -215,7 +215,7 @@ class Claim
     /**
      * Get user
      *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
@@ -225,11 +225,11 @@ class Claim
     /**
      * Set user
      *
-     * @param \AppBundle\Entity\User $user
+     * @param User $user
      *
      * @return Claim
      */
-    public function setUser(\AppBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
 

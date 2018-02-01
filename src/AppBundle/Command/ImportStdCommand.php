@@ -563,6 +563,8 @@ class ImportStdCommand extends ContainerAwareCommand
         if (!$this->deepArrayEquality($newer, $orig)) {
             return $entity;
         }
+
+        return null;
     }
 
     /**
@@ -579,9 +581,10 @@ class ImportStdCommand extends ContainerAwareCommand
 
     /**
      * Performs a deep equality check of two arrays
-     * @param unknown $array1
-     * @param unknown $array2
-     * @return boolean
+     *
+     * @param $array1
+     * @param $array2
+     * @return bool
      */
     protected function deepArrayEquality($array1, $array2)
     {

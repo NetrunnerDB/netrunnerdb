@@ -193,11 +193,11 @@ class Mwl implements \Serializable
     /**
      * Add legality
      *
-     * @param \AppBundle\Entity\Legality $legality
+     * @param Legality $legality
      *
      * @return Mwl
      */
-    public function addLegality(\AppBundle\Entity\Legality $legality)
+    public function addLegality(Legality $legality)
     {
         $this->legalities[] = $legality;
 
@@ -207,9 +207,9 @@ class Mwl implements \Serializable
     /**
      * Remove legality
      *
-     * @param \AppBundle\Entity\Legality $legality
+     * @param Legality $legality
      */
-    public function removeLegality(\AppBundle\Entity\Legality $legality)
+    public function removeLegality(Legality $legality)
     {
         $this->legalities->removeElement($legality);
     }
