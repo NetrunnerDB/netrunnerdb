@@ -7,13 +7,13 @@ class ToolsController extends Controller
 {
     public function demoAction()
     {
-        return $this->render('AppBundle:Tools:demo.html.twig');
+        return $this->render('/Tools/demo.html.twig');
     }
     
     
     public function extdecklistAction($id)
     {
-    	return $this->render('AppBundle:Tools:demo-ext-decklist.html.twig', [
+    	return $this->render('/Tools/demo-ext-decklist.html.twig', [
     			'id' => $id
     	]);
     }

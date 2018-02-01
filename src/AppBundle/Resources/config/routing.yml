@@ -359,12 +359,12 @@ user_validate_introduction:
     path: /user/validate_introduction/{introduction}
     methods: [POST]
     defaults:
-        _controller: AppBundle:Default:validateIntroduction  
+        _controller: AppBundle:Default:validateIntroduction
       
 user_reset_introductions:
     path: /user/reset_introductions
     defaults:
-        _controller: AppBundle:Default:resetIntroductions  
+        _controller: AppBundle:Default:resetIntroductions
       
 user_follow:
     path: /user/follow/{user_id}

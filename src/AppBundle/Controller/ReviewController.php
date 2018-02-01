@@ -236,7 +236,7 @@ class ReviewController extends Controller
             );
         }
         
-        return $this->render('AppBundle:Reviews:reviews.html.twig',
+        return $this->render('/Reviews/reviews.html.twig',
                 array(
                         'pagetitle' => $pagetitle,
                         'pagedescription' => "Read the latest user-submitted reviews on the cards.",
@@ -307,7 +307,7 @@ class ReviewController extends Controller
             );
         }
     
-        return $this->render('AppBundle:Reviews:reviews.html.twig',
+        return $this->render('/Reviews/reviews.html.twig',
                 array(
                         'pagetitle' => $pagetitle,
                         'pagedescription' => "Read the latest user-submitted reviews on the cards.",

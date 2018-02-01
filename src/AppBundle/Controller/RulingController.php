@@ -77,7 +77,7 @@ class RulingController extends Controller
     {
         $list = $this->getDoctrine()->getRepository('AppBundle:Card')->findAll();
 
-        $response = $this->render('AppBundle:Rulings:list.html.twig', array(
+        $response = $this->render('/Rulings/list.html.twig', array(
                     'list' => $list
         ));
         $response->setPublic();

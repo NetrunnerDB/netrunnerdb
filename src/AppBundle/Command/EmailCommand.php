@@ -62,12 +62,12 @@ class EmailCommand extends ContainerAwareCommand
         $message->setTo(array($user->getEmail() => $user->getUsername()));
         
         // Give it a body
-        $message->setBody($this->getContainer()->get('templating')->render('AppBundle:Emails:deck_archive.txt.twig', array(
+        $message->setBody($this->getContainer()->get('templating')->render('/Emails/deck_archive.txt.twig', array(
         	'username' => $user->getUsername()
         )));
         
         // And optionally an alternative body
-        $message->addPart($this->getContainer()->get('templating')->render('AppBundle:Emails:deck_archive.html.twig', array(
+        $message->addPart($this->getContainer()->get('templating')->render('/Emails/deck_archive.html.twig', array(
         	'username' => $user->getUsername()
         )), 'text/html');
         

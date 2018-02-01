@@ -39,7 +39,7 @@ class BuilderController extends Controller
                 "title" => "ASC"
         ));
         
-        return $this->render('AppBundle:Builder:initbuild.html.twig',
+        return $this->render('/Builder/initbuild.html.twig',
                 array(
                         'pagetitle' => "New deck",
                         "identities" => $identities
@@ -69,7 +69,7 @@ class BuilderController extends Controller
         $arr = array(
                 $card_code => 1
         );
-        return $this->render('AppBundle:Builder:deck.html.twig',
+        return $this->render('/Builder/deck.html.twig',
                 array(
                         'pagetitle' => "Deckbuilder",
                         'deck' => array(
@@ -102,7 +102,7 @@ class BuilderController extends Controller
 		
         $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
 		
-        return $this->render('AppBundle:Builder:directimport.html.twig',
+        return $this->render('/Builder/directimport.html.twig',
                 array(
                         'pagetitle' => "Import a deck",
 						'list_mwl' => $list_mwl
@@ -717,7 +717,7 @@ class BuilderController extends Controller
 
         $list_mwl = $this->getDoctrine()->getManager()->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
 
-        return $this->render('AppBundle:Builder:deck.html.twig',
+        return $this->render('/Builder/deck.html.twig',
                 array(
                         'pagetitle' => "Deckbuilder",
                         'deck' => $deck,
@@ -820,7 +820,7 @@ class BuilderController extends Controller
 		$problem = $deck['problem'];
 		$deck['message'] = isset($problem) ? $this->get('judge')->problem($problem) : '';
 		
-        return $this->render('AppBundle:Builder:deckview.html.twig',
+        return $this->render('/Builder/deckview.html.twig',
                 array(
                         'pagetitle' => "Deckbuilder",
                         'deck' => $deck,
@@ -849,7 +849,7 @@ class BuilderController extends Controller
 
         $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
         
-        return $this->render('AppBundle:Builder:decks.html.twig',
+        return $this->render('/Builder/decks.html.twig',
                 array(
                         'pagetitle' => "My Decks",
                         'pagedescription' => "Create custom decks with the help of a powerful deckbuilder.",

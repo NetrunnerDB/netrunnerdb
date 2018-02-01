@@ -52,7 +52,7 @@ class PrebuiltController extends Controller
 		
 		$prebuilt['cards'] = $cards;
 		
-		return $this->render('AppBundle:Prebuilt:view.html.twig', [
+		return $this->render('/Prebuilt/view.html.twig', [
 				'pagetitle' => $prebuilt['name'],
 				'prebuilt' => $prebuilt
 		], $response);

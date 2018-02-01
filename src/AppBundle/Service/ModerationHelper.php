@@ -95,7 +95,7 @@ class ModerationHelper
         }
         
         $body = $this->twig->render(
-            "AppBundle:Emails:decklist-moderation-$status.html.twig",
+            "/Emails/decklist-moderation-$status.html.twig",
             [
                 'username' => $decklist->getUser()->getUsername(),
                 'decklist_name' => $decklist->getName(),

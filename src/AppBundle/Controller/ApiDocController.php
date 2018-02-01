@@ -8,6 +8,6 @@ class ApiDocController extends Controller
 {
 	public function docAction()
 	{
-		return $this->render('AppBundle:Default:apiIntro.html.twig');
+		return $this->render('/Default/apiIntro.html.twig');
 	}
 }

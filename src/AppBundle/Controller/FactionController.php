@@ -91,7 +91,7 @@ class FactionController extends Controller
 	        ];
         }
         
-        return $this->render('AppBundle:Faction:faction.html.twig', array(
+        return $this->render('/Faction/faction.html.twig', array(
                 "pagetitle" => "Faction Page: $faction_name",
                 "results" => $result
         ), $response);

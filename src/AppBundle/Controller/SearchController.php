@@ -69,11 +69,11 @@ class SearchController extends Controller
 			"position" => "ASC" 
 		]);
 		
-		$allsets = $this->renderView('AppBundle:Default:allsets.html.twig', [
+		$allsets = $this->renderView('/Default/allsets.html.twig', [
 			"data" => $this->get('cards_data')->allsetsdata(),
 		]);
 	
-		return $this->render('AppBundle:Search:searchform.html.twig', [
+		return $this->render('/Search/searchform.html.twig', [
 			"pagetitle" => "Card Search",
 			"pagedescription" => "Find all the cards of the game, easily searchable.",
 			"packs" => $packs,
@@ -359,7 +359,7 @@ class SearchController extends Controller
 			}
 		}
 		
-		$searchbar = $this->renderView('AppBundle:Search:searchbar.html.twig', [
+		$searchbar = $this->renderView('/Search/searchbar.html.twig', [
 			"q" => $q,
 			"view" => $view,
 			"sort" => $sort,
@@ -370,7 +370,7 @@ class SearchController extends Controller
 		}
 
 		// attention si $s="short", $cards est un tableau à 2 niveaux au lieu de 1 seul
-		return $this->render('AppBundle:Search:display-'.$view.'.html.twig', [
+		return $this->render('/Search/display-'.$view.'.html.twig', [
 			"view" => $view,
 			"sort" => $sort,
 			"cards" => $cards,
@@ -389,7 +389,7 @@ class SearchController extends Controller
 	    $em = $this->getDoctrine();
 	    $prev = $em->getRepository('AppBundle:Card')->findOneBy(array("pack" => $card->getPack(), "position" => $card->getPosition()-1));
 	    $next = $em->getRepository('AppBundle:Card')->findOneBy(array("pack" => $card->getPack(), "position" => $card->getPosition()+1));
-	    return $this->renderView('AppBundle:Search:setnavigation.html.twig', array(
+	    return $this->renderView('/Search/setnavigation.html.twig', array(
 	            "prevtitle" => $prev ? $prev->getTitle($locale) : "",
 	            "prevhref" => $prev ? $this->get('router')->generate('cards_zoom', array('card_code' => $prev->getCode(), "_locale" => $locale)) : "",
 	            "nexttitle" => $next ? $next->getTitle($locale) : "",
@@ -402,7 +402,7 @@ class SearchController extends Controller
 	
 	public function paginationItem($q = null, $v, $s, $ps, $pi, $total, $locale)
 	{
-		return $this->renderView('AppBundle:Search:paginationitem.html.twig', array(
+		return $this->renderView('/Search/paginationitem.html.twig', array(
 			"href" => $q == null ? "" : $this->get('router')->generate('cards_find', ['q' => $q, 'view' => $v, 'sort' => $s, 'page' => $pi, '_locale' => $locale]),
 			"ps" => $ps,
 			"pi" => $pi,
@@ -442,7 +442,7 @@ class SearchController extends Controller
 			$last = $this->paginationItem($q, $view, $sort, $pagesize, $pagecount, $total, $locale);
 		}
 		
-		return $this->renderView('AppBundle:Search:pagination.html.twig', [
+		return $this->renderView('/Search/pagination.html.twig', [
 			"first" => $first,
 			"prev" => $prev,
 			"current" => $current,

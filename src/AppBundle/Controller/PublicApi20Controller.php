@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Gedmo\Translatable\Entity\Translation;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,7 @@ class PublicApi20Controller extends FOSRestController
 		}
 
 		$locale = $request->query->get('_locale');
-		$translationRepository = $this->getDoctrine()->getManager()->getRepository('Gedmo\Translatable\Entity\Translation');
+		$translationRepository = $this->getDoctrine()->getManager()->getRepository(Translation::class);
 		
 		$content = $additionalTopLevelProperties;
 

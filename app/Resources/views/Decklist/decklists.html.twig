@@ -1,0 +1,87 @@
+{% extends '/layout.html.twig' %}
+
+{% block head %}
+<script src="{{ asset('/bundles/app/js/search.js') }}"></script>
+<script src="{{ asset('/bundles/app/js/decklists.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+
+<div class="container decklists">
+<div class="row">
+<div class="col-md-3">
+
+<ul class="nav nav-pills nav-stacked" id="side_nav" style="margin-bottom:2em">
+{% set linkurl = path('decklists_list', {type:'popular'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Popular</a></li>
+{% set linkurl = path('decklists_list', {type:'recent'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Recent</a></li>
+{% set linkurl = path('decklists_list', {type:'tournament'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Tournaments</a></li>
+{% set linkurl = path('decklists_list', {type:'hottopics'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Hot topics</a></li>
+{% set linkurl = path('decklists_list', {type:'dotw'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Decklist of the week</a></li>
+{% set linkurl = path('decklists_list', {type:'halloffame'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Hall of Fame</a></li>
+{% set linkurl = path('decklists_list', {type:'favorites'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">My favorites</a></li>
+{% set linkurl = path('decklists_list', {type:'mine'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">My decklists</a></li>
+{% set linkurl = path('decklists_searchform') %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+</ul>
+
+{% include '/Default/google_adaptable_ad.html.twig' %}
+
+</div>
+
+<div class="col-md-9">
+
+{{ header|raw }}
+
+<div class="text-center">
+<ul class="pagination pagination-sm" style="margin-top:0">
+{% if prevurl is null %}
+  <li class="disabled"><a href="#">&laquo;</a></li>
+{% else %}
+  <li class=""><a href="{{ prevurl }}">&laquo;</a></li>
+{% endif %}
+{% for page in pages %}
+{% if page.current %}
+  <li class="active"><a href="{{ page.url }}">{{ page.numero }} <span class="sr-only">(current)</span></a></li>
+{% else %}
+  <li><a href="{{ page.url }}">{{ page.numero }}</a></li>
+{% endif %}
+{% endfor %}
+{% if nexturl is null %}
+  <li class="disabled"><a href="#">&raquo;</a></li>
+{% else %}
+  <li class=""><a href="{{ nexturl }}">&raquo;</a></li>
+{% endif %}
+  </ul>
+</div>
+
+{% for decklist in decklists %}
+{% include '/Decklist/decklist-row.html.twig' %}
+{% endfor %}
+
+<div class="text-center">
+<ul class="pagination pagination-sm" style="margin:0">
+{% if prevurl is null %}
+  <li class="disabled"><a href="#">&laquo;</a></li>
+{% else %}
+  <li class=""><a href="{{ prevurl }}">&laquo;</a></li>
+{% endif %}
+{% for page in pages %}
+{% if page.current %}
+  <li class="active"><a href="{{ page.url }}">{{ page.numero }} <span class="sr-only">(current)</span></a></li>
+{% else %}
+  <li><a href="{{ page.url }}">{{ page.numero }}</a></li>
+{% endif %}
+{% endfor %}
+{% if nexturl is null %}
+  <li class="disabled"><a href="#">&raquo;</a></li>
+{% else %}
+  <li class=""><a href="{{ nexturl }}">&raquo;</a></li>
+{% endif %}
+  </ul>
+</div>
+
+</div>
+
+</div>
+</div>
+
+{% endblock %}

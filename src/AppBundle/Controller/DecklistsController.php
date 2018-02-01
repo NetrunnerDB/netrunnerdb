@@ -146,7 +146,7 @@ class DecklistsController extends Controller
             );
         }
 
-        return $this->render('AppBundle:Decklist:decklists.html.twig', array(
+        return $this->render('/Decklist/decklists.html.twig', array(
                     'pagetitle' => $pagetitle,
                     'pagedescription' => "Browse the collection of thousands of premade decks.",
                     'decklists' => $decklists,
@@ -220,12 +220,12 @@ class DecklistsController extends Controller
         $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
         $list_rotations = $em->getRepository(Rotation::class)->findBy(array(), array('dateStart' => 'DESC'));
 
-        return $this->render('AppBundle:Search:search.html.twig', array(
+        return $this->render('/Search/search.html.twig', array(
                     'pagetitle' => 'Decklist Search',
                     'url' => $request
                             ->getRequestUri(),
                     'factions' => $factions,
-                    'form' => $this->renderView('AppBundle:Search:form.html.twig', array(
+                    'form' => $this->renderView('/Search/form.html.twig', array(
                         'allowed' => $categories,
                         'on' => $on,
                         'off' => $off,
@@ -331,11 +331,11 @@ class DecklistsController extends Controller
 
             $params['cards'] = '';
             foreach($cards as $card) {
-                $params['cards'] .= $this->renderView('AppBundle:Search:card.html.twig', $card);
+                $params['cards'] .= $this->renderView('/Search/card.html.twig', $card);
             }
         }
 
-        return $this->renderView('AppBundle:Search:form.html.twig', $params);
+        return $this->renderView('/Search/form.html.twig', $params);
     }
 
     public function diffAction ($decklist1_id, $decklist2_id)
@@ -399,7 +399,7 @@ class DecklistsController extends Controller
         }
 
 
-        return $this->render('AppBundle:Diff:decklistsDiff.html.twig', [
+        return $this->render('/Diff/decklistsDiff.html.twig', [
                     'decklist1' => [
                         'faction_code' => $d1->getFaction()->getCode(),
                         'name' => $d1->getName(),

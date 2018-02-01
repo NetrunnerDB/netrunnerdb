@@ -378,7 +378,7 @@ class SocialController extends Controller
 				where s.decklist_id=?
 				order by y.position asc, p.position asc", array($decklist_id))->fetchAll();
 
-        return $this->render('AppBundle:Decklist:decklist.html.twig', array(
+        return $this->render('/Decklist/decklist.html.twig', array(
                     'pagetitle' => $decklist['name'],
                     'decklist' => $decklist,
                     'commenters' => $commenters,
@@ -494,7 +494,7 @@ class SocialController extends Controller
             $spool = array();
             if($decklist->getUser()->getNotifAuthor()) {
                 if(!isset($spool[$decklist->getUser()->getEmail()])) {
-                    $spool[$decklist->getUser()->getEmail()] = 'AppBundle:Emails:newcomment_author.html.twig';
+                    $spool[$decklist->getUser()->getEmail()] = '/Emails/newcomment_author.html.twig';
                 }
             }
             foreach($decklist->getComments() as $comment) {
@@ -502,7 +502,7 @@ class SocialController extends Controller
                 $commenter = $comment->getAuthor();
                 if($commenter && $commenter->getNotifCommenter()) {
                     if(!isset($spool[$commenter->getEmail()])) {
-                        $spool[$commenter->getEmail()] = 'AppBundle:Emails:newcomment_commenter.html.twig';
+                        $spool[$commenter->getEmail()] = '/Emails/newcomment_commenter.html.twig';
                     }
                 }
             }
@@ -511,7 +511,7 @@ class SocialController extends Controller
                 $mentionned_user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('username' => $mentionned_username));
                 if($mentionned_user && $mentionned_user->getNotifMention()) {
                     if(!isset($spool[$mentionned_user->getEmail()])) {
-                        $spool[$mentionned_user->getEmail()] = 'AppBundle:Emails:newcomment_mentionned.html.twig';
+                        $spool[$mentionned_user->getEmail()] = '/Emails/newcomment_mentionned.html.twig';
                     }
                 }
             }
@@ -731,7 +731,7 @@ class SocialController extends Controller
     public function octgnexport ($filename, $identity, $rd, $description, $response)
     {
 
-        $content = $this->renderView('AppBundle::octgn.xml.twig', array(
+        $content = $this->renderView('/octgn.xml.twig', array(
             "identity" => $identity,
             "rd" => $rd,
             "description" => strip_tags($description)
@@ -880,7 +880,7 @@ class SocialController extends Controller
         $nbreviews = count($reviews);
 
 
-        return $this->render('AppBundle:Default:public_profile.html.twig', array(
+        return $this->render('/Default/public_profile.html.twig', array(
                     'pagetitle' => $user->getUsername(),
                     'user' => $user,
                     'nbdecklists' => $nbdecklists,
@@ -1007,7 +1007,7 @@ class SocialController extends Controller
             );
         }
 
-        return $this->render('AppBundle:Default:usercomments.html.twig', array(
+        return $this->render('/Default/usercomments.html.twig', array(
                     'user' => $user,
                     'comments' => $comments,
                     'url' => $request
@@ -1077,7 +1077,7 @@ class SocialController extends Controller
             );
         }
 
-        return $this->render('AppBundle:Default:allcomments.html.twig', array(
+        return $this->render('/Default/allcomments.html.twig', array(
                     'comments' => $comments,
                     'url' => $request
                             ->getRequestUri(),
@@ -1103,7 +1103,7 @@ class SocialController extends Controller
 
         $users = $dbh->executeQuery("SELECT * FROM user WHERE donation>0 ORDER BY donation DESC, username", array())->fetchAll(\PDO::FETCH_ASSOC);
 
-        return $this->render('AppBundle:Default:donators.html.twig', array(
+        return $this->render('/Default/donators.html.twig', array(
                     'pagetitle' => 'The Gracious Donators',
                     'donators' => $users
                         ), $response);
@@ -1143,7 +1143,7 @@ class SocialController extends Controller
         $this->getUser()->setLastActivityCheck(new \DateTime());
         $em->flush();
 
-        return $this->render('AppBundle:Activity:activity.html.twig', array(
+        return $this->render('/Activity/activity.html.twig', array(
                     'pagetitle' => 'Activity',
                     'items_by_day' => $items_by_day,
                     'max' => $days

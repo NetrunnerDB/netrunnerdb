@@ -19,7 +19,7 @@ class DefaultController extends Controller
             $factions[$i]->localizedName = $faction->getName();
         }
 
-        return $this->render('AppBundle:Default:private_profile.html.twig', array(
+        return $this->render('/Default/private_profile.html.twig', array(
                     'user' => $user, 'factions' => $factions));
     }
 
@@ -119,7 +119,7 @@ class DefaultController extends Controller
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        $page = $this->get('cards_data')->replaceSymbols($this->renderView('AppBundle:Default:rules.html.twig', array("pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game.")));
+        $page = $this->get('cards_data')->replaceSymbols($this->renderView('/Default/rules.html.twig', array("pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game.")));
 
         $response->setContent($page);
         return $response;
@@ -131,7 +131,7 @@ class DefaultController extends Controller
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        return $this->render('AppBundle:Default:about.html.twig', array(
+        return $this->render('/Default/about.html.twig', array(
                     "pagetitle" => "About",
                         ), $response);
     }

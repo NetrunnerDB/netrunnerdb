@@ -21,7 +21,7 @@ class IndexController extends Controller
         // recent decklists
         $decklists_recent = $this->get('decklists')->recent(0, 10, FALSE)['decklists'];
         
-        return $this->render('AppBundle:Default:index.html.twig',
+        return $this->render('Default/index.html.twig',
                 array(
                         'pagetitle' => "Android:Netrunner Cards and Deckbuilder",
                         'pagedescription' => "Build your deck for Android:Netrunner, the LCG by Fantasy Flight Games. Browse the cards and the thousand of decklists submitted by the community. Publish your own decks and get feedback.",
