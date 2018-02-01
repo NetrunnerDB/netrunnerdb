@@ -62,7 +62,7 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     private $position;
 
     /**
-     * @var integer
+     * @var integer|null
      */
     private $ffgId;
 
@@ -189,7 +189,7 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     /**
      * Get ffgId
      *
-     * @return integer
+     * @return integer|null
      */
     public function getFfgId()
     {

@@ -574,7 +574,7 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
     /**
      * Get influenceLimit
      *
-     * @return integer
+     * @return integer|null
      */
     public function getInfluenceLimit()
     {
@@ -1032,7 +1032,7 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
     private $isRestricted;
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getGlobalPenalty()
     {
@@ -1052,7 +1052,7 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUniversalFactionCost()
     {

@@ -3,4 +3,4 @@ install:
 	php bin/console assets:install --symlink web
 
 test:
-	vendor/bin/phpstan analyze src --level 3
+	vendor/bin/phpstan analyze src --level 4
