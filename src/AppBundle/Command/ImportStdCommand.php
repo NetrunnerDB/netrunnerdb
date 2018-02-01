@@ -66,7 +66,7 @@ class ImportStdCommand extends ContainerAwareCommand
         $this->loadCollection('Side');
         $output->writeln("Done.");
 
-        // factions 
+        // factions
 
         $output->writeln("Importing Factions...");
         $factionsFileInfo = $this->getFileInfo($path, 'factions.json');
@@ -305,8 +305,9 @@ class ImportStdCommand extends ContainerAwareCommand
         $code = $fileinfo->getBasename('.json');
 
         $pack = $this->em->getRepository('AppBundle:Pack')->findOneBy(['code' => $code]);
-        if (!$pack)
+        if (!$pack) {
             throw new Exception("Unable to find Pack [$code]");
+        }
 
         $cardsData = $this->getDataFromFile($fileinfo);
         foreach ($cardsData as $cardData) {
@@ -357,8 +358,9 @@ class ImportStdCommand extends ContainerAwareCommand
 
                 foreach ($prebuiltData['cards'] as $card_code => $quantity) {
                     $card = $this->em->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
-                    if (!$card)
+                    if (!$card) {
                         continue;
+                    }
                     $prebuiltslot = new Prebuiltslot();
                     $prebuiltslot->setCard($card);
                     $prebuiltslot->setQuantity($quantity);
@@ -413,8 +415,9 @@ class ImportStdCommand extends ContainerAwareCommand
                 $result[] = $rotation;
                 foreach ($rotationData['cycles'] as $cycle_code) {
                     $cycle = $this->em->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
-                    if (!$cycle)
+                    if (!$cycle) {
                         continue;
+                    }
                     $rotation->addCycle($cycle);
                 }
                 $this->em->persist($rotation);
@@ -557,8 +560,9 @@ class ImportStdCommand extends ContainerAwareCommand
             unset($orig['active']);
         }
 
-        if (!$this->deepArrayEquality($newer, $orig))
+        if (!$this->deepArrayEquality($newer, $orig)) {
             return $entity;
+        }
     }
 
     /**
@@ -721,14 +725,14 @@ class ImportStdCommand extends ContainerAwareCommand
 
     protected function getDataFromFile(SplFileInfo $fileinfo)
     {
-
         $file = $fileinfo->openFile('r');
         $file->setFlags(SplFileObject::SKIP_EMPTY | SplFileObject::DROP_NEW_LINE);
 
         $lines = [];
         foreach ($file as $line) {
-            if ($line !== false)
+            if ($line !== false) {
                 $lines[] = $line;
+            }
         }
         $content = implode('', $lines);
 
@@ -791,5 +795,4 @@ class ImportStdCommand extends ContainerAwareCommand
             $this->collections[$entityShortName][$entity->getCode()] = $entity;
         }
     }
-
 }

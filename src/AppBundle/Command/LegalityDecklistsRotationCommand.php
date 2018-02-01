@@ -15,8 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
  */
 class LegalityDecklistsRotationCommand extends ContainerAwareCommand
 {
-
-    protected function configure ()
+    protected function configure()
     {
         $this
                 ->setName('nrdb:legality:decklists-rotation')
@@ -24,7 +23,7 @@ class LegalityDecklistsRotationCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute (InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
@@ -42,5 +41,4 @@ class LegalityDecklistsRotationCommand extends ContainerAwareCommand
 
         $output->writeln("<info>Done</info>");
     }
-
 }

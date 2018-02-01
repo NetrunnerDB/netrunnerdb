@@ -13,8 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RulingController extends Controller
 {
-
-    public function postAction (Request $request)
+    public function postAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_GURU');
 
@@ -37,7 +36,7 @@ class RulingController extends Controller
         return $this->redirectToRoute('cards_zoom', ['card_code' => $card->getCode()]);
     }
 
-    public function editAction (Request $request)
+    public function editAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_GURU');
 
@@ -57,7 +56,7 @@ class RulingController extends Controller
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }
 
-    public function deleteAction (Request $request)
+    public function deleteAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_GURU');
 
@@ -73,7 +72,7 @@ class RulingController extends Controller
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }
 
-    public function listAction ()
+    public function listAction()
     {
         $list = $this->getDoctrine()->getRepository('AppBundle:Card')->findAll();
 
@@ -84,5 +83,4 @@ class RulingController extends Controller
         $response->setMaxAge($this->container->getParameter('short_cache'));
         return $response;
     }
-
 }

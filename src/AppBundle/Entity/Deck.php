@@ -7,31 +7,34 @@ namespace AppBundle\Entity;
  */
 class Deck implements \Serializable
 {
-	function __toString() {
-		return "[$this->id] $this->name";
-	}
-	
-	function serialize() {
-		$cards = [];
-		foreach($this->slots as $slot) {
-			$cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-		}
-	
-		return  [
-				'id' => $this->id,
-				'date_creation' => $this->dateCreation->format('c'),
-				'date_update' => $this->dateUpdate->format('c'),
-				'name' => $this->name,
-				'description' => $this->description,
-				'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
-				'cards' => $cards
-		];
-	}
-	
-	function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
+    public function __toString()
+    {
+        return "[$this->id] $this->name";
+    }
+    
+    public function serialize()
+    {
+        $cards = [];
+        foreach ($this->slots as $slot) {
+            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+    
+        return  [
+                'id' => $this->id,
+                'date_creation' => $this->dateCreation->format('c'),
+                'date_update' => $this->dateUpdate->format('c'),
+                'name' => $this->name,
+                'description' => $this->description,
+                'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
+                'cards' => $cards
+        ];
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
+    }
+    
     /**
      * @var integer
      */
@@ -211,9 +214,9 @@ class Deck implements \Serializable
      */
     public function setDescription($description)
     {
-    	$this->description = $description;
+        $this->description = $description;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -223,7 +226,7 @@ class Deck implements \Serializable
      */
     public function getDescription()
     {
-    	return $this->description;
+        return $this->description;
     }
     
     /**
@@ -336,9 +339,9 @@ class Deck implements \Serializable
      */
     public function setIdentity($identity)
     {
-    	$this->identity = $identity;
+        $this->identity = $identity;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -348,7 +351,7 @@ class Deck implements \Serializable
      */
     public function getIdentity()
     {
-    	return $this->identity;
+        return $this->identity;
     }
 
     /**
@@ -359,9 +362,9 @@ class Deck implements \Serializable
      */
     public function setLastPack($lastPack)
     {
-    	$this->lastPack = $lastPack;
+        $this->lastPack = $lastPack;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -371,7 +374,7 @@ class Deck implements \Serializable
      */
     public function getLastPack()
     {
-    	return $this->lastPack;
+        return $this->lastPack;
     }
     
     /**
@@ -473,33 +476,33 @@ class Deck implements \Serializable
      */
     public function getCards()
     {
-    	$arr = array();
-    	foreach($this->slots as $slot) {
-    		$card = $slot->getCard();
-    		$arr[$card->getCode()] = array('qty' => $slot->getQuantity(), 'card' => $card);
-    	}
-    	return $arr;
+        $arr = array();
+        foreach ($this->slots as $slot) {
+            $card = $slot->getCard();
+            $arr[$card->getCode()] = array('qty' => $slot->getQuantity(), 'card' => $card);
+        }
+        return $arr;
     }
 
     public function getContent()
     {
-    	$arr = array();
-    	foreach($this->slots as $slot) {
-    		$arr[$slot->getCard()->getCode()] = $slot->getQuantity();
-    	}
-    	ksort($arr);
-    	return $arr;
+        $arr = array();
+        foreach ($this->slots as $slot) {
+            $arr[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+        ksort($arr);
+        return $arr;
     }
     
     public function getMessage()
     {
-    	return $this->message;
+        return $this->message;
     }
     
     public function setMessage($message)
     {
-    	$this->message = $message;
-    	return $this;
+        $this->message = $message;
+        return $this;
     }
     
     /**
@@ -623,7 +626,7 @@ class Deck implements \Serializable
     /**
      * Get changes
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getChanges()
     {

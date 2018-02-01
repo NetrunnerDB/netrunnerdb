@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class RemoveDecklistCommand extends ContainerAwareCommand
 {
-
     protected function configure()
     {
         $this
@@ -26,7 +25,7 @@ class RemoveDecklistCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-		$decklist_id = $input->getArgument('id');
+        $decklist_id = $input->getArgument('id');
 
         /* @var $em \Doctrine\ORM\EntityManager */
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
@@ -34,12 +33,12 @@ class RemoveDecklistCommand extends ContainerAwareCommand
         /* @var $decklistManager \AppBundle\Service\Decklists */
         $decklistManager = $this->getContainer()->get('decklists');
 
-		$decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-		
-		$decklistManager->removeConstraints($decklist);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        
+        $decklistManager->removeConstraints($decklist);
         $entityManager->remove($decklist);
-		
-		$entityManager->flush();
+        
+        $entityManager->flush();
         
         $output->writeln("Done.");
     }

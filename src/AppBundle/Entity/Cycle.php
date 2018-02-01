@@ -10,24 +10,27 @@ use Doctrine\Common\Collections\Collection;
  */
 class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
 {
-    public function toString() {
-		return $this->name;
-	}
-	
-	public function serialize() {
-		return [
-				'code' => $this->code,
-				'name' => $this->name,
-				'position' => $this->position,
-				'size' => $this->size,
-				'rotated' => $this->rotated
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}	
-	
+    public function toString()
+    {
+        return $this->name;
+    }
+    
+    public function serialize()
+    {
+        return [
+                'code' => $this->code,
+                'name' => $this->name,
+                'position' => $this->position,
+                'size' => $this->size,
+                'rotated' => $this->rotated
+        ];
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
+    }
+    
     /**
      * @var integer
      */
@@ -120,7 +123,7 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -143,7 +146,7 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get code
      *
-     * @return string 
+     * @return string
      */
     public function getCode()
     {
@@ -166,11 +169,11 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
-    	return $this->name;
+        return $this->name;
     }
 
     /**
@@ -189,7 +192,7 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get position
      *
-     * @return integer 
+     * @return integer
      */
     public function getPosition()
     {
@@ -204,9 +207,9 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function setSize($size)
     {
-    	$this->size = $size;
+        $this->size = $size;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -216,7 +219,7 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getSize()
     {
-    	return $this->size;
+        return $this->size;
     }
 
     /**
@@ -284,7 +287,7 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get packs
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getPacks()
     {
@@ -293,7 +296,7 @@ class Cycle implements \Gedmo\Translatable\Translatable, \Serializable
     
     public function setTranslatableLocale($locale)
     {
-    	$this->locale = $locale;
+        $this->locale = $locale;
     }
     /**
      * @var \DateTime

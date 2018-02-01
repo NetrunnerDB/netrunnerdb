@@ -15,7 +15,7 @@ class ModflagsController extends Controller
 {
     public function getAction()
     {
-        if(!$this->get('security.authorization_checker')->isGranted('ROLE_MODERATOR')) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_MODERATOR')) {
             throw $this->createAccessDeniedException('Access denied');
         }
         

@@ -12,7 +12,6 @@ use AppBundle\Entity\Reviewcomment;
 
 class CommentizeCommand extends ContainerAwareCommand
 {
-    
     protected function configure()
     {
         $this
@@ -50,9 +49,15 @@ class CommentizeCommand extends ContainerAwareCommand
         /* @var $review_dest Review */
         $review_dest = $repo->find($review_dest_id);
         
-        if(!$review_orig) return "Review does not exist";
-        if(!$review_dest) return "Dest review does not exist";
-        if(count($review_orig->getComments())) return "Review has comments";
+        if (!$review_orig) {
+            return "Review does not exist";
+        }
+        if (!$review_dest) {
+            return "Dest review does not exist";
+        }
+        if (count($review_orig->getComments())) {
+            return "Review has comments";
+        }
         
         $text = $review_orig->getText();
         $text = strip_tags($text);

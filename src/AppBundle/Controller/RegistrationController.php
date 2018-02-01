@@ -20,8 +20,7 @@ class RegistrationController extends BaseController
         if (null === $user) {
             // User with token not found. Do whatever you want here
             return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
-        }
-        else{
+        } else {
             // Token found. Letting the FOSUserBundle's action handle the confirmation
             return parent::confirmAction($request, $token);
         }

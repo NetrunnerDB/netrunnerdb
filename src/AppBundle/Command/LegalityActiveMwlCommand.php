@@ -9,8 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class LegalityActiveMwlCommand extends ContainerAwareCommand
 {
-
-    protected function configure ()
+    protected function configure()
     {
         $this
                 ->setName('nrdb:legality:active-mwl')
@@ -18,7 +17,7 @@ class LegalityActiveMwlCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute (InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -46,17 +45,16 @@ class LegalityActiveMwlCommand extends ContainerAwareCommand
             return;
         }
 
-        $mwl->setActive(TRUE);
+        $mwl->setActive(true);
         $output->writeln($mwl->getName() . " set as ACTIVE");
 
         while ($mwl = array_shift($list)) {
             if ($mwl->getActive()) {
-                $mwl->setActive(FALSE);
+                $mwl->setActive(false);
                 $output->writeln($mwl->getName() . " set as INACTIVE");
             }
         }
 
         $em->flush();
     }
-
 }

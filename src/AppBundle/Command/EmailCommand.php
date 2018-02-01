@@ -10,27 +10,29 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class EmailCommand extends ContainerAwareCommand
 {
-
     protected function createArchiveFile($em, $user)
     {
         $decks = $this->getContainer()->get('decks')->getByUser($user);
-        if(!count($decks)) return FALSE;
+        if (!count($decks)) {
+            return false;
+        }
         
         $file = tempnam("tmp", "zip");
         $zip = new \ZipArchive();
         $res = $zip->open($file, \ZipArchive::OVERWRITE);
-        if ($res === TRUE)
-        {
-            foreach($decks as $deck)
-            {
+        if ($res === true) {
+            foreach ($decks as $deck) {
                 $content = array();
-                foreach($deck['cards'] as $slot)
-                {
+                foreach ($deck['cards'] as $slot) {
                     $card = $em->getRepository('AppBundle:Card')->findOneBy(array('code' => $slot['card_code']));
-                    if(!$card) continue;
+                    if (!$card) {
+                        continue;
+                    }
                     $cardtitle = $card->getTitle();
                     $packname = $card->getPack()->getName();
-                    if($packname == 'Core Set') $packname = 'Core';
+                    if ($packname == 'Core Set') {
+                        $packname = 'Core';
+                    }
                     $qty = $slot['qty'];
                     $content[] = "$cardtitle ($packname) x$qty";
                     $em->detach($card);
@@ -41,8 +43,11 @@ class EmailCommand extends ContainerAwareCommand
             $res = $zip->close();
         }
         
-        if($res === TRUE) return $file;
-        else return FALSE;
+        if ($res === true) {
+            return $file;
+        } else {
+            return false;
+        }
     }
     
     /**
@@ -63,12 +68,12 @@ class EmailCommand extends ContainerAwareCommand
         
         // Give it a body
         $message->setBody($this->getContainer()->get('templating')->render('/Emails/deck_archive.txt.twig', array(
-        	'username' => $user->getUsername()
+            'username' => $user->getUsername()
         )));
         
         // And optionally an alternative body
         $message->addPart($this->getContainer()->get('templating')->render('/Emails/deck_archive.html.twig', array(
-        	'username' => $user->getUsername()
+            'username' => $user->getUsername()
         )), 'text/html');
         
         $attachment = \Swift_Attachment::fromPath($path, 'application/zip')->setFilename('netrunnerdb.zip');
@@ -97,24 +102,26 @@ class EmailCommand extends ContainerAwareCommand
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $em = $this->getContainer()->get('doctrine')->getManager();
         
-        if($user_id) {
+        if ($user_id) {
             $users[] = $em->getRepository('AppBundle:User')->find($user_id);
         } else {
-            $users = $em->getRepository('AppBundle:User')->findBy(array('locked' => FALSE));
+            $users = $em->getRepository('AppBundle:User')->findBy(array('locked' => false));
         }
         $nb=3;
-        foreach($users as $user) {
+        foreach ($users as $user) {
             $output->writeln($user->getUsername());
             $path = $this->createArchiveFile($em, $user);
-            if($path !== FALSE) {
+            if ($path !== false) {
                 $this->sendArchive($em, $user, $path);
                 $output->writeln("  Sent.");
             }
-            $user->setLocked(TRUE);
+            $user->setLocked(true);
             $em->flush();
             $output->writeln("  Locked.");
             $em->detach($user);
-            if($nb-- == 0) break;
+            if ($nb-- == 0) {
+                break;
+            }
         }
     }
 }

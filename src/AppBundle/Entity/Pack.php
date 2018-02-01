@@ -7,25 +7,28 @@ namespace AppBundle\Entity;
  */
 class Pack implements \Gedmo\Translatable\Translatable, \Serializable
 {
-    public function toString() {
-		return $this->name;
-	}
+    public function toString()
+    {
+        return $this->name;
+    }
 
-	public function serialize() {
-		return [
-				'code' => $this->code,
-				'cycle_code' => $this->cycle ? $this->cycle->getCode() : null,
-				'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null, 
-				'name' => $this->name,
-				'position' => $this->position,
-				'size' => $this->size
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
+    public function serialize()
+    {
+        return [
+                'code' => $this->code,
+                'cycle_code' => $this->cycle ? $this->cycle->getCode() : null,
+                'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
+                'name' => $this->name,
+                'position' => $this->position,
+                'size' => $this->size
+        ];
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
+    }
+    
     /**
      * @var integer
      */
@@ -62,7 +65,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     private $ffgId;
 
     /**
-     * @var string 
+     * @var string
      */
     private $locale = 'en';
     
@@ -74,7 +77,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -97,7 +100,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get code
      *
-     * @return string 
+     * @return string
      */
     public function getCode()
     {
@@ -120,11 +123,11 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
-    	return $this->name;
+        return $this->name;
     }
 
     /**
@@ -143,7 +146,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get dateRelease
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDateRelease()
     {
@@ -166,7 +169,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get size
      *
-     * @return integer 
+     * @return integer
      */
     public function getSize()
     {
@@ -212,7 +215,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get position
      *
-     * @return integer 
+     * @return integer
      */
     public function getPosition()
     {
@@ -234,9 +237,9 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function __construct()
     {
-        $this->ts = new \DateTime(); 
-    	$this->cards = new \Doctrine\Common\Collections\ArrayCollection();
-    	$this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->ts = new \DateTime();
+        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -265,7 +268,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get cards
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCards()
     {
@@ -288,7 +291,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get cycle
      *
-     * @return \AppBundle\Entity\Cycle 
+     * @return \AppBundle\Entity\Cycle
      */
     public function getCycle()
     {
@@ -302,7 +305,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getDecklists()
     {
-    	return $this->decklists;
+        return $this->decklists;
     }
 
     /**
@@ -330,7 +333,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
 
     public function setTranslatableLocale($locale)
     {
-    	$this->locale = $locale;
+        $this->locale = $locale;
     }
     /**
      * @var \DateTime
@@ -390,6 +393,4 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     {
         return $this->dateUpdate;
     }
-    
-    
 }

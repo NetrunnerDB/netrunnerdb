@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
- * Connects a user via oauth2 
+ * Connects a user via oauth2
  *
  * @author cbertolini
  * @Route("/oauth")
@@ -24,11 +24,11 @@ class OauthController extends Controller
      * @Method("GET")
      * @Template
      */
-    public function explorerAction (Request $request)
+    public function explorerAction(Request $request)
     {
         // we check if we have an access-token in session
         $session = $request->getSession();
-        if(!$session->has('oauth_token_response')) {
+        if (!$session->has('oauth_token_response')) {
             // no token, we redirect to a login page
             return $this->redirectToRoute('app_oauth_initiate');
         }
@@ -47,7 +47,7 @@ class OauthController extends Controller
      * @Method("GET")
      * @Template
      */
-    public function initiateAction ()
+    public function initiateAction()
     {
         return [
             'client_id' => $this->getParameter('oauth_test_client_id'),
@@ -61,7 +61,7 @@ class OauthController extends Controller
      * @Route("/callback")
      * @Method("GET")
      */
-    public function callbackAction (Request $request)
+    public function callbackAction(Request $request)
     {
         // receive the aothorization code
         $code = $request->get('code');
@@ -77,12 +77,12 @@ class OauthController extends Controller
 
         $client = new Client();
         $res = $client->request('GET', $url);
-        if($res->getStatusCode() !== 200) {
+        if ($res->getStatusCode() !== 200) {
             throw new \Exception($res->getReasonPhrase());
         }
         
         // process the response
-        $response = json_decode($res->getBody(), TRUE);
+        $response = json_decode($res->getBody(), true);
         $now = new \DateTime();
         $response['creation_date'] = $now->format('c');
         $now->add(\DateInterval::createFromDateString($response['expires_in'].' seconds'));

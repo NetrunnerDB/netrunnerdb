@@ -10,13 +10,11 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class HighlightCommand extends ContainerAwareCommand
 {
-
     protected function saveHighlight($decklist_id)
     {
         $dbh = $this->getContainer()->get('doctrine')->getConnection();
         
-        if ($decklist_id) 
-        {
+        if ($decklist_id) {
             $rows = $dbh
         ->executeQuery(
                 "SELECT
@@ -43,10 +41,10 @@ class HighlightCommand extends ContainerAwareCommand
 				join card c on d.identity_id=c.id
 				join faction f on d.faction_id=f.id
 				where d.id=?
-				", array($decklist_id))->fetchAll();
-
+				",
+            array($decklist_id)
+        )->fetchAll();
         } else {
-                
             $rows = $dbh
             ->executeQuery(
                     "SELECT
@@ -77,10 +75,12 @@ class HighlightCommand extends ContainerAwareCommand
                         and d.moderation_status=0
                     order by nbvotes desc , nbcomments desc
                     limit 0,1
-    				", array())->fetchAll();
+    				",
+                array()
+            )->fetchAll();
         }
         
-        if(empty($rows)) {
+        if (empty($rows)) {
             return false;
         }
     
@@ -94,7 +94,9 @@ class HighlightCommand extends ContainerAwareCommand
 				from decklistslot s
 				join card c on s.card_id=c.id
 				where s.decklist_id=?
-				order by c.code asc", array($decklist['id']))->fetchAll();
+				order by c.code asc",
+            array($decklist['id'])
+        )->fetchAll();
     
         $decklist['cards'] = $cards;
          

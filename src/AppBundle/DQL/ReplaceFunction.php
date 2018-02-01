@@ -8,13 +8,13 @@ use Doctrine\ORM\Query\Lexer;
 /**
  * "REPLACE" "(" StringPrimary "," StringSecondary "," StringThird ")"
  *
- * 
+ *
  * @link    www.prohoney.com
  * @since   2.0
  * @author  Igor Aleksejev
  */
-class ReplaceFunction extends FunctionNode {
-
+class ReplaceFunction extends FunctionNode
+{
     public $stringPrimary;
     public $stringSecondary;
     public $stringThird;
@@ -22,21 +22,23 @@ class ReplaceFunction extends FunctionNode {
     /**
      * @override
      */
-    public function getSql(\Doctrine\ORM\Query\SqlWalker $sqlWalker) {
-		return 'REPLACE(' .
-		            $this->stringPrimary->dispatch($sqlWalker) . ', ' .
-		            $this->stringSecondary->dispatch($sqlWalker) . ', ' .
-					$this->stringThird->dispatch($sqlWalker) .
-		        ')';
-/*        return $sqlWalker->getConnection()->getDatabasePlatform()->getReplaceExpression(
-                        $this->stringPrimary, $this->stringSecondary, $this->stringThird
-        );*/
+    public function getSql(\Doctrine\ORM\Query\SqlWalker $sqlWalker)
+    {
+        return 'REPLACE(' .
+                    $this->stringPrimary->dispatch($sqlWalker) . ', ' .
+                    $this->stringSecondary->dispatch($sqlWalker) . ', ' .
+                    $this->stringThird->dispatch($sqlWalker) .
+                ')';
+        /*        return $sqlWalker->getConnection()->getDatabasePlatform()->getReplaceExpression(
+                                $this->stringPrimary, $this->stringSecondary, $this->stringThird
+                );*/
     }
 
     /**
      * @override
      */
-    public function parse(\Doctrine\ORM\Query\Parser $parser) {
+    public function parse(\Doctrine\ORM\Query\Parser $parser)
+    {
         $parser->match(Lexer::T_IDENTIFIER);
         $parser->match(Lexer::T_OPEN_PARENTHESIS);
         $this->stringPrimary = $parser->StringPrimary();
@@ -46,5 +48,4 @@ class ReplaceFunction extends FunctionNode {
         $this->stringThird = $parser->StringPrimary();
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
-
 }

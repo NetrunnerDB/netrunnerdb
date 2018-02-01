@@ -297,7 +297,7 @@ class Review
     /**
      * Get comments
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getComments()
     {

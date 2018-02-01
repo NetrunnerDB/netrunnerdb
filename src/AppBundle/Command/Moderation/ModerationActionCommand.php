@@ -13,7 +13,6 @@ use Symfony\Component\Console\Question\Question;
 
 class ModerationActionCommand extends ContainerAwareCommand
 {
-    
     protected function configure()
     {
         $this
@@ -58,7 +57,7 @@ class ModerationActionCommand extends ContainerAwareCommand
             
     
     /**
-     * 
+     *
      * @return integer
      */
     protected function getNewStatus()
@@ -76,19 +75,17 @@ class ModerationActionCommand extends ContainerAwareCommand
     }
     
     /**
-     * 
+     *
      * @param integer $decklistId
      * @return Decklist
      */
     protected function getDecklist($decklistId)
     {
         $decklist = $this->em->getRepository('AppBundle:Decklist')->find($decklistId);
-        if(!$decklist) {
+        if (!$decklist) {
             $this->output->writeln('<error>Not Found</error>');
             die;
         }
         return $decklist;
     }
-           
-            
 }

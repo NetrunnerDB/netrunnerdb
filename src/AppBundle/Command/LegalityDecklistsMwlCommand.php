@@ -16,8 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
  */
 class LegalityDecklistsMwlCommand extends ContainerAwareCommand
 {
-    
-    protected function configure ()
+    protected function configure()
     {
         $this
                 ->setName('nrdb:legality:decklists-mwl')
@@ -25,7 +24,7 @@ class LegalityDecklistsMwlCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute (InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
@@ -42,5 +41,4 @@ class LegalityDecklistsMwlCommand extends ContainerAwareCommand
 
         $output->writeln("<info>Done</info>");
     }
-
 }

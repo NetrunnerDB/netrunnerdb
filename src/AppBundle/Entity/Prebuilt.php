@@ -7,29 +7,32 @@ namespace AppBundle\Entity;
  */
 class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
 {
-	public function toString() {
-		return $this->name;
-	}
-	
-	public function serialize() {
-		$cards = [];
-		foreach($this->slots as $slot) {
-			$cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-		}
-		
-		return [
-				'code' => $this->code,
-				'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
-				'name' => $this->name,
-				'position' => $this->position,
-				'cards' => $cards
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
+    public function toString()
+    {
+        return $this->name;
+    }
+    
+    public function serialize()
+    {
+        $cards = [];
+        foreach ($this->slots as $slot) {
+            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+        
+        return [
+                'code' => $this->code,
+                'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
+                'name' => $this->name,
+                'position' => $this->position,
+                'cards' => $cards
+        ];
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
+    }
+    
     /**
      * @var integer
      */
@@ -365,7 +368,6 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function setTranslatableLocale($locale)
     {
-    	$this->locale = $locale;
+        $this->locale = $locale;
     }
 }
-

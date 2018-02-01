@@ -11,8 +11,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *
  */
 
-class CardsData {
-
+class CardsData
+{
     public static $faction_letters = [
         'haas-bioroid' => 'h',
         'weyland-consortium' => 'w',
@@ -37,13 +37,15 @@ class CardsData {
     /* @var Router */
     private $router;
 
-    public function __construct(Registry $doctrine, RequestStack $request_stack, Router $router) {
+    public function __construct(Registry $doctrine, RequestStack $request_stack, Router $router)
+    {
         $this->doctrine = $doctrine;
         $this->request_stack = $request_stack;
         $this->router = $router;
     }
 
-    private function backwardCompatibilitySymbols($text) {
+    private function backwardCompatibilitySymbols($text)
+    {
         $map = array(
             '[subroutine]' => '[Subroutine]',
             '[credit]' => '[Credits]',
@@ -62,7 +64,8 @@ class CardsData {
      * @param string $text
      * @return string
      */
-    public function replaceSymbols($text) {
+    public function replaceSymbols($text)
+    {
         $map = array(
             '[subroutine]' => '<span class="icon icon-subroutine"></span>',
             '[credit]' => '<span class="icon icon-credit"></span>',
@@ -83,7 +86,8 @@ class CardsData {
         return str_replace(array_keys($map), array_values($map), $text);
     }
 
-    public function allsetsnocycledata() {
+    public function allsetsnocycledata()
+    {
         $list_packs = $this->doctrine->getRepository('AppBundle:Pack')->findBy(array(), array("dateRelease" => "ASC", "position" => "ASC"));
         $packs = array();
         foreach ($list_packs as $pack) {
@@ -102,7 +106,8 @@ class CardsData {
         return $packs;
     }
 
-    public function allsetsdata() {
+    public function allsetsdata()
+    {
         $list_cycles = $this->doctrine->getRepository('AppBundle:Cycle')->findBy(array(), array("position" => "ASC"));
         $cycles = array();
         foreach ($list_cycles as $cycle) {
@@ -141,7 +146,8 @@ class CardsData {
         return $cycles;
     }
 
-    public function get_search_rows($conditions, $sortorder, $forceempty = false) {
+    public function get_search_rows($conditions, $sortorder, $forceempty = false)
+    {
         $locale = $this->request_stack->getCurrentRequest()->getLocale();
 
         $i = 0;
@@ -172,15 +178,16 @@ class CardsData {
                         if ($code) {
                             $or[] = "(c.code = ?$i)";
                             $parameters[$i++] = $arg;
-                        } else if ($acronym) {
+                        } elseif ($acronym) {
                             $or[] = "(BINARY(c.title) like ?$i)";
                             $parameters[$i++] = "%$arg%";
                             $like = implode('% ', str_split($arg));
                             $or[] = "(REPLACE(c.title, '-', ' ') like ?$i)";
                             $parameters[$i++] = "$like%";
                         } else {
-                            if ($arg == 'Franklin')
-                                $arg = 'Crick'; // easter egg
+                            if ($arg == 'Franklin') {
+                                $arg = 'Crick';
+                            } // easter egg
                             $or[] = "(c.title like ?$i)";
                             $parameters[$i++] = "%$arg%";
                         }
@@ -492,10 +499,11 @@ class CardsData {
                             case '>': $or[] = "(p.dateRelease > ?$i or p.dateRelease IS NULL)";
                                 break;
                         }
-                        if ($arg == "now")
+                        if ($arg == "now") {
                             $parameters[$i++] = new \DateTime();
-                        else
+                        } else {
                             $parameters[$i++] = new \DateTime($arg);
+                        }
                     }
                     $clauses[] = implode(" or ", $or);
                     break;
@@ -538,13 +546,16 @@ class CardsData {
         $query = $qb->getQuery();
 
         $query->setHint(
-                \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER, 'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+                \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
+            'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
         );
         $query->setHint(
-                \Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE, $locale
+                \Gedmo\Translatable\TranslatableListener::HINT_TRANSLATABLE_LOCALE,
+            $locale
         );
         $query->setHint(
-                \Gedmo\Translatable\TranslatableListener::HINT_FALLBACK, 1
+                \Gedmo\Translatable\TranslatableListener::HINT_FALLBACK,
+            1
         );
 
         $rows = $query->getResult();
@@ -557,7 +568,8 @@ class CardsData {
      * @param \AppBundle\Entity\Card $card
      * @return multitype:multitype: string number mixed NULL unknown
      */
-    public function getCardInfo($card) {
+    public function getCardInfo($card)
+    {
         static $cache = array();
 
         $locale = $this->request_stack->getCurrentRequest()->getLocale();
@@ -608,7 +620,7 @@ class CardsData {
         }
 
         // setting the card strength to X if the strength is null and the card subtype has icebreaker
-        if ($cardinfo['strength'] === null && strstr($cardinfo['subtype'], 'Icebreaker') !== FALSE) {
+        if ($cardinfo['strength'] === null && strstr($cardinfo['subtype'], 'Icebreaker') !== false) {
             $cardinfo['strength'] = 'X';
         }
 
@@ -627,8 +639,8 @@ class CardsData {
         $cardinfo['text'] = $this->replaceSymbols($cardinfo['text']);
         $cardinfo['text'] = str_replace('&', '&amp;', $cardinfo['text']);
         $cardinfo['text'] = implode(array_map(function ($l) {
-                    return "<p>$l</p>";
-                }, explode("\n", $cardinfo['text'])));
+            return "<p>$l</p>";
+        }, explode("\n", $cardinfo['text'])));
         $cardinfo['flavor'] = $this->replaceSymbols($cardinfo['flavor']);
         $cardinfo['flavor'] = str_replace('&', '&amp;', $cardinfo['flavor']);
         $cardinfo['cssfaction'] = str_replace(" ", "-", mb_strtolower($card->getFaction()->getName()));
@@ -638,7 +650,8 @@ class CardsData {
         return $cardinfo;
     }
 
-    public function syntax($query) {
+    public function syntax($query)
+    {
         // renvoie une liste de conditions (array)
         // chaque condition est un tableau à n>1 éléments
         // le premier est le type de condition (0 ou 1 caractère)
@@ -682,7 +695,7 @@ class CardsData {
                         $query = $match[2];
                         $etat = 4;
                     }
-                } else if (preg_match('/^\|(.*)/u', $query, $match)) { // jeton "|"
+                } elseif (preg_match('/^\|(.*)/u', $query, $match)) { // jeton "|"
                     if (($cond[1] == ':' || $cond[1] == '!') && (($etat == 2 && count($cond) > 2) || $etat == 3)) {
                         $query = $match[1];
                         $etat = 3;
@@ -691,7 +704,7 @@ class CardsData {
                         $query = $match[1];
                         $etat = 4;
                     }
-                } else if (preg_match('/^ (.*)/u', $query, $match)) { // jeton " "
+                } elseif (preg_match('/^ (.*)/u', $query, $match)) { // jeton " "
                     $query = $match[1];
                     $etat = 1;
                 } else {
@@ -707,15 +720,17 @@ class CardsData {
         return $list;
     }
 
-    public function validateConditions(&$conditions) {
+    public function validateConditions(&$conditions)
+    {
         // suppression des conditions invalides
         $canDoNumeric = array('o', 'n', 'p', 'r', 'y', 'e', 'h', 'c');
         $numeric = array('<', '>');
         foreach ($conditions as $i => $l) {
-            if (in_array($l[1], $numeric) && !in_array($l[0], $canDoNumeric))
+            if (in_array($l[1], $numeric) && !in_array($l[0], $canDoNumeric)) {
                 unset($conditions[$i]);
+            }
             if ($l[0] == 'f') {
-                $factions = Array();
+                $factions = array();
                 for ($j=1; $j<count($l); ++$j) {
                     if (strlen($l[$j]) === 1) {
                         // replace faction letter with full name
@@ -733,21 +748,25 @@ class CardsData {
         }
     }
 
-    public function buildQueryFromConditions($conditions) {
+    public function buildQueryFromConditions($conditions)
+    {
         // reconstruction de la bonne chaine de recherche pour affichage
         return implode(" ", array_map(
                         function ($l) {
-                    return ($l[0] ? $l[0] . $l[1] : "")
+                            return ($l[0] ? $l[0] . $l[1] : "")
                             . implode("|", array_map(
                                             function ($s) {
-                                        return preg_match("/^[\p{L}\p{N}\-\&\.\!\'\;]+$/u", $s) ? $s : "\"$s\"";
-                                    }, array_slice($l, 2)
+                                                return preg_match("/^[\p{L}\p{N}\-\&\.\!\'\;]+$/u", $s) ? $s : "\"$s\"";
+                                            },
+                                array_slice($l, 2)
                     ));
-                }, $conditions
+                        },
+            $conditions
         ));
     }
 
-    public function get_mwl_info($card) {
+    public function get_mwl_info($card)
+    {
         $response = array();
         $card_code = $card->getCode();
         $mwls = $this->doctrine->getRepository('AppBundle:Mwl')->findBy(array(), array("dateStart" => "DESC"));
@@ -772,7 +791,8 @@ class CardsData {
         return $response;
     }
 
-    public function get_reviews($card) {
+    public function get_reviews($card)
+    {
         $reviews = $this->doctrine->getRepository('AppBundle:Review')->findBy(array('card' => $card), array('nbvotes' => 'DESC'));
 
         $response = array();
@@ -799,7 +819,8 @@ class CardsData {
         return $response;
     }
 
-    public function last_pack_for_review($packs, $review) {
+    public function last_pack_for_review($packs, $review)
+    {
         foreach (array_reverse($packs) as $pack) {
             if ($pack->getDateRelease() instanceof \DateTime
                 && $pack->getDateRelease() < $review->getDatecreation()) {
@@ -810,7 +831,8 @@ class CardsData {
         return 'Unknown';
     }
 
-    public function get_rulings($card) {
+    public function get_rulings($card)
+    {
         $rulings = $this->doctrine->getRepository('AppBundle:Ruling')->findBy(array('card' => $card), array('dateCreation' => 'ASC'));
 
         $response = array();
@@ -829,7 +851,8 @@ class CardsData {
      * Searches a Identity card by its partial title
      * @return \AppBundle\Entity\Card
      */
-    public function find_identity($partialTitle) {
+    public function find_identity($partialTitle)
+    {
         $qb = $this->doctrine->getManager()->createQueryBuilder();
         $qb->select('c')->from('AppBundle:Card', 'c')->join('AppBundle:Type', 't', 'WITH', 'c.type = t');
         $qb->where($qb->expr()->eq('t.name', ':typeName'));
@@ -840,5 +863,4 @@ class CardsData {
         $card = $query->getSingleResult();
         return $card;
     }
-
 }

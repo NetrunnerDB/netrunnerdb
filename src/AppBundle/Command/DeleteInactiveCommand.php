@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class DeleteInactiveCommand extends ContainerAwareCommand
 {
-    
     protected function configure()
     {
         $this
@@ -26,9 +25,9 @@ class DeleteInactiveCommand extends ContainerAwareCommand
         $count = 0;
         
         $users = $em->getRepository('AppBundle:User')->findBy(array('enabled' => false));
-        foreach($users as $user) {
+        foreach ($users as $user) {
             /* @var $user AppBundle\Entity\User */
-            if($user->getDateCreation() < $limit) {
+            if ($user->getDateCreation() < $limit) {
                 $count++;
                 $em->remove($user);
             }

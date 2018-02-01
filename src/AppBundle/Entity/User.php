@@ -188,9 +188,9 @@ class User extends BaseUser
      */
     public function setFaction($faction)
     {
-    	$this->faction = $faction;
+        $this->faction = $faction;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -200,7 +200,7 @@ class User extends BaseUser
      */
     public function getFaction()
     {
-    	return $this->faction;
+        return $this->faction;
     }
     
     /**
@@ -257,9 +257,9 @@ class User extends BaseUser
      */
     public function setDecks($decks)
     {
-    	$this->decks = $decks;
+        $this->decks = $decks;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -269,7 +269,7 @@ class User extends BaseUser
      */
     public function getDecks()
     {
-    	return $this->decks;
+        return $this->decks;
     }
 
     /**
@@ -280,9 +280,9 @@ class User extends BaseUser
      */
     public function setDecklists($decklists)
     {
-    	$this->decklists = $decklists;
+        $this->decklists = $decklists;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -292,7 +292,7 @@ class User extends BaseUser
      */
     public function getDecklists()
     {
-    	return $this->decklists;
+        return $this->decklists;
     }
     
     /**
@@ -303,9 +303,9 @@ class User extends BaseUser
      */
     public function setComments($comments)
     {
-    	$this->comments = $comments;
+        $this->comments = $comments;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -315,7 +315,7 @@ class User extends BaseUser
      */
     public function getComments()
     {
-    	return $this->comments;
+        return $this->comments;
     }
 
     /**
@@ -326,10 +326,10 @@ class User extends BaseUser
      */
     public function addFavorite($decklist)
     {
-    	$decklist->addFavorite($this);
-    	$this->favorites[] = $decklist;
+        $decklist->addFavorite($this);
+        $this->favorites[] = $decklist;
     
-    	return $this;
+        return $this;
     }
 
     /**
@@ -340,10 +340,10 @@ class User extends BaseUser
      */
     public function removeFavorite($decklist)
     {
-    	$decklist->removeFavorite($this);
-    	$this->favorites->removeElement($decklist);
-    	
-    	return $this;
+        $decklist->removeFavorite($this);
+        $this->favorites->removeElement($decklist);
+        
+        return $this;
     }
     
     
@@ -354,7 +354,7 @@ class User extends BaseUser
      */
     public function getFavorites()
     {
-    	return $this->favorites;
+        return $this->favorites;
     }
     
     /**
@@ -365,10 +365,10 @@ class User extends BaseUser
      */
     public function addVote($decklist)
     {
-    	$decklist->addVote($this);
-    	$this->votes[] = $decklist;
+        $decklist->addVote($this);
+        $this->votes[] = $decklist;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -378,7 +378,7 @@ class User extends BaseUser
      */
     public function getVotes()
     {
-    	return $this->votes;
+        return $this->votes;
     }
 
     /**
@@ -389,10 +389,10 @@ class User extends BaseUser
      */
     public function addFollowing($user)
     {
-    	$user->addFollower($this);
-    	$this->following[] = $user;
+        $user->addFollower($this);
+        $this->following[] = $user;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -402,7 +402,7 @@ class User extends BaseUser
      */
     public function getFollowing()
     {
-    	return $this->following;
+        return $this->following;
     }
 
     /**
@@ -413,10 +413,10 @@ class User extends BaseUser
      */
     public function removeFollowing($user)
     {
-    	$user->removeFollower($this);
-    	$this->following->removeElement($user);
-    	 
-    	return $this;
+        $user->removeFollower($this);
+        $this->following->removeElement($user);
+         
+        return $this;
     }
     
     /**
@@ -427,9 +427,9 @@ class User extends BaseUser
      */
     public function addFollower($user)
     {
-    	$this->followers[] = $user;
+        $this->followers[] = $user;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -439,7 +439,7 @@ class User extends BaseUser
      */
     public function getFollowers()
     {
-    	return $this->followers;
+        return $this->followers;
     }
 
     /**
@@ -450,61 +450,61 @@ class User extends BaseUser
      */
     public function removeFollower($user)
     {
-    	$this->followers->removeElement($user);
+        $this->followers->removeElement($user);
     
-    	return $this;
+        return $this;
     }
     
     public function getMaxNbDecks()
     {
-    	return 2*(100+floor($this->reputation/ 10));
+        return 2*(100+floor($this->reputation/ 10));
     }
     
     public function __construct()
     {
-    	$this->decks = new ArrayCollection();
-    	$this->decklists = new ArrayCollection();
-       	$this->comments = new ArrayCollection();
-       	$this->favorites = new ArrayCollection();
-       	$this->votes = new ArrayCollection();
-       	$this->following = new ArrayCollection();
-       	$this->followers = new ArrayCollection();
-       	$this->reputation = 1;
-       	$this->faction = 'neutral-runner';
-       	$this->creation = new \DateTime();
-       	$this->donation = 0;
-       	
-       	parent::__construct();
+        $this->decks = new ArrayCollection();
+        $this->decklists = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
+        $this->votes = new ArrayCollection();
+        $this->following = new ArrayCollection();
+        $this->followers = new ArrayCollection();
+        $this->reputation = 1;
+        $this->faction = 'neutral-runner';
+        $this->creation = new \DateTime();
+        $this->donation = 0;
+           
+        parent::__construct();
     }
     /**
      * @var boolean
      */
-    private $notif_author = TRUE;
+    private $notif_author = true;
 
     /**
      * @var boolean
      */
-    private $notif_commenter = TRUE;
+    private $notif_commenter = true;
 
     /**
      * @var boolean
      */
-    private $notif_mention = TRUE;
+    private $notif_mention = true;
 
     /**
      * @var boolean
      */
-    private $notif_follow = TRUE;
+    private $notif_follow = true;
 
     /**
      * @var boolean
      */
-    private $notif_successor = TRUE;
+    private $notif_successor = true;
 
     /**
      * @var boolean
      */
-    private $share_decks = FALSE;
+    private $share_decks = false;
     
     /**
      * Set notif_author

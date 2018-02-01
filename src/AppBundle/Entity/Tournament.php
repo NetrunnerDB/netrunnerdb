@@ -21,7 +21,7 @@ class Tournament
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -44,7 +44,7 @@ class Tournament
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -89,7 +89,7 @@ class Tournament
     /**
      * Get decklists
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getDecklists()
     {

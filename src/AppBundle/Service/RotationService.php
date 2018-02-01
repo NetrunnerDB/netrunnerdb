@@ -16,12 +16,12 @@ class RotationService
     /** @var EntityManager */
     private $entityManager;
 
-    public function __construct (EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
-    public function findCompatibleRotation (Decklist $decklist)
+    public function findCompatibleRotation(Decklist $decklist)
     {
         $rotations = $this->entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
 
@@ -39,7 +39,7 @@ class RotationService
      * @param Rotation $rotation
      * @return bool
      */
-    public function isRotationCompatible (Decklist $decklist, Rotation $rotation)
+    public function isRotationCompatible(Decklist $decklist, Rotation $rotation)
     {
         $cycles = [];
         foreach ($decklist->getSlots() as $slot) {
@@ -47,7 +47,7 @@ class RotationService
         }
 
         return count(array_diff(array_keys($cycles), array_map(function ($cycle) {
-                return $cycle->getCode();
-            }, $rotation->getCycles()->toArray()))) === 0;
+            return $cycle->getCode();
+        }, $rotation->getCycles()->toArray()))) === 0;
     }
 }

@@ -42,75 +42,73 @@ class Ruling
      */
     private $user;
 
-    function getId ()
+    public function getId()
     {
         return $this->id;
     }
 
-    function getDateCreation ()
+    public function getDateCreation()
     {
         return $this->dateCreation;
     }
 
-    function getDateUpdate ()
+    public function getDateUpdate()
     {
         return $this->dateUpdate;
     }
 
-    function getRawtext ()
+    public function getRawtext()
     {
         return $this->rawtext;
     }
 
-    function getText ()
+    public function getText()
     {
         return $this->text;
     }
 
-    function getCard ()
+    public function getCard()
     {
         return $this->card;
     }
 
-    function getUser ()
+    public function getUser()
     {
         return $this->user;
     }
 
-    function setId ($id)
+    public function setId($id)
     {
         $this->id = $id;
     }
 
-    function setDateCreation (\DateTime $dateCreation)
+    public function setDateCreation(\DateTime $dateCreation)
     {
         $this->dateCreation = $dateCreation;
     }
 
-    function setDateUpdate (\DateTime $dateUpdate)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
     }
 
-    function setRawtext ($rawtext)
+    public function setRawtext($rawtext)
     {
         $this->rawtext = $rawtext;
     }
 
-    function setText ($text)
+    public function setText($text)
     {
         $this->text = $text;
     }
 
-    function setCard (\AppBundle\Entity\Card $card)
+    public function setCard(\AppBundle\Entity\Card $card)
     {
         $this->card = $card;
     }
 
-    function setUser (\AppBundle\Entity\User $user)
+    public function setUser(\AppBundle\Entity\User $user)
     {
         $this->user = $user;
     }
-
-
 }

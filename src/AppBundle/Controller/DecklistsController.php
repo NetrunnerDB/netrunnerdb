@@ -16,14 +16,14 @@ class DecklistsController extends Controller
     /**
      * displays the lists of decklists
      */
-    public function listAction ($type, $code = null, $page = 1, Request $request)
+    public function listAction($type, $code = null, $page = 1, Request $request)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
 
         $limit = 30;
-        if($page < 1) {
+        if ($page < 1) {
             $page = 1;
         }
         $start = ($page - 1) * $limit;
@@ -33,7 +33,7 @@ class DecklistsController extends Controller
                   
         $securityContext = $this->get('security.authorization_checker');
 
-        switch($type) {
+        switch ($type) {
             case 'find':
                 $result = $this->get('decklists')->find($start, $limit, $request);
                 $pagetitle = "Decklist search results";
@@ -42,7 +42,7 @@ class DecklistsController extends Controller
             case 'favorites':
                 $response->setPrivate();
                 $user = $this->getUser();
-                if(!$user) {
+                if (!$user) {
                     $result = array('decklists' => array(), 'count' => 0);
                 } else {
                     $result = $this->get('decklists')->favorites($user->getId(), $start, $limit);
@@ -52,7 +52,7 @@ class DecklistsController extends Controller
             case 'mine':
                 $response->setPrivate();
                 $user = $this->getUser();
-                if(!$user) {
+                if (!$user) {
                     $result = array('decklists' => array(), 'count' => 0);
                 } else {
                     $result = $this->get('decklists')->by_author($user->getId(), $start, $limit);
@@ -80,14 +80,14 @@ class DecklistsController extends Controller
                 $pagetitle = "Tournaments";
                 break;
             case 'trashed':
-                if(!$securityContext->isGranted('ROLE_MODERATOR')) {
+                if (!$securityContext->isGranted('ROLE_MODERATOR')) {
                     throw $this->createAccessDeniedException('Access denied');
                 }
                 $result = $this->get('decklists')->trashed($start, $limit);
                 $pagetitle = "Trashed decklists";
                 break;
             case 'restored':
-                if(!$securityContext->isGranted('ROLE_MODERATOR')) {
+                if (!$securityContext->isGranted('ROLE_MODERATOR')) {
                     throw $this->createAccessDeniedException('Access denied');
                 }
                 $result = $this->get('decklists')->restored($start, $limit);
@@ -109,7 +109,8 @@ class DecklistsController extends Controller
 				f.name,
 				f.code
 				from faction f
-				order by f.side_id asc, f.name asc")
+				order by f.side_id asc, f.name asc"
+        )
                 ->fetchAll();
 
         $packs = $dbh->executeQuery(
@@ -119,7 +120,8 @@ class DecklistsController extends Controller
 				from pack p
 				where p.date_release is not null
 				order by p.date_release desc
-				limit 0,5")
+				limit 0,5"
+        )
                 ->fetchAll();
 
         // pagination : calcul de nbpages // currpage // prevpage // nextpage
@@ -136,7 +138,7 @@ class DecklistsController extends Controller
         $params['type'] = $type;
 
         $pages = array();
-        for($page = 1; $page <= $nbpages; $page ++) {
+        for ($page = 1; $page <= $nbpages; $page ++) {
             $pages[] = array(
                 "numero" => $page,
                 "url" => $this->generateUrl($route, $params + array(
@@ -167,7 +169,7 @@ class DecklistsController extends Controller
                         ), $response);
     }
 
-    public function searchAction (Request $request)
+    public function searchAction(Request $request)
     {
         $response = new Response();
         $response->setPublic();
@@ -179,7 +181,8 @@ class DecklistsController extends Controller
 				f.name,
 				f.code
 				from faction f
-				order by f.side_id asc, f.name asc")
+				order by f.side_id asc, f.name asc"
+        )
                 ->fetchAll();
 
         $categories = array();
@@ -187,30 +190,30 @@ class DecklistsController extends Controller
         $off = 0;
         $categories[] = array("label" => "Core / Deluxe", "packs" => array());
         $list_cycles = $this->get('doctrine')->getRepository('AppBundle:Cycle')->findBy(array(), array("position" => "ASC"));
-        foreach($list_cycles as $cycle) {
+        foreach ($list_cycles as $cycle) {
             $size = count($cycle->getPacks());
-            if($cycle->getPosition() == 0 || $size == 0) {
+            if ($cycle->getPosition() == 0 || $size == 0) {
                 continue;
             }
             $first_pack = $cycle->getPacks()[0];
-            if($size === 1 && $first_pack->getName() == $cycle->getName()) {
-                $checked = $first_pack->getDateRelease() !== NULL;
-                if($checked) {
+            if ($size === 1 && $first_pack->getName() == $cycle->getName()) {
+                $checked = $first_pack->getDateRelease() !== null;
+                if ($checked) {
                     $on++;
                 } else {
                     $off++;
                 }
-                $categories[0]["packs"][] = array("id" => $first_pack->getId(), "label" => $first_pack->getName(), "checked" => $checked, "future" => $first_pack->getDateRelease() === NULL);
+                $categories[0]["packs"][] = array("id" => $first_pack->getId(), "label" => $first_pack->getName(), "checked" => $checked, "future" => $first_pack->getDateRelease() === null);
             } else {
                 $category = array("label" => $cycle->getName(), "packs" => array());
-                foreach($cycle->getPacks() as $pack) {
-                    $checked = $pack->getDateRelease() !== NULL;
-                    if($checked) {
+                foreach ($cycle->getPacks() as $pack) {
+                    $checked = $pack->getDateRelease() !== null;
+                    if ($checked) {
                         $on++;
                     } else {
                         $off++;
                     }
-                    $category['packs'][] = array("id" => $pack->getId(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === NULL);
+                    $category['packs'][] = array("id" => $pack->getId(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === null);
                 }
                 $categories[] = $category;
             }
@@ -225,7 +228,9 @@ class DecklistsController extends Controller
                     'url' => $request
                             ->getRequestUri(),
                     'factions' => $factions,
-                    'form' => $this->renderView('/Search/form.html.twig', array(
+                    'form' => $this->renderView(
+                        '/Search/form.html.twig',
+                        array(
                         'allowed' => $categories,
                         'on' => $on,
                         'off' => $off,
@@ -241,7 +246,7 @@ class DecklistsController extends Controller
                         ), $response);
     }
 
-    private function searchForm (Request $request)
+    private function searchForm(Request $request)
     {
         $dbh = $this->get('doctrine')->getConnection();
 
@@ -255,7 +260,7 @@ class DecklistsController extends Controller
         $rotation_id = $request->query->get('rotation_id');
         $is_legal = $request->query->get('is_legal');
 
-        if(!is_array($packs)) {
+        if (!is_array($packs)) {
             $packs = $dbh->executeQuery("select id from pack")->fetchAll(\PDO::FETCH_COLUMN);
         }
 
@@ -266,30 +271,30 @@ class DecklistsController extends Controller
         $off = 0;
         $categories[] = array("label" => "Core / Deluxe", "packs" => array());
         $list_cycles = $this->get('doctrine')->getRepository('AppBundle:Cycle')->findBy(array(), array("position" => "ASC"));
-        foreach($list_cycles as $cycle) {
+        foreach ($list_cycles as $cycle) {
             $size = count($cycle->getPacks());
-            if($cycle->getPosition() == 0 || $size == 0) {
+            if ($cycle->getPosition() == 0 || $size == 0) {
                 continue;
             }
             $first_pack = $cycle->getPacks()[0];
-            if($size === 1 && $first_pack->getName() == $cycle->getName()) {
+            if ($size === 1 && $first_pack->getName() == $cycle->getName()) {
                 $checked = count($packs) ? in_array($first_pack->getId(), $packs) : true;
-                if($checked) {
+                if ($checked) {
                     $on++;
                 } else {
                     $off++;
                 }
-                $categories[0]["packs"][] = array("id" => $first_pack->getId(), "label" => $first_pack->getName(), "checked" => $checked, "future" => $first_pack->getDateRelease() === NULL);
+                $categories[0]["packs"][] = array("id" => $first_pack->getId(), "label" => $first_pack->getName(), "checked" => $checked, "future" => $first_pack->getDateRelease() === null);
             } else {
                 $category = array("label" => $cycle->getName(), "packs" => array());
-                foreach($cycle->getPacks() as $pack) {
+                foreach ($cycle->getPacks() as $pack) {
                     $checked = count($packs) ? in_array($pack->getId(), $packs) : true;
-                    if($checked) {
+                    if ($checked) {
                         $on++;
                     } else {
                         $off++;
                     }
-                    $category['packs'][] = array("id" => $pack->getId(), "label" => $pack->getName($locale), "checked" => $checked, "future" => $pack->getDateRelease() === NULL);
+                    $category['packs'][] = array("id" => $pack->getId(), "label" => $pack->getName($locale), "checked" => $checked, "future" => $pack->getDateRelease() === null);
                 }
                 $categories[] = $category;
             }
@@ -313,11 +318,11 @@ class DecklistsController extends Controller
             'is_legal' => $is_legal
         );
         $params['sort_' . $sort] = ' selected="selected"';
-        if(!empty($faction_code)) {
+        if (!empty($faction_code)) {
             $params['faction_' . CardsData::$faction_letters[$faction_code]] = ' selected="selected"';
         }
 
-        if(!empty($cards_code) && is_array($cards_code)) {
+        if (!empty($cards_code) && is_array($cards_code)) {
             $cards = $dbh->executeQuery(
                             "SELECT
     				c.title,
@@ -326,11 +331,14 @@ class DecklistsController extends Controller
     				from card c
                                 join faction f on f.id=c.faction_id
                                 where c.code in (?)
-    				order by c.code desc", array($cards_code), array(\Doctrine\DBAL\Connection::PARAM_INT_ARRAY))
+    				order by c.code desc",
+                array($cards_code),
+                array(\Doctrine\DBAL\Connection::PARAM_INT_ARRAY)
+            )
                     ->fetchAll();
 
             $params['cards'] = '';
-            foreach($cards as $card) {
+            foreach ($cards as $card) {
                 $params['cards'] .= $this->renderView('/Search/card.html.twig', $card);
             }
         }
@@ -338,9 +346,9 @@ class DecklistsController extends Controller
         return $this->renderView('/Search/form.html.twig', $params);
     }
 
-    public function diffAction ($decklist1_id, $decklist2_id)
+    public function diffAction($decklist1_id, $decklist2_id)
     {
-        if($decklist1_id > $decklist2_id) {
+        if ($decklist1_id > $decklist2_id) {
             return $this->redirect($this->generateUrl('decklists_diff', ['decklist1_id' => $decklist2_id, 'decklist2_id' => $decklist1_id]));
         }
         $response = new Response();
@@ -354,7 +362,7 @@ class DecklistsController extends Controller
         /* @var $d2 Decklist */
         $d2 = $em->getRepository('AppBundle:Decklist')->find($decklist2_id);
 
-        if(!$d1 || !$d2) {
+        if (!$d1 || !$d2) {
             throw new NotFoundHttpException("Unable to find decklists.");
         }
 
@@ -363,9 +371,9 @@ class DecklistsController extends Controller
         list($listings, $intersect) = $this->get('diff')->diffContents($decks);
 
         $content1 = [];
-        foreach($listings[0] as $code => $qty) {
+        foreach ($listings[0] as $code => $qty) {
             $card = $em->getRepository('AppBundle:Card')->findOneBy(['code' => $code]);
-            if($card) {
+            if ($card) {
                 $content1[] = [
                     'title' => $card->getTitle(),
                     'code' => $code,
@@ -375,9 +383,9 @@ class DecklistsController extends Controller
         }
 
         $content2 = [];
-        foreach($listings[1] as $code => $qty) {
+        foreach ($listings[1] as $code => $qty) {
             $card = $em->getRepository('AppBundle:Card')->findOneBy(['code' => $code]);
-            if($card) {
+            if ($card) {
                 $content2[] = [
                     'title' => $card->getTitle(),
                     'code' => $code,
@@ -387,9 +395,9 @@ class DecklistsController extends Controller
         }
 
         $shared = [];
-        foreach($intersect as $code => $qty) {
+        foreach ($intersect as $code => $qty) {
             $card = $em->getRepository('AppBundle:Card')->findOneBy(['code' => $code]);
-            if($card) {
+            if ($card) {
                 $shared[] = [
                     'title' => $card->getTitle(),
                     'code' => $code,
@@ -399,7 +407,9 @@ class DecklistsController extends Controller
         }
 
 
-        return $this->render('/Diff/decklistsDiff.html.twig', [
+        return $this->render(
+            '/Diff/decklistsDiff.html.twig',
+            [
                     'decklist1' => [
                         'faction_code' => $d1->getFaction()->getCode(),
                         'name' => $d1->getName(),
@@ -418,5 +428,4 @@ class DecklistsController extends Controller
                         ]
         );
     }
-
 }

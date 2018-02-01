@@ -7,21 +7,24 @@ namespace AppBundle\Entity;
  */
 class Side implements \Gedmo\Translatable\Translatable, \Serializable
 {
-    public function toString() {
-		return $this->name;
-	}
+    public function toString()
+    {
+        return $this->name;
+    }
 
-	public function serialize() {
-		return [
-				'code' => $this->code,
-				'name' => $this->name
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
+    public function serialize()
+    {
+        return [
+                'code' => $this->code,
+                'name' => $this->name
+        ];
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
+    }
+    
     /**
      * @var integer
      */
@@ -37,7 +40,7 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -60,11 +63,11 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get text
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
-    	return $this->name;
+        return $this->name;
     }
 
     /**
@@ -124,7 +127,7 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get cards
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCards()
     {
@@ -157,7 +160,7 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get decks
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getDecks()
     {
@@ -167,7 +170,7 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get decklists
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getDecklists()
     {
@@ -181,7 +184,7 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getFactions()
     {
-    	return $this->factions;
+        return $this->factions;
     }
     
     /**
@@ -232,7 +235,7 @@ class Side implements \Gedmo\Translatable\Translatable, \Serializable
 
     public function setTranslatableLocale($locale)
     {
-    	$this->locale = $locale;
+        $this->locale = $locale;
     }
     /**
      * @var string

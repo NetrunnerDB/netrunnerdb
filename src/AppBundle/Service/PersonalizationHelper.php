@@ -27,7 +27,7 @@ class PersonalizationHelper
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
     
-    public function __construct (Registry $doctrine, ActivityHelper $activityHelper, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(Registry $doctrine, ActivityHelper $activityHelper, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->doctrine = $doctrine;
         $this->activityHelper = $activityHelper;
@@ -35,11 +35,11 @@ class PersonalizationHelper
     }
 
     /**
-     * 
+     *
      * @param User $user
      * @return array
      */
-    public function defaultBlock (User $user)
+    public function defaultBlock(User $user)
     {
         return [
             'is_authenticated' => true,
@@ -53,12 +53,12 @@ class PersonalizationHelper
             'is_moderator' => $this->authorizationChecker->isGranted('ROLE_MODERATOR'),
             'roles' => $user->getRoles(),
             'following' => array_map(function ($following) {
-                        return $following->getId();
-                    }, $user->getFollowing()->toArray())
+                return $following->getId();
+            }, $user->getFollowing()->toArray())
         ];
     }
 
-    public function decklistBlock (User $user, Decklist $decklist)
+    public function decklistBlock(User $user, Decklist $decklist)
     {
         $dbh = $this->doctrine->getConnection();
 
@@ -82,7 +82,7 @@ class PersonalizationHelper
 
         $content['can_delete'] = ($decklist->getNbcomments() == 0) && ($decklist->getNbfavorites() == 0) && ($decklist->getNbvotes() == 0);
 
-        if ($this->authorizationChecker->isGranted('ROLE_MODERATOR') 
+        if ($this->authorizationChecker->isGranted('ROLE_MODERATOR')
                 or ($content['is_author'] and $decklist->getModerationStatus() === Decklist::MODERATION_TRASHED)) {
             $content['moderation_status'] = $decklist->getModerationStatus();
             $content['moderation_reason'] = $decklist->getModflag() ? $decklist->getModflag()->getReason() : null;
@@ -91,7 +91,7 @@ class PersonalizationHelper
         return $content;
     }
 
-    public function cardBlock (User $user, Card $card)
+    public function cardBlock(User $user, Card $card)
     {
         $content = [];
         
@@ -106,5 +106,4 @@ class PersonalizationHelper
         
         return $content;
     }
-
 }

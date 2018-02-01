@@ -17,17 +17,19 @@ class Decklist implements \Serializable
     const MODERATION_TRASHED = 2;
     const MODERATION_DELETED = 3;
     
-    function __toString() {
-            return "[$this->id] $this->name";
+    public function __toString()
+    {
+        return "[$this->id] $this->name";
     }
 
-    function serialize() {
-            $cards = [];
-            foreach($this->slots as $slot) {
-                    $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-            }
+    public function serialize()
+    {
+        $cards = [];
+        foreach ($this->slots as $slot) {
+            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
 
-            return  [
+        return  [
                             'id' => $this->id,
                             'date_creation' => $this->dateCreation->format('c'),
                             'date_update' => $this->dateUpdate->format('c'),
@@ -37,15 +39,16 @@ class Decklist implements \Serializable
                             'user_name' => $this->user->getUsername(),
                             'tournament_badge' => $this->tournament ? true : false,
                             'cards' => $cards,
-							'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
+                            'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
             ];
     }
 
-    function unserialize($serialized) {
-            throw new \Exception("unserialize() method unsupported");
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
     }
 
-	
+    
     /**
      * @var integer
      */
@@ -169,7 +172,7 @@ class Decklist implements \Serializable
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -184,9 +187,9 @@ class Decklist implements \Serializable
      */
     public function setDateUpdate($dateUpdate)
     {
-    	$this->dateUpdate = $dateUpdate;
+        $this->dateUpdate = $dateUpdate;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -196,7 +199,7 @@ class Decklist implements \Serializable
      */
     public function getDateUpdate()
     {
-    	return $this->dateUpdate;
+        return $this->dateUpdate;
     }
     
     /**
@@ -215,7 +218,7 @@ class Decklist implements \Serializable
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -230,9 +233,9 @@ class Decklist implements \Serializable
      */
     public function setPrettyname($prettyname)
     {
-    	$this->prettyname = $prettyname;
+        $this->prettyname = $prettyname;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -242,7 +245,7 @@ class Decklist implements \Serializable
      */
     public function getPrettyname()
     {
-    	return $this->prettyname;
+        return $this->prettyname;
     }
     
     /**
@@ -261,7 +264,7 @@ class Decklist implements \Serializable
     /**
      * Get summary
      *
-     * @return string 
+     * @return string
      */
     public function getSummary()
     {
@@ -276,9 +279,9 @@ class Decklist implements \Serializable
      */
     public function setRawdescription($rawdescription)
     {
-    	$this->rawdescription = $rawdescription;
+        $this->rawdescription = $rawdescription;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -288,7 +291,7 @@ class Decklist implements \Serializable
      */
     public function getRawdescription()
     {
-    	return $this->rawdescription;
+        return $this->rawdescription;
     }
     
     /**
@@ -307,7 +310,7 @@ class Decklist implements \Serializable
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -330,7 +333,7 @@ class Decklist implements \Serializable
     /**
      * Get dateCreation
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDateCreation()
     {
@@ -353,7 +356,7 @@ class Decklist implements \Serializable
     /**
      * Get signature
      *
-     * @return string 
+     * @return string
      */
     public function getSignature()
     {
@@ -368,9 +371,9 @@ class Decklist implements \Serializable
      */
     public function setNbvotes($nbvotes)
     {
-    	$this->nbvotes = $nbvotes;
+        $this->nbvotes = $nbvotes;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -380,7 +383,7 @@ class Decklist implements \Serializable
      */
     public function getNbvotes()
     {
-    	return $this->nbvotes;
+        return $this->nbvotes;
     }
 
     /**
@@ -391,9 +394,9 @@ class Decklist implements \Serializable
      */
     public function setNbfavorites($nbfavorites)
     {
-    	$this->nbfavorites = $nbfavorites;
+        $this->nbfavorites = $nbfavorites;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -403,7 +406,7 @@ class Decklist implements \Serializable
      */
     public function getNbfavorites()
     {
-    	return $this->nbfavorites;
+        return $this->nbfavorites;
     }
 
     /**
@@ -414,9 +417,9 @@ class Decklist implements \Serializable
      */
     public function setNbcomments($nbcomments)
     {
-    	$this->nbcomments = $nbcomments;
+        $this->nbcomments = $nbcomments;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -426,7 +429,7 @@ class Decklist implements \Serializable
      */
     public function getNbcomments()
     {
-    	return $this->nbcomments;
+        return $this->nbcomments;
     }
 
     /**
@@ -437,9 +440,9 @@ class Decklist implements \Serializable
      */
     public function setDotw($dotw)
     {
-    	$this->dotw = $dotw;
+        $this->dotw = $dotw;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -449,7 +452,7 @@ class Decklist implements \Serializable
      */
     public function getDotw()
     {
-    	return $this->dotw;
+        return $this->dotw;
     }
     
     /**
@@ -460,9 +463,9 @@ class Decklist implements \Serializable
      */
     public function setUser($user)
     {
-    	$this->user = $user;
+        $this->user = $user;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -472,7 +475,7 @@ class Decklist implements \Serializable
      */
     public function getUser()
     {
-    	return $this->user;
+        return $this->user;
     }
 
     /**
@@ -483,9 +486,9 @@ class Decklist implements \Serializable
      */
     public function setSide(\AppBundle\Entity\Side $side = null)
     {
-    	$this->side = $side;
+        $this->side = $side;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -495,7 +498,7 @@ class Decklist implements \Serializable
      */
     public function getSide()
     {
-    	return $this->side;
+        return $this->side;
     }
 
     /**
@@ -506,9 +509,9 @@ class Decklist implements \Serializable
      */
     public function setIdentity($identity)
     {
-    	$this->identity = $identity;
+        $this->identity = $identity;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -518,7 +521,7 @@ class Decklist implements \Serializable
      */
     public function getIdentity()
     {
-    	return $this->identity;
+        return $this->identity;
     }
     
     /**
@@ -529,9 +532,9 @@ class Decklist implements \Serializable
      */
     public function setSlots($slots)
     {
-    	$this->slots = $slots;
+        $this->slots = $slots;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -541,8 +544,8 @@ class Decklist implements \Serializable
      */
     public function getSlots()
     {
-    	return $this->slots;
-    }    
+        return $this->slots;
+    }
 
     /**
      * Get cards
@@ -551,12 +554,12 @@ class Decklist implements \Serializable
      */
     public function getCards()
     {
-    	$arr = array();
-    	foreach($this->slots as $slot) {
-    		$card = $slot->getCard();
-    		$arr[$card->getCode()] = array('qty' => $slot->getQuantity(), 'card' => $card);
-    	}
-    	return $arr;
+        $arr = array();
+        foreach ($this->slots as $slot) {
+            $card = $slot->getCard();
+            $arr[$card->getCode()] = array('qty' => $slot->getQuantity(), 'card' => $card);
+        }
+        return $arr;
     }
 
     /**
@@ -567,9 +570,9 @@ class Decklist implements \Serializable
      */
     public function setLastPack($lastPack)
     {
-    	$this->lastPack = $lastPack;
+        $this->lastPack = $lastPack;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -579,7 +582,7 @@ class Decklist implements \Serializable
      */
     public function getLastPack()
     {
-    	return $this->lastPack;
+        return $this->lastPack;
     }
 
     /**
@@ -590,9 +593,9 @@ class Decklist implements \Serializable
      */
     public function setFaction($faction)
     {
-    	$this->faction = $faction;
+        $this->faction = $faction;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -602,7 +605,7 @@ class Decklist implements \Serializable
      */
     public function getFaction()
     {
-    	return $this->faction;
+        return $this->faction;
     }
     
 
@@ -614,9 +617,9 @@ class Decklist implements \Serializable
      */
     public function setComments($comments)
     {
-    	$this->comments = $comments;
+        $this->comments = $comments;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -626,7 +629,7 @@ class Decklist implements \Serializable
      */
     public function getComments()
     {
-    	return $this->comments;
+        return $this->comments;
     }
 
     /**
@@ -637,9 +640,9 @@ class Decklist implements \Serializable
      */
     public function addFavorite($user)
     {
-    	$this->favorites[] = $user;
+        $this->favorites[] = $user;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -649,7 +652,7 @@ class Decklist implements \Serializable
      */
     public function getFavorites()
     {
-    	return $this->favorites;
+        return $this->favorites;
     }
 
     /**
@@ -660,9 +663,9 @@ class Decklist implements \Serializable
      */
     public function addVote($user)
     {
-    	$this->votes[] = $user;
+        $this->votes[] = $user;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -672,33 +675,33 @@ class Decklist implements \Serializable
      */
     public function getVotes()
     {
-    	return $this->votes;
+        return $this->votes;
     }
     
     public function __construct()
     {
-    	$this->slots = new ArrayCollection();
-    	$this->comments = new ArrayCollection();
-      	$this->favorites = new ArrayCollection();
-       	$this->votes = new ArrayCollection();
+        $this->slots = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
+        $this->votes = new ArrayCollection();
         $this->isLegal = true;
     }
     
     public function getContent()
     {
-    	$arr = array();
-    	foreach($this->slots as $slot) {
-    		$arr[$slot->getCard()->getCode()] = $slot->getQuantity();
-    	}
-    	ksort($arr);
-    	return $arr;
+        $arr = array();
+        foreach ($this->slots as $slot) {
+            $arr[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+        ksort($arr);
+        return $arr;
     }
     /*
     public function getPrettyName()
     {
-    	return preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($this->name));
+        return preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($this->name));
     }
-	*/
+    */
     /**
      * Add slots
      *
@@ -786,7 +789,7 @@ class Decklist implements \Serializable
     /**
      * Get parent
      *
-     * @return \AppBundle\Entity\Deck 
+     * @return \AppBundle\Entity\Deck
      */
     public function getParent()
     {
@@ -829,7 +832,7 @@ class Decklist implements \Serializable
     /**
      * Get successors
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getSuccessors()
     {
@@ -852,7 +855,7 @@ class Decklist implements \Serializable
     /**
      * Get precedent
      *
-     * @return \AppBundle\Entity\Decklist 
+     * @return \AppBundle\Entity\Decklist
      */
     public function getPrecedent()
     {
@@ -890,7 +893,7 @@ class Decklist implements \Serializable
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getChildren()
     {
@@ -941,7 +944,7 @@ class Decklist implements \Serializable
     /**
      * Get tournament
      *
-     * @return \AppBundle\Entity\Tournament 
+     * @return \AppBundle\Entity\Tournament
      */
     public function getTournament()
     {
@@ -1082,22 +1085,22 @@ class Decklist implements \Serializable
     
     private $isLegal;
     
-    function getIsLegal ()
+    public function getIsLegal()
     {
         return $this->isLegal;
     }
 
-    function setIsLegal ($isLegal)
+    public function setIsLegal($isLegal)
     {
         $this->isLegal = $isLegal;
     }
 
-    public function getRotation ()
+    public function getRotation()
     {
         return $this->rotation;
     }
 
-    public function setRotation ($rotation)
+    public function setRotation($rotation)
     {
         $this->rotation = $rotation;
 

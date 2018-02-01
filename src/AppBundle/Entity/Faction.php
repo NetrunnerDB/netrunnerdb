@@ -7,24 +7,27 @@ namespace AppBundle\Entity;
  */
 class Faction implements \Gedmo\Translatable\Translatable, \Serializable
 {
-    public function toString() {
-		return $this->name;
-	}
+    public function toString()
+    {
+        return $this->name;
+    }
 
-	public function serialize() {
-		return [
-				'code' => $this->code,
-				'color' => $this->color,
-				'is_mini' => $this->isMini,
-				'name' => $this->name,
-				'side_code' => $this->side ? $this->side->getCode() : null
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
+    public function serialize()
+    {
+        return [
+                'code' => $this->code,
+                'color' => $this->color,
+                'is_mini' => $this->isMini,
+                'name' => $this->name,
+                'side_code' => $this->side ? $this->side->getCode() : null
+        ];
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
+    }
+    
     /**
      * @var integer
      */
@@ -88,7 +91,7 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getCode()
     {
-    	return $this->code;
+        return $this->code;
     }
 
     /**
@@ -111,7 +114,7 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getName()
     {
-    	return $this->name;
+        return $this->name;
     }
 
     /**
@@ -134,7 +137,7 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getIsMini()
     {
-    	return $this->isMini;
+        return $this->isMini;
     }
 
     /**
@@ -148,7 +151,7 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
     public function __construct()
     {
         $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
-    	$this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -159,9 +162,9 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function setSide(\AppBundle\Entity\Side $side = null)
     {
-    	$this->side = $side;
+        $this->side = $side;
 
-    	return $this;
+        return $this;
     }
 
     /**
@@ -171,7 +174,7 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getSide()
     {
-    	return $this->side;
+        return $this->side;
     }
 
     /**
@@ -214,7 +217,7 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getDecklists()
     {
-    	return $this->decklists;
+        return $this->decklists;
     }
     
     /**
@@ -242,7 +245,7 @@ class Faction implements \Gedmo\Translatable\Translatable, \Serializable
 
     public function setTranslatableLocale($locale)
     {
-    	$this->locale = $locale;
+        $this->locale = $locale;
     }
     /**
      * @var \DateTime

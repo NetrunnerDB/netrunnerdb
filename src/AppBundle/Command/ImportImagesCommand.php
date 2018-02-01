@@ -12,15 +12,14 @@ use GuzzleHttp\Client;
  */
 class ImportImagesCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand
 {
-
-    protected function configure ()
+    protected function configure()
     {
         $this
             ->setName('nrdb:import:images')
             ->setDescription('Import missing images from cardgamedb.com');
     }
 
-    protected function execute (\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output)
+    protected function execute(\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output)
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
         $client = new Client([

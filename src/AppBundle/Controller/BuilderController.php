@@ -1,5 +1,6 @@
 <?php
 namespace AppBundle\Controller;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\DomCrawler\Crawler;
@@ -14,8 +15,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BuilderController extends Controller
 {
-
-    public function buildformAction ($side_text, Request $request)
+    public function buildformAction($side_text, Request $request)
     {
         $response = new Response();
         $response->setPublic();
@@ -39,15 +39,20 @@ class BuilderController extends Controller
                 "title" => "ASC"
         ));
         
-        return $this->render('/Builder/initbuild.html.twig',
+        return $this->render(
+        
+            '/Builder/initbuild.html.twig',
                 array(
                         'pagetitle' => "New deck",
                         "identities" => $identities
-                ), $response);
-    
+                ),
+        
+            $response
+        
+        );
     }
 
-    public function initbuildAction ($card_code)
+    public function initbuildAction($card_code)
     {
         $response = new Response();
         $response->setPublic();
@@ -60,16 +65,18 @@ class BuilderController extends Controller
         $card = $em->getRepository('AppBundle:Card')->findOneBy(array(
                 "code" => $card_code
         ));
-        if (! $card)
+        if (! $card) {
             return new Response('card not found.');
+        }
         
         $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
-		$active_mwl = $em->getRepository('AppBundle:Mwl')->findOneBy(array('active' => TRUE));
+        $active_mwl = $em->getRepository('AppBundle:Mwl')->findOneBy(array('active' => true));
         
         $arr = array(
                 $card_code => 1
         );
-        return $this->render('/Builder/deck.html.twig',
+        return $this->render(
+            '/Builder/deck.html.twig',
                 array(
                         'pagetitle' => "Deckbuilder",
                         'deck' => array(
@@ -87,11 +94,12 @@ class BuilderController extends Controller
                         ),
                         "published_decklists" => array(),
                         "list_mwl" => $list_mwl,
-                ), $response);
-    
+                ),
+            $response
+        );
     }
 
-    public function importAction ()
+    public function importAction()
     {
         $response = new Response();
         $response->setPublic();
@@ -99,24 +107,29 @@ class BuilderController extends Controller
         
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
-		
+        
         $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
-		
-        return $this->render('/Builder/directimport.html.twig',
+        
+        return $this->render(
+        
+            '/Builder/directimport.html.twig',
                 array(
                         'pagetitle' => "Import a deck",
-						'list_mwl' => $list_mwl
-                ), $response);
-    
+                        'list_mwl' => $list_mwl
+                ),
+        
+            $response
+        
+        );
     }
 
-    public function fileimportAction (Request $request)
+    public function fileimportAction(Request $request)
     {
-
         $filetype = filter_var($request->get('type'), FILTER_SANITIZE_STRING);
         $uploadedFile = $request->files->get('upfile');
-        if (! isset($uploadedFile))
+        if (! isset($uploadedFile)) {
             return new Response('No file');
+        }
         $origname = $uploadedFile->getClientOriginalName();
         $origext = $uploadedFile->getClientOriginalExtension();
         $filename = $uploadedFile->getPathname();
@@ -127,8 +140,9 @@ class BuilderController extends Controller
             
             // check to see if the mime-type starts with 'text'
             $is_text = substr(finfo_file($finfo, $filename), 0, 4) == 'text' || substr(finfo_file($finfo, $filename), 0, 15) == "application/xml";
-            if (! $is_text)
+            if (! $is_text) {
                 return new Response('Bad file');
+            }
         }
         
         if ($filetype == "octgn" || ($filetype == "auto" && $origext == "o8d")) {
@@ -136,16 +150,17 @@ class BuilderController extends Controller
         } else {
             $parse = $this->parseTextImport(file_get_contents($filename));
         }
-        return $this->forward('AppBundle:Builder:save',
+        return $this->forward(
+            'AppBundle:Builder:save',
                 array(
                         'name' => $origname,
                         'content' => json_encode($parse['content']),
                         'description' => $parse['description']
-                ));
-    
+                )
+        );
     }
 
-    public function parseTextImport ($text)
+    public function parseTextImport($text)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
@@ -158,18 +173,16 @@ class BuilderController extends Controller
             if (preg_match('/^\s*(\d)x?([\pLl\pLu\pN\-\.\'\!\: ]+)/u', $line, $matches)) {
                 $quantity = intval($matches[1]);
                 $name = trim($matches[2]);
-            } else
-                if (preg_match('/^([^\(]+).*x(\d)/', $line, $matches)) {
-                    $quantity = intval($matches[2]);
-                    $name = trim($matches[1]);
-                } else
-                    if (empty($identity) && preg_match('/([^\(]+):([^\(]+)/', $line, $matches)) {
-                        $quantity = 1;
-                        $name = trim($matches[1] . ":" . $matches[2]);
-                        $identity = $name;
-                    } else {
-                        continue;
-                    }
+            } elseif (preg_match('/^([^\(]+).*x(\d)/', $line, $matches)) {
+                $quantity = intval($matches[2]);
+                $name = trim($matches[1]);
+            } elseif (empty($identity) && preg_match('/([^\(]+):([^\(]+)/', $line, $matches)) {
+                $quantity = 1;
+                $name = trim($matches[1] . ":" . $matches[2]);
+                $identity = $name;
+            } else {
+                continue;
+            }
             $card = $em->getRepository('AppBundle:Card')->findOneBy(array(
                     'title' => $name
             ));
@@ -181,10 +194,9 @@ class BuilderController extends Controller
                 "content" => $content,
                 "description" => ""
         );
-    
     }
 
-    public function parseOctgnImport ($octgn)
+    public function parseOctgnImport($octgn)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
@@ -196,7 +208,7 @@ class BuilderController extends Controller
         $content = array();
         foreach ($cardcrawler as $domElement) {
             $quantity = intval($domElement->getAttribute('qty'));
-			$matches = array();
+            $matches = array();
             if (preg_match('/bc0f047c-01b1-427f-a439-d451eda(\d{5})/', $domElement->getAttribute('id'), $matches)) {
                 $card_code = $matches[1];
             } else {
@@ -219,10 +231,9 @@ class BuilderController extends Controller
                 "content" => $content,
                 "description" => implode("\n", $description)
         );
-    
     }
 
-    public function meteorimportAction (Request $request)
+    public function meteorimportAction(Request $request)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
@@ -262,15 +273,18 @@ class BuilderController extends Controller
             $str = $title . " " . $pack;
             
             $str = str_replace('\'', '', $str);
-            $str = strtr(utf8_decode($str), utf8_decode('ŠŒŽšœžŸ¥µÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿō'),
-                    'SOZsozYYuAAAAAAACEEEEIIIIDNOOOOOOUUUUYsaaaaaaaceeeeiiiionoooooouuuuyyo');
+            $str = strtr(
+                utf8_decode($str),
+                utf8_decode('ŠŒŽšœžŸ¥µÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýÿō'),
+                    'SOZsozYYuAAAAAAACEEEEIIIIDNOOOOOOUUUUYsaaaaaaaceeeeiiiionoooooouuuuyyo'
+            );
             $str = strtolower($str);
             $str = preg_replace('~\W+~', '-', $str);
             $glossary[$str] = $card->getCode();
         }
         
         $url = $request->request->get('urlmeteor');
-		$matches = array();
+        $matches = array();
         if (! preg_match('~http://netrunner.meteor.com/users/([^/]+)~', $url, $matches)) {
             $this->get('session')
                 ->getFlashBag()
@@ -288,8 +302,10 @@ class BuilderController extends Controller
         if ($slots_required > $slots_left) {
             $this->get('session')
                 ->getFlashBag()
-                ->set('error',
-                    "You don't have enough available deck slots to import the $slots_required decks from Meteor (only $slots_left slots left). You must either delete some decks here or on Meteor Decks.");
+                ->set(
+                    'error',
+                    "You don't have enough available deck slots to import the $slots_required decks from Meteor (only $slots_left slots left). You must either delete some decks here or on Meteor Decks."
+                );
             return $this->redirect($this->generateUrl('decks_list'));
         }
         
@@ -298,7 +314,9 @@ class BuilderController extends Controller
             $identity_code = $glossary[$meteor_deck['identity']];
             /* @var $identity \AppBundle\Entity\Card */
             $identity = $em->getRepository('AppBundle:Card')->findOneBy(array('code' => $identity_code));
-            if(!$identity) continue;
+            if (!$identity) {
+                continue;
+            }
             $faction_code = $identity->getFaction()->getCode();
             $side_code = $identity->getSide()->getCode();
             $tags = array($faction_code, $side_code);
@@ -326,19 +344,17 @@ class BuilderController extends Controller
             ->set('notice', "Successfully imported $slots_required decks from Meteor Decks.");
         
         return $this->redirect($this->generateUrl('decks_list'));
-    
     }
 
-    public function textexportAction ($deck_id)
+    public function textexportAction($deck_id)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
         
         /* @var $deck \AppBundle\Entity\Deck */
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
-        if (! $this->getUser() || $this->getUser()->getId() != $deck->getUser()->getId())
-        {
-        	throw $this->createAccessDeniedException("Access denied");
+        if (! $this->getUser() || $this->getUser()->getId() != $deck->getUser()->getId()) {
+            throw $this->createAccessDeniedException("Access denied");
         }
         
         /* @var $judge \AppBundle\Service\Judge */
@@ -372,8 +388,9 @@ class BuilderController extends Controller
                 foreach ($classement[$type]['slots'] as $slot) {
                     $inf = "";
                     for ($i = 0; $i < $slot['influence']; $i ++) {
-                        if ($i % 5 == 0)
+                        if ($i % 5 == 0) {
                             $inf .= " ";
+                        }
                         $inf .= "•";
                     }
                     $lines[] = $slot['qty'] . "x " . $slot['card']->getTitle() . " (" . $slot['card']->getPack()->getName() . ") " . $inf;
@@ -401,10 +418,9 @@ class BuilderController extends Controller
         
         $response->setContent($content);
         return $response;
-    
     }
 
-    public function octgnexportAction ($deck_id)
+    public function octgnexportAction($deck_id)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
@@ -441,18 +457,18 @@ class BuilderController extends Controller
             return new Response('no identity found');
         }
         return $this->octgnexport("$name.o8d", $identity, $rd, $deck->getDescription());
-    
     }
 
-    public function octgnexport ($filename, $identity, $rd, $description)
+    public function octgnexport($filename, $identity, $rd, $description)
     {
-
-        $content = $this->renderView('AppBundle::octgn.xml.twig',
+        $content = $this->renderView(
+            'AppBundle::octgn.xml.twig',
                 array(
                         "identity" => $identity,
                         "rd" => $rd,
                         "description" => strip_tags($description)
-                ));
+                )
+        );
         
         $response = new Response();
         
@@ -461,38 +477,40 @@ class BuilderController extends Controller
         
         $response->setContent($content);
         return $response;
-    
     }
 
-    public function saveAction (Request $request)
+    public function saveAction(Request $request)
     {
 
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
         
         $user = $this->getUser();
-        if (count($user->getDecks()) > $user->getMaxNbDecks())
+        if (count($user->getDecks()) > $user->getMaxNbDecks()) {
             return new Response('You have reached the maximum number of decks allowed. Delete some decks or increase your reputation.');
+        }
         
         $id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
         $deck = null;
         $source_deck = null;
-        if($id) {
-        	$deck = $em->getRepository('AppBundle:Deck')->find($id);
+        if ($id) {
+            $deck = $em->getRepository('AppBundle:Deck')->find($id);
             if (!$deck || $user->getId() != $deck->getUser()->getId()) {
-             throw $this->createAccessDeniedException();
-           }
+                throw $this->createAccessDeniedException();
+            }
             $source_deck = $deck;
         }
         
         $cancel_edits = (boolean) filter_var($request->get('cancel_edits'), FILTER_SANITIZE_NUMBER_INT);
-        if($cancel_edits) {
-            if($deck) $this->get('decks')->revertDeck($deck);
+        if ($cancel_edits) {
+            if ($deck) {
+                $this->get('decks')->revertDeck($deck);
+            }
             return $this->redirect($this->generateUrl('decks_list'));
         }
         
         $is_copy = (boolean) filter_var($request->get('copy'), FILTER_SANITIZE_NUMBER_INT);
-        if($is_copy || !$id) {
+        if ($is_copy || !$id) {
             $deck = new Deck();
             $em->persist($deck);
         }
@@ -510,20 +528,21 @@ class BuilderController extends Controller
         $this->get('decks')->saveDeck($this->getUser(), $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck ? $source_deck : null);
 
         return $this->redirect($this->generateUrl('decks_list'));
-    
     }
 
-    public function deleteAction (Request $request)
+    public function deleteAction(Request $request)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
         
         $deck_id = filter_var($request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
-        if (! $deck)
+        if (! $deck) {
             return $this->redirect($this->generateUrl('decks_list'));
-        if ($this->getUser()->getId() != $deck->getUser()->getId())
+        }
+        if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
+        }
         
         foreach ($deck->getChildren() as $decklist) {
             $decklist->setParent(null);
@@ -536,22 +555,24 @@ class BuilderController extends Controller
             ->set('notice', "Deck deleted.");
         
         return $this->redirect($this->generateUrl('decks_list'));
-    
     }
 
-    public function deleteListAction (Request $request)
+    public function deleteListAction(Request $request)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
         
         $list_id = explode('-', $request->get('ids'));
 
-        foreach($list_id as $id)
-        {
+        foreach ($list_id as $id) {
             /* @var $deck Deck */
             $deck = $em->getRepository('AppBundle:Deck')->find($id);
-            if(!$deck) continue;
-            if ($this->getUser()->getId() != $deck->getUser()->getId()) continue;
+            if (!$deck) {
+                continue;
+            }
+            if ($this->getUser()->getId() != $deck->getUser()->getId()) {
+                continue;
+            }
             
             foreach ($deck->getChildren() as $decklist) {
                 $decklist->setParent(null);
@@ -567,9 +588,8 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function editAction ($deck_id)
+    public function editAction($deck_id)
     {
-
         $dbh = $this->get('doctrine')->getConnection();
         $rows = $dbh->executeQuery("SELECT
 				d.id,
@@ -593,7 +613,7 @@ class BuilderController extends Controller
         
         $deck = $rows[0];
 
-        if($this->getUser()->getId() != $deck['user_id']) {
+        if ($this->getUser()->getId() != $deck['user_id']) {
             throw $this->createAccessDeniedException();
         }
         
@@ -626,19 +646,23 @@ class BuilderController extends Controller
         // recreating the versions with the variation info, starting from $preversion
         $preversion = $cards;
         foreach ($rows as $row) {
-            $row['variation'] = $variation = json_decode($row['variation'], TRUE);
+            $row['variation'] = $variation = json_decode($row['variation'], true);
             $row['saved'] = (boolean) $row['saved'];
             // add preversion with variation that lead to it
             $row['content'] = $preversion;
             array_unshift($snapshots, $row);
             
             // applying variation to create 'next' (older) preversion
-            foreach($variation[0] as $code => $qty) {
+            foreach ($variation[0] as $code => $qty) {
                 $preversion[$code] = $preversion[$code] - $qty;
-                if($preversion[$code] == 0) unset($preversion[$code]);
+                if ($preversion[$code] == 0) {
+                    unset($preversion[$code]);
+                }
             }
-            foreach($variation[1] as $code => $qty) {
-                if(!isset($preversion[$code])) $preversion[$code] = 0;
+            foreach ($variation[1] as $code => $qty) {
+                if (!isset($preversion[$code])) {
+                    $preversion[$code] = 0;
+                }
                 $preversion[$code] = $preversion[$code] + $qty;
             }
             ksort($preversion);
@@ -647,7 +671,7 @@ class BuilderController extends Controller
         // add last know version with empty diff
         $row['content'] = $preversion;
         $row['date_creation'] = $deck['date_creation'];
-        $row['saved'] = TRUE;
+        $row['saved'] = true;
         $row['variation'] = null;
         array_unshift($snapshots, $row);
         
@@ -662,16 +686,20 @@ class BuilderController extends Controller
         // recreating the snapshots with the variation info, starting from $postversion
         $postversion = $cards;
         foreach ($rows as $row) {
-            $row['variation'] = $variation = json_decode($row['variation'], TRUE);
+            $row['variation'] = $variation = json_decode($row['variation'], true);
             $row['saved'] = (boolean) $row['saved'];
             // applying variation to postversion
-            foreach($variation[0] as $code => $qty) {
-                if(!isset($postversion[$code])) $postversion[$code] = 0;
+            foreach ($variation[0] as $code => $qty) {
+                if (!isset($postversion[$code])) {
+                    $postversion[$code] = 0;
+                }
                 $postversion[$code] = $postversion[$code] + $qty;
             }
-            foreach($variation[1] as $code => $qty) {
+            foreach ($variation[1] as $code => $qty) {
                 $postversion[$code] = $postversion[$code] - $qty;
-                if($postversion[$code] == 0) unset($postversion[$code]);
+                if ($postversion[$code] == 0) {
+                    unset($postversion[$code]);
+                }
             }
             ksort($postversion);
             
@@ -696,9 +724,13 @@ class BuilderController extends Controller
 					from decklist d
 					where d.parent_deck_id=?
                                         and d.moderation_status in (0,1)
-					order by d.date_creation asc", array(
+					order by d.date_creation asc",
+        
+            array(
                         $deck_id
-                ))->fetchAll();
+                )
+        
+        )->fetchAll();
                 
         $parent_decklists = $dbh->executeQuery(
                 "SELECT
@@ -711,26 +743,30 @@ class BuilderController extends Controller
 					from decklist d, deck
 					where deck.id = ? and d.id=deck.parent_decklist_id
                                         and d.moderation_status in (0,1)
-					order by d.date_creation asc", array(
+					order by d.date_creation asc",
+                
+            array(
                         $deck_id
-                ))->fetchAll();
+                )
+                
+        )->fetchAll();
 
         $list_mwl = $this->getDoctrine()->getManager()->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
 
-        return $this->render('/Builder/deck.html.twig',
+        return $this->render(
+            '/Builder/deck.html.twig',
                 array(
                         'pagetitle' => "Deckbuilder",
                         'deck' => $deck,
                         'published_decklists' => $published_decklists,
                         'parent_decklists' => $parent_decklists,
                         'list_mwl' => $list_mwl,
-                ));
-    
+                )
+        );
     }
 
-    public function viewAction ($deck_id)
+    public function viewAction($deck_id)
     {
-
         $dbh = $this->get('doctrine')->getConnection();
         $rows = $dbh->executeQuery("SELECT
 				d.id,
@@ -756,10 +792,9 @@ class BuilderController extends Controller
                 $deck_id,
             $this->getUser() ? $this->getUser()->getId() : null,
         ))->fetchAll();
-				
-        if(!count($rows)) 
-        {
-        	throw $this->createNotFoundException("Deck not found");
+                
+        if (!count($rows)) {
+            throw $this->createNotFoundException("Deck not found");
         }
         $deck = $rows[0];
 
@@ -791,9 +826,13 @@ class BuilderController extends Controller
 					from decklist d
 					where d.parent_deck_id=?
                                         and d.moderation_status in (0,1)
-					order by d.date_creation asc", array(
+					order by d.date_creation asc",
+        
+            array(
                         $deck_id
-                ))->fetchAll();
+                )
+        
+        )->fetchAll();
                 
         $parent_decklists = $dbh->executeQuery(
                 "SELECT
@@ -806,50 +845,61 @@ class BuilderController extends Controller
 					from decklist d, deck
 					where deck.id = ? and d.id=deck.parent_decklist_id
                                         and d.moderation_status in (0,1)
-					order by d.date_creation asc", array(
+					order by d.date_creation asc",
+                
+            array(
                         $deck_id
-                ))->fetchAll();
+                )
+                
+        )->fetchAll();
 
         $tournaments = $dbh->executeQuery(
-		        "SELECT
+                "SELECT
 					t.id,
 					t.description
                 FROM tournament t
-                ORDER BY t.description desc")->fetchAll();
-						
-		$problem = $deck['problem'];
-		$deck['message'] = isset($problem) ? $this->get('judge')->problem($problem) : '';
-		
-        return $this->render('/Builder/deckview.html.twig',
+                ORDER BY t.description desc"
+        )->fetchAll();
+                        
+        $problem = $deck['problem'];
+        $deck['message'] = isset($problem) ? $this->get('judge')->problem($problem) : '';
+        
+        return $this->render(
+        
+            '/Builder/deckview.html.twig',
                 array(
                         'pagetitle' => "Deckbuilder",
                         'deck' => $deck,
                         'published_decklists' => $published_decklists,
                         'parent_decklists' => $parent_decklists,
                         'tournaments' => $tournaments,
-                ));
-    
+                )
+        
+        );
     }
 
-    public function listAction ()
+    public function listAction()
     {
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
         
-        $decks = $this->get('decks')->getByUser($user, FALSE);
+        $decks = $this->get('decks')->getByUser($user, false);
 
         $tournaments = $this->getDoctrine()->getConnection()->executeQuery(
                 "SELECT
 					t.id,
 					t.description
                 FROM tournament t
-                ORDER BY t.description desc")->fetchAll();
-					
+                ORDER BY t.description desc"
+        )->fetchAll();
+                    
         $em = $this->get('doctrine')->getManager();
 
         $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
         
-        return $this->render('/Builder/decks.html.twig',
+        return $this->render(
+        
+            '/Builder/decks.html.twig',
                 array(
                         'pagetitle' => "My Decks",
                         'pagedescription' => "Create custom decks with the help of a powerful deckbuilder.",
@@ -858,12 +908,13 @@ class BuilderController extends Controller
                         'nbdecks' => count($decks),
                         'cannotcreate' => $user->getMaxNbDecks() <= count($decks),
                         'tournaments' => $tournaments,
-						'list_mwl' => $list_mwl,
-                ));
-    
+                        'list_mwl' => $list_mwl,
+                )
+        
+        );
     }
 
-    public function copyAction ($decklist_id)
+    public function copyAction($decklist_id)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
@@ -875,18 +926,19 @@ class BuilderController extends Controller
         foreach ($decklist->getSlots() as $slot) {
             $content[$slot->getCard()->getCode()] = $slot->getQuantity();
         }
-		$mwl = $decklist->getMwl();
-        return $this->forward('AppBundle:Builder:save',
+        $mwl = $decklist->getMwl();
+        return $this->forward(
+            'AppBundle:Builder:save',
                 array(
                         'name' => $decklist->getName(),
                         'content' => json_encode($content),
                         'decklist_id' => $decklist_id,
-						'mwl_code' => $mwl == null ? null : $mwl->getCode(),
-                ));
-    
+                        'mwl_code' => $mwl == null ? null : $mwl->getCode(),
+                )
+        );
     }
 
-    public function duplicateAction ($deck_id)
+    public function duplicateAction($deck_id)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
@@ -894,7 +946,7 @@ class BuilderController extends Controller
         /* @var $deck \AppBundle\Entity\Deck */
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
 
-        if($this->getUser()->getId() != $deck->getUser()->getId()) {
+        if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
         
@@ -909,14 +961,16 @@ class BuilderController extends Controller
             $mwl = $mwl->getCode();
         }
 
-        return $this->forward('AppBundle:Builder:save',
+        return $this->forward(
+            'AppBundle:Builder:save',
                 array(
                         'name' => $deck->getName().' (copy)',
                         'content' => json_encode($content),
                         'description' => $description,
                         'deck_id' => $deck->getParent() ? $deck->getParent()->getId() : null,
                         'mwl_code' => $mwl,
-                ));
+                )
+        );
     }
     
     public function downloadallAction()
@@ -926,23 +980,24 @@ class BuilderController extends Controller
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
         
-        $decks = $this->get('decks')->getByUser($user, FALSE);
+        $decks = $this->get('decks')->getByUser($user, false);
 
         $file = tempnam("tmp", "zip");
         $zip = new \ZipArchive();
         $res = $zip->open($file, \ZipArchive::OVERWRITE);
-        if ($res === TRUE)
-        {
-            foreach($decks as $deck)
-            {
+        if ($res === true) {
+            foreach ($decks as $deck) {
                 $content = array();
-                foreach($deck['cards'] as $slot)
-                {
+                foreach ($deck['cards'] as $slot) {
                     $card = $em->getRepository('AppBundle:Card')->findOneBy(array('code' => $slot['card_code']));
-                    if(!$card) continue;
+                    if (!$card) {
+                        continue;
+                    }
                     $cardtitle = $card->getTitle();
                     $packname = $card->getPack()->getName();
-                    if($packname == 'Core Set') $packname = 'Core';
+                    if ($packname == 'Core Set') {
+                        $packname = 'Core';
+                    }
                     $qty = $slot['qty'];
                     $content[] = "$cardtitle ($packname) x$qty";
                 }
@@ -966,8 +1021,9 @@ class BuilderController extends Controller
         ini_set('max_execution_time', 300);
         
         $uploadedFile = $request->files->get('uparchive');
-        if (! isset($uploadedFile))
+        if (! isset($uploadedFile)) {
             return new Response('No file');
+        }
         
         $filename = $uploadedFile->getPathname();
     
@@ -976,19 +1032,20 @@ class BuilderController extends Controller
             $finfo = finfo_open(FILEINFO_MIME);
     
             // check to see if the mime-type is 'zip'
-            if(substr(finfo_file($finfo, $filename), 0, 15) !== 'application/zip')
+            if (substr(finfo_file($finfo, $filename), 0, 15) !== 'application/zip') {
                 return new Response('Bad file');
+            }
         }
         
         $zip = new \ZipArchive;
         $res = $zip->open($filename);
-        if ($res === TRUE) {
+        if ($res === true) {
             for ($i = 0; $i < $zip->numFiles; $i++) {
-                 $name = $zip->getNameIndex($i);
-                 $parse = $this->parseTextImport($zip->getFromIndex($i));
+                $name = $zip->getNameIndex($i);
+                $parse = $this->parseTextImport($zip->getFromIndex($i));
                  
-                 $deck = new Deck();
-                 $this->get('decks')->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content']);
+                $deck = new Deck();
+                $this->get('decks')->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content']);
             }
         }
         $zip->close();
@@ -1003,7 +1060,7 @@ class BuilderController extends Controller
     public function autosaveAction($deck_id, Request $request)
     {
         $user = $this->getUser();
-        if(!$user) {
+        if (!$user) {
             throw $this->createAccessDeniedException();
         }
 
@@ -1011,7 +1068,7 @@ class BuilderController extends Controller
         $em = $this->get('doctrine')->getManager();
         
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
-        if(!$deck) {
+        if (!$deck) {
             throw $this->createNotFoundException();
         }
         if ($user->getId() != $deck->getUser()->getId()) {
@@ -1023,11 +1080,11 @@ class BuilderController extends Controller
             throw new BadRequestHttpException("Wrong content ".$diff);
         }
         
-        if(count($diff[0]) || count($diff[1])) {
+        if (count($diff[0]) || count($diff[1])) {
             $change = new Deckchange();
             $change->setDeck($deck);
             $change->setVariation(json_encode($diff));
-            $change->setSaved(FALSE);
+            $change->setSaved(false);
             $em->persist($change);
             $em->flush();
         }
@@ -1035,4 +1092,3 @@ class BuilderController extends Controller
         return new Response($change->getDatecreation()->format('c'));
     }
 }
-

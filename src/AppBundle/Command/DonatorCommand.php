@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class DonatorCommand extends ContainerAwareCommand
 {
-    
     protected function configure()
     {
         $this
@@ -40,11 +39,11 @@ class DonatorCommand extends ContainerAwareCommand
         $repo = $em->getRepository('AppBundle:User');
         /* @var $user \AppBundle\Entity\User */
         $user = $repo->findOneBy(array('email' => $email));
-        if(!$user) {
-        	$user = $repo->findOneBy(array('username' => $email));
+        if (!$user) {
+            $user = $repo->findOneBy(array('username' => $email));
         }
         
-        if($user) {
+        if ($user) {
             $user->setDonation($donation + $user->getDonation());
             $em->flush();
             $output->writeln(date('c') . " " . "Success");

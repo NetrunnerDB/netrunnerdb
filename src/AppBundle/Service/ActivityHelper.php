@@ -13,12 +13,12 @@ class ActivityHelper
     /** @var EntityManager */
     private $em;
 
-    public function __construct (Registry $doctrine)
+    public function __construct(Registry $doctrine)
     {
         $this->em = $doctrine->getManager();
     }
 
-    public function getItems (User $user, $max_items = 30, $nb_days = 7)
+    public function getItems(User $user, $max_items = 30, $nb_days = 7)
     {
         $items = [];
 
@@ -124,17 +124,18 @@ class ActivityHelper
         return $items;
     }
 
-    public function countUncheckedItems ($items)
+    public function countUncheckedItems($items)
     {
         $count = 0;
         foreach ($items as $item) {
-            if ($item['unchecked'])
+            if ($item['unchecked']) {
                 $count++;
+            }
         }
         return $count;
     }
 
-    public function sortByDay ($items)
+    public function sortByDay($items)
     {
         usort($items, function ($a, $b) {
             return $a['date'] < $b['date'] ? 1 : -1;
@@ -144,13 +145,13 @@ class ActivityHelper
         foreach ($items as $item) {
             $day = $item['date']->format('F j, Y');
             $isoday = $item['date']->format('Y-m-d');
-            if (!key_exists($isoday, $items_by_day))
+            if (!key_exists($isoday, $items_by_day)) {
                 $items_by_day[$isoday] = ['day' => $day, 'items' => []];
+            }
             $items_by_day[$isoday]['items'][] = $item;
         }
         krsort($items_by_day);
 
         return $items_by_day;
     }
-
 }

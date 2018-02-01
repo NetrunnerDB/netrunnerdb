@@ -15,19 +15,20 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
  */
 class LegalityRemoveMwlCommand extends ContainerAwareCommand
 {
-
-    protected function configure ()
+    protected function configure()
     {
         $this
                 ->setName('nrdb:legality:remove-mwl')
                 ->setDescription('Remove a MWL')
                 ->addArgument(
-                        'mwl_code', InputArgument::REQUIRED, 'Code of the MWL'
+                        'mwl_code',
+                    InputArgument::REQUIRED,
+                    'Code of the MWL'
                 )
         ;
     }
 
-    protected function execute (InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
@@ -55,5 +56,4 @@ class LegalityRemoveMwlCommand extends ContainerAwareCommand
 
         $output->writeln("Done.");
     }
-
 }

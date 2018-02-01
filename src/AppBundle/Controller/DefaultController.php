@@ -9,13 +9,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends Controller
 {
-
-    public function profileAction ()
+    public function profileAction()
     {
         $user = $this->getUser();
 
         $factions = $this->get('doctrine')->getRepository('AppBundle:Faction')->findAll();
-        foreach($factions as $i => $faction) {
+        foreach ($factions as $i => $faction) {
             $factions[$i]->localizedName = $faction->getName();
         }
 
@@ -23,18 +22,17 @@ class DefaultController extends Controller
                     'user' => $user, 'factions' => $factions));
     }
 
-    public function saveProfileAction (Request $request)
+    public function saveProfileAction(Request $request)
     {
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
         $em = $this->getDoctrine()->getManager();
 
         $username = filter_var($request->get('username'), FILTER_SANITIZE_STRING);
-        if($username !== $user->getUsername()) {
+        if ($username !== $user->getUsername()) {
             $user_existing = $em->getRepository('AppBundle:User')->findOneBy(array('username' => $username));
 
-            if($user_existing) {
-
+            if ($user_existing) {
                 $this->get('session')
                         ->getFlashBag()
                         ->set('error', "Username $username is already taken.");
@@ -46,17 +44,17 @@ class DefaultController extends Controller
         }
 
         $email = filter_var($request->get('email'), FILTER_SANITIZE_STRING);
-        if($email !== $user->getEmail()) {
+        if ($email !== $user->getEmail()) {
             $user->setEmail($email);
         }
 
         $resume = filter_var($request->get('resume'), FILTER_SANITIZE_STRING);
         $faction_code = filter_var($request->get('user_faction_code'), FILTER_SANITIZE_STRING);
-        $notifAuthor = $request->get('notif_author') ? TRUE : FALSE;
-        $notifCommenter = $request->get('notif_commenter') ? TRUE : FALSE;
-        $notifMention = $request->get('notif_mention') ? TRUE : FALSE;
-        $shareDecks = $request->get('share_decks') ? TRUE : FALSE;
-        $autoloadImages = $request->get('autoload_images') ? TRUE : FALSE;
+        $notifAuthor = $request->get('notif_author') ? true : false;
+        $notifCommenter = $request->get('notif_commenter') ? true : false;
+        $notifMention = $request->get('notif_mention') ? true : false;
+        $shareDecks = $request->get('share_decks') ? true : false;
+        $autoloadImages = $request->get('autoload_images') ? true : false;
 
         $user->setFaction($faction_code);
         $user->setResume($resume);
@@ -80,13 +78,14 @@ class DefaultController extends Controller
      * @param string $introduction
      * @param Request $request
      */
-    public function validateIntroductionAction ($introduction)
+    public function validateIntroductionAction($introduction)
     {
         $user = $this->getUser();
-        if($user) {
+        if ($user) {
             $introductions = $user->getIntroductions();
-            if(!$introductions)
+            if (!$introductions) {
                 $introductions = [];
+            }
             $introductions[$introduction] = true;
             $user->setIntroductions($introductions);
             $this->getDoctrine()->getManager()->flush();
@@ -100,10 +99,10 @@ class DefaultController extends Controller
      * resets all introductions to "uncompleted"
      * @param Request $request
      */
-    public function resetIntroductionsAction ()
+    public function resetIntroductionsAction()
     {
         $user = $this->getUser();
-        if($user) {
+        if ($user) {
             $user->setIntroductions(null);
             $this->getDoctrine()->getManager()->flush();
         }
@@ -112,9 +111,8 @@ class DefaultController extends Controller
         ]);
     }
 
-    function rulesAction ()
+    public function rulesAction()
     {
-
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
@@ -125,7 +123,7 @@ class DefaultController extends Controller
         return $response;
     }
 
-    function aboutAction ()
+    public function aboutAction()
     {
         $response = new Response();
         $response->setPublic();
@@ -135,5 +133,4 @@ class DefaultController extends Controller
                     "pagetitle" => "About",
                         ), $response);
     }
-
 }

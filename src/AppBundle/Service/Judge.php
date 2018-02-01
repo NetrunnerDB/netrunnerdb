@@ -76,27 +76,33 @@ class Judge
             $qty = $slot->getQuantity();
             $elt = ['card' => $card, 'qty' => $qty];
             $type = $card->getType()->getName();
-            if ($type == "Identity")
+            if ($type == "Identity") {
                 continue;
+            }
             if ($type == "ICE") {
                 $keywords = explode(" - ", $card->getKeywords());
-                if (in_array("Barrier", $keywords))
+                if (in_array("Barrier", $keywords)) {
                     $type = "Barrier";
-                if (in_array("Code Gate", $keywords))
+                }
+                if (in_array("Code Gate", $keywords)) {
                     $type = "Code Gate";
-                if (in_array("Sentry", $keywords))
+                }
+                if (in_array("Sentry", $keywords)) {
                     $type = "Sentry";
+                }
             }
             if ($type == "Program") {
                 $keywords = explode(" - ", $card->getKeywords());
-                if (in_array("Icebreaker", $keywords))
+                if (in_array("Icebreaker", $keywords)) {
                     $type = "Icebreaker";
+                }
             }
             $elt['influence'] = $this->getInfluenceCostOfCard($slot, $slots, $identity);
             $elt['faction'] = str_replace(' ', '-', mb_strtolower($card->getFaction()->getName()));
 
-            if (!isset($classeur[$type]))
+            if (!isset($classeur[$type])) {
                 $classeur[$type] = ["qty" => 0, "slots" => []];
+            }
             $classeur[$type]["slots"][] = $elt;
             $classeur[$type]["qty"] += $qty;
         }
@@ -210,8 +216,9 @@ class Judge
             $card = $slot->getCard();
             $qty = $slot->getQuantity();
             if ($card->getType()->getName() == "Identity") {
-                if (isset($identity))
+                if (isset($identity)) {
                     return 'identities';
+                }
                 $identity = $card;
             } else {
                 $deckSize += $qty;
@@ -284,8 +291,9 @@ class Judge
         // agenda points rule, except for draft identities because Cube
         if ($identity->getSide()->getCode() == "corp" && $identity->getPack()->getCode() != "draft") {
             $minAgendaPoints = floor($deckSize / 5) * 2 + 2;
-            if ($agendaPoints < $minAgendaPoints || $agendaPoints > $minAgendaPoints + 1)
+            if ($agendaPoints < $minAgendaPoints || $agendaPoints > $minAgendaPoints + 1) {
                 return 'agendapoints';
+            }
         }
 
         return [
@@ -351,7 +359,7 @@ class Judge
             case 'agendapoints':
                 return "The deck has a wrong number of Agenda Points.";
                 break;
-            case 'copies' :
+            case 'copies':
                 return "The deck has too many copies of a card.";
                 break;
         }

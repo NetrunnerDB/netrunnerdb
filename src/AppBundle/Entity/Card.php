@@ -7,113 +7,121 @@ namespace AppBundle\Entity;
  */
 class Card implements \Gedmo\Translatable\Translatable, \Serializable
 {
-	public function toString() {
-		return $this->code . ' ' . $this->title;
-	}
+    public function toString()
+    {
+        return $this->code . ' ' . $this->title;
+    }
 
-	private function snakeToCamel($snake) {
-		$parts = explode('_', $snake);
-		return implode('', array_map('ucfirst', $parts));
-	}
-	
-	public function serialize() {
-		$serialized = [];
-		if(empty($this->code)) return $serialized;
-		
-		$mandatoryFields = [
-				'code',
-				'title',
-				'position',
-				'uniqueness',
-				'deck_limit',
-				'quantity',
-		];
-		if(substr($this->faction->getCode(), 0, 7) === 'neutral' && $this->type->getCode() !== 'identity') {
-			$mandatoryFields[] = 'faction_cost';
-		}
+    private function snakeToCamel($snake)
+    {
+        $parts = explode('_', $snake);
+        return implode('', array_map('ucfirst', $parts));
+    }
+    
+    public function serialize()
+    {
+        $serialized = [];
+        if (empty($this->code)) {
+            return $serialized;
+        }
+        
+        $mandatoryFields = [
+                'code',
+                'title',
+                'position',
+                'uniqueness',
+                'deck_limit',
+                'quantity',
+        ];
+        if (substr($this->faction->getCode(), 0, 7) === 'neutral' && $this->type->getCode() !== 'identity') {
+            $mandatoryFields[] = 'faction_cost';
+        }
 
-		$optionalFields = [
-				'illustrator',
-				'flavor',
-				'keywords',
-				'text',
-				'cost',
-				'faction_cost',
-				'trash_cost',
-				'image_url'
-		];
+        $optionalFields = [
+                'illustrator',
+                'flavor',
+                'keywords',
+                'text',
+                'cost',
+                'faction_cost',
+                'trash_cost',
+                'image_url'
+        ];
 
-		$externalFields = [
-				'faction',
-				'pack',
-				'side',
-				'type'
-		];
-		
-		switch($this->type->getCode()) {
-			case 'identity':
-				$mandatoryFields[] = 'influence_limit';
-				$mandatoryFields[] = 'minimum_deck_size';
-				if($this->side->getCode() === 'runner') {
-					$mandatoryFields[] = 'base_link';
-				}
-				break;
-			case 'agenda':
-				$mandatoryFields[] = 'advancement_cost';
-				$mandatoryFields[] = 'agenda_points';
-				break;
-			case 'asset':
-			case 'upgrade':
-				$mandatoryFields[] = 'cost';
-				$mandatoryFields[] = 'faction_cost';
-				$mandatoryFields[] = 'trash_cost';
-				break;
-			case 'ice':
-				$mandatoryFields[] = 'cost';
-				$mandatoryFields[] = 'faction_cost';
-				$mandatoryFields[] = 'strength';
-				break;
-			case 'operation':
-			case 'event':
-			case 'hardware':
-			case 'resource':
-				$mandatoryFields[] = 'cost';
-				$mandatoryFields[] = 'faction_cost';
-				break;
-			case 'program':
-				$mandatoryFields[] = 'cost';
-				$mandatoryFields[] = 'faction_cost';
-				$mandatoryFields[] = 'memory_cost';
-				if(strstr($this->keywords, 'Icebreaker') !== FALSE) {
-					$mandatoryFields[] = 'strength';
-				}
-				break;
-		}
+        $externalFields = [
+                'faction',
+                'pack',
+                'side',
+                'type'
+        ];
+        
+        switch ($this->type->getCode()) {
+            case 'identity':
+                $mandatoryFields[] = 'influence_limit';
+                $mandatoryFields[] = 'minimum_deck_size';
+                if ($this->side->getCode() === 'runner') {
+                    $mandatoryFields[] = 'base_link';
+                }
+                break;
+            case 'agenda':
+                $mandatoryFields[] = 'advancement_cost';
+                $mandatoryFields[] = 'agenda_points';
+                break;
+            case 'asset':
+            case 'upgrade':
+                $mandatoryFields[] = 'cost';
+                $mandatoryFields[] = 'faction_cost';
+                $mandatoryFields[] = 'trash_cost';
+                break;
+            case 'ice':
+                $mandatoryFields[] = 'cost';
+                $mandatoryFields[] = 'faction_cost';
+                $mandatoryFields[] = 'strength';
+                break;
+            case 'operation':
+            case 'event':
+            case 'hardware':
+            case 'resource':
+                $mandatoryFields[] = 'cost';
+                $mandatoryFields[] = 'faction_cost';
+                break;
+            case 'program':
+                $mandatoryFields[] = 'cost';
+                $mandatoryFields[] = 'faction_cost';
+                $mandatoryFields[] = 'memory_cost';
+                if (strstr($this->keywords, 'Icebreaker') !== false) {
+                    $mandatoryFields[] = 'strength';
+                }
+                break;
+        }
 
-		foreach($optionalFields as $optionalField) {
-			$getter = 'get' . $this->snakeToCamel($optionalField);
-			$serialized[$optionalField] = $this->$getter();
-			if(!isset($serialized[$optionalField]) || $serialized[$optionalField] === '') unset($serialized[$optionalField]);
-		}
-		
-		foreach($mandatoryFields as $mandatoryField) {
-			$getter = 'get' . $this->snakeToCamel($mandatoryField);
-			$serialized[$mandatoryField] = $this->$getter();
-		}
+        foreach ($optionalFields as $optionalField) {
+            $getter = 'get' . $this->snakeToCamel($optionalField);
+            $serialized[$optionalField] = $this->$getter();
+            if (!isset($serialized[$optionalField]) || $serialized[$optionalField] === '') {
+                unset($serialized[$optionalField]);
+            }
+        }
+        
+        foreach ($mandatoryFields as $mandatoryField) {
+            $getter = 'get' . $this->snakeToCamel($mandatoryField);
+            $serialized[$mandatoryField] = $this->$getter();
+        }
 
-		foreach($externalFields as $externalField) {
-			$getter = 'get' . $this->snakeToCamel($externalField);
-			$serialized[$externalField.'_code'] = $this->$getter()->getCode();
-		}
-		
-		ksort($serialized);
-		return $serialized;
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
+        foreach ($externalFields as $externalField) {
+            $getter = 'get' . $this->snakeToCamel($externalField);
+            $serialized[$externalField.'_code'] = $this->$getter()->getCode();
+        }
+        
+        ksort($serialized);
+        return $serialized;
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
+    }
+    
     /**
      * @var integer
      */
@@ -962,11 +970,11 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     public function getAncurLink()
     {
         $title = $this->title;
-        if($this->getType()->getName() == "Identity") {
-            if($this->getSide()->getName() == "Runner") {
+        if ($this->getType()->getName() == "Identity") {
+            if ($this->getSide()->getName() == "Runner") {
                 $title = preg_replace('/: .*/', '', $title);
             } else {
-                if(strstr($title, $this->getFaction()->getName()) === 0) {
+                if (strstr($title, $this->getFaction()->getName()) === 0) {
                     $title = preg_replace('/.*: /', '', $title);
                 } else {
                     $title = preg_replace('/: .*/', '', $title);
@@ -980,7 +988,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     public function getIdentityShortTitle()
     {
         $parts = explode(': ', $this->title);
-        if(count($parts) > 1 && $parts[0] === $this->faction->getName()) {
+        if (count($parts) > 1 && $parts[0] === $this->faction->getName()) {
             return $parts[1];
         }
         return $parts[0];
@@ -1089,12 +1097,12 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
         return $this;
     }
 
-    public function getImageUrl ()
+    public function getImageUrl()
     {
         return $this->imageUrl;
     }
 
-    public function setImageUrl ($imageUrl = null)
+    public function setImageUrl($imageUrl = null)
     {
         $this->imageUrl = $imageUrl;
 

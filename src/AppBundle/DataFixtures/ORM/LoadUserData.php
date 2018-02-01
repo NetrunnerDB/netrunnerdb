@@ -15,8 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
-
-    public function setContainer (ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
@@ -26,7 +25,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
      */
     private $container;
 
-    public function load (ObjectManager $manager)
+    public function load(ObjectManager $manager)
     {
         /* @var $userManager \FOS\UserBundle\Doctrine\UserManager */
         $userManager = $this->container->get('fos_user.user_manager');
@@ -50,9 +49,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
         $this->addReference('guru-user', $userGuru);
     }
 
-    public function getOrder ()
+    public function getOrder()
     {
         return 1;
     }
-
 }

@@ -12,7 +12,6 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class CleanupCommand extends ContainerAwareCommand
 {
-
     protected function configure()
     {
         $this
@@ -93,10 +92,9 @@ class CleanupCommand extends ContainerAwareCommand
         $qb->select('d');
         $result = $qb->getQuery()->setParameters(array_intersect_key($options, array_flip(['dotw', 'months', 'votes', 'favorites', 'comments', 'desclength'])))->getResult();
 
-		$progress = new ProgressBar($output, $queryCount);
-		
-        foreach($result as $decklist)
-        {
+        $progress = new ProgressBar($output, $queryCount);
+        
+        foreach ($result as $decklist) {
             $decklistManager->removeConstraints($decklist);
             $progress->advance();
         }
@@ -108,10 +106,9 @@ class CleanupCommand extends ContainerAwareCommand
         
         $progress = new ProgressBar($output, $queryCount);
         
-        foreach($result as $decklist)
-        {
-        	$em->remove($decklist);
-        	$progress->advance();
+        foreach ($result as $decklist) {
+            $em->remove($decklist);
+            $progress->advance();
         }
         
         $progress->finish();

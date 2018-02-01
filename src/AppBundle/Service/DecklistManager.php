@@ -11,7 +11,7 @@ class DecklistManager
     /** var EntityManager */
     private $em;
     
-    public function __construct (EntityManager $em)
+    public function __construct(EntityManager $em)
     {
         $this->em = $em;
     }
@@ -21,7 +21,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function favorites ($user_id, $start = 0, $limit = 30)
+    public function favorites($user_id, $start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -57,9 +57,11 @@ class DecklistManager
                 where f.user_id=?
                 and d.moderation_status in (0,1)
                 order by date_creation desc
-                limit $start, $limit", array(
+                limit $start, $limit",
+            array(
                     $user_id
-                ))
+                )
+        )
                 ->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
@@ -75,7 +77,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function by_author ($user_id, $start = 0, $limit = 30)
+    public function by_author($user_id, $start = 0, $limit = 30)
     {
 
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
@@ -111,9 +113,11 @@ class DecklistManager
                 where d.user_id=?
                 and d.moderation_status in (0,1,2)
                 order by date_creation desc
-                limit $start, $limit", array(
+                limit $start, $limit",
+            array(
                     $user_id
-                ))->fetchAll(\PDO::FETCH_ASSOC);
+                )
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -128,7 +132,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function popular ($start = 0, $limit = 30)
+    public function popular($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -164,7 +168,8 @@ class DecklistManager
                 where d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
                 and d.moderation_status in (0,1)
                 order by 2*nbvotes/(1+nbjours*nbjours) DESC, nbvotes desc, nbcomments desc
-                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
+                limit $start, $limit"
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -179,7 +184,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function dotw ($start = 0, $limit = 30)
+    public function dotw($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -213,7 +218,8 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
     			where dotw > 0
     			order by dotw desc
-    			limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
+    			limit $start, $limit"
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -228,7 +234,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function halloffame ($start = 0, $limit = 30)
+    public function halloffame($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -263,7 +269,8 @@ class DecklistManager
                 where nbvotes > 10
                 and d.moderation_status in (0,1)
                 order by nbvotes desc, date_creation desc
-                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
+                limit $start, $limit"
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -278,7 +285,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function hottopics ($start = 0, $limit = 30)
+    public function hottopics($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -314,7 +321,8 @@ class DecklistManager
                 where d.nbcomments > 1
                 and d.moderation_status in (0,1)
                 order by nbrecentcomments desc, date_creation desc
-                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
+                limit $start, $limit"
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -329,7 +337,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function tournaments ($start = 0, $limit = 30)
+    public function tournaments($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -364,7 +372,8 @@ class DecklistManager
                 where d.tournament_id is not null
                 and d.moderation_status in (0,1)
                 order by date_creation desc
-                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
+                limit $start, $limit"
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -379,7 +388,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function faction ($faction_code, $start = 0, $limit = 30)
+    public function faction($faction_code, $start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -415,9 +424,11 @@ class DecklistManager
                 where f.code=?
                 and d.moderation_status in (0,1)
                 order by date_creation desc
-                limit $start, $limit", array(
+                limit $start, $limit",
+            array(
                     $faction_code
-                ))->fetchAll(\PDO::FETCH_ASSOC);
+                )
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -432,7 +443,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function lastpack ($pack_code, $start = 0, $limit = 30)
+    public function lastpack($pack_code, $start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -467,9 +478,11 @@ class DecklistManager
                 where p.code=?
                 and d.moderation_status in (0,1)
                 order by date_creation desc
-                limit $start, $limit", array(
+                limit $start, $limit",
+            array(
                     $pack_code
-                ))->fetchAll(\PDO::FETCH_ASSOC);
+                )
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -484,7 +497,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function recent ($start = 0, $limit = 30, $includeEmptyDesc = true)
+    public function recent($start = 0, $limit = 30, $includeEmptyDesc = true)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -522,7 +535,8 @@ class DecklistManager
                 and d.moderation_status in (0,1)
                 $additional_clause
                 order by date_creation desc
-                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
+                limit $start, $limit"
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -537,7 +551,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function trashed ($start = 0, $limit = 30)
+    public function trashed($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -571,7 +585,8 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where d.moderation_status=2
                 order by date_creation desc
-                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
+                limit $start, $limit"
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -586,7 +601,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function restored ($start = 0, $limit = 30)
+    public function restored($start = 0, $limit = 30)
     {
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->em->getConnection();
@@ -620,7 +635,8 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where d.moderation_status=1
                 order by date_creation desc
-                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
+                limit $start, $limit"
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -635,7 +651,7 @@ class DecklistManager
      * @param integer $limit
      * @return \Doctrine\DBAL\Driver\PDOStatement
      */
-    public function find ($start = 0, $limit = 30, Request $request)
+    public function find($start = 0, $limit = 30, Request $request)
     {
 
         /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
@@ -644,7 +660,7 @@ class DecklistManager
         $cardRepository = $this->em->getRepository('AppBundle:Card');
 
         $cards_code = $request->query->get('cards');
-        if(!is_array($cards_code)) {
+        if (!is_array($cards_code)) {
             $cards_code = array();
         }
         $faction_code = filter_var($request->query->get('faction'), FILTER_SANITIZE_STRING);
@@ -655,17 +671,17 @@ class DecklistManager
         $mwl_code = $request->query->get('mwl_code');
         $rotation_id = $request->query->get('rotation_id');
         $is_legal = $request->query->get('is_legal');
-        if($is_legal === null || $is_legal === '') {
+        if ($is_legal === null || $is_legal === '') {
             $is_legal = null;
         } else {
             $is_legal = boolval($is_legal);
         }
 
-        if(!is_array($packs)) {
+        if (!is_array($packs)) {
             $packs = $dbh->executeQuery("select id from pack")->fetchAll(\PDO::FETCH_COLUMN);
         }
 
-        if($faction_code === "corp" || $faction_code === "runner") {
+        if ($faction_code === "corp" || $faction_code === "runner") {
             $side_code = $faction_code;
             unset($faction_code);
         }
@@ -673,32 +689,33 @@ class DecklistManager
         $wheres = array();
         $params = array();
         $types = array();
-        if(!empty($side_code)) {
+        if (!empty($side_code)) {
             $wheres[] = 's.code=?';
             $params[] = $side_code;
             $types[] = \PDO::PARAM_STR;
         }
-        if(!empty($faction_code)) {
+        if (!empty($faction_code)) {
             $wheres[] = 'f.code=?';
             $params[] = $faction_code;
             $types[] = \PDO::PARAM_STR;
         }
-        if(!empty($author_name)) {
+        if (!empty($author_name)) {
             $wheres[] = 'u.username=?';
             $params[] = $author_name;
             $types[] = \PDO::PARAM_STR;
         }
-        if(!empty($decklist_title)) {
+        if (!empty($decklist_title)) {
             $wheres[] = 'd.name like ?';
             $params[] = '%' . $decklist_title . '%';
             $types[] = \PDO::PARAM_STR;
         }
-        if(count($cards_code)) {
-            foreach($cards_code as $card_code) {
+        if (count($cards_code)) {
+            foreach ($cards_code as $card_code) {
                 /* @var $card \AppBundle\Entity\Card */
                 $card = $cardRepository->findOneBy(array('code' => $card_code));
-                if(!$card)
+                if (!$card) {
                     continue;
+                }
 
                 $wheres[] = 'exists(select * from decklistslot where decklistslot.decklist_id=d.id and decklistslot.card_id=?)';
                 $params[] = $card->getId();
@@ -707,28 +724,28 @@ class DecklistManager
                 $packs[] = $card->getPack()->getId();
             }
         }
-        if(count($packs)) {
+        if (count($packs)) {
             $wheres[] = 'not exists(select * from decklistslot join card on decklistslot.card_id=card.id where decklistslot.decklist_id=d.id and card.pack_id not in (?))';
             $params[] = array_unique($packs);
             $types[] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
         }
-        if(!empty($mwl_code)) {
+        if (!empty($mwl_code)) {
             $wheres[] = 'exists(select * from legality join mwl on legality.mwl_id=mwl.id where legality.decklist_id=d.id and mwl.code=? and legality.is_legal=1)';
             $params[] = $mwl_code;
             $types[] = \PDO::PARAM_INT;
         }
-        if(!empty($rotation_id)) {
+        if (!empty($rotation_id)) {
             $wheres[] = 'd.rotation_id=?';
             $params[] = $rotation_id;
             $types[] = \PDO::PARAM_INT;
         }
-        if($is_legal !== null) {
+        if ($is_legal !== null) {
             $wheres[] = 'd.is_legal = ?';
             $params[] = $is_legal;
             $types[] = \PDO::PARAM_BOOL;
         }
 
-        if(empty($wheres)) {
+        if (empty($wheres)) {
             $where = "d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)";
             $params = array();
             $types = array();
@@ -738,7 +755,7 @@ class DecklistManager
 
         $extra_select = "";
 
-        switch($sort) {
+        switch ($sort) {
             case 'date':
                 $order = 'date_creation';
                 break;
@@ -788,7 +805,10 @@ class DecklistManager
                 where $where
                 and d.moderation_status in (0,1)
                 order by $order desc
-                limit $start, $limit", $params, $types)->fetchAll(\PDO::FETCH_ASSOC);
+                limit $start, $limit",
+            $params,
+            $types
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -798,31 +818,31 @@ class DecklistManager
         );
     }
 
-    public function removeConstraints (Decklist $decklist)
+    public function removeConstraints(Decklist $decklist)
     {
         $successors = $this->em->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
-        foreach($successors as $successor) {
+        foreach ($successors as $successor) {
             /* @var $successor \AppBundle\Entity\Decklist */
             $successor->setPrecedent(null);
         }
 
         $children = $this->em->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
-        foreach($children as $child) {
+        foreach ($children as $child) {
             /* @var $child \AppBundle\Entity\Deck */
             $child->setParent(null);
         }
     }
 
-    public function remove (Decklist $decklist)
+    public function remove(Decklist $decklist)
     {
         $successors = $this->em->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
-        foreach($successors as $successor) {
+        foreach ($successors as $successor) {
             /* @var $successor \AppBundle\Entity\Decklist */
             $successor->setPrecedent(null);
         }
 
         $children = $this->em->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
-        foreach($children as $child) {
+        foreach ($children as $child) {
             /* @var $child \AppBundle\Entity\Deck */
             $child->setParent(null);
         }
@@ -840,7 +860,7 @@ class DecklistManager
                 . " AND s.decklist=?1";
         $countQuery = $this->em->createQuery($countDql)->setParameter(1, $decklist);
         $count = $countQuery->getSingleResult()[1];
-        if($count) {
+        if ($count) {
             return false;
         }
         
@@ -854,7 +874,7 @@ class DecklistManager
                 . " AND s.decklist=?1";
         $countQuery = $this->em->createQuery($countDql)->setParameter(1, $decklist);
         $count = $countQuery->getSingleResult()[1];
-        if($count) {
+        if ($count) {
             return false;
         }
 
@@ -867,12 +887,10 @@ class DecklistManager
                 . " AND l.decklist=?1";
         $countQuery = $this->em->createQuery($countDql)->setParameter(1, $decklist);
         $count = $countQuery->getSingleResult()[1];
-        if($count) {
+        if ($count) {
             return false;
         }
 
         return true;
-        
     }
-
 }

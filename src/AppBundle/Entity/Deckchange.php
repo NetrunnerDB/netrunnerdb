@@ -128,7 +128,7 @@ class Deckchange
     /**
      * Get saved
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getSaved()
     {

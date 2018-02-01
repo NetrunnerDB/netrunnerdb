@@ -24,11 +24,11 @@ abstract class AbstractOauthController extends Controller
 {
 
     /**
-     * 
+     *
      * @param Request $request
      * @return Client
      */
-    public function getOauthClient ()
+    public function getOauthClient()
     {
         $tokenManager = $this->container->get('fos_oauth_server.access_token_manager.default');
         $token = $this->container->get('security.token_storage')->getToken();
@@ -38,13 +38,13 @@ abstract class AbstractOauthController extends Controller
     }
 
     /**
-     * 
+     *
      * @param integer $status
      * @param mixed $data
      * @param string $message
      * @return array
      */
-    public function getJsendResponse ($status, $data, $message = null)
+    public function getJsendResponse($status, $data, $message = null)
     {
         $response = [
             "status" => $status,
@@ -59,13 +59,13 @@ abstract class AbstractOauthController extends Controller
     }
 
     /**
-     * 
+     *
      * @param array $data
      * @param integer $status
      * @param array $headers
      * @return Response
      */
-    public function createJsonResponse ($data, $status = 200, $headers = [])
+    public function createJsonResponse($data, $status = 200, $headers = [])
     {
         /* @var $serializer Serializer */
         $serializer = $this->get('jms_serializer');
@@ -78,5 +78,4 @@ abstract class AbstractOauthController extends Controller
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
-
 }

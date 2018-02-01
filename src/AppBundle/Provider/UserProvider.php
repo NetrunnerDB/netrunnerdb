@@ -4,7 +4,7 @@
 
   namespace AppBundle\Provider;
 
-  use Doctrine\ORM\Query;
+use Doctrine\ORM\Query;
   use Symfony\Component\Security\Core\User\UserInterface;
   use Symfony\Component\Security\Core\User\UserProviderInterface;
   use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -16,7 +16,8 @@
   {
       protected $userRepository;
 
-      public function __construct(ObjectRepository $userRepository){
+      public function __construct(ObjectRepository $userRepository)
+      {
           $this->userRepository = $userRepository;
       }
 

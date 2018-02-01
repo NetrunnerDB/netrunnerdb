@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Controller;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class ToolsController extends Controller
@@ -13,8 +14,8 @@ class ToolsController extends Controller
     
     public function extdecklistAction($id)
     {
-    	return $this->render('/Tools/demo-ext-decklist.html.twig', [
-    			'id' => $id
-    	]);
+        return $this->render('/Tools/demo-ext-decklist.html.twig', [
+                'id' => $id
+        ]);
     }
 }

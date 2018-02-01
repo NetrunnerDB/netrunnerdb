@@ -9,10 +9,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class InfoController extends Controller
 {
-
-    public function getAction (Request $request)
+    public function getAction(Request $request)
     {
-        if(!$this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
             return new JsonResponse(['is_authenticated' => false]);
         }
 
@@ -27,21 +26,20 @@ class InfoController extends Controller
 
         $content = $helper->defaultBlock($user);
 
-        if($request->query->has('decklist_id')) {
+        if ($request->query->has('decklist_id')) {
             $decklist = $em->getRepository('AppBundle:Decklist')->find($request->query->get('decklist_id'));
-            if($decklist) {
+            if ($decklist) {
                 $content = array_merge($content, $helper->decklistBlock($user, $decklist));
             }
         }
 
-        if($request->query->has('card_id')) {
+        if ($request->query->has('card_id')) {
             $card = $em->getRepository('AppBundle:Card')->find($request->query->get('card_id'));
-            if($card) {
+            if ($card) {
                 $content = array_merge($content, $helper->cardBlock($user, $card));
             }
         }
 
         return new JsonResponse($content);
     }
-
 }

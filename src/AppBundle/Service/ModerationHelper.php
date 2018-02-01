@@ -62,14 +62,14 @@ class ModerationHelper
     {
         $previousStatus = $decklist->getModerationStatus();
 
-        if(isset($modflag_id))  {
+        if (isset($modflag_id)) {
             $modflag = $this->em->getRepository('AppBundle:Modflag')->find($modflag_id);
-            if(!$modflag) {
+            if (!$modflag) {
                 throw new \RuntimeException("Unknown modflag_id");
             }
             $decklist->setModflag($modflag);
         } else {
-            if($status != Decklist::MODERATION_PUBLISHED && $status != Decklist::MODERATION_RESTORED) {
+            if ($status != Decklist::MODERATION_PUBLISHED && $status != Decklist::MODERATION_RESTORED) {
                 throw new \RuntimeException("modflag_id required");
             }
         }
@@ -90,7 +90,7 @@ class ModerationHelper
     {
         $status = $decklist->getModerationStatus();
         
-        if($status === Decklist::MODERATION_RESTORED) {
+        if ($status === Decklist::MODERATION_RESTORED) {
             return;
         }
         

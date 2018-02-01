@@ -12,23 +12,27 @@ use AppBundle\Entity\Legality;
 
 class LegalityApplyMwlCommand extends ContainerAwareCommand
 {
-
-    protected function configure ()
+    protected function configure()
     {
         $this
                 ->setName('nrdb:legality:apply-mwl')
                 ->setDescription('Compute decklist legality for a MWL')
                 ->addArgument(
-                        'mwl_code', InputArgument::REQUIRED, 'Code of the MWL'
+                        'mwl_code',
+                    InputArgument::REQUIRED,
+                    'Code of the MWL'
                 )
                 ->addOption(
-                        'decklist', 'd', InputOption::VALUE_OPTIONAL, 'Id of the decklist'
+                        'decklist',
+                    'd',
+                    InputOption::VALUE_OPTIONAL,
+                    'Id of the decklist'
                 )
 
         ;
     }
 
-    protected function execute (InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
@@ -78,7 +82,7 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
         $count = $countQuery->getSingleResult()[1];
         $output->writeln("<comment>Found $count decklists to analyze</comment>");
 
-        if(!$count) {
+        if (!$count) {
             return;
         }
         
@@ -105,5 +109,4 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
         $progress->finish();
         $output->writeln("<info>Done</info>");
     }
-
 }

@@ -21,7 +21,7 @@ class Highlight
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -44,7 +44,7 @@ class Highlight
     /**
      * Get decklist
      *
-     * @return string 
+     * @return string
      */
     public function getDecklist()
     {

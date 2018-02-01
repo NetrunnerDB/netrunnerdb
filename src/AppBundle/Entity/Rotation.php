@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Entity;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -11,13 +12,15 @@ use Doctrine\Common\Collections\Collection;
  */
 class Rotation implements \Serializable
 {
-    public function toString() {
+    public function toString()
+    {
         return $this->name;
     }
 
-    public function serialize() {
+    public function serialize()
+    {
         $cycles = [];
-        foreach($this->cycles as $cycle) {
+        foreach ($this->cycles as $cycle) {
             $cycles[] = $cycle->getCode();
         }
 
@@ -32,7 +35,8 @@ class Rotation implements \Serializable
         ];
     }
 
-    public function unserialize($serialized) {
+    public function unserialize($serialized)
+    {
         throw new \Exception("unserialize() method unsupported");
     }
 
@@ -73,7 +77,7 @@ class Rotation implements \Serializable
     private $decklists;
 
     /** @param Collection|Decklist[] $decklists */
-    public function setDecklists (Collection $decklists)
+    public function setDecklists(Collection $decklists)
     {
         $this->clearDecklists();
         foreach ($decklists as $decklist) {
@@ -83,7 +87,7 @@ class Rotation implements \Serializable
         return $this;
     }
 
-    public function addDecklist (Decklist $decklist)
+    public function addDecklist(Decklist $decklist)
     {
         if ($this->decklists->contains($decklist) === false) {
             $this->decklists->add($decklist);
@@ -94,12 +98,12 @@ class Rotation implements \Serializable
     }
 
     /** @return Collection|Decklist[] */
-    public function getDecklists ()
+    public function getDecklists()
     {
         return $this->decklists;
     }
 
-    public function removeDecklist (Decklist $decklist)
+    public function removeDecklist(Decklist $decklist)
     {
         if ($this->decklists->contains($decklist)) {
             $this->decklists->removeElement($decklist);
@@ -109,7 +113,7 @@ class Rotation implements \Serializable
         return $this;
     }
 
-    public function clearDecklists ()
+    public function clearDecklists()
     {
         foreach ($this->getDecklists() as $decklist) {
             $this->removeDecklist($decklist);
@@ -134,7 +138,7 @@ class Rotation implements \Serializable
      */
     protected $cycles;
 
-    public function __construct ()
+    public function __construct()
     {
         $this->cycles = new ArrayCollection();
     }
@@ -186,70 +190,68 @@ class Rotation implements \Serializable
         return $this;
     }
 
-    public function getId ()
+    public function getId()
     {
         return $this->id;
     }
 
-    public function getCode ()
+    public function getCode()
     {
         return $this->code;
     }
 
-    public function setCode ($code)
+    public function setCode($code)
     {
         $this->code = $code;
 
         return $this;
     }
 
-    public function getName ()
+    public function getName()
     {
         return $this->name;
     }
 
-    public function setName ($name)
+    public function setName($name)
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getDateStart ()
+    public function getDateStart()
     {
         return $this->dateStart;
     }
 
-    public function setDateStart ($dateStart)
+    public function setDateStart($dateStart)
     {
         $this->dateStart = $dateStart;
 
         return $this;
     }
 
-    public function getDateCreation ()
+    public function getDateCreation()
     {
         return $this->dateCreation;
     }
 
-    public function setDateCreation ($dateCreation)
+    public function setDateCreation($dateCreation)
     {
         $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
-    public function getDateUpdate ()
+    public function getDateUpdate()
     {
         return $this->dateUpdate;
     }
 
-    public function setDateUpdate ($dateUpdate)
+    public function setDateUpdate($dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
-
-
 }

@@ -16,3 +16,4 @@
 /var/HTML
 /vendor/
 /web/bundles/
+.php_cs.cache

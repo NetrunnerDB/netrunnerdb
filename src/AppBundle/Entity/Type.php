@@ -7,24 +7,27 @@ namespace AppBundle\Entity;
  */
 class Type implements \Gedmo\Translatable\Translatable, \Serializable
 {
-    public function toString() {
-		return $this->name;
-	}
+    public function toString()
+    {
+        return $this->name;
+    }
 
-	public function serialize() {
-		return [
-				'code' => $this->code,
-				'name' => $this->name,
-				'position' => $this->position,
-				'is_subtype' => $this->isSubtype,
-				'side_code' => $this->side ? $this->side->getCode() : null
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
+    public function serialize()
+    {
+        return [
+                'code' => $this->code,
+                'name' => $this->name,
+                'position' => $this->position,
+                'is_subtype' => $this->isSubtype,
+                'side_code' => $this->side ? $this->side->getCode() : null
+        ];
+    }
+    
+    public function unserialize($serialized)
+    {
+        throw new \Exception("unserialize() method unsupported");
+    }
+    
     /**
      * @var integer
      */
@@ -77,13 +80,13 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function __construct()
     {
-    	$this->cards = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->cards = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -106,11 +109,11 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     /**
      * Get text
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
-    	return $this->name;
+        return $this->name;
     }
 
     /**
@@ -241,9 +244,9 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function setSide(\AppBundle\Entity\Side $side = null)
     {
-    	$this->side = $side;
+        $this->side = $side;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -253,7 +256,7 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getSide()
     {
-    	return $this->side;
+        return $this->side;
     }
 
     /**
@@ -264,9 +267,9 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function addCard(\AppBundle\Entity\Card $cards)
     {
-    	$this->cards[] = $cards;
+        $this->cards[] = $cards;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -276,7 +279,7 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function removeCard(\AppBundle\Entity\Card $cards)
     {
-    	$this->cards->removeElement($cards);
+        $this->cards->removeElement($cards);
     }
     
     /**
@@ -286,12 +289,11 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
      */
     public function getCards()
     {
-    	return $this->cards;
+        return $this->cards;
     }
     
     public function setTranslatableLocale($locale)
     {
-    	$this->locale = $locale;
+        $this->locale = $locale;
     }
-    
 }

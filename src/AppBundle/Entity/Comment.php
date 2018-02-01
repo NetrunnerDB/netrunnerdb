@@ -127,9 +127,9 @@ class Comment
      */
     public function setAuthor($author)
     {
-    	$this->author = $author;
+        $this->author = $author;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -139,7 +139,7 @@ class Comment
      */
     public function getAuthor()
     {
-    	return $this->author;
+        return $this->author;
     }
 
     /**
@@ -150,9 +150,9 @@ class Comment
      */
     public function setDecklist($decklist)
     {
-    	$this->decklist = $decklist;
+        $this->decklist = $decklist;
     
-    	return $this;
+        return $this;
     }
     
     /**
@@ -162,6 +162,6 @@ class Comment
      */
     public function getDecklist()
     {
-    	return $this->decklist;
+        return $this->decklist;
     }
 }

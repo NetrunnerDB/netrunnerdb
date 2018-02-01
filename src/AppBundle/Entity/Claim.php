@@ -63,7 +63,7 @@ class Claim
      *
      * @return integer
      */
-    public function getId ()
+    public function getId()
     {
         return $this->id;
     }
@@ -75,7 +75,7 @@ class Claim
      *
      * @return Claim
      */
-    public function setName ($name)
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -87,7 +87,7 @@ class Claim
      *
      * @return string
      */
-    public function getName ()
+    public function getName()
     {
         return $this->name;
     }
@@ -99,7 +99,7 @@ class Claim
      *
      * @return Claim
      */
-    public function setUrl ($url)
+    public function setUrl($url)
     {
         $this->url = $url;
 
@@ -111,7 +111,7 @@ class Claim
      *
      * @return string
      */
-    public function getUrl ()
+    public function getUrl()
     {
         return $this->url;
     }
@@ -123,7 +123,7 @@ class Claim
      *
      * @return Claim
      */
-    public function setRank ($rank)
+    public function setRank($rank)
     {
         $this->rank = $rank;
 
@@ -135,29 +135,29 @@ class Claim
      *
      * @return integer
      */
-    public function getRank ()
+    public function getRank()
     {
         return $this->rank;
     }
 
     /**
      * Get participants
-     * 
+     *
      * @return integer
      */
-    function getParticipants ()
+    public function getParticipants()
     {
         return $this->participants;
     }
 
     /**
      * Set participants
-     * 
+     *
      * @param integer $participants
-     * 
+     *
      * @return Claim
      */
-    function setParticipants ($participants)
+    public function setParticipants($participants)
     {
         $this->participants = $participants;
 
@@ -171,7 +171,7 @@ class Claim
      *
      * @return Claim
      */
-    public function setDecklist (\AppBundle\Entity\Decklist $decklist = null)
+    public function setDecklist(\AppBundle\Entity\Decklist $decklist = null)
     {
         $this->decklist = $decklist;
 
@@ -183,7 +183,7 @@ class Claim
      *
      * @return \AppBundle\Entity\Decklist
      */
-    public function getDecklist ()
+    public function getDecklist()
     {
         return $this->decklist;
     }
@@ -195,7 +195,7 @@ class Claim
      *
      * @return Claim
      */
-    public function setClient (\AppBundle\Entity\Client $client = null)
+    public function setClient(\AppBundle\Entity\Client $client = null)
     {
         $this->client = $client;
 
@@ -207,33 +207,32 @@ class Claim
      *
      * @return \AppBundle\Entity\Client
      */
-    public function getClient ()
+    public function getClient()
     {
         return $this->client;
     }
 
     /**
      * Get user
-     * 
+     *
      * @return \AppBundle\Entity\User
      */
-    function getUser ()
+    public function getUser()
     {
         return $this->user;
     }
 
     /**
      * Set user
-     * 
+     *
      * @param \AppBundle\Entity\User $user
-     * 
+     *
      * @return Claim
      */
-    function setUser (\AppBundle\Entity\User $user)
+    public function setUser(\AppBundle\Entity\User $user)
     {
         $this->user = $user;
 
         return $this;
     }
-
 }

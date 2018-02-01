@@ -1,5 +1,6 @@
 <?php
 namespace AppBundle\Controller;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,6 @@ use AppBundle\Entity\Comment;
 use AppBundle\Entity\Reviewcomment;
 use \Doctrine\ORM\Tools\Pagination\Paginator;
 
-
 class ReviewController extends Controller
 {
     public function postAction(Request $request)
@@ -23,28 +23,28 @@ class ReviewController extends Controller
         
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
-        if(!$user) {
+        if (!$user) {
             throw new UnauthorizedHttpException("You are not logged in.");
         }
         
         // a user cannot post more reviews than her reputation
-        if(count($user->getReviews()) >= $user->getReputation()) {
+        if (count($user->getReviews()) >= $user->getReputation()) {
             return new Response(json_encode("Your reputation doesn't allow you to write more reviews."));
         }
         
         $card_id = filter_var($request->get('card_id'), FILTER_SANITIZE_NUMBER_INT);
         /* @var $card Card */
         $card = $em->getRepository('AppBundle:Card')->find($card_id);
-        if(!$card) {
+        if (!$card) {
             throw new BadRequestHttpException("Unable to find card.");
         }
-        if(!$card->getPack()->getDateRelease()) {
-        	return new Response(json_encode("You may not write a review for an unreleased card."));
+        if (!$card->getPack()->getDateRelease()) {
+            return new Response(json_encode("You may not write a review for an unreleased card."));
         }
         
         // checking the user didn't already write a review for that card
         $review = $em->getRepository('AppBundle:Review')->findOneBy(array('card' => $card, 'user' => $user));
-        if($review) {
+        if ($review) {
             return new Response(json_encode("You cannot write more than 1 review for a given card."));
         }
         
@@ -52,10 +52,14 @@ class ReviewController extends Controller
         
         $review_raw = preg_replace(
                 '%(?<!\()\b(?:(?:https?|ftp)://)(?:((?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?)(?:[^\s]*)?%iu',
-                '[$1]($0)', $review_raw);
+                '[$1]($0)',
+        
+            $review_raw
+        
+        );
         
         $review_html = $this->get('texts')->markdown($review_raw);
-        if(!$review_html) {
+        if (!$review_html) {
             return new Response(json_encode("Your review is empty."));
         }
         
@@ -70,7 +74,7 @@ class ReviewController extends Controller
         
         $em->flush();
         
-        return new Response(json_encode(TRUE));
+        return new Response(json_encode(true));
     }
     
     public function editAction(Request $request)
@@ -81,17 +85,17 @@ class ReviewController extends Controller
         
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
-        if(!$user) {
+        if (!$user) {
             throw new UnauthorizedHttpException("You are not logged in.");
         }
         
         $review_id = filter_var($request->get('review_id'), FILTER_SANITIZE_NUMBER_INT);
         /* @var $review Review */
         $review = $em->getRepository('AppBundle:Review')->find($review_id);
-        if(!$review) {
+        if (!$review) {
             throw new BadRequestHttpException("Unable to find review.");
         }
-        if($review->getUser()->getId() !== $user->getId()) {
+        if ($review->getUser()->getId() !== $user->getId()) {
             throw new UnauthorizedHttpException("You cannot edit this review.");
         }
         
@@ -99,10 +103,14 @@ class ReviewController extends Controller
         
         $review_raw = preg_replace(
                 '%(?<!\()\b(?:(?:https?|ftp)://)(?:((?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?)(?:[^\s]*)?%iu',
-                '[$1]($0)', $review_raw);
+                '[$1]($0)',
+        
+            $review_raw
+        
+        );
         
         $review_html = $this->get('texts')->markdown($review_raw);
-        if(!$review_html) {
+        if (!$review_html) {
             return new Response('Your review is empty.');
         }
         
@@ -111,7 +119,7 @@ class ReviewController extends Controller
         
         $em->flush();
         
-        return new Response(json_encode(TRUE));
+        return new Response(json_encode(true));
     }
     
     public function likeAction(Request $request)
@@ -120,20 +128,19 @@ class ReviewController extends Controller
         $em = $this->get('doctrine')->getManager();
         
         $user = $this->getUser();
-        if(!$user) {
+        if (!$user) {
             throw new UnauthorizedHttpException("You are not logged in.");
         }
         
         $review_id = filter_var($request->request->get('id'), FILTER_SANITIZE_NUMBER_INT);
         /* @var $review Review */
         $review = $em->getRepository('AppBundle:Review')->find($review_id);
-        if(!$review) {
+        if (!$review) {
             throw new NotFoundHttpException("Unable to find review.");
         }
         
         // a user cannot vote on her own review
-        if($review->getUser()->getId() != $user->getId())
-        {
+        if ($review->getUser()->getId() != $user->getId()) {
             // checking if the user didn't already vote on that review
             $query = $em->getRepository('AppBundle:Review')
             ->createQueryBuilder('r')
@@ -145,8 +152,7 @@ class ReviewController extends Controller
             ->getQuery();
             
             $result = $query->getResult();
-            if (empty($result))
-            {
+            if (empty($result)) {
                 $author = $review->getUser();
                 $author->setReputation($author->getReputation() + 1);
                 $user->addReviewVote($review);
@@ -155,7 +161,6 @@ class ReviewController extends Controller
             }
         }
         return new Response(count($review->getVotes()));
-        
     }
     
     public function removeAction($id, Request $request)
@@ -164,7 +169,7 @@ class ReviewController extends Controller
         $em = $this->get('doctrine')->getManager();
         
         $user = $this->getUser();
-        if(!$user || !in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
+        if (!$user || !in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
             throw new UnauthorizedHttpException('No user or not admin');
         }
         
@@ -172,12 +177,12 @@ class ReviewController extends Controller
         $review_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
         /* @var $review Review */
         $review = $em->getRepository('AppBundle:Review')->find($review_id);
-        if(!$review) {
+        if (!$review) {
             throw new NotFoundHttpException("Unable to find review.");
         }
         
         $votes = $review->getVotes();
-        foreach($votes as $vote) {
+        foreach ($votes as $vote) {
             $review->removeVote($vote);
         }
         $em->remove($review);
@@ -193,8 +198,9 @@ class ReviewController extends Controller
         $response->setMaxAge($this->container->getParameter('short_cache'));
         
         $limit = 5;
-        if ($page < 1)
+        if ($page < 1) {
             $page = 1;
+        }
         $start = ($page - 1) * $limit;
         
         $pagetitle = "Card Reviews";
@@ -236,7 +242,9 @@ class ReviewController extends Controller
             );
         }
         
-        return $this->render('/Reviews/reviews.html.twig',
+        return $this->render(
+        
+            '/Reviews/reviews.html.twig',
                 array(
                         'pagetitle' => $pagetitle,
                         'pagedescription' => "Read the latest user-submitted reviews on the cards.",
@@ -250,8 +258,11 @@ class ReviewController extends Controller
                         'nexturl' => $currpage == $nbpages ? null : $this->generateUrl($route, $params + array(
                                 "page" => $nextpage
                         ))
-                ), $response);
+                ),
         
+            $response
+        
+        );
     }
 
     public function byauthorAction($user_id, $page = 1, Request $request)
@@ -261,8 +272,9 @@ class ReviewController extends Controller
         $response->setMaxAge($this->container->getParameter('short_cache'));
     
         $limit = 5;
-        if ($page < 1)
+        if ($page < 1) {
             $page = 1;
+        }
         $start = ($page - 1) * $limit;
     
         /* @var $em \Doctrine\ORM\EntityManager */
@@ -307,7 +319,9 @@ class ReviewController extends Controller
             );
         }
     
-        return $this->render('/Reviews/reviews.html.twig',
+        return $this->render(
+    
+            '/Reviews/reviews.html.twig',
                 array(
                         'pagetitle' => $pagetitle,
                         'pagedescription' => "Read the latest user-submitted reviews on the cards.",
@@ -323,8 +337,11 @@ class ReviewController extends Controller
                                 "user_id" => $user_id,
                                 "page" => $nextpage
                         ))
-                ), $response);
+                ),
     
+            $response
+    
+        );
     }
     
     public function commentAction(Request $request)
@@ -335,20 +352,20 @@ class ReviewController extends Controller
         
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
-        if(!$user) {
+        if (!$user) {
             throw new UnauthorizedHttpException("You are not logged in.");
         }
         
         $review_id = filter_var($request->get('comment_review_id'), FILTER_SANITIZE_NUMBER_INT);
         /* @var $review Review */
         $review = $em->getRepository('AppBundle:Review')->find($review_id);
-        if(!$review) {
+        if (!$review) {
             throw new BadRequestHttpException("Unable to find review.");
         }
         
         $comment_text = trim($request->get('comment'));
         $comment_text = htmlspecialchars($comment_text);
-        if(!$comment_text) {
+        if (!$comment_text) {
             return new Response('Your comment is empty.');
         }
         
@@ -361,7 +378,6 @@ class ReviewController extends Controller
         
         $em->flush();
         
-        return new Response(json_encode(TRUE));
-        
+        return new Response(json_encode(true));
     }
 }
