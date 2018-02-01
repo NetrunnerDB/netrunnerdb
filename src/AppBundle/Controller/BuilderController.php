@@ -699,6 +699,21 @@ class BuilderController extends Controller
 					order by d.date_creation asc", array(
                         $deck_id
                 ))->fetchAll();
+                
+        $parent_decklists = $dbh->executeQuery(
+                "SELECT
+					d.id,
+					d.name,
+					d.prettyname,
+					d.nbvotes,
+					d.nbfavorites,
+					d.nbcomments
+					from decklist d, deck
+					where deck.id = ? and d.id=deck.parent_decklist_id
+                                        and d.moderation_status in (0,1)
+					order by d.date_creation asc", array(
+                        $deck_id
+                ))->fetchAll();
 
         $list_mwl = $this->getDoctrine()->getManager()->getRepository('AppBundle:Mwl')->findBy(array(), array('dateStart' => 'DESC'));
 
@@ -707,6 +722,7 @@ class BuilderController extends Controller
                         'pagetitle' => "Deckbuilder",
                         'deck' => $deck,
                         'published_decklists' => $published_decklists,
+                        'parent_decklists' => $parent_decklists,
                         'list_mwl' => $list_mwl,
                 ));
     
@@ -778,6 +794,21 @@ class BuilderController extends Controller
 					order by d.date_creation asc", array(
                         $deck_id
                 ))->fetchAll();
+                
+        $parent_decklists = $dbh->executeQuery(
+                "SELECT
+					d.id,
+					d.name,
+					d.prettyname,
+					d.nbvotes,
+					d.nbfavorites,
+					d.nbcomments
+					from decklist d, deck
+					where deck.id = ? and d.id=deck.parent_decklist_id
+                                        and d.moderation_status in (0,1)
+					order by d.date_creation asc", array(
+                        $deck_id
+                ))->fetchAll();
 
         $tournaments = $dbh->executeQuery(
 		        "SELECT
@@ -794,6 +825,7 @@ class BuilderController extends Controller
                         'pagetitle' => "Deckbuilder",
                         'deck' => $deck,
                         'published_decklists' => $published_decklists,
+                        'parent_decklists' => $parent_decklists,
                         'tournaments' => $tournaments,
                 ));
     

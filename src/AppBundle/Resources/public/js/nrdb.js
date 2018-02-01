@@ -713,7 +713,7 @@ $(function () {
 
     $('[data-toggle="tooltip"]').tooltip();
 
-    $.each(['table-graph-costs', 'table-graph-strengths', 'table-predecessor', 'table-successor', 'table-draw-simulator', 'table-suggestions'], function (i, table_id) {
+    $.each(['table-graph-costs', 'table-graph-strengths', 'table-predecessor', 'table-parent', 'table-successor', 'table-draw-simulator', 'table-suggestions'], function (i, table_id) {
         var table = $('#' + table_id);
         if (!table.length)
             return;

@@ -260,6 +260,27 @@ var Filters = {},
 			</tbody>
 		</table>
 		<!-- Published decklists Table -->
+		<!-- Copied-from decklists Table -->
+		<table class="table table-condensed" id="table-parent">
+			<thead>
+				<tr><th colspan="{% if parent_decklists|length %}4{% else %}1{% endif %}"><span class="glyphicon glyphicon-import"></span> Copied from</th></tr>
+			</thead>
+			<tbody>
+			{% if parent_decklists|length %}
+			{% for decklist in parent_decklists %}
+				<tr>
+					<td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+					<td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
+					<td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
+					<td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
+				</tr>
+			{% endfor %}
+			{% else %}
+				<tr><td>None.</td></tr>
+			{% endif %}
+			</tbody>
+		</table>
+		<!-- Copied-from decklists Table -->
     </div>
     <!-- tabpanel Collection -->
     <div role="tabpanel" class="tab-pane" id="tab-pane-collection">
