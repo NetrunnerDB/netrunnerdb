@@ -2,10 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Mwl
  */
-class Mwl implements \Serializable
+class Mwl implements NormalizableInterface, TimestampableInterface
 {
     /**
      * @var integer
@@ -38,7 +42,7 @@ class Mwl implements \Serializable
     private $cards;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $legalities;
 
@@ -60,12 +64,12 @@ class Mwl implements \Serializable
         $this->active = false;
     }
 
-    public function toString()
+    public function __toString()
     {
         return $this->name;
     }
 
-    public function serialize()
+    public function normalize()
     {
         return [
             'id'            => $this->id,
@@ -77,11 +81,6 @@ class Mwl implements \Serializable
             'date_start'    => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
             'cards'         => $this->cards,
         ];
-    }
-
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
     }
 
     /**
@@ -217,7 +216,7 @@ class Mwl implements \Serializable
     /**
      * Get legalities
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getLegalities()
     {

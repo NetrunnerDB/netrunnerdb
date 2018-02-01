@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use FOS\OAuthServerBundle\Entity\Client as BaseClient;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -34,7 +35,7 @@ class Client extends BaseClient
         $this->name = $name;
     }
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $claims;
 
@@ -66,7 +67,7 @@ class Client extends BaseClient
     /**
      * Get claims
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getClaims()
     {

@@ -164,7 +164,7 @@ class ReviewController extends Controller
         return new Response(count($review->getVotes()));
     }
     
-    public function removeAction($id, Request $request)
+    public function removeAction(Request $request)
     {
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();

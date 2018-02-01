@@ -2,6 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\CodeNameInterface;
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Translatable\Translatable;
@@ -9,14 +12,14 @@ use Gedmo\Translatable\Translatable;
 /**
  * Cycle
  */
-class Cycle implements Translatable, \Serializable
+class Cycle implements Translatable, NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
-    public function toString()
+    public function __toString()
     {
         return $this->name;
     }
     
-    public function serialize()
+    public function normalize()
     {
         return [
                 'code' => $this->code,
@@ -26,12 +29,7 @@ class Cycle implements Translatable, \Serializable
                 'rotated' => $this->rotated
         ];
     }
-    
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
-    }
-    
+
     /**
      * @var integer
      */
@@ -249,7 +247,7 @@ class Cycle implements Translatable, \Serializable
 
     
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection|Pack[]
      */
     private $packs;
 
@@ -286,9 +284,7 @@ class Cycle implements Translatable, \Serializable
     }
 
     /**
-     * Get packs
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Pack[]|ArrayCollection|Collection
      */
     public function getPacks()
     {

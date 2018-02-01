@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Faction;
 use AppBundle\Service\CardsData;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -15,6 +16,7 @@ class DefaultController extends Controller
         $user = $this->getUser();
 
         $factions = $this->get('doctrine')->getRepository('AppBundle:Faction')->findAll();
+        /** @var Faction $faction */
         foreach ($factions as $i => $faction) {
             $factions[$i]->localizedName = $faction->getName();
         }

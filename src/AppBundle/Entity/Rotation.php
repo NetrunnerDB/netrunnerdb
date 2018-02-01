@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -10,14 +12,14 @@ use Doctrine\Common\Collections\Collection;
  *
  * @author Alsciende <alsciende@icloud.com>
  */
-class Rotation implements \Serializable
+class Rotation implements NormalizableInterface, TimestampableInterface
 {
-    public function toString()
+    public function __toString()
     {
         return $this->name;
     }
 
-    public function serialize()
+    public function normalize()
     {
         $cycles = [];
         foreach ($this->cycles as $cycle) {
@@ -33,11 +35,6 @@ class Rotation implements \Serializable
             'date_start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
             'cycles' => $cycles
         ];
-    }
-
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
     }
 
     /**

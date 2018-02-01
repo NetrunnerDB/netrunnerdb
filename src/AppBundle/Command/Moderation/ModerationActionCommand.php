@@ -3,12 +3,12 @@
 namespace AppBundle\Command\Moderation;
 
 use AppBundle\Entity\Decklist;
-use AppBundle\Entity\Moderation;
+use AppBundle\Entity\User;
 use AppBundle\Service\ModerationHelper;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -22,7 +22,7 @@ class ModerationActionCommand extends ContainerAwareCommand
     /** @var OutputInterface $output */
     private $output;
 
-    /** @var Helper */
+    /** @var QuestionHelper */
     private $helper;
 
     /** @var EntityManagerInterface $em */
@@ -49,6 +49,7 @@ class ModerationActionCommand extends ContainerAwareCommand
         /* @var $em EntityManager */
         $this->em = $this->getContainer()->get('doctrine')->getManager();
 
+        /** @var User $user */
         $user = $this->em->getRepository('AppBundle:User')->find(1);
 
         $this->moderationHelper = $this->getContainer()->get(ModerationHelper::class);
@@ -59,7 +60,7 @@ class ModerationActionCommand extends ContainerAwareCommand
         $this->showStatus($decklist);
 
         $newStatus = $this->getNewStatus();
-        $this->moderationHelper->changeStatus($decklist, $newStatus, $user);
+        $this->moderationHelper->changeStatus($user, $decklist, $newStatus);
 
         $this->em->flush();
         $this->em->refresh($decklist);
@@ -67,7 +68,7 @@ class ModerationActionCommand extends ContainerAwareCommand
         $this->showStatus($decklist);
     }
     
-    protected function showStatus($decklist)
+    protected function showStatus(Decklist $decklist)
     {
         $this->output->writeln('<info>Decklist: '.$decklist->getName().'. Current moderation status: '.$this->moderationHelper->getLabel($decklist->getModerationStatus()).'</info>');
     }

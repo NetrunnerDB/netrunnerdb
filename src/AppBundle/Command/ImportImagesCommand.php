@@ -52,9 +52,9 @@ class ImportImagesCommand extends ContainerAwareCommand
 
             if ($response->getStatusCode() === 200) {
                 $card->setImageUrl($url);
-                $output->writeln(sprintf('Found image for %s at url %s', $card->toString(), $url));
+                $output->writeln(sprintf('Found image for %s at url %s', $card, $url));
             } else {
-                $output->writeln(sprintf('<error>Image missing for %s at url %s</error>', $card->toString(), $url));
+                $output->writeln(sprintf('<error>Image missing for %s at url %s</error>', $card, $url));
             }
         }
 

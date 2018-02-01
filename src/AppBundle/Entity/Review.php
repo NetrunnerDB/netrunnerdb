@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Review
@@ -40,17 +41,17 @@ class Review
     private $nbvotes;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $card;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      */
     private $user;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $votes;
 
@@ -190,7 +191,7 @@ class Review
     /**
      * Set card
      *
-     * @param \AppBundle\Entity\Card $card
+     * @param Card $card
      * @return Review
      */
     public function setCard(Card $card = null)
@@ -203,7 +204,7 @@ class Review
     /**
      * Get card
      *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getCard()
     {
@@ -213,7 +214,7 @@ class Review
     /**
      * Set user
      *
-     * @param \AppBundle\Entity\User $user
+     * @param User $user
      * @return Review
      */
     public function setUser(User $user = null)
@@ -226,7 +227,7 @@ class Review
     /**
      * Get user
      *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
@@ -236,7 +237,7 @@ class Review
     /**
      * Add votes
      *
-     * @param \AppBundle\Entity\User $votes
+     * @param User $votes
      * @return Review
      */
     public function addVote(User $user)
@@ -249,7 +250,7 @@ class Review
     /**
      * Remove votes
      *
-     * @param \AppBundle\Entity\User $votes
+     * @param User $votes
      */
     public function removeVote(User $votes)
     {
@@ -259,14 +260,14 @@ class Review
     /**
      * Get votes
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getVotes()
     {
         return $this->votes;
     }
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $comments;
 
@@ -274,7 +275,7 @@ class Review
     /**
      * Add comments
      *
-     * @param \AppBundle\Entity\Reviewcomment $comments
+     * @param Reviewcomment $comments
      * @return Review
      */
     public function addComment(Reviewcomment $comments)
@@ -287,7 +288,7 @@ class Review
     /**
      * Remove comments
      *
-     * @param \AppBundle\Entity\Reviewcomment $comments
+     * @param Reviewcomment $comments
      */
     public function removeComment(Reviewcomment $comments)
     {
@@ -297,7 +298,7 @@ class Review
     /**
      * Get comments
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getComments()
     {

@@ -3,7 +3,10 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Card;
+use AppBundle\Entity\Deck;
 use AppBundle\Entity\Deckslot;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Deckchange;
@@ -31,7 +34,7 @@ class Decks
     }
     
 
-    public function getByUser($user, $decode_variation = false)
+    public function getByUser(User $user, $decode_variation = false)
     {
         $dbh = $this->entityManager->getConnection();
         $decks = $dbh->executeQuery(
@@ -240,7 +243,7 @@ class Decks
     }
     
 
-    public function saveDeck($user, $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck)
+    public function saveDeck(User $user, Deck $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, Deck $source_deck)
     {
         $deck_content = array();
         if ($decklist_id) {
@@ -266,6 +269,7 @@ class Decks
         /* @var $latestPack \AppBundle\Entity\Pack */
         $latestPack = null;
         foreach ($content as $card_code => $qty) {
+            /** @var Card $card */
             $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(array(
                     "code" => $card_code
             ));

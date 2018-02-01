@@ -3,12 +3,11 @@
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PrebuiltController extends Controller
 {
-    public function viewAction($prebuilt_code, Request $request)
+    public function viewAction($prebuilt_code)
     {
         $response = new Response();
         $response->setPublic();

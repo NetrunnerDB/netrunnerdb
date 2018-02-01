@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Behavior\Entity\CodeNameInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,7 +33,7 @@ class DumpTransBaseCommand extends ContainerAwareCommand
         $locale = $input->getArgument('locale');
         $entityName = $input->getArgument('entityName');
         $entityFullName = 'AppBundle:'.ucfirst($entityName);
-        
+
         /* @var $repository \AppBundle\Repository\TranslatableRepository */
         $repository = $this->getContainer()->get('doctrine')->getManager()->getRepository($entityFullName);
         
@@ -41,13 +42,14 @@ class DumpTransBaseCommand extends ContainerAwareCommand
         $result = $repository->getResult($qb);
         
         $arr = [];
-        
+
         foreach ($result as $record) {
-            $data = [
+            if ($record instanceof CodeNameInterface) {
+                $arr[] = [
                     "code" => $record->getCode(),
-                    "name" => $record->getName()
-            ];
-            $arr[] = $data;
+                    "name" => $record->getName(),
+                ];
+            }
         }
         
         $output->write(json_encode($arr, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

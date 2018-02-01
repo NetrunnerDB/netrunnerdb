@@ -2,20 +2,24 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\CodeNameInterface;
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Translatable\Translatable;
 
 /**
  * Pack
  */
-class Pack implements Translatable, \Serializable
+class Pack implements Translatable, NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
-    public function toString()
+    public function __toString()
     {
         return $this->name;
     }
 
-    public function serialize()
+    public function normalize()
     {
         return [
                 'code' => $this->code,
@@ -26,12 +30,7 @@ class Pack implements Translatable, \Serializable
                 'size' => $this->size
         ];
     }
-    
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
-    }
-    
+
     /**
      * @var integer
      */
@@ -73,7 +72,7 @@ class Pack implements Translatable, \Serializable
     private $locale = 'en';
     
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $decklists;
 
@@ -206,7 +205,7 @@ class Pack implements Translatable, \Serializable
      * Set position
      *
      * @param integer $position
-     * @return Card
+     * @return $this
      */
     public function setPosition($position)
     {
@@ -226,7 +225,7 @@ class Pack implements Translatable, \Serializable
     }
     
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $cards;
 
@@ -270,7 +269,7 @@ class Pack implements Translatable, \Serializable
     /**
      * Get cards
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getCards()
     {
@@ -303,7 +302,7 @@ class Pack implements Translatable, \Serializable
     /**
      * Get decklists
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getDecklists()
     {

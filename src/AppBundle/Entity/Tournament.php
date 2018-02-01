@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Tournament
@@ -53,7 +54,7 @@ class Tournament
         return $this->description;
     }
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $decklists;
 
@@ -91,7 +92,7 @@ class Tournament
     /**
      * Get decklists
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getDecklists()
     {

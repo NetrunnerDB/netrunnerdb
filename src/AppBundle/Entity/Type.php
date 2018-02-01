@@ -2,20 +2,24 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\CodeNameInterface;
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Translatable\Translatable;
 
 /**
  * Type
  */
-class Type implements Translatable, \Serializable
+class Type implements Translatable, NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
-    public function toString()
+    public function __toString()
     {
         return $this->name;
     }
 
-    public function serialize()
+    public function normalize()
     {
         return [
                 'code' => $this->code,
@@ -25,12 +29,7 @@ class Type implements Translatable, \Serializable
                 'side_code' => $this->side ? $this->side->getCode() : null
         ];
     }
-    
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
-    }
-    
+
     /**
      * @var integer
      */
@@ -72,7 +71,7 @@ class Type implements Translatable, \Serializable
     private $position;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $cards;
     
@@ -243,7 +242,7 @@ class Type implements Translatable, \Serializable
      * Set side
      *
      * @param Side $side
-     * @return Card
+     * @return $this
      */
     public function setSide(Side $side = null)
     {
@@ -288,7 +287,7 @@ class Type implements Translatable, \Serializable
     /**
      * Get cards
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getCards()
     {

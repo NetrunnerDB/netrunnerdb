@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Card;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -48,7 +49,8 @@ class DumpTransCardsCommand extends ContainerAwareCommand
         $cards = $repository->getResult($qb);
         
         $arr = [];
-        
+
+        /** @var Card $card */
         foreach ($cards as $card) {
             $data = [];
             $data['code'] = $card->getCode();

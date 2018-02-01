@@ -2,7 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +24,7 @@ class PublicApi20Controller extends FOSRestController
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
             
-        $dateUpdate = array_reduce($entities, function ($carry, $item) {
+        $dateUpdate = array_reduce($entities, function ($carry, TimestampableInterface $item) {
             if (!$carry || ($item->getDateUpdate() > $carry)) {
                 return $item->getDateUpdate();
             } else {
@@ -39,8 +42,8 @@ class PublicApi20Controller extends FOSRestController
         
         $content = $additionalTopLevelProperties;
 
-        $content['data'] = array_map(function ($entity) use ($locale, $translationRepository) {
-            $data = $entity->serialize();
+        $content['data'] = array_map(function (NormalizableInterface $entity) use ($locale, $translationRepository) {
+            $data = $entity->normalize();
                 
             if (isset($locale)) {
                 $translations = $translationRepository->findTranslations($entity);
@@ -354,7 +357,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function decklistsByDateAction($date, Request $request)
+    public function decklistsByDateAction($date, Request $request, EntityManagerInterface $entityManager)
     {
         $date_from = new \DateTime($date);
         $date_to = clone($date_from);
@@ -365,7 +368,7 @@ class PublicApi20Controller extends FOSRestController
             return $this->prepareFailedResponse("Date is in the future");
         }
         
-        $qb = $this->getDoctrine()->getManager()->getRepository('AppBundle:Decklist')->createQueryBuilder('d');
+        $qb = $entityManager->createQueryBuilder()->select('d')->from('AppBundle:Decklist', 'd');
         $qb->where($qb->expr()->between('d.dateCreation', ':date_from', ':date_to'));
         $qb->setParameter('date_from', $date_from, Type::DATETIME);
         $qb->setParameter('date_to', $date_to, Type::DATETIME);

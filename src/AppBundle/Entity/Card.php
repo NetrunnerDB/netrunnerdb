@@ -2,15 +2,18 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Translatable\Translatable;
 
 /**
  * Card
  */
-class Card implements Translatable, \Serializable
+class Card implements Translatable, NormalizableInterface, TimestampableInterface
 {
-    public function toString()
+    public function __toString()
     {
         return $this->code . ' ' . $this->title;
     }
@@ -21,7 +24,7 @@ class Card implements Translatable, \Serializable
         return implode('', array_map('ucfirst', $parts));
     }
     
-    public function serialize()
+    public function normalize()
     {
         $serialized = [];
         if (empty($this->code)) {
@@ -119,12 +122,7 @@ class Card implements Translatable, \Serializable
         ksort($serialized);
         return $serialized;
     }
-    
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
-    }
-    
+
     /**
      * @var integer
      */
@@ -238,7 +236,7 @@ class Card implements Translatable, \Serializable
     private $locale = 'en';
     
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $decklists;
 
@@ -795,7 +793,7 @@ class Card implements Translatable, \Serializable
     /**
      * Get decklists
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getDecklists()
     {
@@ -895,7 +893,7 @@ class Card implements Translatable, \Serializable
     }
     
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $reviews;
 
@@ -925,7 +923,7 @@ class Card implements Translatable, \Serializable
     /**
      * Get reviews
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getReviews()
     {
@@ -933,7 +931,7 @@ class Card implements Translatable, \Serializable
     }
     
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $rulings;
 
@@ -963,7 +961,7 @@ class Card implements Translatable, \Serializable
     /**
      * Get rulings
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getRulings()
     {

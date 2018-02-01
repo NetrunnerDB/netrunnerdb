@@ -2,20 +2,23 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Translatable\Translatable;
 
 /**
  * Prebuilt
  */
-class Prebuilt implements Translatable, \Serializable
+class Prebuilt implements Translatable, NormalizableInterface, TimestampableInterface
 {
-    public function toString()
+    public function __toString()
     {
         return $this->name;
     }
     
-    public function serialize()
+    public function normalize()
     {
         $cards = [];
         foreach ($this->slots as $slot) {
@@ -30,12 +33,7 @@ class Prebuilt implements Translatable, \Serializable
                 'cards' => $cards
         ];
     }
-    
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
-    }
-    
+
     /**
      * @var integer
      */
@@ -72,7 +70,7 @@ class Prebuilt implements Translatable, \Serializable
     private $dateUpdate;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $slots;
 
@@ -285,7 +283,7 @@ class Prebuilt implements Translatable, \Serializable
     /**
      * Get slots
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getSlots()
     {

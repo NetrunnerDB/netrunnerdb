@@ -19,12 +19,15 @@ class DecklistManager
 
     /**
      * returns the list of decklist favorited by user
-     * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     *
+     * @param     $user_id
+     * @param int $start
+     * @param int $limit
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function favorites($user_id, $start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -75,13 +78,15 @@ class DecklistManager
 
     /**
      * returns the list of decklists published by user
-     * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     *
+     * @param     $user_id
+     * @param int $start
+     * @param int $limit
+     * @return array
+     * @throws \Doctrine\DBAL\DBALException
      */
     public function by_author($user_id, $start = 0, $limit = 30)
     {
-
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -131,11 +136,10 @@ class DecklistManager
     /**
      * returns the list of recent decklists with large number of votes
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function popular($start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -183,11 +187,10 @@ class DecklistManager
     /**
      * returns the list of decklists tagged with dotw>0
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function dotw($start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -233,11 +236,10 @@ class DecklistManager
     /**
      * returns the list of decklists with most number of votes
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function halloffame($start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -284,11 +286,10 @@ class DecklistManager
     /**
      * returns the list of decklists with large number of recent comments
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function hottopics($start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -336,11 +337,10 @@ class DecklistManager
     /**
      * returns the list of decklists with a non-null tournament
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function tournaments($start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -387,11 +387,10 @@ class DecklistManager
     /**
      * returns the list of decklists of chosen faction
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function faction($faction_code, $start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -442,11 +441,10 @@ class DecklistManager
     /**
      * returns the list of decklists of chosen datapack
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function lastpack($pack_code, $start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -496,11 +494,10 @@ class DecklistManager
     /**
      * returns the list of recent decklists
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function recent($start = 0, $limit = 30, $includeEmptyDesc = true)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $additional_clause = $includeEmptyDesc ? "" : "and d.rawdescription!=''";
@@ -550,11 +547,10 @@ class DecklistManager
     /**
      * returns the list of trashed decklists
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function trashed($start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -600,11 +596,10 @@ class DecklistManager
     /**
      * returns the list of restored decklists
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function restored($start = 0, $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
@@ -650,12 +645,10 @@ class DecklistManager
     /**
      * returns a list of decklists according to search criteria
      * @param integer $limit
-     * @return \Doctrine\DBAL\Driver\PDOStatement
+     * @return array
      */
     public function find($start = 0, $limit = 30, Request $request)
     {
-
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
         $dbh = $this->entityManager->getConnection();
 
         $cardRepository = $this->entityManager->getRepository('AppBundle:Card');

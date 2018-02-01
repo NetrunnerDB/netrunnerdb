@@ -4,7 +4,6 @@ namespace AppBundle\Command\Moderation;
 
 use AppBundle\Entity\Moderation;
 use AppBundle\Service\ModerationHelper;
-use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,10 +17,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ModerationLogCommand extends ContainerAwareCommand
 {
-    /** @var EntityManager */
-    private $em;
-    /** @var ModerationHelper */
-    private $helper;
     protected function configure()
     {
         $this

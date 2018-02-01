@@ -2,32 +2,31 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\CodeNameInterface;
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Translatable\Translatable;
 
 /**
  * Side
  */
-class Side implements Translatable, \Serializable
+class Side implements Translatable, NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
-    public function toString()
+    public function __toString()
     {
         return $this->name;
     }
 
-    public function serialize()
+    public function normalize()
     {
         return [
                 'code' => $this->code,
                 'name' => $this->name
         ];
     }
-    
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
-    }
-    
+
     /**
      * @var integer
      */
@@ -74,22 +73,22 @@ class Side implements Translatable, \Serializable
     }
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $cards;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $factions;
     
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $decks;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $decklists;
     
@@ -130,7 +129,7 @@ class Side implements Translatable, \Serializable
     /**
      * Get cards
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getCards()
     {
@@ -163,7 +162,7 @@ class Side implements Translatable, \Serializable
     /**
      * Get decks
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getDecks()
     {
@@ -173,7 +172,7 @@ class Side implements Translatable, \Serializable
     /**
      * Get decklists
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getDecklists()
     {
@@ -183,7 +182,7 @@ class Side implements Translatable, \Serializable
     /**
      * Get decklists
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getFactions()
     {

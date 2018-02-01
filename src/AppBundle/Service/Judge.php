@@ -116,7 +116,7 @@ class Judge
 
     public function countCards($slots, $skipIdentity = false)
     {
-        return array_reduce($slots, function ($carry, $item) use ($skipIdentity) {
+        return array_reduce($slots, function ($carry, SlotInterface $item) use ($skipIdentity) {
             if ($skipIdentity && $item->getCard()->getType()->getName() === 'Identity') {
                 return $carry;
             }

@@ -120,7 +120,7 @@ class Comment
      * Set author
      *
      * @param string $author
-     * @return User
+     * @return $this
      */
     public function setAuthor($author)
     {
@@ -128,11 +128,9 @@ class Comment
     
         return $this;
     }
-    
+
     /**
-     * Get author
-     *
-     * @return string
+     * @return User
      */
     public function getAuthor()
     {
@@ -143,7 +141,7 @@ class Comment
      * Set decklist
      *
      * @param string $decklist
-     * @return Decklist
+     * @return $this
      */
     public function setDecklist($decklist)
     {
@@ -151,11 +149,9 @@ class Comment
     
         return $this;
     }
-    
+
     /**
-     * Get decklist
-     *
-     * @return string
+     * @return Decklist
      */
     public function getDecklist()
     {

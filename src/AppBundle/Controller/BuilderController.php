@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BuilderController extends Controller
 {
-    public function buildformAction($side_text, Request $request, EntityManagerInterface $entityManager)
+    public function buildformAction($side_text, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -336,7 +336,7 @@ class BuilderController extends Controller
             
             /* @var $deck Deck */
             $deck = new Deck();
-            $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $meteor_deck['name'], "", $tags, null, $content);
+            $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $meteor_deck['name'], "", $tags, null, $content, null);
         }
         
         $this->get('session')
@@ -392,7 +392,9 @@ class BuilderController extends Controller
                         }
                         $inf .= "•";
                     }
-                    $lines[] = $slot['qty'] . "x " . $slot['card']->getTitle() . " (" . $slot['card']->getPack()->getName() . ") " . $inf;
+                    /** @var Card $card */
+                    $card = $slot['card'];
+                    $lines[] = $slot['qty'] . "x " . $card->getTitle() . " (" . $card->getPack()->getName() . ") " . $inf;
                 }
             }
         }
@@ -494,7 +496,7 @@ class BuilderController extends Controller
         $source_deck = null;
         if ($id) {
             $deck = $em->getRepository('AppBundle:Deck')->find($id);
-            if (!$deck || $user->getId() != $deck->getUser()->getId()) {
+            if (!$deck instanceof Deck || $user->getId() != $deck->getUser()->getId()) {
                 throw $this->createAccessDeniedException();
             }
             $source_deck = $deck;
@@ -536,7 +538,7 @@ class BuilderController extends Controller
         
         $deck_id = filter_var($request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
-        if (! $deck) {
+        if (! $deck instanceof Deck) {
             return $this->redirect($this->generateUrl('decks_list'));
         }
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
@@ -989,7 +991,7 @@ class BuilderController extends Controller
                 $content = array();
                 foreach ($deck['cards'] as $slot) {
                     $card = $em->getRepository('AppBundle:Card')->findOneBy(array('code' => $slot['card_code']));
-                    if (!$card) {
+                    if (!$card instanceof Card) {
                         continue;
                     }
                     $cardtitle = $card->getTitle();
@@ -1044,7 +1046,7 @@ class BuilderController extends Controller
                 $parse = $this->parseTextImport($zip->getFromIndex($i));
                  
                 $deck = new Deck();
-                $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content']);
+                $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content'], null);
             }
         }
         $zip->close();
@@ -1067,7 +1069,7 @@ class BuilderController extends Controller
         $em = $this->get('doctrine')->getManager();
         
         $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
-        if (!$deck) {
+        if (!$deck instanceof Deck) {
             throw $this->createNotFoundException();
         }
         if ($user->getId() != $deck->getUser()->getId()) {

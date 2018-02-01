@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Card;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,9 +41,10 @@ class DumpStdCardsCommand extends ContainerAwareCommand
         $cards = $repository->getResult($qb);
         
         $arr = [];
-        
+
+        /** @var Card $card */
         foreach ($cards as $card) {
-            $arr[] = $card->serialize();
+            $arr[] = $card->normalize();
         }
         
         $output->write(json_encode($arr, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

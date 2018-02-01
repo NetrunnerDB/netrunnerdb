@@ -358,7 +358,7 @@ class ImportStdCommand extends ContainerAwareCommand
 
                 foreach ($prebuiltData['cards'] as $card_code => $quantity) {
                     $card = $this->em->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
-                    if (!$card) {
+                    if (!$card instanceof Card) {
                         continue;
                     }
                     $prebuiltslot = new Prebuiltslot();
@@ -444,7 +444,7 @@ class ImportStdCommand extends ContainerAwareCommand
             if ($newJsonValue !== null) {
                 $newTypedValue = new DateTime($newJsonValue);
             }
-            if ($currentTypedValue !== null) {
+            if ($currentTypedValue instanceof \DateTime) {
                 switch ($type) {
                     case 'date': {
                         $currentJsonValue = $currentTypedValue->format('Y-m-d');
@@ -459,7 +459,7 @@ class ImportStdCommand extends ContainerAwareCommand
 
         $different = ($currentJsonValue !== $newJsonValue);
         if ($different) {
-            $this->output->writeln("Changing the <info>$fieldName</info> of <info>".$entity->toString()."</info>");
+            $this->output->writeln("Changing the <info>$fieldName</info> of <info>".$entity."</info>");
 
             $setter = 'set'.ucfirst($fieldName);
             $entity->$setter($newTypedValue);

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use JMS\Serializer\Annotation\Exclude;
 
 /**
@@ -21,7 +22,7 @@ class Modflag
     private $reason;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      * @Exclude
      */
     private $decklists;
@@ -96,7 +97,7 @@ class Modflag
     /**
      * Get decklists
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getDecklists()
     {

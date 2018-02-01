@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,9 +36,10 @@ class DumpStdBaseCommand extends ContainerAwareCommand
         $result = $repository->getResult($qb);
         
         $arr = [];
-        
+
+        /** @var NormalizableInterface $record */
         foreach ($result as $record) {
-            $arr[] = $record->serialize();
+            $arr[] = $record->normalize();
         }
         
         $output->write(json_encode($arr, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

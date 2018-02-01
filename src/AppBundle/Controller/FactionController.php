@@ -1,26 +1,24 @@
 <?php
 namespace AppBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\Request;
 
 class FactionController extends Controller
 {
-    public function factionAction($faction_code, Request $request)
+    public function factionAction($faction_code, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
-        
-        $em = $this->getDoctrine()->getManager();
-        
+
         if ($faction_code === 'mini-factions') {
-            $factions = $em->getRepository('AppBundle:Faction')->findBy(['isMini' => true], ['code' => 'ASC']);
+            $factions = $entityManager->getRepository('AppBundle:Faction')->findBy(['isMini' => true], ['code' => 'ASC']);
             $faction_name = "Mini-factions";
         } else {
-            $factions = $em->getRepository('AppBundle:Faction')->findBy(['code' => $faction_code]);
+            $factions = $entityManager->getRepository('AppBundle:Faction')->findBy(['code' => $faction_code]);
             if (!count($factions)) {
                 throw new NotFoundHttpException("Faction $faction_code not found.");
             }
@@ -35,7 +33,7 @@ class FactionController extends Controller
             // build the list of identites for the faction
             
             /* @var $qb \Doctrine\ORM\QueryBuilder */
-            $qb = $em->createQueryBuilder();
+            $qb = $entityManager->createQueryBuilder();
             $qb->select('c')
             ->from('AppBundle:Card', 'c')
             ->join('c.pack', 'p')
@@ -43,7 +41,7 @@ class FactionController extends Controller
             ->setParameter('faction', $faction)
             ->andWhere('c.type=:type')
             ->andWhere('p.dateRelease is not null')
-            ->setParameter('type', $em->getRepository('AppBundle:Type')->findOneBy(array('code' => 'identity')));
+            ->setParameter('type', $entityManager->getRepository('AppBundle:Type')->findOneBy(array('code' => 'identity')));
             
             $identities = $qb->getQuery()->getResult();
             
@@ -54,7 +52,7 @@ class FactionController extends Controller
             
             $decklists = array();
             foreach ($identities as $identity) {
-                $qb = $em->createQueryBuilder();
+                $qb = $entityManager->createQueryBuilder();
                 $qb->select('d, (d.nbvotes/(1+DATE_DIFF(CURRENT_TIMESTAMP(),d.dateCreation)/10)) as points')
                 ->from('AppBundle:Decklist', 'd')
                 ->where('d.identity=:identity')

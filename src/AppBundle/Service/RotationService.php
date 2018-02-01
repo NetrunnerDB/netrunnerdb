@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Rotation;
 
@@ -47,7 +48,7 @@ class RotationService
             $cycles[$slot->getCard()->getPack()->getCycle()->getCode()] = 1;
         }
 
-        return count(array_diff(array_keys($cycles), array_map(function ($cycle) {
+        return count(array_diff(array_keys($cycles), array_map(function (Cycle $cycle) {
             return $cycle->getCode();
         }, $rotation->getCycles()->toArray()))) === 0;
     }

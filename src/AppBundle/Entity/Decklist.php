@@ -2,12 +2,15 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Decklist
  */
-class Decklist implements \Serializable
+class Decklist implements NormalizableInterface, TimestampableInterface
 {
     const MODERATION_PUBLISHED = 0;
     const MODERATION_RESTORED = 1;
@@ -19,7 +22,7 @@ class Decklist implements \Serializable
         return "[$this->id] $this->name";
     }
 
-    public function serialize()
+    public function normalize()
     {
         $cards = [];
         foreach ($this->slots as $slot) {
@@ -40,12 +43,6 @@ class Decklist implements \Serializable
             ];
     }
 
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
-    }
-
-    
     /**
      * @var integer
      */
@@ -372,11 +369,9 @@ class Decklist implements \Serializable
     
         return $this;
     }
-    
+
     /**
-     * Get nbvotes
-     *
-     * @return string
+     * @return int
      */
     public function getNbvotes()
     {
@@ -456,7 +451,7 @@ class Decklist implements \Serializable
      * Set user
      *
      * @param string $user
-     * @return User
+     * @return $this
      */
     public function setUser($user)
     {
@@ -479,7 +474,7 @@ class Decklist implements \Serializable
      * Set side
      *
      * @param Side $side
-     * @return Deck
+     * @return $this
      */
     public function setSide(Side $side = null)
     {
@@ -502,7 +497,7 @@ class Decklist implements \Serializable
      * Set identity
      *
      * @param Card $identity
-     * @return Deck
+     * @return $this
      */
     public function setIdentity($identity)
     {
@@ -525,7 +520,7 @@ class Decklist implements \Serializable
      * Set slots
      *
      * @param string $slots
-     * @return Deck
+     * @return $this
      */
     public function setSlots($slots)
     {
@@ -533,11 +528,9 @@ class Decklist implements \Serializable
     
         return $this;
     }
-    
+
     /**
-     * Get slots
-     *
-     * @return Deckslot[]
+     * @return Decklistslot[]|ArrayCollection
      */
     public function getSlots()
     {
@@ -563,7 +556,7 @@ class Decklist implements \Serializable
      * Set lastPack
      *
      * @param Pack $lastPack
-     * @return Deck
+     * @return $this
      */
     public function setLastPack($lastPack)
     {
@@ -586,7 +579,7 @@ class Decklist implements \Serializable
      * Set faction
      *
      * @param Faction $faction
-     * @return Deck
+     * @return $this
      */
     public function setFaction($faction)
     {
@@ -610,7 +603,7 @@ class Decklist implements \Serializable
      * Set comments
      *
      * @param string $comments
-     * @return Deck
+     * @return $this
      */
     public function setComments($comments)
     {
@@ -793,7 +786,7 @@ class Decklist implements \Serializable
         return $this->parent;
     }
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $successors;
 
@@ -829,7 +822,7 @@ class Decklist implements \Serializable
     /**
      * Get successors
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getSuccessors()
     {
@@ -859,7 +852,7 @@ class Decklist implements \Serializable
         return $this->precedent;
     }
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $children;
 
@@ -890,7 +883,7 @@ class Decklist implements \Serializable
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getChildren()
     {
@@ -948,7 +941,7 @@ class Decklist implements \Serializable
         return $this->tournament;
     }
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $legalities;
 
@@ -980,7 +973,7 @@ class Decklist implements \Serializable
     /**
      * Get legalities
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getLegalities()
     {
@@ -1041,7 +1034,7 @@ class Decklist implements \Serializable
         return $this->modflag;
     }
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $claims;
 
@@ -1073,7 +1066,7 @@ class Decklist implements \Serializable
     /**
      * Get claims
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getClaims()
     {

@@ -7,6 +7,7 @@ use AppBundle\Service\Judge;
 use AppBundle\Service\RotationService;
 use AppBundle\Service\Texts;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -68,7 +69,7 @@ class PrivateApi20Controller extends FOSRestController
      *  }
      * )
      */
-    public function loadDeckAction($deck_id, Request $request)
+    public function loadDeckAction($deck_id, Request $request, EntityManagerInterface $entityManager)
     {
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
@@ -79,7 +80,7 @@ class PrivateApi20Controller extends FOSRestController
         
         $includeHistory = $request->query->has('include_history') && $request->query->get('include_history');
         
-        $deck = $this->getDoctrine()->getManager()->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
+        $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
         
         if (!$deck) {
             throw $this->createNotFoundException("Deck not found");
@@ -88,8 +89,7 @@ class PrivateApi20Controller extends FOSRestController
         $history = [];
         
         if ($includeHistory) {
-            $qb = $this->getDoctrine()->getManager()->getRepository('AppBundle:Deckchange')->createQueryBuilder('h');
-            $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
+            $qb = $entityManager->createQueryBuilder();
             $qb->select('h')
                 ->from('AppBundle:Deckchange', 'h')
                 ->where('h.deck = :deck')
@@ -235,7 +235,7 @@ class PrivateApi20Controller extends FOSRestController
     
         $deck_id = $requestContent['deck_id'];
         $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
-        if (!$deck) {
+        if (!$deck instanceof Deck) {
             throw $this->createNotFoundException("Deck not found");
         }
         
@@ -317,7 +317,7 @@ class PrivateApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function decksAction(Request $request)
+    public function decksAction()
     {
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
@@ -342,7 +342,7 @@ class PrivateApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function decklistsAction(Request $request)
+    public function decklistsAction()
     {
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
@@ -367,7 +367,7 @@ class PrivateApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function accountInfoAction(Request $request)
+    public function accountInfoAction()
     {
         /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();

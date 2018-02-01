@@ -2,19 +2,22 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Deck
  */
-class Deck implements \Serializable
+class Deck implements NormalizableInterface, TimestampableInterface
 {
     public function __toString()
     {
         return "[$this->id] $this->name";
     }
     
-    public function serialize()
+    public function normalize()
     {
         $cards = [];
         foreach ($this->slots as $slot) {
@@ -31,21 +34,11 @@ class Deck implements \Serializable
                 'cards' => $cards
         ];
     }
-    
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
-    }
-    
+
     /**
      * @var integer
      */
     private $id;
-
-    /**
-     * @var string
-     */
-    private $hash;
 
     /**
      * @var string
@@ -95,7 +88,7 @@ class Deck implements \Serializable
     private $message;
     
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection|Deckslot[]
      */
     private $slots;
 
@@ -167,7 +160,7 @@ class Deck implements \Serializable
      * @param \DateTime $dateCreation
      * @return Deck
      */
-    public function setDatecreation($dateCreation)
+    public function setDateCreation($dateCreation)
     {
         $this->dateCreation = $dateCreation;
     
@@ -179,7 +172,7 @@ class Deck implements \Serializable
      *
      * @return \DateTime
      */
-    public function getDatecreation()
+    public function getDateCreation()
     {
         return $this->dateCreation;
     }
@@ -190,7 +183,7 @@ class Deck implements \Serializable
      * @param \DateTime $dateUpdate
      * @return Deck
      */
-    public function setDateupdate($dateUpdate)
+    public function setDateUpdate($dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
     
@@ -202,7 +195,7 @@ class Deck implements \Serializable
      *
      * @return \DateTime
      */
-    public function getDateupdate()
+    public function getDateUpdate()
     {
         return $this->dateUpdate;
     }
@@ -507,7 +500,7 @@ class Deck implements \Serializable
     }
     
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $children;
 
@@ -543,7 +536,7 @@ class Deck implements \Serializable
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getChildren()
     {
@@ -573,7 +566,7 @@ class Deck implements \Serializable
         return $this->parent;
     }
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $changes;
 
@@ -627,7 +620,7 @@ class Deck implements \Serializable
     /**
      * Get changes
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getChanges()
     {

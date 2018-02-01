@@ -136,7 +136,7 @@ class ImportTransCommand extends ContainerAwareCommand
             if ($newJsonValue !== null) {
                 $newTypedValue = new \DateTime($newJsonValue);
             }
-            if ($currentTypedValue !== null) {
+            if ($currentTypedValue instanceof \DateTime) {
                 switch ($type) {
                     case 'date': {
                         $currentJsonValue = $currentTypedValue->format('Y-m-d');

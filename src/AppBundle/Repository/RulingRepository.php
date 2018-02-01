@@ -13,7 +13,8 @@ class RulingRepository extends EntityRepository
 {
     public function findAllSortedByCardCode()
     {
-        return $this->getManager()
+        return $this
+            ->_em
             ->createQuery(
                 'SELECT r FROM AppBundle:Ruling r JOIN r.card c ORDER BY c.code ASC'
             )

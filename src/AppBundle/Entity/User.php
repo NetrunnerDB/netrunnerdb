@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -273,7 +274,7 @@ class User extends BaseUser
      * Set decklists
      *
      * @param string $decklists
-     * @return Deck
+     * @return $this
      */
     public function setDecklists($decklists)
     {
@@ -296,7 +297,7 @@ class User extends BaseUser
      * Set comments
      *
      * @param string $comments
-     * @return Deck
+     * @return $this
      */
     public function setComments($comments)
     {
@@ -321,7 +322,7 @@ class User extends BaseUser
      * @param Decklist $favorites
      * @return User
      */
-    public function addFavorite($decklist)
+    public function addFavorite(Decklist $decklist)
     {
         $decklist->addFavorite($this);
         $this->favorites[] = $decklist;
@@ -335,19 +336,16 @@ class User extends BaseUser
      * @param Decklist $favorites
      * @return User
      */
-    public function removeFavorite($decklist)
+    public function removeFavorite(Decklist $decklist)
     {
         $decklist->removeFavorite($this);
         $this->favorites->removeElement($decklist);
         
         return $this;
     }
-    
-    
+
     /**
-     * Get favorites
-     *
-     * @return Decklist
+     * @return Decklist[]|ArrayCollection
      */
     public function getFavorites()
     {
@@ -360,18 +358,16 @@ class User extends BaseUser
      * @param Decklist $votes
      * @return User
      */
-    public function addVote($decklist)
+    public function addVote(Decklist $decklist)
     {
         $decklist->addVote($this);
         $this->votes[] = $decklist;
     
         return $this;
     }
-    
+
     /**
-     * Get votes
-     *
-     * @return Decklist
+     * @return Decklist[]|ArrayCollection
      */
     public function getVotes()
     {
@@ -384,18 +380,16 @@ class User extends BaseUser
      * @param User $following
      * @return User
      */
-    public function addFollowing($user)
+    public function addFollowing(User $user)
     {
         $user->addFollower($this);
         $this->following[] = $user;
     
         return $this;
     }
-    
+
     /**
-     * Get following
-     *
-     * @return User
+     * @return User[]|ArrayCollection
      */
     public function getFollowing()
     {
@@ -428,11 +422,9 @@ class User extends BaseUser
     
         return $this;
     }
-    
+
     /**
-     * Get followers
-     *
-     * @return User
+     * @return User[]|ArrayCollection
      */
     public function getFollowers()
     {
@@ -698,7 +690,7 @@ class User extends BaseUser
     }
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $reviewvotes;
 
@@ -763,7 +755,7 @@ class User extends BaseUser
     /**
      * Get reviewvotes
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getReviewvotes()
     {
@@ -771,7 +763,7 @@ class User extends BaseUser
     }
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $reviews;
 
@@ -802,7 +794,7 @@ class User extends BaseUser
     /**
      * Get reviews
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getReviews()
     {
@@ -813,12 +805,6 @@ class User extends BaseUser
      */
     protected $id;
 
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $events;
-    
     /**
      * Set share_decks
      *

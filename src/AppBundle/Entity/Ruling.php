@@ -2,10 +2,12 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\TimestampableInterface;
+
 /**
  * @author Alsciende <alsciende@icloud.com>
  */
-class Ruling
+class Ruling implements TimestampableInterface
 {
     /**
      * @var integer

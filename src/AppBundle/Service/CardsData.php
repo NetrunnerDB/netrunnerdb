@@ -2,6 +2,9 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Card;
+use AppBundle\Entity\Pack;
+use AppBundle\Entity\Review;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Gedmo\Translatable\TranslatableListener;
@@ -41,21 +44,6 @@ class CardsData
         $this->entityManager = $entityManager;
         $this->request_stack = $request_stack;
         $this->router = $router;
-    }
-
-    private function backwardCompatibilitySymbols($text)
-    {
-        $map = array(
-            '[subroutine]' => '[Subroutine]',
-            '[credit]' => '[Credits]',
-            '[trash]' => '[Trash]',
-            '[click]' => '[Click]',
-            '[recurring-credit]' => '[Recurring Credits]',
-            '[mu]' => '[Memory Unit]',
-            '[link]' => '[Link]'
-        );
-
-        return str_replace(array_keys($map), array_values($map), $text);
     }
 
     /**
@@ -125,7 +113,7 @@ class CardsData
                     "known" => intval($real),
                     "total" => $max,
                     "url" => $this->router->generate('cards_list', array('pack_code' => $pack->getCode()), UrlGeneratorInterface::ABSOLUTE_URL),
-                    "search" => "e:" . $pack->getCode()
+                    "search" => "e:" . $pack->getCode(),
                 );
             }
             if ($cycle->getSize() === 1) {
@@ -566,7 +554,7 @@ class CardsData
      * @param $card
      * @return array
      */
-    public function getCardInfo($card)
+    public function getCardInfo(Card $card)
     {
         static $cache = array();
 
@@ -763,7 +751,7 @@ class CardsData
         ));
     }
 
-    public function get_mwl_info($card)
+    public function get_mwl_info(Card $card)
     {
         $response = array();
         $card_code = $card->getCode();
@@ -817,8 +805,9 @@ class CardsData
         return $response;
     }
 
-    public function last_pack_for_review($packs, $review)
+    public function last_pack_for_review($packs, Review $review)
     {
+        /** @var Pack $pack */
         foreach (array_reverse($packs) as $pack) {
             if ($pack->getDateRelease() instanceof \DateTime
                 && $pack->getDateRelease() < $review->getDatecreation()) {

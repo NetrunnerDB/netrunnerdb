@@ -2,10 +2,11 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Comment;
+use AppBundle\Entity\Decklist;
+use AppBundle\Entity\Review;
+use AppBundle\Entity\Reviewcomment;
 use AppBundle\Entity\User;
-use DateInterval;
-use DateTime;
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -27,8 +28,8 @@ class ActivityHelper
         $last_activity_check = $user->getLastActivityCheck();
 
         // defining date limit
-        $dateinf = new DateTime();
-        $dateinf->sub(new DateInterval("P${nb_days}D"));
+        $dateinf = new \DateTime();
+        $dateinf->sub(new \DateInterval("P${nb_days}D"));
 
         // DECKLIST_PUBLISH
         $qb = $this->entityManager->createQueryBuilder();
@@ -44,12 +45,13 @@ class ActivityHelper
         $qb->setMaxResults($max_items);
 
         $query = $qb->getQuery();
+        /** @var Decklist $decklist */
         foreach ($query->getResult() as $decklist) {
             $items[] = [
                 'type' => 'DECKLIST_PUBLISH',
                 'date' => $decklist->getDateCreation(),
                 'decklist' => $decklist,
-                'unchecked' => $last_activity_check < $decklist->getDateCreation()
+                'unchecked' => $last_activity_check < $decklist->getDateCreation(),
             ];
         }
 
@@ -67,12 +69,13 @@ class ActivityHelper
         $qb->setMaxResults($max_items);
 
         $query = $qb->getQuery();
+        /** @var Comment $comment */
         foreach ($query->getResult() as $comment) {
             $items[] = [
                 'type' => 'DECKLIST_COMMENT',
                 'date' => $comment->getDateCreation(),
                 'comment' => $comment,
-                'unchecked' => $last_activity_check < $comment->getDateCreation()
+                'unchecked' => $last_activity_check < $comment->getDateCreation(),
             ];
         }
 
@@ -90,6 +93,7 @@ class ActivityHelper
         $qb->setMaxResults($max_items);
 
         $query = $qb->getQuery();
+        /** @var Review $review */
         foreach ($query->getResult() as $review) {
             $items[] = [
                 'type' => 'REVIEW_PUBLISH',
@@ -113,6 +117,7 @@ class ActivityHelper
         $qb->setMaxResults($max_items);
 
         $query = $qb->getQuery();
+        /** @var Reviewcomment $reviewcomment */
         foreach ($query->getResult() as $reviewcomment) {
             $items[] = [
                 'type' => 'REVIEW_COMMENT',
@@ -144,8 +149,10 @@ class ActivityHelper
 
         $items_by_day = [];
         foreach ($items as $item) {
-            $day = $item['date']->format('F j, Y');
-            $isoday = $item['date']->format('Y-m-d');
+            /** @var \DateTime $date */
+            $date = $item['date'];
+            $day = $date->format('F j, Y');
+            $isoday = $date->format('Y-m-d');
             if (!key_exists($isoday, $items_by_day)) {
                 $items_by_day[$isoday] = ['day' => $day, 'items' => []];
             }

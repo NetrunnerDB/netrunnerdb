@@ -2,6 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Card;
+use AppBundle\Entity\Pack;
+use AppBundle\Entity\Type;
 use AppBundle\Service\CardsData;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -10,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SearchController extends Controller
 {
-    public function formAction(Request $request)
+    public function formAction()
     {
         $response = new Response();
         $response->setPublic();
@@ -46,7 +49,7 @@ class SearchController extends Controller
         ], [
                 "name" => "ASC"
         ]);
-        $types = array_map(function ($type) {
+        $types = array_map(function (Type $type) {
             return $type->getName();
         }, $list_types);
         
@@ -90,7 +93,7 @@ class SearchController extends Controller
     public function zoomAction($card_code, Request $request)
     {
         $card = $this->getDoctrine()->getRepository('AppBundle:Card')->findOneBy(["code" => $card_code]);
-        if (!$card) {
+        if (!$card instanceof Card) {
             throw $this->createNotFoundException('Sorry, this card is not in the database (yet?)');
         }
         $meta = $card->getTitle().", a ".$card->getFaction()->getName()." ".$card->getType()->getName()." card for Android:Netrunner from the set ".$card->getPack()->getName()." published by Fantasy Flight Games.";
@@ -112,7 +115,7 @@ class SearchController extends Controller
     public function listAction($pack_code, $view, $sort, $page, Request $request)
     {
         $pack = $this->getDoctrine()->getRepository('AppBundle:Pack')->findOneBy(["code" => $pack_code]);
-        if (!$pack) {
+        if (!$pack instanceof Pack) {
             throw $this->createNotFoundException('This pack does not exist');
         }
         $meta = $pack->getName().", a set of cards for Android:Netrunner"
@@ -323,13 +326,14 @@ class SearchController extends Controller
             $nb_per_page = $pagesizes[$view];
             $first = $nb_per_page * ($page - 1);
             if ($first > count($rows)) {
-                $page = 1;
                 $first = 0;
             }
             $last = $first + $nb_per_page;
-            
+
+            $card = null;
             // data à passer à la view
             for ($rowindex = $first; $rowindex < $last && $rowindex < count($rows); $rowindex++) {
+                /** @var Card $card */
                 $card = $rows[$rowindex];
                 $pack = $card->getPack();
                 $cardinfo = $this->get(CardsData::class)->getCardInfo($card);
@@ -354,9 +358,9 @@ class SearchController extends Controller
             $first += 1;
 
             // si on a des cartes on affiche une bande de navigation/pagination
-            if (count($rows)) {
+            if (count($rows) && $card instanceof Card) {
                 if (count($rows) == 1) {
-                    $pagination = $this->setnavigation($card, $q, $view, $sort, $locale);
+                    $pagination = $this->setnavigation($card, $locale);
                 } else {
                     $pagination = $this->pagination($nb_per_page, count($rows), $first, $q, $view, $sort, $locale);
                 }
@@ -413,7 +417,7 @@ class SearchController extends Controller
         ], $response);
     }
 
-    public function setnavigation($card, $q, $view, $sort, $locale)
+    public function setnavigation(Card $card, $locale)
     {
         $em = $this->getDoctrine();
         $prev = $em->getRepository('AppBundle:Card')->findOneBy(array("pack" => $card->getPack(), "position" => $card->getPosition()-1));

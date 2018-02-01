@@ -2,12 +2,14 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Card;
 use AppBundle\Service\ActivityHelper;
 use AppBundle\Service\DecklistManager;
 use AppBundle\Service\Judge;
 use AppBundle\Service\ModerationHelper;
 use AppBundle\Service\RotationService;
 use AppBundle\Service\Texts;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -193,7 +195,7 @@ class SocialController extends Controller
     /**
      * displays the content of a decklist along with comments, siblings, similar, etc.
      */
-    public function viewAction($decklist_id, $decklist_name)
+    public function viewAction($decklist_id)
     {
         $response = new Response();
         $response->setPublic();
@@ -481,7 +483,7 @@ class SocialController extends Controller
                 ->find($decklist_id);
 
         $comment_text = trim($request->get('comment'));
-        if ($decklist && !empty($comment_text)) {
+        if ($decklist instanceof Decklist && !empty($comment_text)) {
             $comment_text = preg_replace(
                     '%(?<!\()\b(?:(?:https?|ftp)://)(?:((?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?)(?:[^\s]*)?%iu',
                 '[$1]($0)',
@@ -573,7 +575,7 @@ class SocialController extends Controller
         $em = $this->get('doctrine')->getManager();
 
         $comment = $em->getRepository('AppBundle:Comment')->find($comment_id);
-        if (!$comment) {
+        if (!$comment instanceof Comment) {
             throw $this->createNotFoundException();
         }
 
@@ -602,6 +604,7 @@ class SocialController extends Controller
 
         $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
 
+        /** @var Decklist $decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
 
         if ($decklist->getUser()->getId() != $user->getId()) {
@@ -679,7 +682,9 @@ class SocialController extends Controller
                         }
                         $inf .= "•";
                     }
-                    $lines[] = $slot['qty'] . "x " . $slot['card']->getTitle() . " (" . $slot['card']->getPack()->getName() . ") " . $inf;
+                    /** @var Card $card */
+                    $card = $slot['card'];
+                    $lines[] = $slot['qty'] . "x " . $card->getTitle() . " (" . $card->getPack()->getName() . ") " . $inf;
                 }
             }
         }
@@ -745,7 +750,7 @@ class SocialController extends Controller
     /**
      * does the "downloadable file" part of the export
      */
-    public function octgnexport($filename, $identity, $rd, $description, $response)
+    public function octgnexport($filename, $identity, $rd, $description, Response $response)
     {
         $content = $this->renderView('/octgn.xml.twig', array(
             "identity" => $identity,
@@ -840,6 +845,7 @@ class SocialController extends Controller
             throw $this->createAccessDeniedException("No user.");
         }
 
+        /** @var Decklist $decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist || $decklist->getUser()->getId() != $user->getId()) {
             throw $this->createAccessDeniedException("No decklist or not authorized to delete decklist.");
@@ -873,7 +879,7 @@ class SocialController extends Controller
     /**
      * displays details about a user and the list of decklists he published
      */
-    public function profileAction($user_id, $user_name, $page)
+    public function profileAction($user_id)
     {
         $response = new Response();
         $response->setPublic();
@@ -910,7 +916,7 @@ class SocialController extends Controller
         /* who is followed */
         $following = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->find($user_id);
 
-        if (!$follower) {
+        if (!$follower instanceof User) {
             throw $this->createAccessDeniedException("No user.");
         }
 
@@ -937,6 +943,7 @@ class SocialController extends Controller
     public function unfollowAction($user_id, Request $request)
     {
         /* who is following */
+        /** @var User $follower */
         $follower = $this->getUser();
         /* who is followed */
         $following = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->find($user_id);
@@ -965,7 +972,7 @@ class SocialController extends Controller
         )));
     }
 
-    public function usercommentsAction($page, Request $request)
+    public function usercommentsAction($page, Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPrivate();
@@ -979,8 +986,7 @@ class SocialController extends Controller
         }
         $start = ($page - 1) * $limit;
 
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
 
         $comments = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -1040,7 +1046,7 @@ class SocialController extends Controller
                         ), $response);
     }
 
-    public function commentsAction($page, Request $request)
+    public function commentsAction($page, Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -1052,8 +1058,7 @@ class SocialController extends Controller
         }
         $start = ($page - 1) * $limit;
 
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
 
         $comments = $dbh->executeQuery(
                         "SELECT SQL_CALC_FOUND_ROWS
@@ -1111,14 +1116,13 @@ class SocialController extends Controller
                         ), $response);
     }
 
-    public function donatorsAction()
+    public function donatorsAction(EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
 
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
 
         $users = $dbh->executeQuery("SELECT * FROM user WHERE donation>0 ORDER BY donation DESC, username", array())->fetchAll(\PDO::FETCH_ASSOC);
 

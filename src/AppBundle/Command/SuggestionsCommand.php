@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -10,6 +11,15 @@ use AppBundle\Entity\Side;
 
 class SuggestionsCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(string $name = null, EntityManagerInterface $entityManager)
+    {
+        parent::__construct($name);
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -26,11 +36,11 @@ class SuggestionsCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         ini_set('memory_limit', '1G');
-        $this->getContainer()->get('doctrine')->getConnection()->getConfiguration()->setSQLLogger(null);
+        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         
         $webdir = $this->getContainer()->get('kernel')->getRootDir() . "/../web";
         $side_code = $input->getArgument('side');
-        $side = $this->getContainer()->get('doctrine')->getManager()->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
+        $side = $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
         if (!$side) {
             throw new \Exception("Side not found [$side_code]");
         }
@@ -54,8 +64,7 @@ class SuggestionsCommand extends ContainerAwareCommand
     
     private function fillMatrix(&$matrix, $cardIndexById, $side_id)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->getContainer()->get('doctrine')->getConnection();
+        $dbh = $this->entityManager->getConnection();
         
         // a numeric array of all the decklists
         $decklists = $dbh->executeQuery(
@@ -118,8 +127,7 @@ class SuggestionsCommand extends ContainerAwareCommand
     
     private function getCardsByIndex($side_id)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->getContainer()->get('doctrine')->getConnection();
+        $dbh = $this->entityManager->getConnection();
         
         return $dbh->executeQuery(
                 "SELECT

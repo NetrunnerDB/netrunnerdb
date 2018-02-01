@@ -19,7 +19,7 @@ class DecklistsController extends Controller
     /**
      * displays the lists of decklists
      */
-    public function listAction($type, $code = null, $page = 1, Request $request)
+    public function listAction($type, $page = 1, Request $request)
     {
         $response = new Response();
         $response->setPublic();
@@ -31,7 +31,6 @@ class DecklistsController extends Controller
         }
         $start = ($page - 1) * $limit;
 
-        $pagetitle = "Decklists";
         $header = '';
                   
         $securityContext = $this->get('security.authorization_checker');
@@ -267,8 +266,6 @@ class DecklistsController extends Controller
             $packs = $dbh->executeQuery("select id from pack")->fetchAll(\PDO::FETCH_COLUMN);
         }
 
-        $locale = $request->query->get('_locale') ?: $request->getLocale();
-
         $categories = array();
         $on = 0;
         $off = 0;
@@ -297,7 +294,7 @@ class DecklistsController extends Controller
                     } else {
                         $off++;
                     }
-                    $category['packs'][] = array("id" => $pack->getId(), "label" => $pack->getName($locale), "checked" => $checked, "future" => $pack->getDateRelease() === null);
+                    $category['packs'][] = array("id" => $pack->getId(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === null);
                 }
                 $categories[] = $category;
             }

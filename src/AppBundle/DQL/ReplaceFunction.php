@@ -3,6 +3,7 @@
 namespace AppBundle\DQL;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
+use Doctrine\ORM\Query\AST\Node;
 use Doctrine\ORM\Query\Lexer;
 use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
@@ -17,8 +18,13 @@ use Doctrine\ORM\Query\SqlWalker;
  */
 class ReplaceFunction extends FunctionNode
 {
+    /** @var Node */
     public $stringPrimary;
+
+    /** @var Node */
     public $stringSecondary;
+
+    /** @var Node */
     public $stringThird;
 
     /**

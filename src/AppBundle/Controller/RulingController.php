@@ -43,7 +43,7 @@ class RulingController extends Controller
 
         $ruling = $this->getDoctrine()->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
 
-        if (!$ruling) {
+        if (!$ruling instanceof Ruling) {
             throw $this->createNotFoundException();
         }
 
@@ -63,7 +63,7 @@ class RulingController extends Controller
 
         $ruling = $this->getDoctrine()->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
 
-        if (!$ruling) {
+        if (!$ruling instanceof Ruling) {
             throw $this->createNotFoundException();
         }
 

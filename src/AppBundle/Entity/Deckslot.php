@@ -20,12 +20,12 @@ class Deckslot implements SlotInterface
     private $quantity;
 
     /**
-     * @var \AppBundle\Entity\Deck
+     * @var Deck
      */
     private $deck;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $card;
 
@@ -101,7 +101,7 @@ class Deckslot implements SlotInterface
     /**
      * Get card
      *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getCard()
     {

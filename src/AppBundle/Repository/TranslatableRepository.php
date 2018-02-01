@@ -66,7 +66,7 @@ class TranslatableRepository extends EntityRepository
      * @param QueryBuilder $qb     A Doctrine query builder instance
      * @param string       $locale A locale name
      *
-     * @return QueryBuilder
+     * @return array
      */
     public function getArrayResult(QueryBuilder $qb, $locale = null)
     {
@@ -93,7 +93,7 @@ class TranslatableRepository extends EntityRepository
      * @param QueryBuilder $qb     A Doctrine query builder instance
      * @param string       $locale A locale name
      *
-     * @return QueryBuilder
+     * @return array
      */
     public function getScalarResult(QueryBuilder $qb, $locale = null)
     {

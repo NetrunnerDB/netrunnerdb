@@ -32,7 +32,7 @@ abstract class AbstractOauthController extends Controller
     {
         $tokenManager = $this->container->get('fos_oauth_server.access_token_manager.default');
         $token = $this->container->get('security.token_storage')->getToken();
-        $accessToken = $tokenManager->findTokenByToken($token->getToken());
+        $accessToken = $tokenManager->findTokenBy(['user' => $token->getUser()]);
 
         return $accessToken->getClient();
     }
