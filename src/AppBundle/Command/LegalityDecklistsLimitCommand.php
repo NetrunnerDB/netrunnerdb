@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,6 +15,15 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
  */
 class LegalityDecklistsLimitCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -24,9 +34,6 @@ class LegalityDecklistsLimitCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /* @var $entityManager \Doctrine\ORM\EntityManager */
-        $entityManager = $this->getContainer()->get('doctrine')->getManager();
-
         $sql = "UPDATE decklist d SET d.is_legal=0 WHERE d.is_legal=1"
                 . " AND EXISTS(SELECT *"
                 . " FROM decklistslot s"
@@ -34,7 +41,7 @@ class LegalityDecklistsLimitCommand extends ContainerAwareCommand
                 . " WHERE s.quantity>c.deck_limit"
                 . " AND d.id=s.decklist_id)";
         
-        $entityManager->getConnection()->executeQuery($sql);
+        $this->entityManager->getConnection()->executeQuery($sql);
 
         $output->writeln("<info>Done</info>");
     }

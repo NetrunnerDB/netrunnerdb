@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Card;
+use AppBundle\Entity\Deckslot;
 use AppBundle\Service\ActivityHelper;
 use AppBundle\Service\DecklistManager;
 use AppBundle\Service\Judge;
@@ -50,6 +51,7 @@ class SocialController extends Controller
                 'allowed' => false,
                 'message' => "You cannot publish this deck yet, because it has unreleased cards.",
             ]);
+
             return $response;
         }
         $judge = $this->get(Judge::class);
@@ -60,26 +62,28 @@ class SocialController extends Controller
                 'allowed' => false,
                 'message' => $judge->problem($analyse),
             ]);
+
             return $response;
         }
 
         $new_content = json_encode($deck->getContent());
         $new_signature = md5($new_content);
         $old_decklists = $this->getDoctrine()
-                ->getRepository('AppBundle:Decklist')
-                ->findBy(array(
-            'signature' => $new_signature
-        ));
+                              ->getRepository('AppBundle:Decklist')
+                              ->findBy([
+                                  'signature' => $new_signature,
+                              ]);
         foreach ($old_decklists as $decklist) {
             if (json_encode($decklist->getContent()) == $new_content) {
-                $url = $this->generateUrl('decklist_detail', array(
-                    'decklist_id' => $decklist->getId(),
-                    'decklist_name' => $decklist->getPrettyName()
-                ));
+                $url = $this->generateUrl('decklist_detail', [
+                    'decklist_id'   => $decklist->getId(),
+                    'decklist_name' => $decklist->getPrettyName(),
+                ]);
                 $response->setData([
                     'allowed' => true,
                     'message' => 'This deck is <a href="' . $url . '">already published</a>. Are you sure you want to publish a duplicate?',
                 ]);
+
                 return $response;
             }
         }
@@ -88,6 +92,7 @@ class SocialController extends Controller
             'allowed' => true,
             'message' => '',
         ]);
+
         return $response;
     }
 
@@ -100,12 +105,12 @@ class SocialController extends Controller
         $em = $this->get('doctrine')->getManager();
 
         $manager = $this->get(DecklistManager::class);
-        
+
         $deck_id = filter_var($request->request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         /* @var $deck \AppBundle\Entity\Deck */
         $deck = $this->getDoctrine()
-                ->getRepository('AppBundle:Deck')
-                ->find($deck_id);
+                     ->getRepository('AppBundle:Deck')
+                     ->find($deck_id);
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException("Unauthorized user.");
         }
@@ -144,7 +149,7 @@ class SocialController extends Controller
         $decklist->setSignature($new_signature);
         $decklist->setIdentity($deck->getIdentity());
         $decklist->setFaction($deck->getIdentity()
-                        ->getFaction());
+                                   ->getFaction());
         $decklist->setSide($deck->getSide());
         $decklist->setLastPack($deck->getLastPack());
         $decklist->setNbvotes(0);
@@ -186,10 +191,15 @@ class SocialController extends Controller
         $decklist->setIsLegal($manager->isDecklistLegal($decklist));
         $em->flush();
 
-        return $this->redirect($this->generateUrl('decklist_detail', array(
-                            'decklist_id' => $decklist->getId(),
-                            'decklist_name' => $decklist->getPrettyName()
-        )));
+        return $this->redirect(
+            $this->generateUrl(
+                'decklist_detail',
+                [
+                    'decklist_id'   => $decklist->getId(),
+                    'decklist_name' => $decklist->getPrettyname(),
+                ]
+            )
+        );
     }
 
     /**
@@ -203,7 +213,7 @@ class SocialController extends Controller
 
         $dbh = $this->get('doctrine')->getConnection();
         $rows = $dbh->executeQuery(
-                        "SELECT
+            "SELECT
 				d.id,
 				d.date_update,
 				d.name,
@@ -228,17 +238,17 @@ class SocialController extends Controller
                                 d.moderation_status,
                                 d.is_legal,
                                 d.rotation_id
-				from decklist d
-				join user u on d.user_id=u.id
-				join card c on d.identity_id=c.id
-				join faction f on d.faction_id=f.id
-                                left join tournament t on d.tournament_id=t.id
-				where d.id=?
-                                and d.moderation_status in (0,1,2)
+				FROM decklist d
+				JOIN user u ON d.user_id=u.id
+				JOIN card c ON d.identity_id=c.id
+				JOIN faction f ON d.faction_id=f.id
+                                LEFT JOIN tournament t ON d.tournament_id=t.id
+				WHERE d.id=?
+                                AND d.moderation_status IN (0,1,2)
 				",
-            array(
-                    $decklist_id
-                )
+            [
+                $decklist_id,
+            ]
         )->fetchAll();
 
         if (empty($rows)) {
@@ -248,7 +258,7 @@ class SocialController extends Controller
         $decklist = $rows[0];
 
         $comments = $dbh->executeQuery(
-                        "SELECT
+            "SELECT
 				c.id,
 				c.date_creation,
 				c.user_id,
@@ -257,94 +267,94 @@ class SocialController extends Controller
                 u.donation,
 				c.text,
                 c.hidden
-				from comment c
-				join user u on c.user_id=u.id
-				where c.decklist_id=?
-				order by date_creation asc",
-            array(
-                    $decklist_id
-                )
+				FROM comment c
+				JOIN user u ON c.user_id=u.id
+				WHERE c.decklist_id=?
+				ORDER BY date_creation ASC",
+            [
+                $decklist_id,
+            ]
         )->fetchAll();
 
-        $commenters = array_values(array_unique(array_merge(array($decklist['username']), array_map(function ($item) {
+        $commenters = array_values(array_unique(array_merge([$decklist['username']], array_map(function ($item) {
             return $item['author'];
         }, $comments))));
 
         $cards = $dbh->executeQuery("SELECT
 				c.code card_code,
 				s.quantity qty
-				from decklistslot s
-				join card c on s.card_id=c.id
-				where s.decklist_id=?
-				order by c.code asc", array(
-                    $decklist_id
-                ))->fetchAll();
+				FROM decklistslot s
+				JOIN card c ON s.card_id=c.id
+				WHERE s.decklist_id=?
+				ORDER BY c.code ASC", [
+            $decklist_id,
+        ])->fetchAll();
 
 
         $decklist['comments'] = $comments;
         $decklist['cards'] = $cards;
 
         $precedent_decklists = $dbh->executeQuery(
-                        "SELECT
+            "SELECT
 					d.id,
 					d.name,
 					d.prettyname,
 					d.nbvotes,
 					d.nbfavorites,
 					d.nbcomments
-					from decklist d
-					where d.id=?
-                                        and d.moderation_status in (0,1)
-					order by d.date_creation asc",
-            array(
-                    $decklist['precedent']
-                )
+					FROM decklist d
+					WHERE d.id=?
+                                        AND d.moderation_status IN (0,1)
+					ORDER BY d.date_creation ASC",
+            [
+                $decklist['precedent'],
+            ]
         )->fetchAll();
 
         $successor_decklists = $dbh->executeQuery(
-                        "SELECT
+            "SELECT
 					d.id,
 					d.name,
 					d.prettyname,
 					d.nbvotes,
 					d.nbfavorites,
 					d.nbcomments
-					from decklist d
-					where d.precedent_decklist_id=?
-                                        and d.moderation_status in (0,1)
-					order by d.date_creation asc",
-            array(
-                    $decklist_id
-                )
+					FROM decklist d
+					WHERE d.precedent_decklist_id=?
+                                        AND d.moderation_status IN (0,1)
+					ORDER BY d.date_creation ASC",
+            [
+                $decklist_id,
+            ]
         )->fetchAll();
 
         $duplicate = $dbh->executeQuery(
-                        "SELECT
+            "SELECT
 					d.id,
 					d.name,
 					d.prettyname
-					from decklist d
-					where d.signature=?
-					and d.date_creation<?
-                                        and d.moderation_status in (0,1)
-					order by d.date_creation asc
-					limit 0,1",
-            array(
-                    $decklist['signature'],
-                    $decklist['date_creation']
-                )
+					FROM decklist d
+					WHERE d.signature=?
+					AND d.date_creation<?
+                                        AND d.moderation_status IN (0,1)
+					ORDER BY d.date_creation ASC
+					LIMIT 0,1",
+            [
+                $decklist['signature'],
+                $decklist['date_creation'],
+            ]
         )->fetch();
 
         $tournaments = $dbh->executeQuery(
-                        "SELECT
+            "SELECT
 					t.id,
 					t.description
                 FROM tournament t
-                ORDER BY t.description desc"
+                ORDER BY t.description DESC"
         )->fetchAll();
 
         $legalities = $dbh->executeQuery(
-                        "SELECT
+            "SELECT
         			m.code,
         			m.name,
         			l.is_legal
@@ -352,11 +362,11 @@ class SocialController extends Controller
         		LEFT JOIN mwl m ON l.mwl_id=m.id
         		WHERE l.decklist_id=?
         		ORDER BY m.date_start DESC",
-            array($decklist_id)
+            [$decklist_id]
         )->fetchAll();
 
         $mwl = $dbh->executeQuery(
-                        "SELECT
+            "SELECT
                 m.code
             FROM mwl m
             WHERE m.active=1"
@@ -370,17 +380,17 @@ class SocialController extends Controller
             : null;
 
         $claims = $dbh->executeQuery("SELECT "
-                . "c.url, "
-                . "c.rank, "
-                . "c.name, "
-                . "c.participants, "
-                . "u.id user_id, "
-                . "u.username "
-                . "FROM Claim c "
-                . "JOIN decklist d ON d.id=c.decklist_id "
-                . "JOIN user u ON u.id=c.user_id "
-                . "WHERE d.id=?", array($decklist_id))->fetchAll();
-        
+            . "c.url, "
+            . "c.rank, "
+            . "c.name, "
+            . "c.participants, "
+            . "u.id user_id, "
+            . "u.username "
+            . "FROM Claim c "
+            . "JOIN decklist d ON d.id=c.decklist_id "
+            . "JOIN user u ON u.id=c.user_id "
+            . "WHERE d.id=?", [$decklist_id])->fetchAll();
+
         $packs = $dbh->executeQuery("SELECT DISTINCT
 				p.code code,
 				p.name name,
@@ -388,27 +398,27 @@ class SocialController extends Controller
 				y.code cycle_code,
 				y.name cycle_name,
 				y.position cycle_position
-				from pack p
-				join cycle y on p.cycle_id=y.id
-        		join card c on c.pack_id=p.id
-        		join decklistslot s on s.card_id=c.id
-				where s.decklist_id=?
-				order by y.position asc, p.position asc", array($decklist_id))->fetchAll();
+				FROM pack p
+				JOIN cycle y ON p.cycle_id=y.id
+        		JOIN card c ON c.pack_id=p.id
+        		JOIN decklistslot s ON s.card_id=c.id
+				WHERE s.decklist_id=?
+				ORDER BY y.position ASC, p.position ASC", [$decklist_id])->fetchAll();
 
-        return $this->render('/Decklist/decklist.html.twig', array(
-                    'pagetitle' => $decklist['name'],
-                    'decklist' => $decklist,
-                    'commenters' => $commenters,
-                    'precedent_decklists' => $precedent_decklists,
-                    'successor_decklists' => $successor_decklists,
-                    'duplicate' => $duplicate,
-                    'tournaments' => $tournaments,
-                    'legalities' => $legalities,
-                    'claims' => $claims,
-                    'mwl' => $mwl,
-                    'rotation' => $rotation,
-                    'packs' => $packs,
-                        ), $response);
+        return $this->render('/Decklist/decklist.html.twig', [
+            'pagetitle'           => $decklist['name'],
+            'decklist'            => $decklist,
+            'commenters'          => $commenters,
+            'precedent_decklists' => $precedent_decklists,
+            'successor_decklists' => $successor_decklists,
+            'duplicate'           => $duplicate,
+            'tournaments'         => $tournaments,
+            'legalities'          => $legalities,
+            'claims'              => $claims,
+            'mwl'                 => $mwl,
+            'rotation'            => $rotation,
+            'packs'               => $packs,
+        ], $response);
     }
 
     /**
@@ -437,14 +447,14 @@ class SocialController extends Controller
         $dbh = $this->get('doctrine')->getConnection();
         $is_favorite = $dbh->executeQuery("SELECT
 				count(*)
-				from decklist d
-				join favorite f on f.decklist_id=d.id
-				where f.user_id=?
-				and d.id=?", array(
-                            $user->getId(),
-                            $decklist_id
-                        ))
-                        ->fetch(\PDO::FETCH_NUM)[0];
+				FROM decklist d
+				JOIN favorite f ON f.decklist_id=d.id
+				WHERE f.user_id=?
+				AND d.id=?", [
+            $user->getId(),
+            $decklist_id,
+        ])
+                           ->fetch(\PDO::FETCH_NUM)[0];
 
         if ($is_favorite) {
             $decklist->setNbfavorites($decklist->getNbfavorites() - 1);
@@ -460,8 +470,8 @@ class SocialController extends Controller
             }
         }
         $this->get('doctrine')
-                ->getManager()
-                ->flush();
+             ->getManager()
+             ->flush();
 
         return new Response(count($decklist->getFavorites()));
     }
@@ -479,19 +489,19 @@ class SocialController extends Controller
 
         $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
         $decklist = $this->getDoctrine()
-                ->getRepository('AppBundle:Decklist')
-                ->find($decklist_id);
+                         ->getRepository('AppBundle:Decklist')
+                         ->find($decklist_id);
 
         $comment_text = trim($request->get('comment'));
         if ($decklist instanceof Decklist && !empty($comment_text)) {
             $comment_text = preg_replace(
-                    '%(?<!\()\b(?:(?:https?|ftp)://)(?:((?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?)(?:[^\s]*)?%iu',
+                '%(?<!\()\b(?:(?:https?|ftp)://)(?:((?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?)(?:[^\s]*)?%iu',
                 '[$1]($0)',
                 $comment_text
             );
 
-            $mentionned_usernames = array();
-            $matches = array();
+            $mentionned_usernames = [];
+            $matches = [];
             if (preg_match_all('/`@([\w_]+)`/', $comment_text, $matches, PREG_PATTERN_ORDER)) {
                 $mentionned_usernames = array_unique($matches[1]);
             }
@@ -511,7 +521,7 @@ class SocialController extends Controller
             $this->get('doctrine')->getManager()->flush();
 
             // send emails
-            $spool = array();
+            $spool = [];
             if ($decklist->getUser()->getNotifAuthor()) {
                 if (!isset($spool[$decklist->getUser()->getEmail()])) {
                     $spool[$decklist->getUser()->getEmail()] = '/Emails/newcomment_author.html.twig';
@@ -528,7 +538,7 @@ class SocialController extends Controller
             }
             foreach ($mentionned_usernames as $mentionned_username) {
                 /* @var $mentionned_user User */
-                $mentionned_user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(array('username' => $mentionned_username));
+                $mentionned_user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(['username' => $mentionned_username]);
                 if ($mentionned_user && $mentionned_user->getNotifMention()) {
                     if (!isset($spool[$mentionned_user->getEmail()])) {
                         $spool[$mentionned_user->getEmail()] = '/Emails/newcomment_mentionned.html.twig';
@@ -537,27 +547,27 @@ class SocialController extends Controller
             }
             unset($spool[$user->getEmail()]);
 
-            $email_data = array(
-                'username' => $user->getUsername(),
+            $email_data = [
+                'username'      => $user->getUsername(),
                 'decklist_name' => $decklist->getName(),
-                'url' => $this->generateUrl('decklist_detail', array('decklist_id' => $decklist->getId(), 'decklist_name' => $decklist->getPrettyname()), UrlGeneratorInterface::ABSOLUTE_URL) . '#' . $comment->getId(),
-                'comment' => $comment_html,
-                'profile' => $this->generateUrl('user_profile', array(), UrlGeneratorInterface::ABSOLUTE_URL)
-            );
+                'url'           => $this->generateUrl('decklist_detail', ['decklist_id' => $decklist->getId(), 'decklist_name' => $decklist->getPrettyname()], UrlGeneratorInterface::ABSOLUTE_URL) . '#' . $comment->getId(),
+                'comment'       => $comment_html,
+                'profile'       => $this->generateUrl('user_profile', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            ];
             foreach ($spool as $email => $view) {
                 $message = \Swift_Message::newInstance()
-                        ->setSubject("[NetrunnerDB] New comment")
-                        ->setFrom(array("alsciende@netrunnerdb.com" => $user->getUsername()))
-                        ->setTo($email)
-                        ->setBody($this->renderView($view, $email_data), 'text/html');
+                                         ->setSubject("[NetrunnerDB] New comment")
+                                         ->setFrom(["alsciende@netrunnerdb.com" => $user->getUsername()])
+                                         ->setTo($email)
+                                         ->setBody($this->renderView($view, $email_data), 'text/html');
                 $this->get('mailer')->send($message);
             }
         }
 
-        return $this->redirect($this->generateUrl('decklist_detail', array(
-                            'decklist_id' => $decklist_id,
-                            'decklist_name' => $decklist->getPrettyName()
-        )));
+        return $this->redirect($this->generateUrl('decklist_detail', [
+            'decklist_id'   => $decklist_id,
+            'decklist_name' => $decklist->getPrettyName(),
+        ]));
     }
 
     /**
@@ -609,13 +619,13 @@ class SocialController extends Controller
 
         if ($decklist->getUser()->getId() != $user->getId()) {
             $query = $em->getRepository('AppBundle:Decklist')
-                    ->createQueryBuilder('d')
-                    ->innerJoin('d.votes', 'u')
-                    ->where('d.id = :decklist_id')
-                    ->andWhere('u.id = :user_id')
-                    ->setParameter('decklist_id', $decklist_id)
-                    ->setParameter('user_id', $user->getId())
-                    ->getQuery();
+                        ->createQueryBuilder('d')
+                        ->innerJoin('d.votes', 'u')
+                        ->where('d.id = :decklist_id')
+                        ->andWhere('u.id = :user_id')
+                        ->setParameter('decklist_id', $decklist_id)
+                        ->setParameter('user_id', $user->getId())
+                        ->getQuery();
 
             $result = $query->getResult();
             if (empty($result)) {
@@ -626,6 +636,7 @@ class SocialController extends Controller
                 $this->get('doctrine')->getManager()->flush();
             }
         }
+
         return new Response(count($decklist->getVotes()));
     }
 
@@ -650,8 +661,8 @@ class SocialController extends Controller
         $judge = $this->get(Judge::class);
         $classement = $judge->classe($decklist->getSlots(), $decklist->getIdentity());
 
-        $lines = array();
-        $types = array(
+        $lines = [];
+        $types = [
             "Event",
             "Hardware",
             "Resource",
@@ -664,19 +675,19 @@ class SocialController extends Controller
             "Barrier",
             "Code Gate",
             "Sentry",
-            "ICE"
-        );
+            "ICE",
+        ];
 
         $lines[] = $decklist->getIdentity()->getTitle() . " (" . $decklist->getIdentity()
-                        ->getPack()
-                        ->getName() . ")";
+                                                                          ->getPack()
+                                                                          ->getName() . ")";
         foreach ($types as $type) {
             if (isset($classement[$type]) && $classement[$type]['qty']) {
                 $lines[] = "";
                 $lines[] = $type . " (" . $classement[$type]['qty'] . ")";
                 foreach ($classement[$type]['slots'] as $slot) {
                     $inf = "";
-                    for ($i = 0; $i < $slot['influence']; $i ++) {
+                    for ($i = 0; $i < $slot['influence']; $i++) {
                         if ($i % 5 == 0) {
                             $inf .= " ";
                         }
@@ -698,6 +709,7 @@ class SocialController extends Controller
         $response->headers->set('Content-Disposition', 'attachment;filename=' . $name . ".txt");
 
         $response->setContent($content);
+
         return $response;
     }
 
@@ -719,23 +731,23 @@ class SocialController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $rd = array();
+        $rd = [];
         $identity = null;
-        /** @var $slot Decklistslot */
+        /** @var Deckslot $slot */
         foreach ($decklist->getSlots() as $slot) {
             if ($slot->getCard()
-                            ->getType()
-                            ->getName() == "Identity") {
-                $identity = array(
+                     ->getType()
+                     ->getName() == "Identity") {
+                $identity = [
                     "index" => $slot->getCard()->getCode(),
-                    "name" => $slot->getCard()->getTitle()
-                );
+                    "name"  => $slot->getCard()->getTitle(),
+                ];
             } else {
-                $rd[] = array(
+                $rd[] = [
                     "index" => $slot->getCard()->getCode(),
-                    "name" => $slot->getCard()->getTitle(),
-                    "qty" => $slot->getQuantity()
-                );
+                    "name"  => $slot->getCard()->getTitle(),
+                    "qty"   => $slot->getQuantity(),
+                ];
             }
         }
         $name = mb_strtolower($decklist->getName());
@@ -744,6 +756,7 @@ class SocialController extends Controller
         if (empty($identity)) {
             return new Response('no identity found');
         }
+
         return $this->octgnexport("$name.o8d", $identity, $rd, $decklist->getRawdescription(), $response);
     }
 
@@ -752,16 +765,17 @@ class SocialController extends Controller
      */
     public function octgnexport($filename, $identity, $rd, $description, Response $response)
     {
-        $content = $this->renderView('/octgn.xml.twig', array(
-            "identity" => $identity,
-            "rd" => $rd,
-            "description" => strip_tags($description)
-        ));
+        $content = $this->renderView('/octgn.xml.twig', [
+            "identity"    => $identity,
+            "rd"          => $rd,
+            "description" => strip_tags($description),
+        ]);
 
         $response->headers->set('Content-Type', 'application/octgn');
         $response->headers->set('Content-Disposition', 'attachment;filename=' . $filename);
 
         $response->setContent($content);
+
         return $response;
     }
 
@@ -795,7 +809,7 @@ class SocialController extends Controller
         $tournament = $em->getRepository('AppBundle:Tournament')->find($tournament_id);
 
         $derived_from = $request->request->get('derived');
-        $matches = array();
+        $matches = [];
         if (preg_match('/^(\d+)$/', $derived_from, $matches)) {
         } elseif (preg_match('/decklist\/(\d+)\//', $derived_from, $matches)) {
             $derived_from = $matches[1];
@@ -819,17 +833,17 @@ class SocialController extends Controller
         $decklist->setDescription($description);
         $decklist->setPrecedent($precedent_decklist);
         $decklist->setTournament($tournament);
-        
+
         if ($decklist->getModerationStatus() === Decklist::MODERATION_TRASHED) {
             $this->get(ModerationHelper::class)->changeStatus($this->getUser(), $decklist, Decklist::MODERATION_RESTORED);
         }
-        
+
         $em->flush();
 
-        return $this->redirect($this->generateUrl('decklist_detail', array(
-                            'decklist_id' => $decklist_id,
-                            'decklist_name' => $decklist->getPrettyName()
-        )));
+        return $this->redirect($this->generateUrl('decklist_detail', [
+            'decklist_id'   => $decklist_id,
+            'decklist_name' => $decklist->getPrettyName(),
+        ]));
     }
 
     /**
@@ -871,9 +885,9 @@ class SocialController extends Controller
         $em->remove($decklist);
         $em->flush();
 
-        return $this->redirect($this->generateUrl('decklists_list', array(
-                            'type' => 'mine'
-        )));
+        return $this->redirect($this->generateUrl('decklists_list', [
+            'type' => 'mine',
+        ]));
     }
 
     /**
@@ -894,19 +908,19 @@ class SocialController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $decklists = $em->getRepository('AppBundle:Decklist')->findBy(array('user' => $user));
+        $decklists = $em->getRepository('AppBundle:Decklist')->findBy(['user' => $user]);
         $nbdecklists = count($decklists);
 
-        $reviews = $em->getRepository('AppBundle:Review')->findBy(array('user' => $user));
+        $reviews = $em->getRepository('AppBundle:Review')->findBy(['user' => $user]);
         $nbreviews = count($reviews);
 
 
-        return $this->render('/Default/public_profile.html.twig', array(
-                    'pagetitle' => $user->getUsername(),
-                    'user' => $user,
-                    'nbdecklists' => $nbdecklists,
-                    'nbreviews' => $nbreviews
-                        ), $response);
+        return $this->render('/Default/public_profile.html.twig', [
+            'pagetitle'   => $user->getUsername(),
+            'user'        => $user,
+            'nbdecklists' => $nbdecklists,
+            'nbreviews'   => $nbreviews,
+        ], $response);
     }
 
     public function followAction($user_id, Request $request)
@@ -933,11 +947,11 @@ class SocialController extends Controller
             $this->getDoctrine()->getManager()->flush();
         }
 
-        return $this->redirect($this->generateUrl('user_profile_view', array(
-                            "_locale" => $request->getLocale(),
-                            "user_id" => $following->getId(),
-                            "user_name" => $following->getUsername()
-        )));
+        return $this->redirect($this->generateUrl('user_profile_view', [
+            "_locale"   => $request->getLocale(),
+            "user_id"   => $following->getId(),
+            "user_name" => $following->getUsername(),
+        ]));
     }
 
     public function unfollowAction($user_id, Request $request)
@@ -965,11 +979,11 @@ class SocialController extends Controller
             $this->getDoctrine()->getManager()->flush();
         }
 
-        return $this->redirect($this->generateUrl('user_profile_view', array(
-                            "_locale" => $request->getLocale(),
-                            "user_id" => $following->getId(),
-                            "user_name" => $following->getUsername()
-        )));
+        return $this->redirect($this->generateUrl('user_profile_view', [
+            "_locale"   => $request->getLocale(),
+            "user_id"   => $following->getId(),
+            "user_name" => $following->getUsername(),
+        ]));
     }
 
     public function usercommentsAction($page, Request $request, EntityManagerInterface $entityManager)
@@ -989,7 +1003,7 @@ class SocialController extends Controller
         $dbh = $entityManager->getConnection();
 
         $comments = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
 				c.id,
 				c.text,
 				c.date_creation,
@@ -1001,11 +1015,11 @@ class SocialController extends Controller
 				where c.user_id=?
 				order by date_creation desc
 				limit $start, $limit",
-            array(
-                    $user->getId()
-                )
+            [
+                $user->getId(),
+            ]
         )
-                ->fetchAll(\PDO::FETCH_ASSOC);
+                        ->fetchAll(\PDO::FETCH_ASSOC);
 
         $maxcount = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
@@ -1019,31 +1033,31 @@ class SocialController extends Controller
 
         $route = $request->get('_route');
 
-        $pages = array();
-        for ($page = 1; $page <= $nbpages; $page ++) {
-            $pages[] = array(
-                "numero" => $page,
-                "url" => $this->generateUrl($route, array(
-                    "page" => $page
-                )),
-                "current" => $page == $currpage
-            );
+        $pages = [];
+        for ($page = 1; $page <= $nbpages; $page++) {
+            $pages[] = [
+                "numero"  => $page,
+                "url"     => $this->generateUrl($route, [
+                    "page" => $page,
+                ]),
+                "current" => $page == $currpage,
+            ];
         }
 
-        return $this->render('/Default/usercomments.html.twig', array(
-                    'user' => $user,
-                    'comments' => $comments,
-                    'url' => $request
-                            ->getRequestUri(),
-                    'route' => $route,
-                    'pages' => $pages,
-                    'prevurl' => $currpage == 1 ? null : $this->generateUrl($route, array(
-                        "page" => $prevpage
-                    )),
-                    'nexturl' => $currpage == $nbpages ? null : $this->generateUrl($route, array(
-                        "page" => $nextpage
-                    ))
-                        ), $response);
+        return $this->render('/Default/usercomments.html.twig', [
+            'user'     => $user,
+            'comments' => $comments,
+            'url'      => $request
+                ->getRequestUri(),
+            'route'    => $route,
+            'pages'    => $pages,
+            'prevurl'  => $currpage == 1 ? null : $this->generateUrl($route, [
+                "page" => $prevpage,
+            ]),
+            'nexturl'  => $currpage == $nbpages ? null : $this->generateUrl($route, [
+                "page" => $nextpage,
+            ]),
+        ], $response);
     }
 
     public function commentsAction($page, Request $request, EntityManagerInterface $entityManager)
@@ -1061,7 +1075,7 @@ class SocialController extends Controller
         $dbh = $entityManager->getConnection();
 
         $comments = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
 				c.id,
 				c.text,
 				c.date_creation,
@@ -1075,7 +1089,7 @@ class SocialController extends Controller
 				join user u on c.user_id=u.id
 				order by date_creation desc
 				limit $start, $limit",
-            array()
+            []
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         $maxcount = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
@@ -1090,30 +1104,30 @@ class SocialController extends Controller
 
         $route = $request->get('_route');
 
-        $pages = array();
-        for ($page = 1; $page <= $nbpages; $page ++) {
-            $pages[] = array(
-                "numero" => $page,
-                "url" => $this->generateUrl($route, array(
-                    "page" => $page
-                )),
-                "current" => $page == $currpage
-            );
+        $pages = [];
+        for ($page = 1; $page <= $nbpages; $page++) {
+            $pages[] = [
+                "numero"  => $page,
+                "url"     => $this->generateUrl($route, [
+                    "page" => $page,
+                ]),
+                "current" => $page == $currpage,
+            ];
         }
 
-        return $this->render('/Default/allcomments.html.twig', array(
-                    'comments' => $comments,
-                    'url' => $request
-                            ->getRequestUri(),
-                    'route' => $route,
-                    'pages' => $pages,
-                    'prevurl' => $currpage == 1 ? null : $this->generateUrl($route, array(
-                        "page" => $prevpage
-                    )),
-                    'nexturl' => $currpage == $nbpages ? null : $this->generateUrl($route, array(
-                        "page" => $nextpage
-                    ))
-                        ), $response);
+        return $this->render('/Default/allcomments.html.twig', [
+            'comments' => $comments,
+            'url'      => $request
+                ->getRequestUri(),
+            'route'    => $route,
+            'pages'    => $pages,
+            'prevurl'  => $currpage == 1 ? null : $this->generateUrl($route, [
+                "page" => $prevpage,
+            ]),
+            'nexturl'  => $currpage == $nbpages ? null : $this->generateUrl($route, [
+                "page" => $nextpage,
+            ]),
+        ], $response);
     }
 
     public function donatorsAction(EntityManagerInterface $entityManager)
@@ -1124,12 +1138,12 @@ class SocialController extends Controller
 
         $dbh = $entityManager->getConnection();
 
-        $users = $dbh->executeQuery("SELECT * FROM user WHERE donation>0 ORDER BY donation DESC, username", array())->fetchAll(\PDO::FETCH_ASSOC);
+        $users = $dbh->executeQuery("SELECT * FROM user WHERE donation>0 ORDER BY donation DESC, username", [])->fetchAll(\PDO::FETCH_ASSOC);
 
-        return $this->render('/Default/donators.html.twig', array(
-                    'pagetitle' => 'The Gracious Donators',
-                    'donators' => $users
-                        ), $response);
+        return $this->render('/Default/donators.html.twig', [
+            'pagetitle' => 'The Gracious Donators',
+            'donators'  => $users,
+        ], $response);
     }
 
     /**
@@ -1140,8 +1154,8 @@ class SocialController extends Controller
      *  - decklist comment
      *  - review publish
      *  - review comment
+     *
      * @param integer $days number of days of activity to display
-     * @param Request $request
      */
     public function activityAction($days)
     {
@@ -1166,11 +1180,11 @@ class SocialController extends Controller
         $this->getUser()->setLastActivityCheck(new \DateTime());
         $em->flush();
 
-        return $this->render('/Activity/activity.html.twig', array(
-                    'pagetitle' => 'Activity',
-                    'items_by_day' => $items_by_day,
-                    'max' => $days
-                        ), $response);
+        return $this->render('/Activity/activity.html.twig', [
+            'pagetitle'    => 'Activity',
+            'items_by_day' => $items_by_day,
+            'max'          => $days,
+        ], $response);
     }
 
     /**

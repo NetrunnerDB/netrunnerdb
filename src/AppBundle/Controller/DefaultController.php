@@ -21,8 +21,8 @@ class DefaultController extends Controller
             $factions[$i]->localizedName = $faction->getName();
         }
 
-        return $this->render('/Default/private_profile.html.twig', array(
-                    'user' => $user, 'factions' => $factions));
+        return $this->render('/Default/private_profile.html.twig', [
+            'user' => $user, 'factions' => $factions]);
     }
 
     public function saveProfileAction(Request $request)
@@ -33,12 +33,12 @@ class DefaultController extends Controller
 
         $username = filter_var($request->get('username'), FILTER_SANITIZE_STRING);
         if ($username !== $user->getUsername()) {
-            $user_existing = $em->getRepository('AppBundle:User')->findOneBy(array('username' => $username));
+            $user_existing = $em->getRepository('AppBundle:User')->findOneBy(['username' => $username]);
 
             if ($user_existing) {
                 $this->get('session')
-                        ->getFlashBag()
-                        ->set('error', "Username $username is already taken.");
+                     ->getFlashBag()
+                     ->set('error', "Username $username is already taken.");
 
                 return $this->redirect($this->generateUrl('user_profile'));
             }
@@ -70,16 +70,16 @@ class DefaultController extends Controller
         $this->get('doctrine')->getManager()->flush();
 
         $this->get('session')
-                ->getFlashBag()
-                ->set('notice', "Successfully saved your profile.");
+             ->getFlashBag()
+             ->set('notice', "Successfully saved your profile.");
 
         return $this->redirect($this->generateUrl('user_profile'));
     }
 
     /**
      * tags an introduction as completed
+     *
      * @param string $introduction
-     * @param Request $request
      */
     public function validateIntroductionAction($introduction)
     {
@@ -93,14 +93,14 @@ class DefaultController extends Controller
             $user->setIntroductions($introductions);
             $this->getDoctrine()->getManager()->flush();
         }
+
         return new JsonResponse([
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
      * resets all introductions to "uncompleted"
-     * @param Request $request
      */
     public function resetIntroductionsAction()
     {
@@ -109,8 +109,9 @@ class DefaultController extends Controller
             $user->setIntroductions(null);
             $this->getDoctrine()->getManager()->flush();
         }
+
         return new JsonResponse([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -120,9 +121,10 @@ class DefaultController extends Controller
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        $page = $this->get(CardsData::class)->replaceSymbols($this->renderView('/Default/rules.html.twig', array("pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game.")));
+        $page = $this->get(CardsData::class)->replaceSymbols($this->renderView('/Default/rules.html.twig', ["pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game."]));
 
         $response->setContent($page);
+
         return $response;
     }
 
@@ -132,8 +134,8 @@ class DefaultController extends Controller
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        return $this->render('/Default/about.html.twig', array(
-                    "pagetitle" => "About",
-                        ), $response);
+        return $this->render('/Default/about.html.twig', [
+            "pagetitle" => "About",
+        ], $response);
     }
 }

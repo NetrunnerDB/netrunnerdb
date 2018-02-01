@@ -15,7 +15,7 @@ class Texts
 
     public function __construct($tempDir)
     {
-        $config = \HTMLPurifier_Config::create(array('Cache.SerializerPath' => $tempDir));
+        $config = \HTMLPurifier_Config::create(['Cache.SerializerPath' => $tempDir]);
         $this->purifier = new \HTMLPurifier($config);
 
         $this->transformer = new Markdown();
@@ -32,9 +32,9 @@ class Texts
 
         $string = preg_replace('/\s+/', ' ', $string);
 
-        while (strlen($token.$string) > 0 && strlen($response.$token) < $max_length) {
-            $response = $response.$token;
-            $matches = array();
+        while (strlen($token . $string) > 0 && strlen($response . $token) < $max_length) {
+            $response = $response . $token;
+            $matches = [];
 
             if (preg_match('/^(<.+?>)(.*)/', $string, $matches)) {
                 $token = $matches[1];

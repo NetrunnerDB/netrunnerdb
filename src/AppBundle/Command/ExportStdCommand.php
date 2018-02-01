@@ -2,6 +2,8 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Pack;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,6 +14,15 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class ExportStdCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -56,8 +67,9 @@ class ExportStdCommand extends ContainerAwareCommand
             }
         }
         
-        $packs = $this->getContainer()->get('doctrine')->getManager()->getRepository('AppBundle:Pack')->findAll();
-        
+        $packs = $this->entityManager->getRepository('AppBundle:Pack')->findAll();
+
+        /** @var Pack $pack */
         foreach ($packs as $pack) {
             $pack_code = $pack->getCode();
             $filepath = "${path}/pack/${pack_code}.json";

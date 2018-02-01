@@ -16,22 +16,22 @@ class Deck implements NormalizableInterface, TimestampableInterface
     {
         return "[$this->id] $this->name";
     }
-    
+
     public function normalize()
     {
         $cards = [];
         foreach ($this->slots as $slot) {
             $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
         }
-    
-        return  [
-                'id' => $this->id,
-                'date_creation' => $this->dateCreation->format('c'),
-                'date_update' => $this->dateUpdate->format('c'),
-                'name' => $this->name,
-                'description' => $this->description,
-                'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
-                'cards' => $cards
+
+        return [
+            'id'            => $this->id,
+            'date_creation' => $this->dateCreation->format('c'),
+            'date_update'   => $this->dateUpdate->format('c'),
+            'name'          => $this->name,
+            'description'   => $this->description,
+            'mwl_code'      => $this->mwl ? $this->mwl->getCode() : null,
+            'cards'         => $cards,
         ];
     }
 
@@ -59,12 +59,12 @@ class Deck implements NormalizableInterface, TimestampableInterface
      * @var string
      */
     private $description;
-    
+
     /**
      * @var string
      */
     private $problem;
-    
+
     /**
      * @var integer
      */
@@ -84,9 +84,9 @@ class Deck implements NormalizableInterface, TimestampableInterface
      * @var string
      */
     private $tags;
-    
+
     private $message;
-    
+
     /**
      * @var Collection|Deckslot[]
      */
@@ -106,12 +106,12 @@ class Deck implements NormalizableInterface, TimestampableInterface
      * @var Card
      */
     private $identity;
-    
+
     /**
      * @var Pack
      */
     private $lastPack;
-    
+
     /**
      * Constructor
      */
@@ -120,7 +120,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
         $this->slots = new ArrayCollection();
         $this->children = new ArrayCollection();
     }
-    
+
     /**
      * Get id
      *
@@ -140,7 +140,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -163,7 +163,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setDateCreation($dateCreation)
     {
         $this->dateCreation = $dateCreation;
-    
+
         return $this;
     }
 
@@ -186,7 +186,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setDateUpdate($dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
-    
+
         return $this;
     }
 
@@ -209,10 +209,10 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setDescription($description)
     {
         $this->description = $description;
-    
+
         return $this;
     }
-    
+
     /**
      * Get description
      *
@@ -222,7 +222,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     {
         return $this->description;
     }
-    
+
     /**
      * Set problem
      *
@@ -232,7 +232,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setProblem($problem)
     {
         $this->problem = $problem;
-    
+
         return $this;
     }
 
@@ -255,7 +255,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function addSlot(Deckslot $slots)
     {
         $this->slots[] = $slots;
-    
+
         return $this;
     }
 
@@ -288,7 +288,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setUser(User $user = null)
     {
         $this->user = $user;
-    
+
         return $this;
     }
 
@@ -311,7 +311,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setSide(Side $side = null)
     {
         $this->side = $side;
-    
+
         return $this;
     }
 
@@ -334,10 +334,10 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setIdentity($identity)
     {
         $this->identity = $identity;
-    
+
         return $this;
     }
-    
+
     /**
      * Get identity
      *
@@ -357,10 +357,10 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setLastPack($lastPack)
     {
         $this->lastPack = $lastPack;
-    
+
         return $this;
     }
-    
+
     /**
      * Get lastPack
      *
@@ -370,7 +370,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     {
         return $this->lastPack;
     }
-    
+
     /**
      * Set deckSize
      *
@@ -380,7 +380,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setDeckSize($deckSize)
     {
         $this->deckSize = $deckSize;
-    
+
         return $this;
     }
 
@@ -403,7 +403,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setInfluenceSpent($influenceSpent)
     {
         $this->influenceSpent = $influenceSpent;
-    
+
         return $this;
     }
 
@@ -426,7 +426,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setAgendaPoints($agendaPoints)
     {
         $this->agendaPoints = $agendaPoints;
-    
+
         return $this;
     }
 
@@ -449,10 +449,10 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setTags($tags)
     {
         $this->tags = $tags;
-    
+
         return $this;
     }
-    
+
     /**
      * Get tags
      *
@@ -462,7 +462,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     {
         return $this->tags;
     }
-    
+
     /**
      * Get cards
      *
@@ -470,35 +470,38 @@ class Deck implements NormalizableInterface, TimestampableInterface
      */
     public function getCards()
     {
-        $arr = array();
+        $arr = [];
         foreach ($this->slots as $slot) {
             $card = $slot->getCard();
-            $arr[$card->getCode()] = array('qty' => $slot->getQuantity(), 'card' => $card);
+            $arr[$card->getCode()] = ['qty' => $slot->getQuantity(), 'card' => $card];
         }
+
         return $arr;
     }
 
     public function getContent()
     {
-        $arr = array();
+        $arr = [];
         foreach ($this->slots as $slot) {
             $arr[$slot->getCard()->getCode()] = $slot->getQuantity();
         }
         ksort($arr);
+
         return $arr;
     }
-    
+
     public function getMessage()
     {
         return $this->message;
     }
-    
+
     public function setMessage($message)
     {
         $this->message = $message;
+
         return $this;
     }
-    
+
     /**
      * @var Collection
      */
@@ -519,7 +522,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function addChildren(Decklist $children)
     {
         $this->children[] = $children;
-    
+
         return $this;
     }
 
@@ -552,7 +555,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function setParent(Decklist $parent = null)
     {
         $this->parent = $parent;
-    
+
         return $this;
     }
 
@@ -565,6 +568,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     {
         return $this->parent;
     }
+
     /**
      * @var Collection
      */
@@ -626,6 +630,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     {
         return $this->changes;
     }
+
     /**
      * @var Mwl
      */

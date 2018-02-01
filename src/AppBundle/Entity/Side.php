@@ -2,17 +2,17 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use AppBundle\Behavior\Entity\CodeNameInterface;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Gedmo\Translatable\Translatable;
 
 /**
  * Side
  */
-class Side implements Translatable, NormalizableInterface, TimestampableInterface, CodeNameInterface
+class Side extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
     public function __toString()
     {
@@ -37,8 +37,6 @@ class Side implements Translatable, NormalizableInterface, TimestampableInterfac
      */
     private $name;
 
-    private $locale = 'en';
-    
     /**
      * Get id
      *
@@ -235,10 +233,6 @@ class Side implements Translatable, NormalizableInterface, TimestampableInterfac
         $this->decklists->removeElement($decklists);
     }
 
-    public function setTranslatableLocale($locale)
-    {
-        $this->locale = $locale;
-    }
     /**
      * @var string
      */

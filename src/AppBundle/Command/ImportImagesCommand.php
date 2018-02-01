@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Card;
+use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,6 +16,15 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ImportImagesCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -24,13 +34,12 @@ class ImportImagesCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $client = new Client([
             'http_errors' => false,
         ]);
 
         /** @var Card[] $cards */
-        $cards = $em->getRepository(Card::class)->findBy(['imageUrl' => null]);
+        $cards = $this->entityManager->getRepository(Card::class)->findBy(['imageUrl' => null]);
 
         foreach ($cards as $card) {
             $ffgId = $card->getPack()->getFfgId();
@@ -58,6 +67,6 @@ class ImportImagesCommand extends ContainerAwareCommand
             }
         }
 
-        $em->flush();
+        $this->entityManager->flush();
     }
 }

@@ -76,14 +76,11 @@ class ClaimsController extends AbstractOauthController
     }
 
     /**
-     *
-     * @param integer $decklist_id
-     * @param integer $id
-     * @param Request $request
+     * @param int $decklist_id
+     * @param int $id
      * @return Claim
-     * @throws \Exception
      */
-    protected function retrieveClaim($decklist_id, $id)
+    protected function retrieveClaim(int $decklist_id, int $id)
     {
         $user = $this->getUser();
         $client = $this->getOauthClient();
@@ -96,9 +93,9 @@ class ClaimsController extends AbstractOauthController
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
-        /* @var $claim Claim */
+        /** @var Claim|null $claim */
         $claim = $em->getRepository('AppBundle:Claim')->find($id);
-        if (!$claim) {
+        if (!$claim instanceof Claim) {
             throw $this->createNotFoundException();
         }
         if ($claim->getDecklist()->getId() !== $decklist->getId()) {

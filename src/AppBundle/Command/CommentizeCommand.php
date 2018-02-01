@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,6 +12,15 @@ use AppBundle\Entity\Reviewcomment;
 
 class CommentizeCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -39,13 +49,12 @@ class CommentizeCommand extends ContainerAwareCommand
     
     private function review_to_comment($review_orig_id, $review_dest_id)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $repo = $this->entityManager->getRepository('AppBundle:Review');
 
-        $repo = $em->getRepository('AppBundle:Review');
-        /* @var $review_orig Review */
+        /** @var Review $review_orig */
         $review_orig = $repo->find($review_orig_id);
-        /* @var $review_dest Review */
+
+        /** @var Review $review_dest */
         $review_dest = $repo->find($review_dest_id);
         
         if (!$review_orig) {
@@ -67,9 +76,9 @@ class CommentizeCommand extends ContainerAwareCommand
         $comment->setDateupdate($review_orig->getDateupdate());
         $comment->setReview($review_dest);
         $comment->setText($text);
-        $em->persist($comment);
-        $em->remove($review_orig);
-        $em->flush();
+        $this->entityManager->persist($comment);
+        $this->entityManager->remove($review_orig);
+        $this->entityManager->flush();
 
         return null;
     }

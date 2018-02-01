@@ -246,24 +246,20 @@ class User extends BaseUser
     {
         return $this->donation;
     }
-    
+
     /**
-     * Set deck
-     *
-     * @param string $decks
-     * @return User
+     * @param array $decks
+     * @return $this
      */
-    public function setDecks($decks)
+    public function setDecks(array $decks)
     {
         $this->decks = $decks;
     
         return $this;
     }
-    
+
     /**
-     * Get deck
-     *
-     * @return Deck[]
+     * @return Deck[]|ArrayCollection|Collection
      */
     public function getDecks()
     {

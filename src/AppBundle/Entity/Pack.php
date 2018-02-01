@@ -2,17 +2,17 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use AppBundle\Behavior\Entity\CodeNameInterface;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Gedmo\Translatable\Translatable;
 
 /**
  * Pack
  */
-class Pack implements Translatable, NormalizableInterface, TimestampableInterface, CodeNameInterface
+class Pack extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
     public function __toString()
     {
@@ -66,11 +66,6 @@ class Pack implements Translatable, NormalizableInterface, TimestampableInterfac
      */
     private $ffgId;
 
-    /**
-     * @var string
-     */
-    private $locale = 'en';
-    
     /**
      * @var Collection
      */
@@ -332,10 +327,6 @@ class Pack implements Translatable, NormalizableInterface, TimestampableInterfac
         $this->decklists->removeElement($decklists);
     }
 
-    public function setTranslatableLocale($locale)
-    {
-        $this->locale = $locale;
-    }
     /**
      * @var \DateTime
      */

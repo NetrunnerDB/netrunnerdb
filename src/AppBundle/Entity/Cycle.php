@@ -2,17 +2,17 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use AppBundle\Behavior\Entity\CodeNameInterface;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Gedmo\Translatable\Translatable;
 
 /**
  * Cycle
  */
-class Cycle implements Translatable, NormalizableInterface, TimestampableInterface, CodeNameInterface
+class Cycle extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
     public function __toString()
     {
@@ -59,11 +59,6 @@ class Cycle implements Translatable, NormalizableInterface, TimestampableInterfa
      * @var boolean
      */
     private $rotated;
-
-    /**
-     * @var string
-     */
-    private $locale = 'en';
 
     /**
      * @var Collection|Rotation[]
@@ -290,11 +285,7 @@ class Cycle implements Translatable, NormalizableInterface, TimestampableInterfa
     {
         return $this->packs;
     }
-    
-    public function setTranslatableLocale($locale)
-    {
-        $this->locale = $locale;
-    }
+
     /**
      * @var \DateTime
      */

@@ -3,10 +3,12 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Card;
+use AppBundle\Entity\Prebuilt;
 use AppBundle\Entity\Prebuiltslot;
 use AppBundle\Entity\Rotation;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use GlobIterator;
 use SplFileInfo;
@@ -22,11 +24,16 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ImportStdCommand extends ContainerAwareCommand
 {
-    /* @var $em EntityManager */
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
-    private $em;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
 
-    /* @var $output OutputInterface */
+    /** @var OutputInterface $output */
     private $output;
 
     private $collections = [];
@@ -45,10 +52,8 @@ class ImportStdCommand extends ContainerAwareCommand
         $path = $input->getArgument('path');
         $force = $input->getOption('force');
 
-        $this->em = $this->getContainer()->get('doctrine')->getManager();
         $this->output = $output;
 
-        /* @var $helper QuestionHelper */
         $helper = $this->getHelper('question');
 
         // sides
@@ -62,7 +67,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 die();
             }
         }
-        $this->em->flush();
+        $this->entityManager->flush();
         $this->loadCollection('Side');
         $output->writeln("Done.");
 
@@ -77,7 +82,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 die();
             }
         }
-        $this->em->flush();
+        $this->entityManager->flush();
         $this->loadCollection('Faction');
         $output->writeln("Done.");
 
@@ -92,7 +97,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 die();
             }
         }
-        $this->em->flush();
+        $this->entityManager->flush();
         $this->loadCollection('Type');
         $output->writeln("Done.");
 
@@ -107,7 +112,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 die();
             }
         }
-        $this->em->flush();
+        $this->entityManager->flush();
         $this->loadCollection('Cycle');
         $output->writeln("Done.");
 
@@ -122,7 +127,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 die();
             }
         }
-        $this->em->flush();
+        $this->entityManager->flush();
         $this->loadCollection('Pack');
         $output->writeln("Done.");
 
@@ -140,7 +145,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 die();
             }
         }
-        $this->em->flush();
+        $this->entityManager->flush();
         $output->writeln("Done.");
 
         // prebuilt
@@ -154,7 +159,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 die();
             }
         }
-        $this->em->flush();
+        $this->entityManager->flush();
         $output->writeln("Done.");
 
         // mwl
@@ -168,7 +173,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 die();
             }
         }
-        $this->em->flush();
+        $this->entityManager->flush();
         $output->writeln("Done.");
 
         // rotation
@@ -182,7 +187,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 die();
             }
         }
-        $this->em->flush();
+        $this->entityManager->flush();
         $output->writeln("Done.");
     }
 
@@ -198,7 +203,7 @@ class ImportStdCommand extends ContainerAwareCommand
             ], [], []);
             if ($side) {
                 $result[] = $side;
-                $this->em->persist($side);
+                $this->entityManager->persist($side);
             }
         }
 
@@ -221,7 +226,7 @@ class ImportStdCommand extends ContainerAwareCommand
             ], []);
             if ($faction) {
                 $result[] = $faction;
-                $this->em->persist($faction);
+                $this->entityManager->persist($faction);
             }
         }
 
@@ -244,7 +249,7 @@ class ImportStdCommand extends ContainerAwareCommand
             ], []);
             if ($type) {
                 $result[] = $type;
-                $this->em->persist($type);
+                $this->entityManager->persist($type);
             }
         }
 
@@ -266,7 +271,7 @@ class ImportStdCommand extends ContainerAwareCommand
             ], [], []);
             if ($cycle) {
                 $result[] = $cycle;
-                $this->em->persist($cycle);
+                $this->entityManager->persist($cycle);
             }
         }
 
@@ -291,7 +296,7 @@ class ImportStdCommand extends ContainerAwareCommand
             ], []);
             if ($pack) {
                 $result[] = $pack;
-                $this->em->persist($pack);
+                $this->entityManager->persist($pack);
             }
         }
 
@@ -304,7 +309,7 @@ class ImportStdCommand extends ContainerAwareCommand
 
         $code = $fileinfo->getBasename('.json');
 
-        $pack = $this->em->getRepository('AppBundle:Pack')->findOneBy(['code' => $code]);
+        $pack = $this->entityManager->getRepository('AppBundle:Pack')->findOneBy(['code' => $code]);
         if (!$pack) {
             throw new Exception("Unable to find Pack [$code]");
         }
@@ -334,7 +339,7 @@ class ImportStdCommand extends ContainerAwareCommand
             ]);
             if ($card) {
                 $result[] = $card;
-                $this->em->persist($card);
+                $this->entityManager->persist($card);
             }
         }
 
@@ -352,12 +357,12 @@ class ImportStdCommand extends ContainerAwareCommand
                 'date_release',
                 'position',
             ], [], []);
-            if ($prebuilt) {
+            if ($prebuilt instanceof Prebuilt) {
                 $result[] = $prebuilt;
-                $this->em->persist($prebuilt);
+                $this->entityManager->persist($prebuilt);
 
                 foreach ($prebuiltData['cards'] as $card_code => $quantity) {
-                    $card = $this->em->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
+                    $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
                     if (!$card instanceof Card) {
                         continue;
                     }
@@ -365,7 +370,7 @@ class ImportStdCommand extends ContainerAwareCommand
                     $prebuiltslot->setCard($card);
                     $prebuiltslot->setQuantity($quantity);
                     $prebuiltslot->setPrebuilt($prebuilt);
-                    $this->em->persist($prebuiltslot);
+                    $this->entityManager->persist($prebuiltslot);
 
                     if ($card->getType()->getCode() === 'identity') {
                         $prebuilt->setIdentity($card);
@@ -392,7 +397,7 @@ class ImportStdCommand extends ContainerAwareCommand
             ], [], []);
             if ($mwl) {
                 $result[] = $mwl;
-                $this->em->persist($mwl);
+                $this->entityManager->persist($mwl);
             }
         }
 
@@ -414,13 +419,13 @@ class ImportStdCommand extends ContainerAwareCommand
             if ($rotation) {
                 $result[] = $rotation;
                 foreach ($rotationData['cycles'] as $cycle_code) {
-                    $cycle = $this->em->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
+                    $cycle = $this->entityManager->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
                     if (!$cycle) {
                         continue;
                     }
                     $rotation->addCycle($cycle);
                 }
-                $this->em->persist($rotation);
+                $this->entityManager->persist($rotation);
             }
         }
 
@@ -429,7 +434,7 @@ class ImportStdCommand extends ContainerAwareCommand
 
     protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
     {
-        $metadata = $this->em->getClassMetadata($entityName);
+        $metadata = $this->entityManager->getClassMetadata($entityName);
         $type = $metadata->fieldMappings[$fieldName]['type'];
 
         // new value, by default what json gave us is the correct typed value
@@ -468,7 +473,7 @@ class ImportStdCommand extends ContainerAwareCommand
 
     protected function copyKeyToEntity($entity, $entityName, $data, $key, $isMandatory = true)
     {
-        $metadata = $this->em->getClassMetadata($entityName);
+        $metadata = $this->entityManager->getClassMetadata($entityName);
 
         if (!key_exists($key, $data)) {
             if ($isMandatory) {
@@ -503,7 +508,7 @@ class ImportStdCommand extends ContainerAwareCommand
             throw new Exception("Missing key [code] in ".json_encode($data));
         }
 
-        $entity = $this->em->getRepository($entityName)->findOneBy(['code' => $data['code']]);
+        $entity = $this->entityManager->getRepository($entityName)->findOneBy(['code' => $data['code']]);
         if (!$entity) {
             $entity = new $entityName();
         }
@@ -580,13 +585,11 @@ class ImportStdCommand extends ContainerAwareCommand
     }
 
     /**
-     * Performs a deep equality check of two arrays
-     *
-     * @param $array1
-     * @param $array2
+     * @param array $array1
+     * @param array $array2
      * @return bool
      */
-    protected function deepArrayEquality($array1, $array2)
+    protected function deepArrayEquality(array $array1, array $array2)
     {
         return $this->uniquelyEncodeJson($array1) === $this->uniquelyEncodeJson($array2);
     }
@@ -792,7 +795,7 @@ class ImportStdCommand extends ContainerAwareCommand
     {
         $this->collections[$entityShortName] = [];
 
-        $entities = $this->em->getRepository('AppBundle:'.$entityShortName)->findAll();
+        $entities = $this->entityManager->getRepository('AppBundle:'.$entityShortName)->findAll();
 
         foreach ($entities as $entity) {
             $this->collections[$entityShortName][$entity->getCode()] = $entity;

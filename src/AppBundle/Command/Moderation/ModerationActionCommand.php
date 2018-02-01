@@ -25,11 +25,18 @@ class ModerationActionCommand extends ContainerAwareCommand
     /** @var QuestionHelper */
     private $helper;
 
-    /** @var EntityManagerInterface $em */
-    private $em;
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
     /** @var ModerationHelper $moderationHelper */
     private $moderationHelper;
+
+    public function __construct(EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+        $this->moderationHelper = $moderationHelper;
+    }
 
     protected function configure()
     {
@@ -46,14 +53,9 @@ class ModerationActionCommand extends ContainerAwareCommand
         
         $this->helper = $this->getHelper('question');
 
-        /* @var $em EntityManager */
-        $this->em = $this->getContainer()->get('doctrine')->getManager();
-
         /** @var User $user */
-        $user = $this->em->getRepository('AppBundle:User')->find(1);
+        $user = $this->entityManager->getRepository('AppBundle:User')->find(1);
 
-        $this->moderationHelper = $this->getContainer()->get(ModerationHelper::class);
-        
         $decklistId = $this->helper->ask($input, $output, new Question('Please enter the id of the decklist: '));
         $decklist = $this->getDecklist($decklistId);
         
@@ -62,8 +64,8 @@ class ModerationActionCommand extends ContainerAwareCommand
         $newStatus = $this->getNewStatus();
         $this->moderationHelper->changeStatus($user, $decklist, $newStatus);
 
-        $this->em->flush();
-        $this->em->refresh($decklist);
+        $this->entityManager->flush();
+        $this->entityManager->refresh($decklist);
 
         $this->showStatus($decklist);
     }
@@ -99,7 +101,7 @@ class ModerationActionCommand extends ContainerAwareCommand
      */
     protected function getDecklist($decklistId)
     {
-        $decklist = $this->em->getRepository('AppBundle:Decklist')->find($decklistId);
+        $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklistId);
         if (!$decklist) {
             $this->output->writeln('<error>Not Found</error>');
             die;

@@ -14,28 +14,28 @@ class Diff
     {
         $this->entityManager = $entityManager;
     }
-    
+
     public function diffContents($decks)
     {
 
         // n flat lists of the cards of each decklist
-        $ensembles = array();
+        $ensembles = [];
         foreach ($decks as $deck) {
-            $cards = array();
+            $cards = [];
             foreach ($deck as $code => $qty) {
-                for ($i=0; $i<$qty; $i++) {
+                for ($i = 0; $i < $qty; $i++) {
                     $cards[] = $code;
                 }
             }
             $ensembles[] = $cards;
         }
-        
+
         // 1 flat list of the cards seen in every decklist
-        $conjunction = array();
-        for ($i=0; $i<count($ensembles[0]); $i++) {
+        $conjunction = [];
+        for ($i = 0; $i < count($ensembles[0]); $i++) {
             $code = $ensembles[0][$i];
-            $indexes = array($i);
-            for ($j=1; $j<count($ensembles); $j++) {
+            $indexes = [$i];
+            for ($j = 1; $j < count($ensembles); $j++) {
                 $index = array_search($code, $ensembles[$j]);
                 if ($index !== false) {
                     $indexes[] = $index;
@@ -45,7 +45,7 @@ class Diff
             }
             if (count($indexes) === count($ensembles)) {
                 $conjunction[] = $code;
-                for ($j=0; $j<count($indexes); $j++) {
+                for ($j = 0; $j < count($indexes); $j++) {
                     $list = $ensembles[$j];
                     array_splice($list, $indexes[$j], 1);
                     $ensembles[$j] = $list;
@@ -53,13 +53,13 @@ class Diff
                 $i--;
             }
         }
-        
-        $listings = array();
-        for ($i=0; $i<count($ensembles); $i++) {
+
+        $listings = [];
+        for ($i = 0; $i < count($ensembles); $i++) {
             $listings[$i] = array_count_values($ensembles[$i]);
         }
         $intersect = array_count_values($conjunction);
-        
-        return array($listings, $intersect);
+
+        return [$listings, $intersect];
     }
 }

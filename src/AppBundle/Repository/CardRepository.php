@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace AppBundle\Repository;
 
@@ -10,9 +10,9 @@ class CardRepository extends TranslatableRepository
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata('AppBundle\Entity\Card'));
     }
-    
+
     public function findAll()
     {
-        return $this->findBy(array(), array('code' => 'ASC'));
+        return $this->findBy([], ['code' => 'ASC']);
     }
 }

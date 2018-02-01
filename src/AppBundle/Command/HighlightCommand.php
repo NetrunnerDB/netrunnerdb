@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -9,14 +10,23 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class HighlightCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function saveHighlight($decklist_id)
     {
-        $dbh = $this->getContainer()->get('doctrine')->getConnection();
-        
+        $dbh = $this->entityManager->getConnection();
+
         if ($decklist_id) {
             $rows = $dbh
-        ->executeQuery(
-                "SELECT
+                ->executeQuery(
+                    "SELECT
 				d.id,
 				d.date_update,
 				d.name,
@@ -35,17 +45,17 @@ class HighlightCommand extends ContainerAwareCommand
 				d.nbvotes,
 				d.nbfavorites,
 				d.nbcomments
-				from decklist d
-				join user u on d.user_id=u.id
-				join card c on d.identity_id=c.id
-				join faction f on d.faction_id=f.id
-				where d.id=?
+				FROM decklist d
+				JOIN user u ON d.user_id=u.id
+				JOIN card c ON d.identity_id=c.id
+				JOIN faction f ON d.faction_id=f.id
+				WHERE d.id=?
 				",
-            array($decklist_id)
-        )->fetchAll();
+                    [$decklist_id]
+                )->fetchAll();
         } else {
             $rows = $dbh
-            ->executeQuery(
+                ->executeQuery(
                     "SELECT
     				d.id,
     				d.date_update,
@@ -65,61 +75,60 @@ class HighlightCommand extends ContainerAwareCommand
     				d.nbvotes,
     				d.nbfavorites,
     				d.nbcomments
-    				from decklist d
-    				join user u on d.user_id=u.id
-    				join card c on d.identity_id=c.id
-    				join faction f on d.faction_id=f.id
-    				where d.date_creation > date_sub( current_date, interval 7 day )
-            		and u.enabled=1
-                        and d.moderation_status=0
-                    order by nbvotes desc , nbcomments desc
-                    limit 0,1
+    				FROM decklist d
+    				JOIN user u ON d.user_id=u.id
+    				JOIN card c ON d.identity_id=c.id
+    				JOIN faction f ON d.faction_id=f.id
+    				WHERE d.date_creation > date_sub( current_date, INTERVAL 7 DAY )
+            		AND u.enabled=1
+                        AND d.moderation_status=0
+                    ORDER BY nbvotes DESC , nbcomments DESC
+                    LIMIT 0,1
     				",
-                array()
-            )->fetchAll();
+                    []
+                )->fetchAll();
         }
-        
+
         if (empty($rows)) {
             return false;
         }
-    
+
         $decklist = $rows[0];
-    
+
         $cards = $dbh
-        ->executeQuery(
+            ->executeQuery(
                 "SELECT
 				c.code card_code,
 				s.quantity qty
-				from decklistslot s
-				join card c on s.card_id=c.id
-				where s.decklist_id=?
-				order by c.code asc",
-            array($decklist['id'])
-        )->fetchAll();
-    
+				FROM decklistslot s
+				JOIN card c ON s.card_id=c.id
+				WHERE s.decklist_id=?
+				ORDER BY c.code ASC",
+                [$decklist['id']]
+            )->fetchAll();
+
         $decklist['cards'] = $cards;
-         
+
         $json = json_encode($decklist);
-        $dbh->executeQuery("INSERT INTO highlight (id, decklist) VALUES (?,?) ON DUPLICATE KEY UPDATE decklist=values(decklist)", array(1, $json));
-    
+        $dbh->executeQuery("INSERT INTO highlight (id, decklist) VALUES (?,?) ON DUPLICATE KEY UPDATE decklist=values(decklist)", [1, $json]);
+
         $dotw = $dbh->executeQuery("SELECT max(dotw) FROM decklist")->fetchColumn(0);
         $next_dotw = intval($dotw) + 1;
-        $dbh->executeQuery("UPDATE decklist SET dotw=? WHERE ID=?", array($next_dotw, $decklist['id']));
-        
+        $dbh->executeQuery("UPDATE decklist SET dotw=? WHERE ID=?", [$next_dotw, $decklist['id']]);
+
         return true;
     }
-    
+
     protected function configure()
     {
         $this
-        ->setName('nrdb:highlight')
-        ->setDescription('Save decklist of the week')
-        ->addArgument(
-            'decklist_id',
-            InputArgument::OPTIONAL,
-            'Id for Decklist'
-        )
-        ;
+            ->setName('nrdb:highlight')
+            ->setDescription('Save decklist of the week')
+            ->addArgument(
+                'decklist_id',
+                InputArgument::OPTIONAL,
+                'Id for Decklist'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

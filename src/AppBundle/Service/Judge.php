@@ -27,7 +27,7 @@ class Judge
 
     /**
      * @param Card $card
-     * @param Mwl  $mwl
+     * @param Mwl $mwl
      */
     private function getModifiedCard($card, $mwl)
     {
@@ -41,7 +41,7 @@ class Judge
             $modificationData = $mwl->getCards()[$card->getCode()];
             $modifiedCard = clone($card);
             foreach ($modificationData as $modificationKey => $modificationValue) {
-                $setter = 'set'.$this->getTrainCase($modificationKey);
+                $setter = 'set' . $this->getTrainCase($modificationKey);
                 $modifiedCard->$setter($modificationValue);
             }
         }
@@ -126,9 +126,9 @@ class Judge
     }
 
     /**
-     * @param SlotInterface              $slot
+     * @param SlotInterface $slot
      * @param SlotInterface[]|Collection $slots
-     * @param Card                       $identity
+     * @param Card $identity
      * @return int
      */
     public function getInfluenceCostOfCard($slot, $slots, Card $identity)

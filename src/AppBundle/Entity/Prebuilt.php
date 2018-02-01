@@ -2,16 +2,16 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Gedmo\Translatable\Translatable;
 
 /**
  * Prebuilt
  */
-class Prebuilt implements Translatable, NormalizableInterface, TimestampableInterface
+class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface
 {
     public function __toString()
     {
@@ -89,11 +89,6 @@ class Prebuilt implements Translatable, NormalizableInterface, TimestampableInte
      */
     private $faction;
 
-    /**
-     * @var string
-     */
-    private $locale = 'en';
-    
     /**
      * Constructor
      */
@@ -360,17 +355,5 @@ class Prebuilt implements Translatable, NormalizableInterface, TimestampableInte
     public function getFaction()
     {
         return $this->faction;
-    }
-
-    /**
-     * Get translatableLocale
-     *
-     * @return string
-     */
-    public function setTranslatableLocale($locale)
-    {
-        $this->locale = $locale;
-
-        return $this;
     }
 }

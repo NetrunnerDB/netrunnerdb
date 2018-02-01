@@ -77,11 +77,12 @@ class RulingController extends Controller
     {
         $list = $this->getDoctrine()->getRepository('AppBundle:Card')->findAll();
 
-        $response = $this->render('/Rulings/list.html.twig', array(
-                    'list' => $list
-        ));
+        $response = $this->render('/Rulings/list.html.twig', [
+            'list' => $list,
+        ]);
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
+
         return $response;
     }
 }

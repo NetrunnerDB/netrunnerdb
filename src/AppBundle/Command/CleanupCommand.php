@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Service\DecklistManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,6 +13,19 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class CleanupCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    /** @var DecklistManager $decklistManager */
+    private $decklistManager;
+
+    public function __construct(EntityManagerInterface $entityManager, DecklistManager $decklistManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+        $this->decklistManager = $decklistManager;
+    }
+
     protected function configure()
     {
         $this
@@ -55,12 +69,7 @@ class CleanupCommand extends ContainerAwareCommand
         $options = $input->getOptions();
         $options['dotw'] = 0;
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->getContainer()->get('doctrine')->getManager();
-
-        $decklistManager = $this->getContainer()->get(DecklistManager::class);
-
-        $qb = $em->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $qb->select('count(d)')
             ->from('AppBundle:Decklist', 'd')
             ->where('d.dotw=:dotw');
@@ -94,24 +103,24 @@ class CleanupCommand extends ContainerAwareCommand
         $progress = new ProgressBar($output, $queryCount);
         
         foreach ($result as $decklist) {
-            $decklistManager->removeConstraints($decklist);
+            $this->decklistManager->removeConstraints($decklist);
             $progress->advance();
         }
 
         $progress->finish();
-        $em->flush();
+        $this->entityManager->flush();
         
         $output->writeln("\nRemoved $queryCount constraints.");
         
         $progress = new ProgressBar($output, $queryCount);
         
         foreach ($result as $decklist) {
-            $em->remove($decklist);
+            $this->entityManager->remove($decklist);
             $progress->advance();
         }
         
         $progress->finish();
-        $em->flush();
+        $this->entityManager->flush();
         
         $output->writeln("\nRemoved $queryCount decklists ($periodPct% of period, $totalPct% of total).");
     }

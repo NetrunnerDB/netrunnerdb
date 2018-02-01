@@ -32,13 +32,13 @@ class Decks
         $this->diff = $diff;
         $this->logger = $logger;
     }
-    
+
 
     public function getByUser(User $user, $decode_variation = false)
     {
         $dbh = $this->entityManager->getConnection();
         $decks = $dbh->executeQuery(
-                "SELECT
+            "SELECT
 				d.id,
 				d.name,
 				DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
@@ -46,7 +46,7 @@ class Decks
 				d.description,
                 d.tags,
                 m.code mwl_code,
-                (select count(*) from deckchange c where c.deck_id=d.id and c.saved=0) unsaved,
+                (SELECT count(*) FROM deckchange c WHERE c.deck_id=d.id AND c.saved=0) unsaved,
                 d.problem,
 				c.title identity_title,
                 c.code identity_code,
@@ -56,92 +56,92 @@ class Decks
                 p.cycle_id cycle_id,
                 p.position pack_number,
 				s.name side
-				from deck d
-        		left join mwl m on d.mwl_id=m.id
-				left join card c on d.identity_id=c.id
-				left join faction f on c.faction_id=f.id
-				left join side s on d.side_id=s.id
-                left join pack p on d.last_pack_id=p.id
-        		left join cycle y on p.cycle_id=y.id
-				where d.user_id=?
-				order by date_update desc",
-            array(
-                        $user->getId()
-                )
+				FROM deck d
+        		LEFT JOIN mwl m ON d.mwl_id=m.id
+				LEFT JOIN card c ON d.identity_id=c.id
+				LEFT JOIN faction f ON c.faction_id=f.id
+				LEFT JOIN side s ON d.side_id=s.id
+                LEFT JOIN pack p ON d.last_pack_id=p.id
+        		LEFT JOIN cycle y ON p.cycle_id=y.id
+				WHERE d.user_id=?
+				ORDER BY date_update DESC",
+            [
+                $user->getId(),
+            ]
         )
-            ->fetchAll();
-        
+                     ->fetchAll();
+
         foreach ($decks as $i => $deck) {
             $decks[$i]['id'] = intval($deck['id']);
         }
-        
+
         // slots
-        
+
         $rows = $dbh->executeQuery(
-                "SELECT
+            "SELECT
 				s.deck_id,
 				c.code card_code,
 				s.quantity qty
-				from deckslot s
-				join card c on s.card_id=c.id
-				join deck d on s.deck_id=d.id
-				where d.user_id=?",
-        
-            array(
-                        $user->getId()
-                )
-        
+				FROM deckslot s
+				JOIN card c ON s.card_id=c.id
+				JOIN deck d ON s.deck_id=d.id
+				WHERE d.user_id=?",
+
+            [
+                $user->getId(),
+            ]
+
         )
-            ->fetchAll();
-        
-        $cards = array();
+                    ->fetchAll();
+
+        $cards = [];
         foreach ($rows as $row) {
             $deck_id = intval($row['deck_id']);
             unset($row['deck_id']);
             $row['qty'] = intval($row['qty']);
-            if (! isset($cards[$deck_id])) {
-                $cards[$deck_id] = array();
+            if (!isset($cards[$deck_id])) {
+                $cards[$deck_id] = [];
             }
             $cards[$deck_id][] = $row;
         }
-        
+
         // changes
-        
+
         $rows = $dbh->executeQuery(
-                "SELECT
+            "SELECT
                 DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
 				c.variation,
                 c.deck_id
-				from deckchange c
-				join deck d on c.deck_id=d.id
-				where d.user_id=? and c.saved=1",
-        
-            array(
-                    $user->getId()
-            )
-        
+				FROM deckchange c
+				JOIN deck d ON c.deck_id=d.id
+				WHERE d.user_id=? AND c.saved=1",
+
+            [
+                $user->getId(),
+            ]
+
         )
-            ->fetchAll();
-        
-        $changes = array();
+                    ->fetchAll();
+
+        $changes = [];
         foreach ($rows as $row) {
             $deck_id = intval($row['deck_id']);
             unset($row['deck_id']);
             if ($decode_variation) {
                 $row['variation'] = json_decode($row['variation'], true);
             }
-            if (! isset($changes[$deck_id])) {
-                $changes[$deck_id] = array();
+            if (!isset($changes[$deck_id])) {
+                $changes[$deck_id] = [];
             }
             $changes[$deck_id][] = $row;
         }
-        
+
         foreach ($decks as $i => $deck) {
             $decks[$i]['cards'] = $cards[$deck['id']];
-            $decks[$i]['history'] = isset($changes[$deck['id']]) ? $changes[$deck['id']] : array();
+            $decks[$i]['history'] = isset($changes[$deck['id']]) ? $changes[$deck['id']] : [];
             $decks[$i]['unsaved'] = intval($decks[$i]['unsaved']);
-            $decks[$i]['tags'] = $deck['tags'] ? explode(' ', $deck['tags']) : array();
-            
+            $decks[$i]['tags'] = $deck['tags'] ? explode(' ', $deck['tags']) : [];
+
             $problem_message = '';
             if (isset($deck['problem'])) {
                 $problem_message = $this->judge->problem($deck['problem']);
@@ -149,10 +149,10 @@ class Decks
             if ($decks[$i]['unsaved'] > 0) {
                 $problem_message = "This deck has unsaved changes.";
             }
-            
-            $decks[$i]['message'] =  $problem_message;
+
+            $decks[$i]['message'] = $problem_message;
         }
-        
+
         return $decks;
     }
 
@@ -160,7 +160,7 @@ class Decks
     {
         $dbh = $this->entityManager->getConnection();
         $deck = $dbh->executeQuery(
-                "SELECT
+            "SELECT
 				d.id,
 				d.name,
 				DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
@@ -168,65 +168,65 @@ class Decks
 				d.description,
                 d.tags,
                 m.code mwl_code,
-                (select count(*) from deckchange c where c.deck_id=d.id and c.saved=0) unsaved,
+                (SELECT count(*) FROM deckchange c WHERE c.deck_id=d.id AND c.saved=0) unsaved,
                 d.problem,
 				c.title identity_title,
                 c.code identity_code,
 				f.code faction_code,
 				s.name side
-				from deck d
-        		left join mwl m on d.mwl_id=m.id
-				left join card c on d.identity_id=c.id
-				left join faction f on c.faction_id=f.id
-				left join side s on d.side_id=s.id
-				where d.id=?",
-            array(
-                        $deck_id
-                )
+				FROM deck d
+        		LEFT JOIN mwl m ON d.mwl_id=m.id
+				LEFT JOIN card c ON d.identity_id=c.id
+				LEFT JOIN faction f ON c.faction_id=f.id
+				LEFT JOIN side s ON d.side_id=s.id
+				WHERE d.id=?",
+            [
+                $deck_id,
+            ]
         )
-            ->fetch();
-        
+                    ->fetch();
+
         $deck['id'] = intval($deck['id']);
-        
+
         $rows = $dbh->executeQuery(
-                "SELECT
+            "SELECT
 				c.code card_code,
 				s.quantity qty
-				from deckslot s
-				join card c on s.card_id=c.id
-				join deck d on s.deck_id=d.id
-				where d.id=?",
-        
-            array(
-                        $deck_id
-                )
-        
+				FROM deckslot s
+				JOIN card c ON s.card_id=c.id
+				JOIN deck d ON s.deck_id=d.id
+				WHERE d.id=?",
+
+            [
+                $deck_id,
+            ]
+
         )
-            ->fetchAll();
-        
-        $cards = array();
+                    ->fetchAll();
+
+        $cards = [];
         foreach ($rows as $row) {
             $row['qty'] = intval($row['qty']);
             $cards[] = $row;
         }
         $deck['cards'] = $cards;
-        
+
         $rows = $dbh->executeQuery(
-                "SELECT
+            "SELECT
 				DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
 				c.variation
-				from deckchange c
-				where c.deck_id=? and c.saved=1
-                order by date_creation desc",
-        
-            array(
-                                $deck_id
-                        )
-        
+				FROM deckchange c
+				WHERE c.deck_id=? AND c.saved=1
+                ORDER BY date_creation DESC",
+
+            [
+                $deck_id,
+            ]
+
         )
-                        ->fetchAll();
-        
-        $changes = array();
+                    ->fetchAll();
+
+        $changes = [];
         foreach ($rows as $row) {
             if ($decode_variation) {
                 $row['variation'] = json_decode($row['variation'], true);
@@ -234,18 +234,18 @@ class Decks
             $changes[] = $row;
         }
         $deck['history'] = $changes;
-        
-        $deck['tags'] = $deck['tags'] ? explode(' ', $deck['tags']) : array();
+
+        $deck['tags'] = $deck['tags'] ? explode(' ', $deck['tags']) : [];
         $problem = $deck['problem'];
         $deck['message'] = isset($problem) ? $this->judge->problem($problem) : '';
-        
+
         return $deck;
     }
-    
+
 
     public function saveDeck(User $user, Deck $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, Deck $source_deck)
     {
-        $deck_content = array();
+        $deck_content = [];
         if ($decklist_id) {
             $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
             if ($decklist) {
@@ -260,24 +260,24 @@ class Decks
         } else {
             $deck->setMwl(null);
         }
-        
+
         $deck->setName($name);
         $deck->setDescription($description);
         $deck->setUser($user);
         $identity = null;
-        $cards = array();
+        $cards = [];
         /* @var $latestPack \AppBundle\Entity\Pack */
         $latestPack = null;
         foreach ($content as $card_code => $qty) {
             /** @var Card $card */
-            $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(array(
-                    "code" => $card_code
-            ));
+            $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy([
+                "code" => $card_code,
+            ]);
             if (!$card) {
                 continue;
             }
             $pack = $card->getPack();
-            if (! $latestPack) {
+            if (!$latestPack) {
                 $latestPack = $pack;
             } elseif ($latestPack->getCycle()->getPosition() < $pack->getCycle()->getPosition()) {
                 $latestPack = $pack;
@@ -296,9 +296,9 @@ class Decks
         } else {
             $deck->setSide(current($cards)->getSide());
             /** @var Card $identity */
-            $identity = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(array(
-                    "side" => $deck->getSide()
-            ));
+            $identity = $this->entityManager->getRepository('AppBundle:Card')->findOneBy([
+                "side" => $deck->getSide(),
+            ]);
             $cards[$identity->getCode()] = $identity;
             $content[$identity->getCode()] = 1;
             $deck->setIdentity($identity);
@@ -306,19 +306,19 @@ class Decks
         if (empty($tags)) {
             // tags can never be empty. if it is we put faction in
             $faction_code = $identity->getFaction()->getCode();
-            $tags = array($faction_code);
+            $tags = [$faction_code];
         }
         if (is_array($tags)) {
             $tags = implode(' ', $tags);
         }
         $deck->setTags($tags);
         $this->entityManager->persist($deck);
-        
+
         // on the deck content
-        
+
         if ($source_deck) {
             // compute diff between current content and saved content
-            list($listings) = $this->diff->diffContents(array($content, $source_deck->getContent()));
+            list($listings) = $this->diff->diffContents([$content, $source_deck->getContent()]);
             // remove all change (autosave) since last deck update (changes are sorted)
             $changes = $this->getUnsavedChanges($deck);
             foreach ($changes as $change) {
@@ -337,7 +337,7 @@ class Decks
             $deck->removeSlot($slot);
             $this->entityManager->remove($slot);
         }
-       
+
         foreach ($content as $card_code => $qty) {
             $card = $cards[$card_code];
             if ($card->getSide()->getId() != $deck->getSide()->getId()) {
@@ -349,10 +349,10 @@ class Decks
             $slot->setCard($card);
             $slot->setDeck($deck);
             $deck->addSlot($slot);
-            $deck_content[$card_code] = array(
-                    'card' => $card,
-                    'qty' => $qty
-            );
+            $deck_content[$card_code] = [
+                'card' => $card,
+                'qty'  => $qty,
+            ];
         }
         $analyse = $this->judge->analyse($deck->getSlots());
         if (is_string($analyse)) {
@@ -365,6 +365,7 @@ class Decks
         }
         $deck->setDateUpdate(new \DateTime());
         $this->entityManager->flush();
+
         return $deck->getId();
     }
 
@@ -376,9 +377,9 @@ class Decks
         }
         $this->entityManager->flush();
     }
-    
+
     public function getUnsavedChanges($deck)
     {
-        return $this->entityManager->getRepository('AppBundle:Deckchange')->findBy(array('deck' => $deck, 'saved' => false));
+        return $this->entityManager->getRepository('AppBundle:Deckchange')->findBy(['deck' => $deck, 'saved' => false]);
     }
 }

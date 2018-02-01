@@ -42,7 +42,7 @@ class OauthController extends Controller
 
     /**
      * Display a page with "Connect to NetrunnerDB" button
-     * @param Request $request
+     *
      * @Route("/initiate")
      * @Method("GET")
      * @Template("/Oauth/initiate.html.twig")

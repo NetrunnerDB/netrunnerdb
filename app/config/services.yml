@@ -5,7 +5,11 @@ services:
         public: true
         bind:
             $tempDir: '%kernel.project_dir%/var'
+            $publicDir: '%kernel.project_dir%/web'
 
     AppBundle\:
         resource: '../../src/AppBundle/*'
         exclude: '../../src/AppBundle/{Behavior,DataFixtures,DQL,Entity,Repository,Resources}'
+
+    FOS\OAuthServerBundle\Entity\ClientManager:
+        alias: 'fos_oauth_server.client_manager.default'

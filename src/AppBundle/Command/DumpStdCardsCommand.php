@@ -3,6 +3,8 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Card;
+use AppBundle\Repository\CardRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,6 +12,15 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class DumpStdCardsCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -27,14 +38,14 @@ class DumpStdCardsCommand extends ContainerAwareCommand
     {
         $pack_code = $input->getArgument('pack_code');
         
-        $pack = $this->getContainer()->get('doctrine')->getManager()->getRepository('AppBundle:Pack')->findOneBy(['code' => $pack_code]);
+        $pack = $this->entityManager->getRepository('AppBundle:Pack')->findOneBy(['code' => $pack_code]);
         
         if (!$pack) {
             throw new \Exception("Pack [$pack_code] cannot be found.");
         }
-        
-        /* @var $repository \AppBundle\Repository\CardRepository */
-        $repository = $this->getContainer()->get('doctrine')->getManager()->getRepository('AppBundle:Card');
+
+        /** @var CardRepository $repository */
+        $repository = $this->entityManager->getRepository('AppBundle:Card');
         
         $qb = $repository->createQueryBuilder('c')->where('c.pack = :pack')->setParameter('pack', $pack)->orderBy('c.code');
         

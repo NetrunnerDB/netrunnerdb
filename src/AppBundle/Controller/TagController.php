@@ -1,4 +1,5 @@
 <?php
+
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -18,16 +19,16 @@ class TagController extends Controller
         if (!is_array($list_tag)) {
             $list_tag = explode(' ', $list_tag);
         }
-        
+
         $list_tag = array_map(function ($tag) {
             return preg_replace('/[^a-zA-Z0-9-]/', '', $tag);
         }, $list_tag);
-        
+
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
-        
-        $response = array("success" => true);
-        
+
+        $response = ["success" => true];
+
         foreach ($list_id as $id) {
             /* @var $deck Deck */
             $deck = $em->getRepository('AppBundle:Deck')->find($id);
@@ -44,20 +45,20 @@ class TagController extends Controller
             $deck->setTags(implode(' ', $tags));
         }
         $em->flush();
-        
+
         return new Response(json_encode($response));
     }
-    
+
     public function removeAction(Request $request)
     {
         $list_id = $request->get('ids');
         $list_tag = $request->get('tags');
-        
+
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
-        
-        $response = array("success" => true);
-        
+
+        $response = ["success" => true];
+
         foreach ($list_id as $id) {
             /* @var $deck Deck */
             $deck = $em->getRepository('AppBundle:Deck')->find($id);
@@ -72,19 +73,19 @@ class TagController extends Controller
             $deck->setTags(implode(' ', $tags));
         }
         $em->flush();
-        
+
         return new Response(json_encode($response));
     }
-    
+
     public function clearAction(Request $request)
     {
         $list_id = $request->get('ids');
-        
+
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->get('doctrine')->getManager();
-        
-        $response = array("success" => true);
-        
+
+        $response = ["success" => true];
+
         foreach ($list_id as $id) {
             /* @var $deck Deck */
             $deck = $em->getRepository('AppBundle:Deck')->find($id);
@@ -94,11 +95,11 @@ class TagController extends Controller
             if ($this->getUser()->getId() != $deck->getUser()->getId()) {
                 continue;
             }
-            $response['tags'][$deck->getId()] = array();
+            $response['tags'][$deck->getId()] = [];
             $deck->setTags('');
         }
         $em->flush();
-        
+
         return new Response(json_encode($response));
     }
 }

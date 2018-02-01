@@ -1,18 +1,11 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Client;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -24,8 +17,6 @@ abstract class AbstractOauthController extends Controller
 {
 
     /**
-     *
-     * @param Request $request
      * @return Client
      */
     public function getOauthClient()

@@ -2,12 +2,22 @@
 
 namespace AppBundle\Command;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class LegalityActiveMwlCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -18,13 +28,9 @@ class LegalityActiveMwlCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->getContainer()->get('doctrine')->getManager();
-
-
         $now = new \DateTime();
 
-        $qb = $em->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $qb->select('m')
                 ->from('AppBundle:Mwl', 'm')
                 ->orderBy('m.dateStart', 'DESC');
@@ -54,6 +60,6 @@ class LegalityActiveMwlCommand extends ContainerAwareCommand
             }
         }
 
-        $em->flush();
+        $this->entityManager->flush();
     }
 }

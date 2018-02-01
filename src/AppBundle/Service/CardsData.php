@@ -16,18 +16,18 @@ use Symfony\Component\Routing\RouterInterface;
 class CardsData
 {
     public static $faction_letters = [
-        'haas-bioroid' => 'h',
+        'haas-bioroid'       => 'h',
         'weyland-consortium' => 'w',
-        'anarch' => 'a',
-        'shaper' => 's',
-        'criminal' => 'c',
-        'jinteki' => 'j',
-        'nbn' => 'n',
-        'neutral-corp' => '-',
-        'neutral-runner' => '-',
-        'apex' => 'p',
-        'adam' => 'd',
-        'sunny-lebeau' => 'u',
+        'anarch'             => 'a',
+        'shaper'             => 's',
+        'criminal'           => 'c',
+        'jinteki'            => 'j',
+        'nbn'                => 'n',
+        'neutral-corp'       => '-',
+        'neutral-runner'     => '-',
+        'apex'               => 'p',
+        'adam'               => 'd',
+        'sunny-lebeau'       => 'u',
     ];
 
     /** @var EntityManagerInterface $entityManager */
@@ -53,52 +53,53 @@ class CardsData
      */
     public function replaceSymbols($text)
     {
-        $map = array(
-            '[subroutine]' => '<span class="icon icon-subroutine"></span>',
-            '[credit]' => '<span class="icon icon-credit"></span>',
-            '[trash]' => '<span class="icon icon-trash"></span>',
-            '[click]' => '<span class="icon icon-click"></span>',
-            '[recurring-credit]' => '<span class="icon icon-recurring-credit"></span>',
-            '[mu]' => '<span class="icon icon-mu"></span>',
-            '[link]' => '<span class="icon icon-link"></span>',
-            '[anarch]' => '<span class="icon icon-anarch"></span>',
-            '[criminal]' => '<span class="icon icon-criminal"></span>',
-            '[shaper]' => '<span class="icon icon-shaper"></span>',
-            '[jinteki]' => '<span class="icon icon-jinteki"></span>',
-            '[haas-bioroid]' => '<span class="icon icon-haas-bioroid"></span>',
-            '[nbn]' => '<span class="icon icon-nbn"></span>',
+        $map = [
+            '[subroutine]'         => '<span class="icon icon-subroutine"></span>',
+            '[credit]'             => '<span class="icon icon-credit"></span>',
+            '[trash]'              => '<span class="icon icon-trash"></span>',
+            '[click]'              => '<span class="icon icon-click"></span>',
+            '[recurring-credit]'   => '<span class="icon icon-recurring-credit"></span>',
+            '[mu]'                 => '<span class="icon icon-mu"></span>',
+            '[link]'               => '<span class="icon icon-link"></span>',
+            '[anarch]'             => '<span class="icon icon-anarch"></span>',
+            '[criminal]'           => '<span class="icon icon-criminal"></span>',
+            '[shaper]'             => '<span class="icon icon-shaper"></span>',
+            '[jinteki]'            => '<span class="icon icon-jinteki"></span>',
+            '[haas-bioroid]'       => '<span class="icon icon-haas-bioroid"></span>',
+            '[nbn]'                => '<span class="icon icon-nbn"></span>',
             '[weyland-consortium]' => '<span class="icon icon-weyland-consortium"></span>',
-        );
+        ];
 
         return str_replace(array_keys($map), array_values($map), $text);
     }
 
     public function allsetsnocycledata()
     {
-        $list_packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy(array(), array("dateRelease" => "ASC", "position" => "ASC"));
-        $packs = array();
+        $list_packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy([], ["dateRelease" => "ASC", "position" => "ASC"]);
+        $packs = [];
         foreach ($list_packs as $pack) {
             $real = count($pack->getCards());
             $max = $pack->getSize();
-            $packs[] = array(
-                "name" => $pack->getName(),
-                "code" => $pack->getCode(),
-                "number" => $pack->getPosition(),
+            $packs[] = [
+                "name"      => $pack->getName(),
+                "code"      => $pack->getCode(),
+                "number"    => $pack->getPosition(),
                 "available" => $pack->getDateRelease() ? $pack->getDateRelease()->format('Y-m-d') : '',
-                "known" => intval($real),
-                "total" => $max,
-                "url" => $this->router->generate('cards_list', array('pack_code' => $pack->getCode()), UrlGeneratorInterface::ABSOLUTE_URL),
-            );
+                "known"     => intval($real),
+                "total"     => $max,
+                "url"       => $this->router->generate('cards_list', ['pack_code' => $pack->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),
+            ];
         }
+
         return $packs;
     }
 
     public function allsetsdata()
     {
-        $list_cycles = $this->entityManager->getRepository('AppBundle:Cycle')->findBy(array(), array("position" => "ASC"));
-        $cycles = array();
+        $list_cycles = $this->entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
+        $cycles = [];
         foreach ($list_cycles as $cycle) {
-            $packs = array();
+            $packs = [];
             $sreal = 0;
             $smax = 0;
             foreach ($cycle->getPacks() as $pack) {
@@ -106,30 +107,31 @@ class CardsData
                 $sreal += $real;
                 $max = $pack->getSize();
                 $smax += $max;
-                $packs[] = array(
-                    "name" => $pack->getName(),
-                    "code" => $pack->getCode(),
+                $packs[] = [
+                    "name"      => $pack->getName(),
+                    "code"      => $pack->getCode(),
                     "available" => $pack->getDateRelease() ? $pack->getDateRelease()->format('Y-m-d') : '',
-                    "known" => intval($real),
-                    "total" => $max,
-                    "url" => $this->router->generate('cards_list', array('pack_code' => $pack->getCode()), UrlGeneratorInterface::ABSOLUTE_URL),
-                    "search" => "e:" . $pack->getCode(),
-                );
+                    "known"     => intval($real),
+                    "total"     => $max,
+                    "url"       => $this->router->generate('cards_list', ['pack_code' => $pack->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),
+                    "search"    => "e:" . $pack->getCode(),
+                ];
             }
             if ($cycle->getSize() === 1) {
                 $cycles[] = $packs[0];
             } else {
-                $cycles[] = array(
-                    "name" => $cycle->getName(),
-                    "code" => $cycle->getCode(),
-                    "known" => intval($sreal),
-                    "total" => $smax,
-                    "url" => $this->router->generate('cards_cycle', array('cycle_code' => $cycle->getCode()), UrlGeneratorInterface::ABSOLUTE_URL),
+                $cycles[] = [
+                    "name"   => $cycle->getName(),
+                    "code"   => $cycle->getCode(),
+                    "known"  => intval($sreal),
+                    "total"  => $smax,
+                    "url"    => $this->router->generate('cards_cycle', ['cycle_code' => $cycle->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),
                     "search" => 'c:' . $cycle->getCode(),
-                    "packs" => $packs,
-                );
+                    "packs"  => $packs,
+                ];
             }
         }
+
         return $cycles;
     }
 
@@ -143,10 +145,10 @@ class CardsData
         $qb = $this->entityManager->createQueryBuilder()->from(Card::class, 'c');
         $qb->select('c', 'p', 'y', 't', 'f', 's');
         $qb->leftJoin('c.pack', 'p')
-                ->leftJoin('p.cycle', 'y')
-                ->leftJoin('c.type', 't')
-                ->leftJoin('c.faction', 'f')
-                ->leftJoin('c.side', 's');
+           ->leftJoin('p.cycle', 'y')
+           ->leftJoin('c.type', 't')
+           ->leftJoin('c.faction', 'f')
+           ->leftJoin('c.side', 's');
         $qb2 = null;
         $qb3 = null;
 
@@ -158,7 +160,7 @@ class CardsData
             $operator = array_shift($condition);
             switch ($type) {
                 case '': // title or index
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         $code = preg_match('/^\d\d\d\d\d$/u', $arg);
                         $acronym = preg_match('/^[A-Z]{2,}$/', $arg);
@@ -182,12 +184,14 @@ class CardsData
                     $clauses[] = implode(" or ", $or);
                     break;
                 case 'x': // text
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(c.text like ?$i)";
+                            case ':':
+                                $or[] = "(c.text like ?$i)";
                                 break;
-                            case '!': $or[] = "(c.text not like ?$i)";
+                            case '!':
+                                $or[] = "(c.text not like ?$i)";
                                 break;
                         }
                         $parameters[$i++] = "%$arg%";
@@ -195,12 +199,14 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'a': // flavor
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(c.flavor like ?$i)";
+                            case ':':
+                                $or[] = "(c.flavor like ?$i)";
                                 break;
-                            case '!': $or[] = "(c.flavor not like ?$i)";
+                            case '!':
+                                $or[] = "(c.flavor not like ?$i)";
                                 break;
                         }
                         $parameters[$i++] = "%$arg%";
@@ -208,12 +214,14 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'e': // extension (pack)
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(p.code = ?$i)";
+                            case ':':
+                                $or[] = "(p.code = ?$i)";
                                 break;
-                            case '!': $or[] = "(p.code != ?$i)";
+                            case '!':
+                                $or[] = "(p.code != ?$i)";
                                 break;
                             case '<':
                                 if (!isset($qb2)) {
@@ -233,16 +241,20 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'c': // cycle (cycle)
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(y.position = ?$i)";
+                            case ':':
+                                $or[] = "(y.position = ?$i)";
                                 break;
-                            case '!': $or[] = "(y.position != ?$i)";
+                            case '!':
+                                $or[] = "(y.position != ?$i)";
                                 break;
-                            case '<': $or[] = "(y.position < ?$i)";
+                            case '<':
+                                $or[] = "(y.position < ?$i)";
                                 break;
-                            case '>': $or[] = "(y.position > ?$i)";
+                            case '>':
+                                $or[] = "(y.position > ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -250,12 +262,14 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 't': // type
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(t.code = ?$i)";
+                            case ':':
+                                $or[] = "(t.code = ?$i)";
                                 break;
-                            case '!': $or[] = "(t.code != ?$i)";
+                            case '!':
+                                $or[] = "(t.code != ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -263,12 +277,14 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'f': // faction
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(f.code = ?$i)";
+                            case ':':
+                                $or[] = "(f.code = ?$i)";
                                 break;
-                            case '!': $or[] = "(f.code != ?$i)";
+                            case '!':
+                                $or[] = "(f.code != ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -276,7 +292,7 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 's': // subtype (keywords)
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
                             case ':':
@@ -298,12 +314,14 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'd': // side
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(SUBSTRING(s.code,1,1) = ?$i)";
+                            case ':':
+                                $or[] = "(SUBSTRING(s.code,1,1) = ?$i)";
                                 break;
-                            case '!': $or[] = "(SUBSTRING(s.code,1,1) != ?$i)";
+                            case '!':
+                                $or[] = "(SUBSTRING(s.code,1,1) != ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -311,12 +329,14 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'i': // illustrator
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(c.illustrator = ?$i)";
+                            case ':':
+                                $or[] = "(c.illustrator = ?$i)";
                                 break;
-                            case '!': $or[] = "(c.illustrator != ?$i)";
+                            case '!':
+                                $or[] = "(c.illustrator != ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -324,24 +344,30 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'o': // cost
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         if ($arg === 'X') {
                             switch ($operator) {
-                                case ':': $or[] = "(c.cost is null)";
+                                case ':':
+                                    $or[] = "(c.cost is null)";
                                     break;
-                                case '!': $or[] = "(c.cost is not null)";
+                                case '!':
+                                    $or[] = "(c.cost is not null)";
                                     break;
                             }
                         } else {
                             switch ($operator) {
-                                case ':': $or[] = "(c.cost = ?$i)";
+                                case ':':
+                                    $or[] = "(c.cost = ?$i)";
                                     break;
-                                case '!': $or[] = "(c.cost != ?$i)";
+                                case '!':
+                                    $or[] = "(c.cost != ?$i)";
                                     break;
-                                case '<': $or[] = "(c.cost < ?$i)";
+                                case '<':
+                                    $or[] = "(c.cost < ?$i)";
                                     break;
-                                case '>': $or[] = "(c.cost > ?$i)";
+                                case '>':
+                                    $or[] = "(c.cost > ?$i)";
                                     break;
                             }
                             $parameters[$i++] = $arg;
@@ -350,16 +376,20 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'g': // advancementcost
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(c.advancementCost = ?$i)";
+                            case ':':
+                                $or[] = "(c.advancementCost = ?$i)";
                                 break;
-                            case '!': $or[] = "(c.advancementCost != ?$i)";
+                            case '!':
+                                $or[] = "(c.advancementCost != ?$i)";
                                 break;
-                            case '<': $or[] = "(c.advancementCost < ?$i)";
+                            case '<':
+                                $or[] = "(c.advancementCost < ?$i)";
                                 break;
-                            case '>': $or[] = "(c.advancementCost > ?$i)";
+                            case '>':
+                                $or[] = "(c.advancementCost > ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -367,16 +397,20 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'm': // memoryunits
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(c.memoryCost = ?$i)";
+                            case ':':
+                                $or[] = "(c.memoryCost = ?$i)";
                                 break;
-                            case '!': $or[] = "(c.memoryCost != ?$i)";
+                            case '!':
+                                $or[] = "(c.memoryCost != ?$i)";
                                 break;
-                            case '<': $or[] = "(c.memoryCost < ?$i)";
+                            case '<':
+                                $or[] = "(c.memoryCost < ?$i)";
                                 break;
-                            case '>': $or[] = "(c.memoryCost > ?$i)";
+                            case '>':
+                                $or[] = "(c.memoryCost > ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -384,16 +418,20 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'n': // influence or influenceLimit
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(c.factionCost = ?$i or c.influenceLimit =?$i)";
+                            case ':':
+                                $or[] = "(c.factionCost = ?$i or c.influenceLimit =?$i)";
                                 break;
-                            case '!': $or[] = "(c.factionCost != ?$i or c.influenceLimit != ?$i)";
+                            case '!':
+                                $or[] = "(c.factionCost != ?$i or c.influenceLimit != ?$i)";
                                 break;
-                            case '<': $or[] = "(c.factionCost < ?$i or c.influenceLimit < ?$i)";
+                            case '<':
+                                $or[] = "(c.factionCost < ?$i or c.influenceLimit < ?$i)";
                                 break;
-                            case '>': $or[] = "(c.factionCost > ?$i or c.influenceLimit > ?$i)";
+                            case '>':
+                                $or[] = "(c.factionCost > ?$i or c.influenceLimit > ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -401,24 +439,30 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'p': // strength
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         if ($arg === 'X') {
                             switch ($operator) {
-                                case ':': $or[] = "(c.strength is null)";
+                                case ':':
+                                    $or[] = "(c.strength is null)";
                                     break;
-                                case '!': $or[] = "(c.strength is not null)";
+                                case '!':
+                                    $or[] = "(c.strength is not null)";
                                     break;
                             }
                         } else {
                             switch ($operator) {
-                                case ':': $or[] = "(c.strength = ?$i)";
+                                case ':':
+                                    $or[] = "(c.strength = ?$i)";
                                     break;
-                                case '!': $or[] = "(c.strength != ?$i)";
+                                case '!':
+                                    $or[] = "(c.strength != ?$i)";
                                     break;
-                                case '<': $or[] = "(c.strength < ?$i)";
+                                case '<':
+                                    $or[] = "(c.strength < ?$i)";
                                     break;
-                                case '>': $or[] = "(c.strength > ?$i)";
+                                case '>':
+                                    $or[] = "(c.strength > ?$i)";
                                     break;
                             }
                             $parameters[$i++] = $arg;
@@ -427,16 +471,20 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'v': // agendapoints
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(c.agendaPoints = ?$i)";
+                            case ':':
+                                $or[] = "(c.agendaPoints = ?$i)";
                                 break;
-                            case '!': $or[] = "(c.agendaPoints != ?$i)";
+                            case '!':
+                                $or[] = "(c.agendaPoints != ?$i)";
                                 break;
-                            case '<': $or[] = "(c.agendaPoints < ?$i)";
+                            case '<':
+                                $or[] = "(c.agendaPoints < ?$i)";
                                 break;
-                            case '>': $or[] = "(c.agendaPoints > ?$i)";
+                            case '>':
+                                $or[] = "(c.agendaPoints > ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -444,16 +492,20 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'h': // trashcost
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(c.trashCost = ?$i)";
+                            case ':':
+                                $or[] = "(c.trashCost = ?$i)";
                                 break;
-                            case '!': $or[] = "(c.trashCost != ?$i)";
+                            case '!':
+                                $or[] = "(c.trashCost != ?$i)";
                                 break;
-                            case '<': $or[] = "(c.trashCost < ?$i)";
+                            case '<':
+                                $or[] = "(c.trashCost < ?$i)";
                                 break;
-                            case '>': $or[] = "(c.trashCost > ?$i)";
+                            case '>':
+                                $or[] = "(c.trashCost > ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -461,16 +513,20 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'y': // quantity
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case ':': $or[] = "(c.quantity = ?$i)";
+                            case ':':
+                                $or[] = "(c.quantity = ?$i)";
                                 break;
-                            case '!': $or[] = "(c.quantity != ?$i)";
+                            case '!':
+                                $or[] = "(c.quantity != ?$i)";
                                 break;
-                            case '<': $or[] = "(c.quantity < ?$i)";
+                            case '<':
+                                $or[] = "(c.quantity < ?$i)";
                                 break;
-                            case '>': $or[] = "(c.quantity > ?$i)";
+                            case '>':
+                                $or[] = "(c.quantity > ?$i)";
                                 break;
                         }
                         $parameters[$i++] = $arg;
@@ -478,12 +534,14 @@ class CardsData
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'r': // release
-                    $or = array();
+                    $or = [];
                     foreach ($condition as $arg) {
                         switch ($operator) {
-                            case '<': $or[] = "(p.dateRelease <= ?$i)";
+                            case '<':
+                                $or[] = "(p.dateRelease <= ?$i)";
                                 break;
-                            case '>': $or[] = "(p.dateRelease > ?$i or p.dateRelease IS NULL)";
+                            case '>':
+                                $or[] = "(p.dateRelease > ?$i or p.dateRelease IS NULL)";
                                 break;
                         }
                         if ($arg == "now") {
@@ -517,31 +575,37 @@ class CardsData
         }
 
         switch ($sortorder) {
-            case 'set': $qb->orderBy('y.code')->addOrderBy('c.position');
+            case 'set':
+                $qb->orderBy('y.code')->addOrderBy('c.position');
                 break;
-            case 'name': $qb->orderBy('c.title');
+            case 'name':
+                $qb->orderBy('c.title');
                 break;
-            case 'faction': $qb->orderBy('c.side', 'DESC')->addOrderBy('c.faction')->addOrderBy('c.type');
+            case 'faction':
+                $qb->orderBy('c.side', 'DESC')->addOrderBy('c.faction')->addOrderBy('c.type');
                 break;
-            case 'type': $qb->orderBy('c.side', 'DESC')->addOrderBy('c.type')->addOrderBy('c.faction');
+            case 'type':
+                $qb->orderBy('c.side', 'DESC')->addOrderBy('c.type')->addOrderBy('c.faction');
                 break;
-            case 'cost': $qb->orderBy('c.type')->addOrderBy('c.cost')->addOrderBy('c.advancementCost');
+            case 'cost':
+                $qb->orderBy('c.type')->addOrderBy('c.cost')->addOrderBy('c.advancementCost');
                 break;
-            case 'strength': $qb->orderBy('c.type')->addOrderBy('c.strength')->addOrderBy('c.agendaPoints')->addOrderBy('c.trashCost');
+            case 'strength':
+                $qb->orderBy('c.type')->addOrderBy('c.strength')->addOrderBy('c.agendaPoints')->addOrderBy('c.trashCost');
                 break;
         }
         $query = $qb->getQuery();
 
         $query->setHint(
-                Query::HINT_CUSTOM_OUTPUT_WALKER,
+            Query::HINT_CUSTOM_OUTPUT_WALKER,
             'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
         );
         $query->setHint(
-                TranslatableListener::HINT_TRANSLATABLE_LOCALE,
+            TranslatableListener::HINT_TRANSLATABLE_LOCALE,
             $locale
         );
         $query->setHint(
-                TranslatableListener::HINT_FALLBACK,
+            TranslatableListener::HINT_FALLBACK,
             1
         );
 
@@ -556,7 +620,7 @@ class CardsData
      */
     public function getCardInfo(Card $card)
     {
-        static $cache = array();
+        static $cache = [];
 
         $locale = $this->request_stack->getCurrentRequest()->getLocale();
 
@@ -564,41 +628,41 @@ class CardsData
             return $cache[$card->getId()][$locale];
         }
 
-        $cardinfo = array(
-            "id" => $card->getId(),
-            "code" => $card->getCode(),
-            "title" => $card->getTitle(),
-            "type_name" => $card->getType()->getName(),
-            "type_code" => $card->getType()->getCode(),
-            "subtype" => $card->getKeywords(),
-            "text" => $card->getText(),
+        $cardinfo = [
+            "id"              => $card->getId(),
+            "code"            => $card->getCode(),
+            "title"           => $card->getTitle(),
+            "type_name"       => $card->getType()->getName(),
+            "type_code"       => $card->getType()->getCode(),
+            "subtype"         => $card->getKeywords(),
+            "text"            => $card->getText(),
             "advancementcost" => $card->getAdvancementCost(),
-            "agendapoints" => $card->getAgendaPoints(),
-            "baselink" => $card->getBaseLink(),
-            "cost" => $card->getCost(),
-            "faction_name" => $card->getFaction()->getName(),
-            "faction_code" => $card->getFaction()->getCode(),
-            "factioncost" => $card->getFactionCost(),
-            "flavor" => $card->getFlavor(),
-            "illustrator" => $card->getIllustrator(),
-            "influencelimit" => $card->getInfluenceLimit(),
-            "memoryunits" => $card->getMemoryCost(),
+            "agendapoints"    => $card->getAgendaPoints(),
+            "baselink"        => $card->getBaseLink(),
+            "cost"            => $card->getCost(),
+            "faction_name"    => $card->getFaction()->getName(),
+            "faction_code"    => $card->getFaction()->getCode(),
+            "factioncost"     => $card->getFactionCost(),
+            "flavor"          => $card->getFlavor(),
+            "illustrator"     => $card->getIllustrator(),
+            "influencelimit"  => $card->getInfluenceLimit(),
+            "memoryunits"     => $card->getMemoryCost(),
             "minimumdecksize" => $card->getMinimumDeckSize(),
-            "position" => $card->getPosition(),
-            "quantity" => $card->getQuantity(),
-            "pack_name" => $card->getPack()->getName(),
-            "pack_code" => $card->getPack()->getCode(),
-            "side_name" => $card->getSide()->getName(),
-            "side_code" => $card->getSide()->getCode(),
-            "strength" => $card->getStrength(),
-            "trash" => $card->getTrashCost(),
-            "uniqueness" => $card->getUniqueness(),
-            "limited" => $card->getDeckLimit(),
-            "cycle_name" => $card->getPack()->getCycle()->getName(),
-            "cycle_code" => $card->getPack()->getCycle()->getCode(),
-            "ancur_link" => $card->getAncurLink(),
-            "imageUrl" => $card->getImageUrl(),
-        );
+            "position"        => $card->getPosition(),
+            "quantity"        => $card->getQuantity(),
+            "pack_name"       => $card->getPack()->getName(),
+            "pack_code"       => $card->getPack()->getCode(),
+            "side_name"       => $card->getSide()->getName(),
+            "side_code"       => $card->getSide()->getCode(),
+            "strength"        => $card->getStrength(),
+            "trash"           => $card->getTrashCost(),
+            "uniqueness"      => $card->getUniqueness(),
+            "limited"         => $card->getDeckLimit(),
+            "cycle_name"      => $card->getPack()->getCycle()->getName(),
+            "cycle_code"      => $card->getPack()->getCycle()->getCode(),
+            "ancur_link"      => $card->getAncurLink(),
+            "imageUrl"        => $card->getImageUrl(),
+        ];
 
         // setting the card cost to X if the cost is null and the card is not of a costless type
         if ($cardinfo['cost'] === null && !in_array($cardinfo['type_code'], ['agenda', 'identity'])) {
@@ -610,7 +674,7 @@ class CardsData
             $cardinfo['strength'] = 'X';
         }
 
-        $cardinfo['url'] = $this->router->generate('cards_zoom', array('card_code' => $card->getCode(), '_locale' => $locale), UrlGeneratorInterface::ABSOLUTE_URL);
+        $cardinfo['url'] = $this->router->generate('cards_zoom', ['card_code' => $card->getCode(), '_locale' => $locale], UrlGeneratorInterface::ABSOLUTE_URL);
         $cardinfo['imageUrl'] = $cardinfo['imageUrl'] ?: $this->request_stack->getCurrentRequest()->getSchemeAndHttpHost() . "/card_image/" . $card->getCode() . ".png";
 
         // replacing <trace>
@@ -645,7 +709,7 @@ class CardsData
 
         $query = preg_replace('/\s+/u', ' ', trim($query));
 
-        $list = array();
+        $list = [];
         $cond = null;
         // l'automate a 3 états :
         // 1:recherche de type
@@ -660,17 +724,17 @@ class CardsData
                     $list[] = $cond;
                 }
                 // on commence par rechercher un type de condition
-                $match = array();
+                $match = [];
                 if (preg_match('/^(\p{L})([:<>!])(.*)/u', $query, $match)) { // jeton "condition:"
-                    $cond = array(mb_strtolower($match[1]), $match[2]);
+                    $cond = [mb_strtolower($match[1]), $match[2]];
                     $query = $match[3];
                 } else {
-                    $cond = array("", ":");
+                    $cond = ["", ":"];
                 }
                 $etat = 2;
             } else {
                 if (preg_match('/^"([^"]*)"(.*)/u', $query, $match) // jeton "texte libre entre guillements"
-                        || preg_match('/^([\p{L}\p{N}\-\&\.\!\'\;]+)(.*)/u', $query, $match) // jeton "texte autorisé sans guillements"
+                    || preg_match('/^([\p{L}\p{N}\-\&\.\!\'\;]+)(.*)/u', $query, $match) // jeton "texte autorisé sans guillements"
                 ) {
                     if (($etat == 2 && count($cond) == 2) || $etat == 3) {
                         $cond[] = $match[1];
@@ -703,21 +767,22 @@ class CardsData
         if (isset($cond) && $etat != 4 && count($cond) > 2) {
             $list[] = $cond;
         }
+
         return $list;
     }
 
     public function validateConditions(&$conditions)
     {
         // suppression des conditions invalides
-        $canDoNumeric = array('o', 'n', 'p', 'r', 'y', 'e', 'h', 'c');
-        $numeric = array('<', '>');
+        $canDoNumeric = ['o', 'n', 'p', 'r', 'y', 'e', 'h', 'c'];
+        $numeric = ['<', '>'];
         foreach ($conditions as $i => $l) {
             if (in_array($l[1], $numeric) && !in_array($l[0], $canDoNumeric)) {
                 unset($conditions[$i]);
             }
             if ($l[0] == 'f') {
-                $factions = array();
-                for ($j=1; $j<count($l); ++$j) {
+                $factions = [];
+                for ($j = 1; $j < count($l); ++$j) {
                     if (strlen($l[$j]) === 1) {
                         // replace faction letter with full name
                         $keys = array_keys(self::$faction_letters, $l[$j]);
@@ -738,24 +803,24 @@ class CardsData
     {
         // reconstruction de la bonne chaine de recherche pour affichage
         return implode(" ", array_map(
-                        function ($l) {
-                            return ($l[0] ? $l[0] . $l[1] : "")
-                            . implode("|", array_map(
-                                            function ($s) {
-                                                return preg_match("/^[\p{L}\p{N}\-\&\.\!\'\;]+$/u", $s) ? $s : "\"$s\"";
-                                            },
-                                array_slice($l, 2)
-                    ));
+            function ($l) {
+                return ($l[0] ? $l[0] . $l[1] : "")
+                    . implode("|", array_map(
+                        function ($s) {
+                            return preg_match("/^[\p{L}\p{N}\-\&\.\!\'\;]+$/u", $s) ? $s : "\"$s\"";
                         },
+                        array_slice($l, 2)
+                    ));
+            },
             $conditions
         ));
     }
 
     public function get_mwl_info(Card $card)
     {
-        $response = array();
+        $response = [];
         $card_code = $card->getCode();
-        $mwls = $this->entityManager->getRepository('AppBundle:Mwl')->findBy(array(), array("dateStart" => "DESC"));
+        $mwls = $this->entityManager->getRepository('AppBundle:Mwl')->findBy([], ["dateStart" => "DESC"]);
         foreach ($mwls as $mwl) {
             $mwl_cards = $mwl->getCards();
             if (isset($mwl_cards[$card_code])) {
@@ -764,13 +829,13 @@ class CardsData
                 $deck_limit = $card_mwl['deck_limit'] ?? null;
                 // Ceux-ci signifient la même chose
                 $universal_faction_cost = $card_mwl['universal_faction_cost'] ?? $card_mwl['global_penalty'] ?? 0;
-                $response[] = array(
-                    'mwl_name' => $mwl->getName(),
-                    'active' => $mwl->getActive(),
-                    'is_restricted' => $is_restricted,
-                    'deck_limit' => $deck_limit,
+                $response[] = [
+                    'mwl_name'               => $mwl->getName(),
+                    'active'                 => $mwl->getActive(),
+                    'is_restricted'          => $is_restricted,
+                    'deck_limit'             => $deck_limit,
                     'universal_faction_cost' => $universal_faction_cost,
-                );
+                ];
             }
         }
 
@@ -779,27 +844,27 @@ class CardsData
 
     public function get_reviews($card)
     {
-        $reviews = $this->entityManager->getRepository('AppBundle:Review')->findBy(array('card' => $card), array('nbvotes' => 'DESC'));
+        $reviews = $this->entityManager->getRepository('AppBundle:Review')->findBy(['card' => $card], ['nbvotes' => 'DESC']);
 
-        $response = array();
-        $packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy(array(), array("dateRelease" => "ASC"));
+        $response = [];
+        $packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy([], ["dateRelease" => "ASC"]);
         foreach ($reviews as $review) {
             /* @var $review \AppBundle\Entity\Review */
             $user = $review->getUser();
 
-            $response[] = array(
-                'id' => $review->getId(),
-                'text' => $review->getText(),
-                'author_id' => $user->getId(),
-                'author_name' => $user->getUsername(),
+            $response[] = [
+                'id'                => $review->getId(),
+                'text'              => $review->getText(),
+                'author_id'         => $user->getId(),
+                'author_name'       => $user->getUsername(),
                 'author_reputation' => $user->getReputation(),
-                'author_donation' => $user->getDonation(),
-                'author_color' => $user->getFaction(),
-                'date_creation' => $review->getDateCreation(),
-                'nbvotes' => $review->getNbvotes(),
-                'comments' => $review->getComments(),
-                'latestpack' => $this->last_pack_for_review($packs, $review),
-            );
+                'author_donation'   => $user->getDonation(),
+                'author_color'      => $user->getFaction(),
+                'date_creation'     => $review->getDateCreation(),
+                'nbvotes'           => $review->getNbvotes(),
+                'comments'          => $review->getComments(),
+                'latestpack'        => $this->last_pack_for_review($packs, $review),
+            ];
         }
 
         return $response;
@@ -820,15 +885,15 @@ class CardsData
 
     public function get_rulings($card)
     {
-        $rulings = $this->entityManager->getRepository('AppBundle:Ruling')->findBy(array('card' => $card), array('dateCreation' => 'ASC'));
+        $rulings = $this->entityManager->getRepository('AppBundle:Ruling')->findBy(['card' => $card], ['dateCreation' => 'ASC']);
 
-        $response = array();
+        $response = [];
         foreach ($rulings as $ruling) {
-            $response[] = array(
-                'id' => $ruling->getId(),
-                'text' => $ruling->getText(),
+            $response[] = [
+                'id'      => $ruling->getId(),
+                'text'    => $ruling->getText(),
                 'rawtext' => $ruling->getRawtext(),
-            );
+            ];
         }
 
         return $response;
@@ -848,6 +913,7 @@ class CardsData
         $query->setParameter('typeName', 'Identity');
         $query->setParameter('title', '%' . $partialTitle . '%');
         $card = $query->getSingleResult();
+
         return $card;
     }
 }

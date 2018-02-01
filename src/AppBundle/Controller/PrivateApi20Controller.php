@@ -79,7 +79,8 @@ class PrivateApi20Controller extends FOSRestController
         }
         
         $includeHistory = $request->query->has('include_history') && $request->query->get('include_history');
-        
+
+        /** @var Deck $deck */
         $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
         
         if (!$deck) {
@@ -114,7 +115,7 @@ class PrivateApi20Controller extends FOSRestController
             }
         }
         
-        $data = $deck->serialize();
+        $data = $deck->normalize();
         $data['history'] = $history;
         
         return $this->prepareResponse([$data]);

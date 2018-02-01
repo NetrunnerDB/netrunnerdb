@@ -12,7 +12,7 @@ class DecklistManager
 {
     /** @var EntityManagerInterface $entityManager */
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -32,7 +32,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -63,18 +63,18 @@ class DecklistManager
                 and d.moderation_status in (0,1)
                 order by date_creation desc
                 limit $start, $limit",
-            array(
-                    $user_id
-                )
+            [
+                $user_id,
+            ]
         )
-                ->fetchAll(\PDO::FETCH_ASSOC);
+                    ->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     /**
@@ -91,7 +91,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -121,17 +121,17 @@ class DecklistManager
                 and d.moderation_status in (0,1,2)
                 order by date_creation desc
                 limit $start, $limit",
-            array(
-                    $user_id
-                )
+            [
+                $user_id,
+            ]
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     /**
@@ -144,7 +144,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -179,10 +179,10 @@ class DecklistManager
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     /**
@@ -195,7 +195,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
     			d.id,
     			d.name,
     			d.prettyname,
@@ -228,10 +228,10 @@ class DecklistManager
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     /**
@@ -244,7 +244,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -278,10 +278,10 @@ class DecklistManager
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     /**
@@ -294,7 +294,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -329,10 +329,10 @@ class DecklistManager
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     /**
@@ -345,7 +345,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -379,10 +379,10 @@ class DecklistManager
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     /**
@@ -395,7 +395,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -426,17 +426,17 @@ class DecklistManager
                 and d.moderation_status in (0,1)
                 order by date_creation desc
                 limit $start, $limit",
-            array(
-                    $faction_code
-                )
+            [
+                $faction_code,
+            ]
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     /**
@@ -449,7 +449,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -479,17 +479,17 @@ class DecklistManager
                 and d.moderation_status in (0,1)
                 order by date_creation desc
                 limit $start, $limit",
-            array(
-                    $pack_code
-                )
+            [
+                $pack_code,
+            ]
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     /**
@@ -504,7 +504,7 @@ class DecklistManager
         $additional_clause = $includeEmptyDesc ? "" : "and d.rawdescription!=''";
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -539,12 +539,12 @@ class DecklistManager
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
-    
+
     /**
      * returns the list of trashed decklists
      * @param integer $limit
@@ -555,7 +555,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -588,12 +588,12 @@ class DecklistManager
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
-    
+
     /**
      * returns the list of restored decklists
      * @param integer $limit
@@ -604,7 +604,7 @@ class DecklistManager
         $dbh = $this->entityManager->getConnection();
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -637,12 +637,12 @@ class DecklistManager
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
-    
+
     /**
      * returns a list of decklists according to search criteria
      * @param integer $limit
@@ -656,7 +656,7 @@ class DecklistManager
 
         $cards_code = $request->query->get('cards');
         if (!is_array($cards_code)) {
-            $cards_code = array();
+            $cards_code = [];
         }
         $faction_code = filter_var($request->query->get('faction'), FILTER_SANITIZE_STRING);
         $author_name = filter_var($request->query->get('author'), FILTER_SANITIZE_STRING);
@@ -673,7 +673,7 @@ class DecklistManager
         }
 
         if (!is_array($packs)) {
-            $packs = $dbh->executeQuery("select id from pack")->fetchAll(\PDO::FETCH_COLUMN);
+            $packs = $dbh->executeQuery("SELECT id FROM pack")->fetchAll(\PDO::FETCH_COLUMN);
         }
 
         if ($faction_code === "corp" || $faction_code === "runner") {
@@ -681,9 +681,9 @@ class DecklistManager
             unset($faction_code);
         }
 
-        $wheres = array();
-        $params = array();
-        $types = array();
+        $wheres = [];
+        $params = [];
+        $types = [];
         if (!empty($side_code)) {
             $wheres[] = 's.code=?';
             $params[] = $side_code;
@@ -707,7 +707,7 @@ class DecklistManager
         if (count($cards_code)) {
             foreach ($cards_code as $card_code) {
                 /** @var Card $card */
-                $card = $cardRepository->findOneBy(array('code' => $card_code));
+                $card = $cardRepository->findOneBy(['code' => $card_code]);
                 if (!$card) {
                     continue;
                 }
@@ -742,8 +742,8 @@ class DecklistManager
 
         if (empty($wheres)) {
             $where = "d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)";
-            $params = array();
-            $types = array();
+            $params = [];
+            $types = [];
         } else {
             $where = implode(" AND ", $wheres);
         }
@@ -768,7 +768,7 @@ class DecklistManager
         }
 
         $rows = $dbh->executeQuery(
-                        "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
                 d.name,
                 d.prettyname,
@@ -807,21 +807,21 @@ class DecklistManager
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
 
-        return array(
-            "count" => $count,
-            "decklists" => $rows
-        );
+        return [
+            "count"     => $count,
+            "decklists" => $rows,
+        ];
     }
 
     public function removeConstraints(Decklist $decklist)
     {
-        $successors = $this->entityManager->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
+        $successors = $this->entityManager->getRepository('AppBundle:Decklist')->findBy(['precedent' => $decklist]);
         foreach ($successors as $successor) {
             /* @var $successor \AppBundle\Entity\Decklist */
             $successor->setPrecedent(null);
         }
 
-        $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
+        $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(['parent' => $decklist]);
         foreach ($children as $child) {
             /* @var $child \AppBundle\Entity\Deck */
             $child->setParent(null);
@@ -830,13 +830,13 @@ class DecklistManager
 
     public function remove(Decklist $decklist)
     {
-        $successors = $this->entityManager->getRepository('AppBundle:Decklist')->findBy(array('precedent' => $decklist));
+        $successors = $this->entityManager->getRepository('AppBundle:Decklist')->findBy(['precedent' => $decklist]);
         foreach ($successors as $successor) {
             /* @var $successor \AppBundle\Entity\Decklist */
             $successor->setPrecedent(null);
         }
 
-        $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(array('parent' => $decklist));
+        $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(['parent' => $decklist]);
         foreach ($children as $child) {
             /* @var $child \AppBundle\Entity\Deck */
             $child->setParent(null);
@@ -844,29 +844,29 @@ class DecklistManager
 
         $this->entityManager->remove($decklist);
     }
-    
+
     public function isDecklistLegal(Decklist $decklist)
     {
         // card limits
         $countDql = "SELECT COUNT(DISTINCT s)"
-                . " FROM AppBundle:Decklistslot s"
-                . " JOIN AppBundle:Card c WITH s.card=c"
-                . " WHERE s.quantity>c.deckLimit"
-                . " AND s.decklist=?1";
+            . " FROM AppBundle:Decklistslot s"
+            . " JOIN AppBundle:Card c WITH s.card=c"
+            . " WHERE s.quantity>c.deckLimit"
+            . " AND s.decklist=?1";
         $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $decklist);
         $count = $countQuery->getSingleResult()[1];
         if ($count) {
             return false;
         }
-        
+
         // card rotation
         $countDql = "SELECT COUNT(DISTINCT s)"
-                . " FROM AppBundle:Decklistslot s"
-                . " JOIN AppBundle:Card c WITH s.card=c"
-                . " JOIN AppBundle:Pack p WITH c.pack=p"
-                . " JOIN AppBundle:Cycle y WITH p.cycle=y"
-                . " WHERE y.rotated=true"
-                . " AND s.decklist=?1";
+            . " FROM AppBundle:Decklistslot s"
+            . " JOIN AppBundle:Card c WITH s.card=c"
+            . " JOIN AppBundle:Pack p WITH c.pack=p"
+            . " JOIN AppBundle:Cycle y WITH p.cycle=y"
+            . " WHERE y.rotated=true"
+            . " AND s.decklist=?1";
         $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $decklist);
         $count = $countQuery->getSingleResult()[1];
         if ($count) {
@@ -875,11 +875,11 @@ class DecklistManager
 
         // mwl
         $countDql = "SELECT COUNT(DISTINCT l)"
-                . " FROM AppBundle:Legality l"
-                . " JOIN AppBundle:Mwl m WITH l.mwl=m"
-                . " WHERE m.active=true"
-                . " AND l.isLegal=false"
-                . " AND l.decklist=?1";
+            . " FROM AppBundle:Legality l"
+            . " JOIN AppBundle:Mwl m WITH l.mwl=m"
+            . " WHERE m.active=true"
+            . " AND l.isLegal=false"
+            . " AND l.decklist=?1";
         $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $decklist);
         $count = $countQuery->getSingleResult()[1];
         if ($count) {

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Pack;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,6 +15,15 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class ExportTranslationsCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -57,7 +68,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $output->writeln("Exporting translations for <info>" . implode(",", $locales) . "</info> in <info>$path</info>");
         
         $things = ['side', 'faction', 'type', 'cycle', 'pack'];
-        $packs = $this->getContainer()->get('doctrine')->getManager()->getRepository('AppBundle:Pack')->findAll();
+        $packs = $this->entityManager->getRepository('AppBundle:Pack')->findAll();
         
         
         foreach ($locales as $locale) {
@@ -82,6 +93,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             }
         
             $command = $this->getApplication()->find('nrdb:translations:dump:cards');
+            /** @var Pack $pack */
             foreach ($packs as $pack) {
                 $pack_code = $pack->getCode();
                 $filepath = "${path}/translations/${locale}/pack/${pack_code}.{$locale}.json";

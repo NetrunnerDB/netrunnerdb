@@ -3,6 +3,8 @@
 namespace AppBundle\Command;
 
 use AppBundle\Behavior\Entity\CodeNameInterface;
+use AppBundle\Repository\TranslatableRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,6 +12,15 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class DumpTransBaseCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -34,8 +45,8 @@ class DumpTransBaseCommand extends ContainerAwareCommand
         $entityName = $input->getArgument('entityName');
         $entityFullName = 'AppBundle:'.ucfirst($entityName);
 
-        /* @var $repository \AppBundle\Repository\TranslatableRepository */
-        $repository = $this->getContainer()->get('doctrine')->getManager()->getRepository($entityFullName);
+        /** @var TranslatableRepository $repository */
+        $repository = $this->entityManager->getRepository($entityFullName);
         
         $qb = $repository->setDefaultLocale($locale)->createQueryBuilder('e')->orderBy('e.code');
         

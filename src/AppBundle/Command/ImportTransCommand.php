@@ -2,6 +2,9 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
+use Doctrine\ORM\EntityManagerInterface;
+use Gedmo\Translatable\Translatable;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,12 +17,18 @@ use Symfony\Component\Console\Helper\ProgressBar;
 
 class ImportTransCommand extends ContainerAwareCommand
 {
-    /* @var $em EntityManager */
-    private $em;
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
-    /* @var $output OutputInterface */
+    /** @var OutputInterface $output */
     private $output;
-        
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
     protected function configure()
     {
         $this
@@ -41,7 +50,6 @@ class ImportTransCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->em = $this->getContainer()->get('doctrine')->getManager();
         $this->output = $output;
         
         $supported_locales = $this->getContainer()->getParameter('supported_locales');
@@ -69,7 +77,7 @@ class ImportTransCommand extends ContainerAwareCommand
                 $fileInfo = $this->getFileInfo("${path}/translations/${locale}", "${thing}s.${locale}.json");
                 $this->importThingsJsonFile($fileInfo, $locale, $thing);
             }
-            $this->em->flush();
+            $this->entityManager->flush();
             
             $fileSystemIterator = $this->getFileSystemIterator("${path}/translations/${locale}");
             
@@ -79,7 +87,7 @@ class ImportTransCommand extends ContainerAwareCommand
                 $this->importCardsJsonFile($fileInfo, $locale);
             }
             
-            $this->em->flush();
+            $this->entityManager->flush();
         }
     }
     
@@ -121,7 +129,7 @@ class ImportTransCommand extends ContainerAwareCommand
 
     protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
     {
-        $metadata = $this->em->getClassMetadata($entityName);
+        $metadata = $this->entityManager->getClassMetadata($entityName);
         $type = $metadata->fieldMappings[$fieldName]['type'];
     
         // new value, by default what json gave us is the correct typed value
@@ -158,7 +166,7 @@ class ImportTransCommand extends ContainerAwareCommand
     
     protected function copyKeyToEntity($entity, $entityName, $data, $key, $isMandatory = true)
     {
-        $metadata = $this->em->getClassMetadata($entityName);
+        $metadata = $this->entityManager->getClassMetadata($entityName);
     
         if (!key_exists($key, $data)) {
             if ($isMandatory) {
@@ -188,12 +196,12 @@ class ImportTransCommand extends ContainerAwareCommand
             return;
         }
         
-        $entity = $this->em->getRepository($entityName)->findOneBy(['code' => $data['code']]);
-        if (!$entity) {
+        $entity = $this->entityManager->getRepository($entityName)->findOneBy(['code' => $data['code']]);
+        if (!$entity instanceof AbstractTranslatableEntity) {
             throw new \Exception("Cannot find entity $entityName code [".$data['code']."]");
         }
         $entity->setTranslatableLocale($locale);
-        $this->em->refresh($entity);
+        $this->entityManager->refresh($entity);
         
         foreach ($mandatoryKeys as $key) {
             $this->copyKeyToEntity($entity, $entityName, $data, $key, true);
@@ -247,11 +255,11 @@ class ImportTransCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @return \GlobIterator
      * @throws \Exception
      */
-    protected function getFileSystemIterator($path)
+    protected function getFileSystemIterator(string $path)
     {
         $fs = new Filesystem();
         

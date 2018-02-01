@@ -2,17 +2,17 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use AppBundle\Behavior\Entity\CodeNameInterface;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Gedmo\Translatable\Translatable;
 
 /**
  * Type
  */
-class Type implements Translatable, NormalizableInterface, TimestampableInterface, CodeNameInterface
+class Type extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
     public function __toString()
     {
@@ -74,8 +74,6 @@ class Type implements Translatable, NormalizableInterface, TimestampableInterfac
      * @var Collection
      */
     private $cards;
-    
-    private $locale = 'en';
 
     /**
      * Constructor
@@ -292,10 +290,5 @@ class Type implements Translatable, NormalizableInterface, TimestampableInterfac
     public function getCards()
     {
         return $this->cards;
-    }
-    
-    public function setTranslatableLocale($locale)
-    {
-        $this->locale = $locale;
     }
 }

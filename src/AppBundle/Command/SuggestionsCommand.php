@@ -14,10 +14,14 @@ class SuggestionsCommand extends ContainerAwareCommand
     /** @var EntityManagerInterface $entityManager */
     private $entityManager;
 
-    public function __construct(string $name = null, EntityManagerInterface $entityManager)
+    /** @var string $publicDir */
+    private $publicDir;
+
+    public function __construct(string $name = null, EntityManagerInterface $entityManager, string $publicDir)
     {
         parent::__construct($name);
         $this->entityManager = $entityManager;
+        $this->publicDir = $publicDir;
     }
 
     protected function configure()
@@ -38,14 +42,13 @@ class SuggestionsCommand extends ContainerAwareCommand
         ini_set('memory_limit', '1G');
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         
-        $webdir = $this->getContainer()->get('kernel')->getRootDir() . "/../web";
         $side_code = $input->getArgument('side');
         $side = $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
         if (!$side) {
             throw new \Exception("Side not found [$side_code]");
         }
         $data = $this->getSuggestions($side);
-        file_put_contents("$webdir/$side_code.json", json_encode($data));
+        file_put_contents($this->publicDir . "/$side_code.json", json_encode($data));
         $output->writeln('done');
     }
 

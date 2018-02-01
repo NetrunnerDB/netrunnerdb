@@ -2,16 +2,16 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Gedmo\Translatable\Translatable;
 
 /**
  * Card
  */
-class Card implements Translatable, NormalizableInterface, TimestampableInterface
+class Card extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface
 {
     public function __toString()
     {
@@ -233,8 +233,6 @@ class Card implements Translatable, NormalizableInterface, TimestampableInterfac
      */
     private $deckLimit;
 
-    private $locale = 'en';
-    
     /**
      * @var Collection
      */
@@ -994,16 +992,11 @@ class Card implements Translatable, NormalizableInterface, TimestampableInterfac
         }
         return $parts[0];
     }
-    
-    public function setTranslatableLocale($locale)
-    {
-        $this->locale = $locale;
-    }
+
     /**
      * @var \DateTime
      */
     private $dateCreation;
-
 
     /**
      * Set dateCreation

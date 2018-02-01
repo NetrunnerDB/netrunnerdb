@@ -4,13 +4,29 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Decklist;
 use AppBundle\Service\DecklistManager;
+use Doctrine\ORM\EntityManagerInterface;
+use function GuzzleHttp\Psr7\parse_header;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-class RemoveDecklistCommand extends ContainerAwareCommand
+class RemoveDecklistCommand extends Command
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    /** @var DecklistManager $decklistManager */
+    private $decklistManager;
+
+    public function __construct(EntityManagerInterface $entityManager, DecklistManager $decklistManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+        $this->decklistManager = $decklistManager;
+    }
+
     protected function configure()
     {
         $this
@@ -28,18 +44,13 @@ class RemoveDecklistCommand extends ContainerAwareCommand
     {
         $decklist_id = $input->getArgument('id');
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $entityManager = $this->getContainer()->get('doctrine')->getManager();
-
-        $decklistManager = $this->getContainer()->get(DecklistManager::class);
-
         /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         
-        $decklistManager->removeConstraints($decklist);
-        $entityManager->remove($decklist);
+        $this->decklistManager->removeConstraints($decklist);
+        $this->entityManager->remove($decklist);
         
-        $entityManager->flush();
+        $this->entityManager->flush();
         
         $output->writeln("Done.");
     }
