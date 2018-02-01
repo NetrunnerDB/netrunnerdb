@@ -2,6 +2,8 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Decklist;
+use AppBundle\Entity\Mwl;
 use AppBundle\Service\Judge;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -52,14 +54,14 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
         $mwl_code = $input->getArgument('mwl_code');
         $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
 
-        if (!$mwl) {
+        if (!$mwl instanceof Mwl) {
             throw new \Exception("MWL not found");
         }
 
         $decklist_id = $input->getOption('decklist');
         if ($decklist_id) {
             $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-            if (!$decklist) {
+            if (!$decklist instanceof Decklist) {
                 throw new \Exception("Decklist not found");
             }
             $legality = $this->entityManager->getRepository('AppBundle:Legality')->findOneBy(['mwl' => $mwl, 'decklist' => $decklist]);

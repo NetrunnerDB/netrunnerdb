@@ -33,13 +33,10 @@ class TranslatableRepository extends EntityRepository
     }
 
     /**
-     * Returns translated one (or null if not found) result for given locale
-     *
-     * @param QueryBuilder $qb            A Doctrine query builder instance
-     * @param string       $locale        A locale name
-     * @param string       $hydrationMode A Doctrine results hydration mode
-     *
-     * @return QueryBuilder
+     * @param QueryBuilder $qb
+     * @param string|null $locale
+     * @param int|null $hydrationMode
+     * @return mixed
      */
     public function getOneOrNullResult(QueryBuilder $qb, $locale = null, $hydrationMode = null)
     {
@@ -47,13 +44,10 @@ class TranslatableRepository extends EntityRepository
     }
 
     /**
-     * Returns translated results for given locale
-     *
-     * @param QueryBuilder $qb            A Doctrine query builder instance
-     * @param string       $locale        A locale name
-     * @param string       $hydrationMode A Doctrine results hydration mode
-     *
-     * @return array
+     * @param QueryBuilder $qb
+     * @param string|null $locale
+     * @param int $hydrationMode
+     * @return mixed
      */
     public function getResult(QueryBuilder $qb, $locale = null, $hydrationMode = AbstractQuery::HYDRATE_OBJECT)
     {
@@ -61,11 +55,8 @@ class TranslatableRepository extends EntityRepository
     }
 
     /**
-     * Returns translated array results for given locale
-     *
-     * @param QueryBuilder $qb     A Doctrine query builder instance
-     * @param string       $locale A locale name
-     *
+     * @param QueryBuilder $qb
+     * @param string|null $locale
      * @return array
      */
     public function getArrayResult(QueryBuilder $qb, $locale = null)
@@ -74,13 +65,10 @@ class TranslatableRepository extends EntityRepository
     }
 
     /**
-     * Returns translated single result for given locale
-     *
-     * @param QueryBuilder $qb            A Doctrine query builder instance
-     * @param string       $locale        A locale name
-     * @param string       $hydrationMode A Doctrine results hydration mode
-     *
-     * @return object
+     * @param QueryBuilder $qb
+     * @param string|null $locale
+     * @param int|null $hydrationMode
+     * @return mixed
      */
     public function getSingleResult(QueryBuilder $qb, $locale = null, $hydrationMode = null)
     {
@@ -88,11 +76,8 @@ class TranslatableRepository extends EntityRepository
     }
 
     /**
-     * Returns translated scalar result for given locale
-     *
-     * @param QueryBuilder $qb     A Doctrine query builder instance
-     * @param string       $locale A locale name
-     *
+     * @param QueryBuilder $qb
+     * @param string|null $locale
      * @return array
      */
     public function getScalarResult(QueryBuilder $qb, $locale = null)
@@ -101,11 +86,8 @@ class TranslatableRepository extends EntityRepository
     }
 
     /**
-     * Returns translated single scalar result for given locale
-     *
-     * @param QueryBuilder $qb     A Doctrine query builder instance
-     * @param string       $locale A locale name
-     *
+     * @param QueryBuilder $qb
+     * @param string|null $locale
      * @return mixed
      */
     public function getSingleScalarResult(QueryBuilder $qb, $locale = null)
@@ -114,11 +96,8 @@ class TranslatableRepository extends EntityRepository
     }
 
     /**
-     * Returns translated Doctrine query instance
-     *
-     * @param QueryBuilder $qb     A Doctrine query builder instance
-     * @param string       $locale A locale name
-     *
+     * @param QueryBuilder $qb
+     * @param string|null $locale
      * @return Query
      */
     protected function getTranslatedQuery(QueryBuilder $qb, $locale = null)

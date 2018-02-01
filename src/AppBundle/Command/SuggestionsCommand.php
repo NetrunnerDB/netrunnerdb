@@ -44,7 +44,7 @@ class SuggestionsCommand extends ContainerAwareCommand
         
         $side_code = $input->getArgument('side');
         $side = $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
-        if (!$side) {
+        if (!$side instanceof Side) {
             throw new \Exception("Side not found [$side_code]");
         }
         $data = $this->getSuggestions($side);

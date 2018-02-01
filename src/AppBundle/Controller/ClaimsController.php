@@ -160,7 +160,7 @@ class ClaimsController extends AbstractOauthController
         $em->remove($claim);
         $em->flush();
 
-        $jsend = $this->getJsendResponse('success', null);
+        $jsend = $this->getJsendResponse('success');
 
         return $this->createJsonResponse($jsend);
     }

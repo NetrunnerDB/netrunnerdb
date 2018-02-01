@@ -2,11 +2,11 @@
 
 namespace AppBundle\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityManager;
 
 class CycleRepository extends TranslatableRepository
 {
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManager $entityManager)
     {
         parent::__construct($entityManager, $entityManager->getClassMetadata('AppBundle\Entity\Cycle'));
     }

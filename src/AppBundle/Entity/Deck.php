@@ -61,7 +61,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     private $description;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $problem;
 
@@ -229,7 +229,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
      * @param string $problem
      * @return Deck
      */
-    public function setProblem($problem)
+    public function setProblem($problem = null)
     {
         $this->problem = $problem;
 

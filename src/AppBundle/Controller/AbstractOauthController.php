@@ -29,13 +29,12 @@ abstract class AbstractOauthController extends Controller
     }
 
     /**
-     *
-     * @param integer $status
-     * @param mixed $data
-     * @param string $message
+     * @param string $status
+     * @param array $data
+     * @param string|null $message
      * @return array
      */
-    public function getJsendResponse($status, $data, $message = null)
+    public function getJsendResponse(string $status, array $data = [], string $message = null)
     {
         $response = [
             "status" => $status,

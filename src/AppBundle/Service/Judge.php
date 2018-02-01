@@ -127,13 +127,12 @@ class Judge
 
     /**
      * @param SlotInterface $slot
-     * @param SlotInterface[]|Collection $slots
+     * @param SlotInterface[] $slots
      * @param Card $identity
-     * @return int
+     * @return float|int
      */
-    public function getInfluenceCostOfCard($slot, $slots, Card $identity)
+    public function getInfluenceCostOfCard(SlotInterface $slot, $slots, Card $identity)
     {
-        $arraySlots = $slots instanceof Collection ? $slots->toArray() : $slots;
         $card = $slot->getCard();
         $qty = $slot->getQuantity();
 
@@ -148,7 +147,7 @@ class Judge
         }
         if ($card->getCode() === '10018') {
             // Mumba Temple: 15 or fewer ice => 0 inf
-            $targets = array_filter($arraySlots, function ($potentialTarget) {
+            $targets = array_filter($slots, function ($potentialTarget) {
                 /** @var SlotInterface $potentialTarget */
                 return $potentialTarget->getCard()->getType()->getCode() === 'ice';
             });
@@ -158,13 +157,13 @@ class Judge
         }
         if ($card->getCode() === '10019') {
             // Museum of History: 50 or more cards => 0 inf
-            if ($this->countCards($arraySlots, true) >= 50) {
+            if ($this->countCards($slots, true) >= 50) {
                 return 0;
             }
         }
         if ($card->getCode() === '10038') {
             // PAD Factory: 3 PAD Campaign => 0 inf
-            $targets = array_filter($arraySlots, function ($potentialTarget) {
+            $targets = array_filter($slots, function ($potentialTarget) {
                 /** @var SlotInterface $potentialTarget */
                 $code = $potentialTarget->getCard()->getCode();
 
@@ -176,7 +175,7 @@ class Judge
         }
         if ($card->getCode() === '10076') {
             // Mumbad Virtual Tour: 7 or more assets => 0 inf
-            $targets = array_filter($arraySlots, function ($potentialTarget) {
+            $targets = array_filter($slots, function ($potentialTarget) {
                 /** @var SlotInterface $potentialTarget */
                 return $potentialTarget->getCard()->getType()->getCode() === 'asset';
             });
@@ -186,7 +185,7 @@ class Judge
         }
         if ($card->getKeywords() && strpos($card->getKeywords(), 'Alliance') !== false) {
             // 6 or more non-alliance cards of the same faction
-            $targets = array_filter($arraySlots, function ($potentialTarget) use ($card) {
+            $targets = array_filter($slots, function ($potentialTarget) use ($card) {
                 /** @var SlotInterface $potentialTarget */
                 return $potentialTarget->getCard()->getFaction()->getId() === $card->getFaction()->getId() && strpos($potentialTarget->getCard()->getKeywords(), 'Alliance') === false;
             });
@@ -326,7 +325,7 @@ class Judge
 
         /* @var $slot \AppBundle\Entity\Decklistslot */
         foreach ($decklist->getSlots() as $slot) {
-            $influenceCostOfCard = $this->getInfluenceCostOfCard($slot, $decklist->getSlots(), $identity);
+            $influenceCostOfCard = $this->getInfluenceCostOfCard($slot, $decklist->getSlots()->toArray(), $identity);
             $influenceSpent += $influenceCostOfCard;
         }
 

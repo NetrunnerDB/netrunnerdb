@@ -4,6 +4,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Moderation;
+use AppBundle\Entity\Modflag;
 use AppBundle\Entity\User;
 use DateTime;
 
@@ -66,7 +67,7 @@ class ModerationHelper
 
         if (isset($modflag_id)) {
             $modflag = $this->entityManager->getRepository('AppBundle:Modflag')->find($modflag_id);
-            if (!$modflag) {
+            if (!$modflag instanceof Modflag) {
                 throw new \RuntimeException("Unknown modflag_id");
             }
             $decklist->setModflag($modflag);
@@ -98,12 +99,21 @@ class ModerationHelper
 
         $name = "/Emails/decklist-moderation-$status.html.twig";
 
+        $url = $this->router->generate(
+            'decklist_detail',
+            [
+                'decklist_id'   => $decklist->getId(),
+                'decklist_name' => $decklist->getPrettyname(),
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
         $body = $this->twig->render(
             $name,
             [
                 'username'      => $decklist->getUser()->getUsername(),
                 'decklist_name' => $decklist->getName(),
-                'url'           => $this->router->generate('decklist_detail', ['decklist_id' => $decklist->getId(), 'decklist_name' => $decklist->getPrettyname()], UrlGeneratorInterface::ABSOLUTE_URL),
+                'url'           => $url,
                 'reason'        => $decklist->getModflag() ? $decklist->getModflag()->getReason() : "Unknown",
             ]
         );

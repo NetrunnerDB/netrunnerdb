@@ -5,7 +5,9 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Deck;
+use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Deckslot;
+use AppBundle\Entity\Mwl;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -248,13 +250,13 @@ class Decks
         $deck_content = [];
         if ($decklist_id) {
             $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-            if ($decklist) {
+            if ($decklist instanceof Decklist) {
                 $deck->setParent($decklist);
             }
         }
         if ($mwl_code) {
             $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
-            if ($mwl) {
+            if ($mwl instanceof Mwl) {
                 $deck->setMwl($mwl);
             }
         } else {
@@ -354,7 +356,7 @@ class Decks
                 'qty'  => $qty,
             ];
         }
-        $analyse = $this->judge->analyse($deck->getSlots());
+        $analyse = $this->judge->analyse($deck->getSlots()->toArray());
         if (is_string($analyse)) {
             $deck->setProblem($analyse);
         } else {

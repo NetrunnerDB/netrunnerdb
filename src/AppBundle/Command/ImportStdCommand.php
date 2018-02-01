@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Card;
+use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Prebuilt;
 use AppBundle\Entity\Prebuiltslot;
 use AppBundle\Entity\Rotation;
@@ -420,7 +421,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 $result[] = $rotation;
                 foreach ($rotationData['cycles'] as $cycle_code) {
                     $cycle = $this->entityManager->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
-                    if (!$cycle) {
+                    if (!$cycle instanceof Cycle) {
                         continue;
                     }
                     $rotation->addCycle($cycle);
