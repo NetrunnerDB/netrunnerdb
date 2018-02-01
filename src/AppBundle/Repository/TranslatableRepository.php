@@ -53,7 +53,7 @@ class TranslatableRepository extends EntityRepository
      * @param string       $locale        A locale name
      * @param string       $hydrationMode A Doctrine results hydration mode
      *
-     * @return QueryBuilder
+     * @return array
      */
     public function getResult(QueryBuilder $qb, $locale = null, $hydrationMode = AbstractQuery::HYDRATE_OBJECT)
     {
@@ -80,7 +80,7 @@ class TranslatableRepository extends EntityRepository
      * @param string       $locale        A locale name
      * @param string       $hydrationMode A Doctrine results hydration mode
      *
-     * @return QueryBuilder
+     * @return object
      */
     public function getSingleResult(QueryBuilder $qb, $locale = null, $hydrationMode = null)
     {
@@ -106,7 +106,7 @@ class TranslatableRepository extends EntityRepository
      * @param QueryBuilder $qb     A Doctrine query builder instance
      * @param string       $locale A locale name
      *
-     * @return QueryBuilder
+     * @return mixed
      */
     public function getSingleScalarResult(QueryBuilder $qb, $locale = null)
     {

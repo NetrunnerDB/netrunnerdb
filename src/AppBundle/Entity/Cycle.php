@@ -279,7 +279,7 @@ class Cycle extends AbstractTranslatableEntity implements NormalizableInterface,
     }
 
     /**
-     * @return Pack[]|ArrayCollection|Collection
+     * @return Pack[]|Collection
      */
     public function getPacks()
     {

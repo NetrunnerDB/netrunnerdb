@@ -248,18 +248,7 @@ class User extends BaseUser
     }
 
     /**
-     * @param array $decks
-     * @return $this
-     */
-    public function setDecks(array $decks)
-    {
-        $this->decks = $decks;
-    
-        return $this;
-    }
-
-    /**
-     * @return Deck[]|ArrayCollection|Collection
+     * @return Deck[]|Collection
      */
     public function getDecks()
     {
@@ -267,45 +256,15 @@ class User extends BaseUser
     }
 
     /**
-     * Set decklists
-     *
-     * @param string $decklists
-     * @return $this
-     */
-    public function setDecklists($decklists)
-    {
-        $this->decklists = $decklists;
-    
-        return $this;
-    }
-    
-    /**
-     * Get decklists
-     *
-     * @return string
+     * @return Decklist[]|Collection
      */
     public function getDecklists()
     {
         return $this->decklists;
     }
-    
+
     /**
-     * Set comments
-     *
-     * @param string $comments
-     * @return $this
-     */
-    public function setComments($comments)
-    {
-        $this->comments = $comments;
-    
-        return $this;
-    }
-    
-    /**
-     * Get comments
-     *
-     * @return string
+     * @return Comment[]|Collection
      */
     public function getComments()
     {
@@ -337,7 +296,7 @@ class User extends BaseUser
     }
 
     /**
-     * @return Decklist[]|ArrayCollection
+     * @return Decklist[]|Collection
      */
     public function getFavorites()
     {
@@ -357,7 +316,7 @@ class User extends BaseUser
     }
 
     /**
-     * @return Decklist[]|ArrayCollection
+     * @return Decklist[]|Collection
      */
     public function getVotes()
     {
@@ -377,7 +336,7 @@ class User extends BaseUser
     }
 
     /**
-     * @return User[]|ArrayCollection
+     * @return User[]|Collection
      */
     public function getFollowing()
     {
@@ -410,7 +369,7 @@ class User extends BaseUser
     }
 
     /**
-     * @return User[]|ArrayCollection
+     * @return User[]|Collection
      */
     public function getFollowers()
     {

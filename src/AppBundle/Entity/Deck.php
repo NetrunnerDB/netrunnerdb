@@ -270,9 +270,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get slots
-     *
-     * @return Deckslot[]
+     * @return Deckslot[]|Collection
      */
     public function getSlots()
     {

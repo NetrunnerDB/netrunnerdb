@@ -117,12 +117,10 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Set isMini
-     *
-     * @param string $isMini
-     * @return Faction
+     * @param bool $isMini
+     * @return $this
      */
-    public function setIsMini($isMini)
+    public function setIsMini(bool $isMini)
     {
         $this->isMini = $isMini;
 
@@ -130,9 +128,7 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Get isMini
-     *
-     * @return string
+     * @return bool
      */
     public function getIsMini()
     {

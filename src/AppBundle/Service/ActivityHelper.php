@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class ActivityHelper
 {
-    /** @var EntityManager */
+    /** @var EntityManagerInterface */
     private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)

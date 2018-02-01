@@ -201,7 +201,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 'code',
                 'name',
             ], [], []);
-            if ($side) {
+            if ($side !== null) {
                 $result[] = $side;
                 $this->entityManager->persist($side);
             }
@@ -500,7 +500,7 @@ class ImportStdCommand extends ContainerAwareCommand
      * @param array  $foreignKeys
      * @param array  $optionalKeys
      * @throws Exception
-     * @return object
+     * @return object|null
      */
     protected function getEntityFromData($entityName, $data, $mandatoryKeys, $foreignKeys, $optionalKeys)
     {

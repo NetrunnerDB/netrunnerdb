@@ -115,14 +115,12 @@ class Comment
     {
         return $this->hidden;
     }
-    
+
     /**
-     * Set author
-     *
-     * @param string $author
+     * @param User $author
      * @return $this
      */
-    public function setAuthor($author)
+    public function setAuthor(User $author)
     {
         $this->author = $author;
     
@@ -138,12 +136,10 @@ class Comment
     }
 
     /**
-     * Set decklist
-     *
-     * @param string $decklist
+     * @param Decklist $decklist
      * @return $this
      */
-    public function setDecklist($decklist)
+    public function setDecklist(Decklist $decklist)
     {
         $this->decklist = $decklist;
     

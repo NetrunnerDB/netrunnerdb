@@ -42,15 +42,14 @@ class ModerationActionCommand extends ContainerAwareCommand
     {
         $this
             ->setName('nrdb:moderation:action')
-            ->setDescription('Changes the moderation status of a decklist')
-        ;
+            ->setDescription('Changes the moderation status of a decklist');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
         $this->output = $output;
-        
+
         $this->helper = $this->getHelper('question');
 
         /** @var User $user */
@@ -58,7 +57,7 @@ class ModerationActionCommand extends ContainerAwareCommand
 
         $decklistId = $this->helper->ask($input, $output, new Question('Please enter the id of the decklist: '));
         $decklist = $this->getDecklist($decklistId);
-        
+
         $this->showStatus($decklist);
 
         $newStatus = $this->getNewStatus();
@@ -69,13 +68,13 @@ class ModerationActionCommand extends ContainerAwareCommand
 
         $this->showStatus($decklist);
     }
-    
+
     protected function showStatus(Decklist $decklist)
     {
-        $this->output->writeln('<info>Decklist: '.$decklist->getName().'. Current moderation status: '.$this->moderationHelper->getLabel($decklist->getModerationStatus()).'</info>');
+        $this->output->writeln('<info>Decklist: ' . $decklist->getName() . '. Current moderation status: ' . $this->moderationHelper->getLabel($decklist->getModerationStatus()) . '</info>');
     }
-            
-    
+
+
     /**
      *
      * @return integer
@@ -90,10 +89,10 @@ class ModerationActionCommand extends ContainerAwareCommand
         $question->setErrorMessage('Status %s is invalid.');
 
         $answer = $this->helper->ask($this->input, $this->output, $question);
-        
+
         return array_search($answer, $choices);
     }
-    
+
     /**
      *
      * @param integer $decklistId
@@ -102,10 +101,11 @@ class ModerationActionCommand extends ContainerAwareCommand
     protected function getDecklist($decklistId)
     {
         $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklistId);
-        if (!$decklist) {
-            $this->output->writeln('<error>Not Found</error>');
-            die;
+        if ($decklist instanceof Decklist) {
+            return $decklist;
         }
-        return $decklist;
+
+        $this->output->writeln('<error>Not Found</error>');
+        die;
     }
 }

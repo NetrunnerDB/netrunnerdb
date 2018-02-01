@@ -163,6 +163,15 @@ class Decklist implements NormalizableInterface, TimestampableInterface
      */
     private $moderationStatus;
 
+    public function __construct()
+    {
+        $this->slots = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
+        $this->votes = new ArrayCollection();
+        $this->isLegal = true;
+    }
+
     /**
      * Get id
      *
@@ -358,12 +367,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set nbvotes
-     *
-     * @param string $nbvotes
-     * @return Decklist
+     * @param int $nbvotes
+     * @return $this
      */
-    public function setNbvotes($nbvotes)
+    public function setNbvotes(int $nbvotes)
     {
         $this->nbvotes = $nbvotes;
 
@@ -379,12 +386,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set nbfavorites
-     *
-     * @param string $nbfavorites
-     * @return Decklist
+     * @param int $nbfavorites
+     * @return $this
      */
-    public function setNbfavorites($nbfavorites)
+    public function setNbfavorites(int $nbfavorites)
     {
         $this->nbfavorites = $nbfavorites;
 
@@ -402,12 +407,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set nbcomments
-     *
-     * @param string $nbcomments
-     * @return Decklist
+     * @param int $nbcomments
+     * @return $this
      */
-    public function setNbcomments($nbcomments)
+    public function setNbcomments(int $nbcomments)
     {
         $this->nbcomments = $nbcomments;
 
@@ -415,9 +418,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get nbcomments
-     *
-     * @return string
+     * @return int
      */
     public function getNbcomments()
     {
@@ -425,12 +426,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set decklist of the week number
-     *
-     * @param string $dotw
-     * @return Decklist
+     * @param int $dotw
+     * @return $this
      */
-    public function setDotw($dotw)
+    public function setDotw(int $dotw)
     {
         $this->dotw = $dotw;
 
@@ -438,9 +437,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get decklist of the week number
-     *
-     * @return string
+     * @return int
      */
     public function getDotw()
     {
@@ -448,12 +445,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set user
-     *
-     * @param string $user
+     * @param User $user
      * @return $this
      */
-    public function setUser($user)
+    public function setUser(User $user)
     {
         $this->user = $user;
 
@@ -515,20 +510,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set slots
-     *
-     * @param string $slots
-     * @return $this
-     */
-    public function setSlots($slots)
-    {
-        $this->slots = $slots;
-
-        return $this;
-    }
-
-    /**
-     * @return Decklistslot[]|ArrayCollection
+     * @return Decklistslot[]|Collection
      */
     public function getSlots()
     {
@@ -597,24 +579,8 @@ class Decklist implements NormalizableInterface, TimestampableInterface
         return $this->faction;
     }
 
-
     /**
-     * Set comments
-     *
-     * @param string $comments
-     * @return $this
-     */
-    public function setComments($comments)
-    {
-        $this->comments = $comments;
-
-        return $this;
-    }
-
-    /**
-     * Get comments
-     *
-     * @return string
+     * @return Comment[]|Collection
      */
     public function getComments()
     {
@@ -635,9 +601,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get favorites
-     *
-     * @return User[]
+     * @return User[]|Collection
      */
     public function getFavorites()
     {
@@ -658,22 +622,11 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get votes
-     *
-     * @return User[]
+     * @return User[]|Collection
      */
     public function getVotes()
     {
         return $this->votes;
-    }
-
-    public function __construct()
-    {
-        $this->slots = new ArrayCollection();
-        $this->comments = new ArrayCollection();
-        $this->favorites = new ArrayCollection();
-        $this->votes = new ArrayCollection();
-        $this->isLegal = true;
     }
 
     public function getContent()

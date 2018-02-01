@@ -63,12 +63,10 @@ class Deckslot implements SlotInterface
     }
 
     /**
-     * Set deck
-     *
-     * @param string $deck
-     * @return Deckslot
+     * @param Deck $deck
+     * @return $this
      */
-    public function setDeck($deck)
+    public function setDeck(Deck $deck)
     {
         $this->deck = $deck;
 
@@ -76,9 +74,7 @@ class Deckslot implements SlotInterface
     }
 
     /**
-     * Get deck
-     *
-     * @return string
+     * @return Deck
      */
     public function getDeck()
     {
@@ -86,12 +82,10 @@ class Deckslot implements SlotInterface
     }
 
     /**
-     * Set card
-     *
-     * @param string $card
-     * @return Deckslot
+     * @param Card $card
+     * @return $this
      */
-    public function setCard($card)
+    public function setCard(Card $card)
     {
         $this->card = $card;
 
