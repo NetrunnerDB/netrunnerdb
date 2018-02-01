@@ -21,9 +21,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.3.0/introjs.css">
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
-    <link rel="stylesheet" href="{{ asset('/bundles/app/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('/bundles/app/latofonts.css') }}">
-    <link rel="stylesheet" href="{{ asset('/bundles/app/netrunnerfont.css') }}">
+    <link rel="stylesheet" href="{{ asset('/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('/latofonts.css') }}">
+    <link rel="stylesheet" href="{{ asset('/netrunnerfont.css') }}">
 
     <script src="{{ asset('/bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData","version": asset_version('')}) }}"></script>
@@ -42,8 +42,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.4.2/localforage.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.3.0/intro.js"></script>
-    <script src="{{ asset('/bundles/app/lib/bootstrap-toggle-checklist.js') }}"></script>
-    <script src="{{ asset('/bundles/app/lib/jquery-persistence.js') }}"></script>
+    <script src="{{ asset('/lib/bootstrap-toggle-checklist.js') }}"></script>
+    <script src="{{ asset('/lib/jquery-persistence.js') }}"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
       <script>
         window.addEventListener("load", function(){
@@ -83,12 +83,12 @@ ga('create', 'UA-44413511-1', 'auto');
 ga('send', 'pageview');
   {% endif %}
     </script>
-    <script src="{{ asset('/bundles/app/js/nrdb.js') }}"></script>
-    <script src="{{ asset('/bundles/app/js/nrdb.user.js') }}"></script>
-    <script src="{{ asset('/bundles/app/js/nrdb.data.js') }}"></script>
-    <script src="{{ asset('/bundles/app/js/nrdb.format.js') }}"></script>
-    <script src="{{ asset('/bundles/app/js/nrdb.tip.js') }}"></script>
-    <script src="{{ asset('/bundles/app/js/nrdb.ui.js') }}"></script>
+    <script src="{{ asset('/js/nrdb.js') }}"></script>
+    <script src="{{ asset('/js/nrdb.user.js') }}"></script>
+    <script src="{{ asset('/js/nrdb.data.js') }}"></script>
+    <script src="{{ asset('/js/nrdb.format.js') }}"></script>
+    <script src="{{ asset('/js/nrdb.tip.js') }}"></script>
+    <script src="{{ asset('/js/nrdb.ui.js') }}"></script>
 
       {% block head %}{% endblock %}
 
@@ -174,7 +174,7 @@ ga('send', 'pageview');
     {% for supported_locale in supported_locales %}
     <li>
     	<a href="{{ path(_route, _route_params|merge({'_locale': supported_locale})) }}">
-    		<img src="{{ asset('/bundles/app/images/flags/32px/flag_' ~ supported_locale ~ '.png') }}" style="height:19px">
+    		<img src="{{ asset('/images/flags/32px/flag_' ~ supported_locale ~ '.png') }}" style="height:19px">
     	</a>
     </li>
     {% endfor %}

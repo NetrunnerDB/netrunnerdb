@@ -1,15 +1,15 @@
 {% extends '/layout.html.twig' %}
 {% block head %}
-<script src="{{ asset('/bundles/app/js/nrdb.card_modal.js') }}"></script>
-<script src="{{ asset('/bundles/app/js/nrdb.diff.js') }}"></script>
-<script src="{{ asset('/bundles/app/js/decks.js') }}"></script>
+<script src="{{ asset('/js/nrdb.card_modal.js') }}"></script>
+<script src="{{ asset('/js/nrdb.diff.js') }}"></script>
+<script src="{{ asset('/js/decks.js') }}"></script>
 <script type="text/javascript">
 var Identity = null,
 	LastClickedDeck = null,
 	SelectedDeck = null,
 	Decks = {{ decks|json_encode|raw }},
 	MWL = null,
-	Url_FactionImage = '{{  asset('/bundles/app/images/factions/16px/xxx.png') }}',
+	Url_FactionImage = '{{  asset('/images/factions/16px/xxx.png') }}',
 	DisplaySort = 'type',
 	DisplaySortSecondary = 'name';
 	

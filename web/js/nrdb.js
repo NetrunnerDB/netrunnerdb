@@ -21,62 +21,62 @@ function getDisplayDescriptions(sort) {
                 {
                     id: 'event',
                     label: 'Event',
-                    image: '/bundles/app/images/types/event.png',
+                    image: '/images/types/event.png',
                 }, {
                 id: 'hardware',
                 label: 'Hardware',
-                image: '/bundles/app/images/types/hardware.png',
+                image: '/images/types/hardware.png',
             }, {
                 id: 'resource',
                 label: 'Resource',
-                image: '/bundles/app/images/types/resource.png',
+                image: '/images/types/resource.png',
             }, {
                 id: 'agenda',
                 label: 'Agenda',
-                image: '/bundles/app/images/types/agenda.png',
+                image: '/images/types/agenda.png',
             }, {
                 id: 'asset',
                 label: 'Asset',
-                image: '/bundles/app/images/types/asset.png',
+                image: '/images/types/asset.png',
             }, {
                 id: 'upgrade',
                 label: 'Upgrade',
-                image: '/bundles/app/images/types/upgrade.png',
+                image: '/images/types/upgrade.png',
             }, {
                 id: 'operation',
                 label: 'Operation',
-                image: '/bundles/app/images/types/operation.png',
+                image: '/images/types/operation.png',
             },
             ],
             [// second column
                 {
                     id: 'icebreaker',
                     label: 'Icebreaker',
-                    image: '/bundles/app/images/types/program.png',
+                    image: '/images/types/program.png',
                 }, {
                 id: 'program',
                 label: 'Program',
-                image: '/bundles/app/images/types/program.png',
+                image: '/images/types/program.png',
             }, {
                 id: 'barrier',
                 label: 'Barrier',
-                image: '/bundles/app/images/types/ice.png',
+                image: '/images/types/ice.png',
             }, {
                 id: 'code-gate',
                 label: 'Code Gate',
-                image: '/bundles/app/images/types/ice.png',
+                image: '/images/types/ice.png',
             }, {
                 id: 'sentry',
                 label: 'Sentry',
-                image: '/bundles/app/images/types/ice.png',
+                image: '/images/types/ice.png',
             }, {
                 id: 'multi',
                 label: 'Multi',
-                image: '/bundles/app/images/types/ice.png',
+                image: '/images/types/ice.png',
             }, {
                 id: 'none',
                 label: 'Other',
-                image: '/bundles/app/images/types/ice.png',
+                image: '/images/types/ice.png',
             },
             ],
         ],
