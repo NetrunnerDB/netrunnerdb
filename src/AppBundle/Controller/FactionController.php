@@ -13,7 +13,7 @@ class FactionController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         if ($faction_code === 'mini-factions') {
             $factions = $entityManager->getRepository('AppBundle:Faction')->findBy(['isMini' => true], ['code' => 'ASC']);

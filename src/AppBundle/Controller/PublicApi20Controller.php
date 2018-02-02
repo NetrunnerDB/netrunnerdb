@@ -32,7 +32,7 @@ class PublicApi20Controller extends FOSRestController
         $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
         $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
             
         $dateUpdate = array_reduce($entities, function ($carry, TimestampableInterface $item) {
             if (!$carry || ($item->getDateUpdate() > $carry)) {

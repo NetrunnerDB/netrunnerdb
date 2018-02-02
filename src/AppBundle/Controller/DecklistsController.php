@@ -26,7 +26,7 @@ class DecklistsController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         $limit = 30;
         if ($page < 1) {
@@ -176,7 +176,7 @@ class DecklistsController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('long_cache'));
+        $response->setMaxAge($this->getParameter('long_cache'));
 
         $dbh = $entityManager->getConnection();
         $factions = $dbh->executeQuery(
@@ -351,7 +351,7 @@ class DecklistsController extends Controller
         }
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         /** @var Decklist $d1 */
         $d1 = $entityManager->getRepository('AppBundle:Decklist')->find($decklist1_id);

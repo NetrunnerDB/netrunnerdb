@@ -16,6 +16,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
+    /** @var UserManagerInterface $userManager */
+    private $userManager;
+
+    public function __construct(UserManagerInterface $userManager)
+    {
+        $this->userManager = $userManager;
+    }
+
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
@@ -32,25 +40,22 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
             throw new \Exception('No Container.');
         }
 
-        /** @var UserManagerInterface $userManager */
-        $userManager = $this->container->get('fos_user.user_manager');
-
-        $userAdmin = $userManager->createUser();
+        $userAdmin = $this->userManager->createUser();
         $userAdmin->setUsername('admin');
         $userAdmin->setEmail('admin@example.org');
         $userAdmin->setPlainPassword('admin');
         $userAdmin->addRole('ROLE_ADMIN');
         $userAdmin->setEnabled(true);
-        $userManager->updateUser($userAdmin);
+        $this->userManager->updateUser($userAdmin);
         $this->addReference('admin-user', $userAdmin);
 
-        $userGuru = $userManager->createUser();
+        $userGuru = $this->userManager->createUser();
         $userGuru->setUsername('guru');
         $userGuru->setEmail('guru@example.org');
         $userGuru->setPlainPassword('guru');
         $userGuru->addRole('ROLE_GURU');
         $userGuru->setEnabled(true);
-        $userManager->updateUser($userGuru);
+        $this->userManager->updateUser($userGuru);
         $this->addReference('guru-user', $userGuru);
     }
 

@@ -3,12 +3,16 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Client;
+use FOS\OAuthServerBundle\Entity\AccessTokenManager;
+use FOS\OAuthServerBundle\Model\ClientManager;
 use JMS\Serializer\ArrayTransformerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Description of AbstractOauthController
@@ -23,10 +27,22 @@ abstract class AbstractOauthController extends Controller
     /** @var ArrayTransformerInterface $arrayTransformer */
     protected $arrayTransformer;
 
-    public function __construct(SerializerInterface $serializer, ArrayTransformerInterface $arrayTransformer)
-    {
+    /** @var TokenStorageInterface $tokenStorage */
+    private $tokenStorage;
+
+    /** @var AccessTokenManager $accessTokenManager */
+    private $accessTokenManager;
+
+    public function __construct(
+        SerializerInterface $serializer,
+        ArrayTransformerInterface $arrayTransformer,
+        TokenStorageInterface $tokenStorage,
+        AccessTokenManager $accessTokenManager
+    ) {
         $this->serializer = $serializer;
         $this->arrayTransformer = $arrayTransformer;
+        $this->tokenStorage = $tokenStorage;
+        $this->accessTokenManager = $accessTokenManager;
     }
 
     /**
@@ -34,16 +50,22 @@ abstract class AbstractOauthController extends Controller
      */
     public function getOauthClient()
     {
-        $tokenManager = $this->container->get('fos_oauth_server.access_token_manager.default');
-        $token = $this->container->get('security.token_storage')->getToken();
-        $accessToken = $tokenManager->findTokenBy(['user' => $token->getUser()]);
+        $token = $this->tokenStorage->getToken();
+        if (!$token instanceof TokenInterface) {
+            throw $this->createAccessDeniedException();
+        }
 
-        return $accessToken->getClient();
+        return $this
+            ->accessTokenManager
+            ->findTokenBy([
+                'user' => $token->getUser(),
+            ])
+            ->getClient();
     }
 
     /**
-     * @param string $status
-     * @param array $data
+     * @param string      $status
+     * @param array       $data
      * @param string|null $message
      * @return array
      */
@@ -51,7 +73,7 @@ abstract class AbstractOauthController extends Controller
     {
         $response = [
             "status" => $status,
-            "data" => $data
+            "data"   => $data,
         ];
 
         if (isset($message)) {
@@ -63,9 +85,9 @@ abstract class AbstractOauthController extends Controller
 
     /**
      *
-     * @param array $data
+     * @param array   $data
      * @param integer $status
-     * @param array $headers
+     * @param array   $headers
      * @return Response
      */
     public function createJsonResponse($data, $status = 200, $headers = [])
@@ -76,6 +98,7 @@ abstract class AbstractOauthController extends Controller
         $content = $this->serializer->serialize($data, 'json', $context);
         $response = new Response($content, $status, $headers);
         $response->headers->set('Content-Type', 'application/json');
+
         return $response;
     }
 }

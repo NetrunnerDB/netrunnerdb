@@ -127,7 +127,7 @@ class DefaultController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('long_cache'));
+        $response->setMaxAge($this->getParameter('long_cache'));
 
         $page = $this->get(CardsData::class)->replaceSymbols($this->renderView('/Default/rules.html.twig', ["pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game."]));
 
@@ -140,7 +140,7 @@ class DefaultController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('long_cache'));
+        $response->setMaxAge($this->getParameter('long_cache'));
 
         return $this->render('/Default/about.html.twig', [
             "pagetitle" => "About",

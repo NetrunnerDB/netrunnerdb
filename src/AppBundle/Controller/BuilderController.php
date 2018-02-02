@@ -28,7 +28,7 @@ class BuilderController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('long_cache'));
+        $response->setMaxAge($this->getParameter('long_cache'));
 
         $side = $entityManager->getRepository('AppBundle:Side')->findOneBy([
             "name" => $side_text,
@@ -62,7 +62,7 @@ class BuilderController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('long_cache'));
+        $response->setMaxAge($this->getParameter('long_cache'));
 
         /** @var Card $card */
         $card = $entityManager->getRepository('AppBundle:Card')->findOneBy([
@@ -108,7 +108,7 @@ class BuilderController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('long_cache'));
+        $response->setMaxAge($this->getParameter('long_cache'));
 
         $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
 

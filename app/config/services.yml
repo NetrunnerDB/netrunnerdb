@@ -13,3 +13,6 @@ services:
 
     FOS\OAuthServerBundle\Entity\ClientManager:
         alias: 'fos_oauth_server.client_manager.default'
+
+    FOS\OAuthServerBundle\Entity\AccessTokenManager:
+        alias: 'fos_oauth_server.access_token_manager.default'

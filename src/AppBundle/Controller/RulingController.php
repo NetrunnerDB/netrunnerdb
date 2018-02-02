@@ -83,7 +83,7 @@ class RulingController extends Controller
             'list' => $list,
         ]);
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         return $response;
     }

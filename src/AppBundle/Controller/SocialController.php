@@ -209,7 +209,7 @@ class SocialController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery(
@@ -641,7 +641,7 @@ class SocialController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('long_cache'));
+        $response->setMaxAge($this->getParameter('long_cache'));
 
         /** @var Decklist $decklist */
         $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
@@ -714,7 +714,7 @@ class SocialController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('long_cache'));
+        $response->setMaxAge($this->getParameter('long_cache'));
 
         /** @var Decklist $decklist */
         $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
@@ -883,7 +883,7 @@ class SocialController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         /** @var User $user */
         $user = $entityManager->getRepository('AppBundle:User')->find($user_id);
@@ -1047,7 +1047,7 @@ class SocialController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         $limit = 100;
         if ($page < 1) {
@@ -1117,7 +1117,7 @@ class SocialController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         $dbh = $entityManager->getConnection();
 
@@ -1146,7 +1146,7 @@ class SocialController extends Controller
     {
         $response = new Response();
         $response->setPrivate();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         // max number of displayed items for each category
         $max_items = 30;
@@ -1177,7 +1177,7 @@ class SocialController extends Controller
     {
         $response = new Response();
         $response->setPrivate();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         /** @var Decklist $decklist */
         $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);

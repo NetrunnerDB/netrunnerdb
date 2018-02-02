@@ -14,7 +14,7 @@ class IndexController extends Controller
     {
         $response = new Response();
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         // decklist of the week
         $dbh = $entityManager->getConnection();
