@@ -36,7 +36,7 @@ class ImportStdCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('nrdb:import:std')
+            ->setName('app:import:std')
             ->setDescription('Import std data file in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
             ->addArgument('path', InputArgument::REQUIRED, 'Path to the repository')
             ->addOption('force', 'f', InputOption::VALUE_NONE, "Yes to all questions");

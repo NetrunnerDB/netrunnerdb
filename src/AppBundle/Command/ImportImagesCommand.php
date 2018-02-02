@@ -28,7 +28,7 @@ class ImportImagesCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('nrdb:import:images')
+            ->setName('app:import:images')
             ->setDescription('Import missing images from cardgamedb.com');
     }
 

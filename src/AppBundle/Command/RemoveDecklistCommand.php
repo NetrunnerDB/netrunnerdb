@@ -29,7 +29,7 @@ class RemoveDecklistCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('nrdb:delete-decklist')
+            ->setName('app:delete-decklist')
             ->setDescription('Remove one decklist')
             ->addArgument(
                 'id',

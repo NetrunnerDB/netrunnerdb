@@ -24,7 +24,7 @@ class DumpStdCardsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-        ->setName('nrdb:dump:std:cards')
+        ->setName('app:dump:std:cards')
         ->setDescription('Dump JSON Data of Cards from a Pack')
         ->addArgument(
                 'pack_code',

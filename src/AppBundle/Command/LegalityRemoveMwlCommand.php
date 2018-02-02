@@ -28,7 +28,7 @@ class LegalityRemoveMwlCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('nrdb:legality:remove-mwl')
+            ->setName('app:legality:remove-mwl')
             ->setDescription('Remove a MWL')
             ->addArgument(
                 'mwl_code',

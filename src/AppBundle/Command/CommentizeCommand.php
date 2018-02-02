@@ -24,7 +24,7 @@ class CommentizeCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-        ->setName('nrdb:commentize')
+        ->setName('app:commentize')
         ->setDescription('Turn a review into a comment')
         ->addArgument(
             'review_orig_id',

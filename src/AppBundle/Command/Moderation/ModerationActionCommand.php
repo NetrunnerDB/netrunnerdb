@@ -41,7 +41,7 @@ class ModerationActionCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('nrdb:moderation:action')
+            ->setName('app:moderation:action')
             ->setDescription('Changes the moderation status of a decklist');
     }
 

@@ -24,7 +24,7 @@ class DumpTransCardsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-        ->setName('nrdb:dump:trans:cards')
+        ->setName('app:dump:trans:cards')
         ->setDescription('Dump Translations of Cards from a Pack for a Locale')
         ->addArgument(
                 'pack_code',

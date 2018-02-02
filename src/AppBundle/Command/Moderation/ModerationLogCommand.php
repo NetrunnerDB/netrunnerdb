@@ -34,7 +34,7 @@ class ModerationLogCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('nrdb:moderation:log')
+            ->setName('app:moderation:log')
             ->setDescription('View the moderation log')
             ->addArgument('limit', InputArgument::OPTIONAL, "Number of lines to display", 10)
         ;

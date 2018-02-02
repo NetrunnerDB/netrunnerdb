@@ -31,7 +31,7 @@ class ImportTransCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-        ->setName('nrdb:import:trans')
+        ->setName('app:import:trans')
         ->setDescription('Import translation data in json format from a copy of https://github.com/zaroth/netrunner-cards-json')
         ->addOption(
                 'locale',

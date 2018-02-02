@@ -27,7 +27,7 @@ class SuggestionsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-        ->setName('nrdb:suggestions')
+        ->setName('app:suggestions')
         ->setDescription('Compute and save the suggestions matrix')
         ->addArgument(
                 'side',

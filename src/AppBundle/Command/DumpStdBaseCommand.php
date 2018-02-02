@@ -24,7 +24,7 @@ class DumpStdBaseCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-        ->setName('nrdb:dump:std:base')
+        ->setName('app:dump:std:base')
         ->setDescription('Dump Base data for a Locale')
         ->addArgument(
                 'entityName',

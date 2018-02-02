@@ -27,7 +27,7 @@ class LegalityDecklistsMwlCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-                ->setName('nrdb:legality:decklists-mwl')
+                ->setName('app:legality:decklists-mwl')
                 ->setDescription('Compute decklist legality regarding MWL')
         ;
     }

@@ -122,7 +122,7 @@ class HighlightCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('nrdb:highlight')
+            ->setName('app:highlight')
             ->setDescription('Save decklist of the week')
             ->addArgument(
                 'decklist_id',

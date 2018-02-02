@@ -24,7 +24,7 @@ class DumpTransBaseCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-        ->setName('nrdb:dump:trans:base')
+        ->setName('app:dump:trans:base')
         ->setDescription('Dump Translations of Base data for a Locale')
         ->addArgument(
                 'entityName',

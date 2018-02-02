@@ -23,7 +23,7 @@ class CreateClientCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('nrdb:oauth-server:client:create')
+            ->setName('app:oauth-server:client:create')
             ->setDescription('Creates a new client')
             ->addOption(
                 'redirect-uri',

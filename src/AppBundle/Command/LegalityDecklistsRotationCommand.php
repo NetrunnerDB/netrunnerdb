@@ -26,7 +26,7 @@ class LegalityDecklistsRotationCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-                ->setName('nrdb:legality:decklists-rotation')
+                ->setName('app:legality:decklists-rotation')
                 ->setDescription('Compute decklist legality regarding rotations')
         ;
     }

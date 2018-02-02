@@ -23,7 +23,7 @@ class DonatorCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('nrdb:donator')
+            ->setName('app:donator')
             ->setDescription('Add a donation to a user by email address or username')
             ->addArgument(
                 'email',

@@ -29,7 +29,7 @@ class CleanupCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('nrdb:cleanup')
+            ->setName('app:cleanup')
             ->setDescription('Remove old, unused decklists')
             ->addOption(
                 'months',

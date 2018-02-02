@@ -22,7 +22,7 @@ class LegalityActiveMwlCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-                ->setName('nrdb:legality:active-mwl')
+                ->setName('app:legality:active-mwl')
                 ->setDescription('Checks to see if a new MWL becomes active')
         ;
     }

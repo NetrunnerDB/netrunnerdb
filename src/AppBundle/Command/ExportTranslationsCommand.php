@@ -27,7 +27,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-        ->setName('nrdb:export:trans')
+        ->setName('app:export:trans')
         ->setDescription('Create Translation Files for every Locale')
         ->addOption(
                 'locale',
@@ -76,7 +76,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
                 continue;
             }
             
-            $command = $this->getApplication()->find('nrdb:translations:dump:things');
+            $command = $this->getApplication()->find('app:translations:dump:things');
             foreach ($things as $thing) {
                 $filepath = "${path}/translations/${locale}/${thing}s.{$locale}.json";
                 $output->writeln("Exporting to <info>$filepath</info>");
@@ -92,7 +92,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
                 }
             }
         
-            $command = $this->getApplication()->find('nrdb:translations:dump:cards');
+            $command = $this->getApplication()->find('app:translations:dump:cards');
             /** @var Pack $pack */
             foreach ($packs as $pack) {
                 $pack_code = $pack->getCode();

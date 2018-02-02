@@ -27,7 +27,7 @@ class LegalityDecklistsLimitCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-                ->setName('nrdb:legality:decklists-limit')
+                ->setName('app:legality:decklists-limit')
                 ->setDescription('Compute decklist legality regarding card limits')
         ;
     }

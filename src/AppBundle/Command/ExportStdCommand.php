@@ -26,7 +26,7 @@ class ExportStdCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-        ->setName('nrdb:export:std')
+        ->setName('app:export:std')
         ->setDescription('Create JSON Data Files')
         ->addArgument(
                 'path',
@@ -54,7 +54,7 @@ class ExportStdCommand extends ContainerAwareCommand
             $filepath = "${path}/${thing}s.json";
             $output->writeln("Exporting to <info>$filepath</info>");
             
-            $command = $this->getApplication()->find('nrdb:dump:std:base');
+            $command = $this->getApplication()->find('app:dump:std:base');
             $arguments = [ 'entityName' => $thing ];
             $subInput = new ArrayInput($arguments);
             $subOutput = new BufferedOutput();
@@ -75,7 +75,7 @@ class ExportStdCommand extends ContainerAwareCommand
             $filepath = "${path}/pack/${pack_code}.json";
             $output->writeln("Exporting to <info>$filepath</info>");
     
-            $command = $this->getApplication()->find('nrdb:dump:std:cards');
+            $command = $this->getApplication()->find('app:dump:std:cards');
             $arguments = [ 'pack_code' => $pack_code ];
             $subInput = new ArrayInput($arguments);
             $subOutput = new BufferedOutput();
