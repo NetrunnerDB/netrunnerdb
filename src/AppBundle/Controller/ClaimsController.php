@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Claim;
 use AppBundle\Entity\Decklist;
+use JMS\Serializer\Serializer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +21,7 @@ class ClaimsController extends AbstractOauthController
 {
     private function deserializeClaim(Request $request)
     {
-        /* @var $serializer \JMS\Serializer\Serializer */
+        /** @var Serializer $serializer */
         $serializer = $this->get('jms_serializer');
 
         $data = json_decode($request->getContent(), true);
@@ -28,7 +29,7 @@ class ClaimsController extends AbstractOauthController
             throw new BadRequestHttpException("Malformed JSON");
         }
         
-        /* @var $claim Claim */
+        /** @var Claim $claim */
         $claim = $serializer->fromArray($data, 'AppBundle\Entity\Claim');
 
         return $claim;
@@ -56,12 +57,12 @@ class ClaimsController extends AbstractOauthController
             throw $this->createAccessDeniedException();
         }
         $em = $this->getDoctrine()->getManager();
-        /* @var $decklist Decklist */
+        /** @var Decklist $decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
-        /* @var $claim Claim */
+        /** @var Claim $claim */
         $claim = $this->deserializeClaim($request);
         $claim->setDecklist($decklist);
         $claim->setClient($client);
@@ -88,7 +89,7 @@ class ClaimsController extends AbstractOauthController
             throw $this->createAccessDeniedException();
         }
         $em = $this->getDoctrine()->getManager();
-        /* @var $decklist Decklist */
+        /** @var Decklist $decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist) {
             throw $this->createNotFoundException();
@@ -133,7 +134,7 @@ class ClaimsController extends AbstractOauthController
     public function putAction($decklist_id, $id, Request $request)
     {
         $claim = $this->retrieveClaim($decklist_id, $id);
-        /* @var $updatingClaim Claim */
+        /** @var Claim $updatingClaim */
         $updatingClaim = $this->deserializeClaim($request);
         $claim->setName($updatingClaim->getName());
         $claim->setRank($updatingClaim->getRank());

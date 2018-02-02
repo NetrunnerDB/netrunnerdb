@@ -97,7 +97,7 @@ class PersonalizationHelper
         $content = [];
 
         $reviews = $card->getReviews();
-        /* @var $review Review */
+        /** @var Review $review */
         foreach ($reviews as $review) {
             if ($review->getUser()->getId() === $user->getId()) {
                 $content['review_id'] = $review->getId();

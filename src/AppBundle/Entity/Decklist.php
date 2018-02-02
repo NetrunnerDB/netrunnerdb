@@ -119,7 +119,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     private $side;
 
     /**
-     * @var Card|null
+     * @var Card
      */
     private $identity;
 
@@ -502,7 +502,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return Card|null
+     * @return Card
      */
     public function getIdentity()
     {
@@ -780,10 +780,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @param Decklist $precedent
+     * @param Decklist|null $precedent
      * @return $this
      */
-    public function setPrecedent(Decklist $precedent)
+    public function setPrecedent(Decklist $precedent = null)
     {
         $this->precedent = $precedent;
 
@@ -867,10 +867,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @param Tournament $tournament
+     * @param Tournament|null $tournament
      * @return $this
      */
-    public function setTournament(Tournament $tournament)
+    public function setTournament(Tournament $tournament = null)
     {
         $this->tournament = $tournament;
 
@@ -1038,15 +1038,15 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Mwl
+     * @var Mwl|null
      */
     private $mwl;
 
     /**
-     * @param Mwl $mwl
+     * @param Mwl|null $mwl
      * @return $this
      */
-    public function setMwl(Mwl $mwl)
+    public function setMwl(Mwl $mwl = null)
     {
         $this->mwl = $mwl;
 
@@ -1054,9 +1054,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get mwl
-     *
-     * @return Mwl
+     * @return Mwl|null
      */
     public function getMwl()
     {

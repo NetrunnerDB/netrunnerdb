@@ -2,18 +2,19 @@
 
 namespace AppBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 class PrebuiltController extends Controller
 {
-    public function viewAction($prebuilt_code)
+    public function viewAction($prebuilt_code, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
         
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
         
         $rows = $dbh->executeQuery(
                 "SELECT

@@ -36,7 +36,7 @@ class LegalityActiveMwlCommand extends ContainerAwareCommand
                 ->orderBy('m.dateStart', 'DESC');
         $query = $qb->getQuery();
 
-        /* @var $mwl \AppBundle\Entity\Mwl */
+        /** @var Mwl $mwl */
         $list = $query->getResult();
 
         if (!count($list)) {

@@ -2,10 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Card;
 use AppBundle\Entity\Rotation;
 use AppBundle\Service\DecklistManager;
 use AppBundle\Service\Diff;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -19,7 +21,7 @@ class DecklistsController extends Controller
     /**
      * displays the lists of decklists
      */
-    public function listAction($type, $page = 1, Request $request)
+    public function listAction($type, $page = 1, Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -39,7 +41,7 @@ class DecklistsController extends Controller
             case 'find':
                 $result = $this->get(DecklistManager::class)->find($start, $limit, $request);
                 $pagetitle = "Decklist search results";
-                $header = $this->searchForm($request);
+                $header = $this->searchForm($request, $entityManager);
                 break;
             case 'favorites':
                 $response->setPrivate();
@@ -105,7 +107,7 @@ class DecklistsController extends Controller
         $decklists = $result['decklists'];
         $maxcount = $result['count'];
 
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
         $factions = $dbh->executeQuery(
             "SELECT
 				f.name,
@@ -171,13 +173,13 @@ class DecklistsController extends Controller
         ], $response);
     }
 
-    public function searchAction(Request $request)
+    public function searchAction(Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
         $factions = $dbh->executeQuery(
             "SELECT
 				f.name,
@@ -191,7 +193,7 @@ class DecklistsController extends Controller
         $on = 0;
         $off = 0;
         $categories[] = ["label" => "Core / Deluxe", "packs" => []];
-        $list_cycles = $this->get('doctrine')->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
+        $list_cycles = $$entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
         foreach ($list_cycles as $cycle) {
             $size = count($cycle->getPacks());
             if ($cycle->getPosition() == 0 || $size == 0) {
@@ -248,9 +250,9 @@ class DecklistsController extends Controller
         ], $response);
     }
 
-    private function searchForm(Request $request)
+    private function searchForm(Request $request, EntityManagerInterface $entityManager)
     {
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
 
         $cards_code = $request->query->get('cards');
         $faction_code = filter_var($request->query->get('faction'), FILTER_SANITIZE_STRING);
@@ -270,7 +272,7 @@ class DecklistsController extends Controller
         $on = 0;
         $off = 0;
         $categories[] = ["label" => "Core / Deluxe", "packs" => []];
-        $list_cycles = $this->get('doctrine')->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
+        $list_cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
         foreach ($list_cycles as $cycle) {
             $size = count($cycle->getPacks());
             if ($cycle->getPosition() == 0 || $size == 0) {
@@ -346,7 +348,7 @@ class DecklistsController extends Controller
         return $this->renderView('/Search/form.html.twig', $params);
     }
 
-    public function diffAction($decklist1_id, $decklist2_id)
+    public function diffAction($decklist1_id, $decklist2_id, EntityManagerInterface $entityManager)
     {
         if ($decklist1_id > $decklist2_id) {
             return $this->redirect($this->generateUrl('decklists_diff', ['decklist1_id' => $decklist2_id, 'decklist2_id' => $decklist1_id]));
@@ -355,12 +357,10 @@ class DecklistsController extends Controller
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-        /* @var $d1 Decklist */
-        $d1 = $em->getRepository('AppBundle:Decklist')->find($decklist1_id);
-        /* @var $d2 Decklist */
-        $d2 = $em->getRepository('AppBundle:Decklist')->find($decklist2_id);
+        /** @var Decklist $d1 */
+        $d1 = $entityManager->getRepository('AppBundle:Decklist')->find($decklist1_id);
+        /** @var Decklist $d2 */
+        $d2 = $entityManager->getRepository('AppBundle:Decklist')->find($decklist2_id);
 
         if (!$d1 || !$d2) {
             throw new NotFoundHttpException("Unable to find decklists.");
@@ -372,8 +372,8 @@ class DecklistsController extends Controller
 
         $content1 = [];
         foreach ($listings[0] as $code => $qty) {
-            $card = $em->getRepository('AppBundle:Card')->findOneBy(['code' => $code]);
-            if ($card) {
+            $card = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $code]);
+            if ($card instanceof Card) {
                 $content1[] = [
                     'title' => $card->getTitle(),
                     'code'  => $code,
@@ -384,8 +384,8 @@ class DecklistsController extends Controller
 
         $content2 = [];
         foreach ($listings[1] as $code => $qty) {
-            $card = $em->getRepository('AppBundle:Card')->findOneBy(['code' => $code]);
-            if ($card) {
+            $card = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $code]);
+            if ($card instanceof Card) {
                 $content2[] = [
                     'title' => $card->getTitle(),
                     'code'  => $code,
@@ -396,8 +396,8 @@ class DecklistsController extends Controller
 
         $shared = [];
         foreach ($intersect as $code => $qty) {
-            $card = $em->getRepository('AppBundle:Card')->findOneBy(['code' => $code]);
-            if ($card) {
+            $card = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $code]);
+            if ($card instanceof Card) {
                 $shared[] = [
                     'title' => $card->getTitle(),
                     'code'  => $code,

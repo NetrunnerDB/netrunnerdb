@@ -48,7 +48,7 @@ class ModerationLogCommand extends ContainerAwareCommand
         
         $table = new Table($output);
         $table->setHeaders(['Date','Mod','Before','After','Id','Deck']);
-        /* @var $moderation Moderation */
+        /** @var Moderation $moderation */
         foreach ($moderationList as $moderation) {
             $table->addRow([
                 $moderation->getDateCreation()->format('Y-m-d'),

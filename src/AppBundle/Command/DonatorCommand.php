@@ -43,7 +43,7 @@ class DonatorCommand extends ContainerAwareCommand
         $donation = $input->getArgument('donation');
 
         $repo = $this->entityManager->getRepository('AppBundle:User');
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $repo->findOneBy(['email' => $email]);
         if (!$user instanceof User) {
             $user = $repo->findOneBy(['username' => $email]);

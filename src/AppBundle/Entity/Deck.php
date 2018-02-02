@@ -541,12 +541,10 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set parent
-     *
-     * @param Decklist $parent
-     * @return Deck
+     * @param Decklist|null $parent
+     * @return $this
      */
-    public function setParent(Decklist $parent)
+    public function setParent(Decklist $parent = null)
     {
         $this->parent = $parent;
 

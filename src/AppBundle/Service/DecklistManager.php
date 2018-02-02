@@ -817,13 +817,13 @@ class DecklistManager
     {
         $successors = $this->entityManager->getRepository('AppBundle:Decklist')->findBy(['precedent' => $decklist]);
         foreach ($successors as $successor) {
-            /* @var $successor \AppBundle\Entity\Decklist */
+            /** @var Decklist $successor */
             $successor->setPrecedent(null);
         }
 
         $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(['parent' => $decklist]);
         foreach ($children as $child) {
-            /* @var $child \AppBundle\Entity\Deck */
+            /** @var Deck $child */
             $child->setParent(null);
         }
     }
@@ -832,13 +832,13 @@ class DecklistManager
     {
         $successors = $this->entityManager->getRepository('AppBundle:Decklist')->findBy(['precedent' => $decklist]);
         foreach ($successors as $successor) {
-            /* @var $successor \AppBundle\Entity\Decklist */
+            /** @var Decklist $successor */
             $successor->setPrecedent(null);
         }
 
         $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(['parent' => $decklist]);
         foreach ($children as $child) {
-            /* @var $child \AppBundle\Entity\Deck */
+            /** @var Deck $child */
             $child->setParent(null);
         }
 

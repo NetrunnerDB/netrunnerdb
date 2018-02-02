@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Behavior\Entity\SlotInterface;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Decklistslot;
+use AppBundle\Entity\Deckslot;
 use AppBundle\Entity\Legality;
 use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Card;
@@ -68,9 +69,9 @@ class Judge
         $analyse = $this->analyse($slots);
 
         $classeur = [];
-        /* @var $slot \AppBundle\Entity\Deckslot */
+        /** @var Deckslot $slot */
         foreach ($slots as $slot) {
-            /* @var $card \AppBundle\Entity\Card */
+            /** @var Card $card */
             $card = $slot->getCard();
             $qty = $slot->getQuantity();
             $elt = ['card' => $card, 'qty' => $qty];
@@ -317,15 +318,13 @@ class Judge
     {
         $influenceSpent = 0;
 
-        $identity = $decklist->getIdentity();
-
-        if (!isset($identity)) {
-            return null;
-        }
-
-        /* @var $slot \AppBundle\Entity\Decklistslot */
+        /** @var Decklistslot $slot */
         foreach ($decklist->getSlots() as $slot) {
-            $influenceCostOfCard = $this->getInfluenceCostOfCard($slot, $decklist->getSlots()->toArray(), $identity);
+            $influenceCostOfCard = $this->getInfluenceCostOfCard(
+                $slot,
+                $decklist->getSlots()->toArray(),
+                $decklist->getIdentity()
+            );
             $influenceSpent += $influenceCostOfCard;
         }
 

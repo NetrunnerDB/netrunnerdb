@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Deckslot;
+use AppBundle\Entity\Tournament;
 use AppBundle\Service\ActivityHelper;
 use AppBundle\Service\DecklistManager;
 use AppBundle\Service\Judge;
@@ -11,6 +12,8 @@ use AppBundle\Service\ModerationHelper;
 use AppBundle\Service\RotationService;
 use AppBundle\Service\Texts;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -30,18 +33,17 @@ class SocialController extends Controller
 
     /**
      * checks to see if a deck can be published in its current saved state
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function publishAction($deck_id)
+    public function publishAction($deck_id, EntityManagerInterface $entityManager)
     {
         $response = new JsonResponse();
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
+        /** @var Deck $deck */
+        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
 
-        /* @var $deck \AppBundle\Entity\Deck */
-        $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
-
-        if ($this->getUser()->getId() != $deck->getUser()->getId()) {
+        if ($this->getUser() instanceof User && $this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException("Unauthorized user.");
         }
 
@@ -99,15 +101,12 @@ class SocialController extends Controller
     /**
      * creates a new decklist from a deck (publish action)
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $manager = $this->get(DecklistManager::class);
 
         $deck_id = filter_var($request->request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
-        /* @var $deck \AppBundle\Entity\Deck */
+        /** @var Deck $deck */
         $deck = $this->getDoctrine()
                      ->getRepository('AppBundle:Deck')
                      ->find($deck_id);
@@ -138,7 +137,8 @@ class SocialController extends Controller
         $description = $this->get(Texts::class)->markdown($rawdescription);
 
         $tournament_id = filter_var($request->request->get('tournament'), FILTER_SANITIZE_NUMBER_INT);
-        $tournament = $em->getRepository('AppBundle:Tournament')->find($tournament_id);
+        /** @var Tournament|null $tournament */
+        $tournament = $entityManager->getRepository('AppBundle:Tournament')->find($tournament_id);
 
         $decklist = new Decklist();
         $decklist->setName($name);
@@ -176,20 +176,20 @@ class SocialController extends Controller
         $decklist->setParent($deck);
         $decklist->setRotation($this->get(RotationService::class)->findCompatibleRotation($decklist));
 
-        $em->persist($decklist);
+        $entityManager->persist($decklist);
 
-        $mwls = $em->getRepository('AppBundle:Mwl')->findAll();
+        $mwls = $entityManager->getRepository('AppBundle:Mwl')->findAll();
         foreach ($mwls as $mwl) {
             $legality = new Legality();
             $legality->setDecklist($decklist);
             $legality->setMwl($mwl);
             $judge->computeLegality($legality);
-            $em->persist($legality);
+            $entityManager->persist($legality);
         }
 
-        $em->flush();
+        $entityManager->flush();
         $decklist->setIsLegal($manager->isDecklistLegal($decklist));
-        $em->flush();
+        $entityManager->flush();
 
         return $this->redirect(
             $this->generateUrl(
@@ -205,13 +205,13 @@ class SocialController extends Controller
     /**
      * displays the content of a decklist along with comments, siblings, similar, etc.
      */
-    public function viewAction($decklist_id)
+    public function viewAction($decklist_id, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
 
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery(
             "SELECT
 				d.id,
@@ -424,11 +424,8 @@ class SocialController extends Controller
     /**
      * adds a decklist to a user's list of favorites
      */
-    public function favoriteAction(Request $request)
+    public function favoriteAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException("No user.");
@@ -436,15 +433,15 @@ class SocialController extends Controller
 
         $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
 
-        /* @var $decklist \AppBundle\Entity\Decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        /** @var Decklist $decklist */
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
 
         $author = $decklist->getUser();
 
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
         $is_favorite = $dbh->executeQuery("SELECT
 				count(*)
 				FROM decklist d
@@ -469,9 +466,7 @@ class SocialController extends Controller
                 $author->setReputation($author->getReputation() + 5);
             }
         }
-        $this->get('doctrine')
-             ->getManager()
-             ->flush();
+        $entityManager->flush();
 
         return new Response(count($decklist->getFavorites()));
     }
@@ -479,9 +474,9 @@ class SocialController extends Controller
     /**
      * records a user's comment
      */
-    public function commentAction(Request $request)
+    public function commentAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $user User */
+        /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException("No user.");
@@ -514,11 +509,11 @@ class SocialController extends Controller
             $comment->setDecklist($decklist);
             $comment->setHidden($user->getSoftBan());
 
-            $this->get('doctrine')->getManager()->persist($comment);
+            $entityManager->persist($comment);
 
             $decklist->setNbcomments($decklist->getNbcomments() + 1);
 
-            $this->get('doctrine')->getManager()->flush();
+            $entityManager->flush();
 
             // send emails
             $spool = [];
@@ -528,7 +523,7 @@ class SocialController extends Controller
                 }
             }
             foreach ($decklist->getComments() as $comment) {
-                /* @var $comment Comment */
+                /** @var Comment $comment */
                 $commenter = $comment->getAuthor();
                 if ($commenter && $commenter->getNotifCommenter()) {
                     if (!isset($spool[$commenter->getEmail()])) {
@@ -537,7 +532,7 @@ class SocialController extends Controller
                 }
             }
             foreach ($mentionned_usernames as $mentionned_username) {
-                /* @var $mentionned_user User */
+                /** @var User $mentionned_user */
                 $mentionned_user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(['username' => $mentionned_username]);
                 if ($mentionned_user && $mentionned_user->getNotifMention()) {
                     if (!isset($spool[$mentionned_user->getEmail()])) {
@@ -573,18 +568,15 @@ class SocialController extends Controller
     /**
      * hides a comment, or if $hidden is false, unhide a comment
      */
-    public function hidecommentAction($comment_id, $hidden)
+    public function hidecommentAction($comment_id, $hidden, EntityManagerInterface $entityManager)
     {
-        /* @var $user User */
+        /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException("No user.");
         }
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        $comment = $em->getRepository('AppBundle:Comment')->find($comment_id);
+        $comment = $entityManager->getRepository('AppBundle:Comment')->find($comment_id);
         if (!$comment instanceof Comment) {
             throw $this->createNotFoundException();
         }
@@ -594,7 +586,7 @@ class SocialController extends Controller
         }
 
         $comment->setHidden((boolean) $hidden);
-        $em->flush();
+        $entityManager->flush();
 
         return new JsonResponse(true);
     }
@@ -602,11 +594,8 @@ class SocialController extends Controller
     /**
      * records a user's vote
      */
-    public function voteAction(Request $request)
+    public function voteAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException("No user.");
@@ -615,11 +604,13 @@ class SocialController extends Controller
         $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
 
         /** @var Decklist $decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
 
         if ($decklist->getUser()->getId() != $user->getId()) {
-            $query = $em->getRepository('AppBundle:Decklist')
-                        ->createQueryBuilder('d')
+            $query = $entityManager
+                        ->createQueryBuilder()
+                        ->select('d')
+                        ->from(Decklist::class, 'd')
                         ->innerJoin('d.votes', 'u')
                         ->where('d.id = :decklist_id')
                         ->andWhere('u.id = :user_id')
@@ -633,7 +624,7 @@ class SocialController extends Controller
                 $author = $decklist->getUser();
                 $author->setReputation($author->getReputation() + 1);
                 $decklist->setNbvotes($decklist->getNbvotes() + 1);
-                $this->get('doctrine')->getManager()->flush();
+                $entityManager->flush();
             }
         }
 
@@ -643,17 +634,14 @@ class SocialController extends Controller
     /**
      * returns a text file with the content of a decklist
      */
-    public function textexportAction($decklist_id)
+    public function textexportAction($decklist_id, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $decklist \AppBundle\Entity\Decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        /** @var Decklist $decklist */
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
@@ -678,9 +666,12 @@ class SocialController extends Controller
             "ICE",
         ];
 
-        $lines[] = $decklist->getIdentity()->getTitle() . " (" . $decklist->getIdentity()
-                                                                          ->getPack()
-                                                                          ->getName() . ")";
+        $lines[] = sprintf(
+            "%s (%s)",
+            $decklist->getIdentity()->getTitle(),
+            $decklist->getIdentity()->getPack()->getName()
+        );
+
         foreach ($types as $type) {
             if (isset($classement[$type]) && $classement[$type]['qty']) {
                 $lines[] = "";
@@ -716,17 +707,14 @@ class SocialController extends Controller
     /**
      * returns a octgn file with the content of a decklist
      */
-    public function octgnexportAction($decklist_id)
+    public function octgnexportAction($decklist_id, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $decklist \AppBundle\Entity\Decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        /** @var Decklist $decklist */
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
@@ -782,17 +770,14 @@ class SocialController extends Controller
     /**
      * edits name and description of a decklist by its publisher
      */
-    public function editAction($decklist_id, Request $request)
+    public function editAction($decklist_id, Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException("No user.");
         }
-        /* @var $decklist Decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        /** @var Decklist $decklist */
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist || $decklist->getUser()->getId() != $user->getId()) {
             throw $this->createAccessDeniedException("No decklist or not authorized to edit decklist.");
         }
@@ -806,7 +791,8 @@ class SocialController extends Controller
         $description = $this->get(Texts::class)->markdown($rawdescription);
 
         $tournament_id = filter_var($request->request->get('tournament'), FILTER_SANITIZE_NUMBER_INT);
-        $tournament = $em->getRepository('AppBundle:Tournament')->find($tournament_id);
+        /** @var Tournament|null $tournament */
+        $tournament = $entityManager->getRepository('AppBundle:Tournament')->find($tournament_id);
 
         $derived_from = $request->request->get('derived');
         $matches = [];
@@ -820,8 +806,8 @@ class SocialController extends Controller
         if (!$derived_from) {
             $precedent_decklist = null;
         } else {
-            /* @var $precedent_decklist Decklist */
-            $precedent_decklist = $em->getRepository('AppBundle:Decklist')->find($derived_from);
+            /** @var Decklist $precedent_decklist */
+            $precedent_decklist = $entityManager->getRepository('AppBundle:Decklist')->find($derived_from);
             if (!$precedent_decklist || $precedent_decklist->getDateCreation() > $decklist->getDateCreation()) {
                 $precedent_decklist = $decklist->getPrecedent();
             }
@@ -838,29 +824,26 @@ class SocialController extends Controller
             $this->get(ModerationHelper::class)->changeStatus($this->getUser(), $decklist, Decklist::MODERATION_RESTORED);
         }
 
-        $em->flush();
+        $entityManager->flush();
 
         return $this->redirect($this->generateUrl('decklist_detail', [
             'decklist_id'   => $decklist_id,
-            'decklist_name' => $decklist->getPrettyName(),
+            'decklist_name' => $decklist->getPrettyname(),
         ]));
     }
 
     /**
      * deletes a decklist if it has no comment, no vote, no favorite
      */
-    public function deleteAction($decklist_id)
+    public function deleteAction($decklist_id, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException("No user.");
         }
 
         /** @var Decklist $decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist || $decklist->getUser()->getId() != $user->getId()) {
             throw $this->createAccessDeniedException("No decklist or not authorized to delete decklist.");
         }
@@ -871,19 +854,19 @@ class SocialController extends Controller
         $precedent = $decklist->getPrecedent();
 
         $children_decks = $decklist->getChildren();
-        /* @var $children_deck Deck */
+        /** @var Deck $children_deck */
         foreach ($children_decks as $children_deck) {
             $children_deck->setParent($precedent);
         }
 
         $successor_decklists = $decklist->getSuccessors();
-        /* @var $successor_decklist Decklist */
+        /** @var Decklist $successor_decklist */
         foreach ($successor_decklists as $successor_decklist) {
             $successor_decklist->setPrecedent($precedent);
         }
 
-        $em->remove($decklist);
-        $em->flush();
+        $entityManager->remove($decklist);
+        $entityManager->flush();
 
         return $this->redirect($this->generateUrl('decklists_list', [
             'type' => 'mine',
@@ -893,25 +876,22 @@ class SocialController extends Controller
     /**
      * displays details about a user and the list of decklists he published
      */
-    public function profileAction($user_id)
+    public function profileAction($user_id, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $user \AppBundle\Entity\User */
-        $user = $em->getRepository('AppBundle:User')->find($user_id);
+        /** @var User $user */
+        $user = $entityManager->getRepository('AppBundle:User')->find($user_id);
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
-        $decklists = $em->getRepository('AppBundle:Decklist')->findBy(['user' => $user]);
+        $decklists = $entityManager->getRepository('AppBundle:Decklist')->findBy(['user' => $user]);
         $nbdecklists = count($decklists);
 
-        $reviews = $em->getRepository('AppBundle:Review')->findBy(['user' => $user]);
+        $reviews = $entityManager->getRepository('AppBundle:Review')->findBy(['user' => $user]);
         $nbreviews = count($reviews);
 
 
@@ -991,7 +971,7 @@ class SocialController extends Controller
         $response = new Response();
         $response->setPrivate();
 
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
 
         $limit = 100;
@@ -1206,7 +1186,7 @@ class SocialController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        /* @var $decklist Decklist */
+        /** @var Decklist $decklist */
         $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist) {
             throw $this->createNotFoundException();

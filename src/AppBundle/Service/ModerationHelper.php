@@ -6,17 +6,10 @@ use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Moderation;
 use AppBundle\Entity\Modflag;
 use AppBundle\Entity\User;
-use DateTime;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Swift_Mailer;
-use Swift_Message;
-
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use Symfony\Component\Routing\RouterInterface;
-use Twig_Environment;
 
 /**
  * Description of ModerationHelper
@@ -28,10 +21,10 @@ class ModerationHelper
     /** @var EntityManagerInterface $entityManager */
     private $entityManager;
 
-    /** @var Swift_Mailer $mailer */
+    /** @var \Swift_Mailer $mailer */
     private $mailer;
 
-    /** @var Twig_Environment $twig */
+    /** @var \Twig_Environment $twig */
     private $twig;
 
     /** @var RouterInterface $router */
@@ -40,7 +33,7 @@ class ModerationHelper
     /** @var LoggerInterface $logger */
     private $logger;
 
-    public function __construct(EntityManagerInterface $entityManager, Swift_Mailer $mailer, Twig_Environment $twig, RouterInterface $router, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, \Swift_Mailer $mailer, \Twig_Environment $twig, RouterInterface $router, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->mailer = $mailer;
@@ -85,7 +78,7 @@ class ModerationHelper
         $moderation->setStatusAfter($status);
         $moderation->setModerator($user);
         $moderation->setDecklist($decklist);
-        $moderation->setDateCreation(new DateTime);
+        $moderation->setDateCreation(new \DateTime);
         $this->entityManager->persist($moderation);
     }
 
@@ -118,7 +111,7 @@ class ModerationHelper
             ]
         );
         $this->logger->debug($body);
-        $message = Swift_Message::newInstance()
+        $message = \Swift_Message::newInstance()
                                 ->setSubject("Your decklist on NetrunnerDB")
                                 ->setFrom("moderation@netrunnerdb.com", "NetrunnerDB Moderation Team")
                                 ->setTo($decklist->getUser()->getEmail())

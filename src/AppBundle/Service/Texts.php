@@ -10,7 +10,7 @@ class Texts
     /** @var \HTMLPurifier $purifier */
     private $purifier;
 
-    /** @var \Michelf\Markdown $transformer */
+    /** @var Markdown $transformer */
     private $transformer;
 
     public function __construct($tempDir)

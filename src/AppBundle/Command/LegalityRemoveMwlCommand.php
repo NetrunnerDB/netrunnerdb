@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Deck;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -44,7 +45,7 @@ class LegalityRemoveMwlCommand extends ContainerAwareCommand
             throw new \Exception("MWL not found");
         }
 
-        /* @var $list_deck \AppBundle\Entity\Deck[] */
+        /** @var Deck[] $list_deck */
         $list_deck = $this->entityManager->getRepository('AppBundle:Deck')->findBy([
             'mwl' => $mwl,
         ]);

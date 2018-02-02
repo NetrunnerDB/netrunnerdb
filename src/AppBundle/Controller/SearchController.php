@@ -6,6 +6,7 @@ use AppBundle\Entity\Card;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Type;
 use AppBundle\Service\CardsData;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -13,13 +14,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SearchController extends Controller
 {
-    public function formAction()
+    public function formAction(EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
 
         $list_packs = $this->getDoctrine()->getRepository('AppBundle:Pack')->findBy([], [
             "dateRelease" => "ASC",

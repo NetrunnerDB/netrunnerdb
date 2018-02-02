@@ -2,9 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Decklist;
+use AppBundle\Entity\Mwl;
 use AppBundle\Service\Decks;
 use AppBundle\Service\Judge;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
@@ -53,25 +56,23 @@ class BuilderController extends Controller
         );
     }
 
-    public function initbuildAction($card_code)
+    public function initbuildAction($card_code, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $card Card */
-        $card = $em->getRepository('AppBundle:Card')->findOneBy([
+        /** @var Card $card */
+        $card = $entityManager->getRepository('AppBundle:Card')->findOneBy([
             "code" => $card_code,
         ]);
         if (!$card) {
             return new Response('card not found.');
         }
 
-        $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
-        $active_mwl = $em->getRepository('AppBundle:Mwl')->findOneBy(['active' => true]);
+        $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
+        /** @var Mwl|null $active_mwl */
+        $active_mwl = $entityManager->getRepository('AppBundle:Mwl')->findOneBy(['active' => true]);
 
         $arr = [
             $card_code => 1,
@@ -101,16 +102,13 @@ class BuilderController extends Controller
         );
     }
 
-    public function importAction()
+    public function importAction(EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('long_cache'));
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
+        $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
 
         return $this->render(
 
@@ -125,7 +123,7 @@ class BuilderController extends Controller
         );
     }
 
-    public function fileimportAction(Request $request)
+    public function fileimportAction(Request $request, EntityManagerInterface $entityManager)
     {
         $filetype = filter_var($request->get('type'), FILTER_SANITIZE_STRING);
         $uploadedFile = $request->files->get('upfile');
@@ -148,9 +146,9 @@ class BuilderController extends Controller
         }
 
         if ($filetype == "octgn" || ($filetype == "auto" && $origext == "o8d")) {
-            $parse = $this->parseOctgnImport(file_get_contents($filename));
+            $parse = $this->parseOctgnImport(file_get_contents($filename), $entityManager);
         } else {
-            $parse = $this->parseTextImport(file_get_contents($filename));
+            $parse = $this->parseTextImport(file_get_contents($filename), $entityManager);
         }
 
         return $this->forward(
@@ -163,11 +161,8 @@ class BuilderController extends Controller
         );
     }
 
-    public function parseTextImport($text)
+    public function parseTextImport($text, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $content = [];
         $lines = explode("\n", $text);
         $identity = null;
@@ -186,10 +181,10 @@ class BuilderController extends Controller
             } else {
                 continue;
             }
-            $card = $em->getRepository('AppBundle:Card')->findOneBy([
+            $card = $entityManager->getRepository('AppBundle:Card')->findOneBy([
                 'title' => $name,
             ]);
-            if ($card) {
+            if ($card instanceof Card) {
                 $content[$card->getCode()] = $quantity;
             }
         }
@@ -200,11 +195,8 @@ class BuilderController extends Controller
         ];
     }
 
-    public function parseOctgnImport($octgn)
+    public function parseOctgnImport($octgn, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $crawler = new Crawler();
         $crawler->addXmlContent($octgn);
         $cardcrawler = $crawler->filter('deck > section > card');
@@ -218,10 +210,10 @@ class BuilderController extends Controller
             } else {
                 continue;
             }
-            $card = $em->getRepository('AppBundle:Card')->findOneBy([
+            $card = $entityManager->getRepository('AppBundle:Card')->findOneBy([
                 'code' => $card_code,
             ]);
-            if ($card) {
+            if ($card instanceof Card) {
                 $content[$card->getCode()] = $quantity;
             }
         }
@@ -238,15 +230,12 @@ class BuilderController extends Controller
         ];
     }
 
-    public function meteorimportAction(Request $request)
+    public function meteorimportAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         // first build an array to match meteor card names with our card codes
         $glossary = [];
-        $cards = $em->getRepository('AppBundle:Card')->findAll();
-        /* @var $card Card */
+        $cards = $entityManager->getRepository('AppBundle:Card')->findAll();
+        /** @var Card $card */
         foreach ($cards as $card) {
             $title = $card->getTitle();
             $replacements = [
@@ -319,8 +308,8 @@ class BuilderController extends Controller
         foreach ($meteor_data as $meteor_deck) {
             // add a tag for side and faction of deck
             $identity_code = $glossary[$meteor_deck['identity']];
-            /* @var $identity \AppBundle\Entity\Card */
-            $identity = $em->getRepository('AppBundle:Card')->findOneBy(['code' => $identity_code]);
+            /** @var Card $identity */
+            $identity = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $identity_code]);
             if (!$identity) {
                 continue;
             }
@@ -342,7 +331,7 @@ class BuilderController extends Controller
                 $content[$glossary[$entry]] = $qty;
             }
 
-            /* @var $deck Deck */
+            /** @var Deck $deck */
             $deck = new Deck();
             $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $meteor_deck['name'], "", $tags, null, $content, null);
         }
@@ -354,13 +343,10 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function textexportAction($deck_id)
+    public function textexportAction($deck_id, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $deck \AppBundle\Entity\Deck */
-        $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
+        /** @var Deck $deck */
+        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
         if (!$this->getUser() || $this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException("Access denied");
         }
@@ -430,13 +416,10 @@ class BuilderController extends Controller
         return $response;
     }
 
-    public function octgnexportAction($deck_id)
+    public function octgnexportAction($deck_id, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $deck \AppBundle\Entity\Deck */
-        $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
+        /** @var Deck $deck */
+        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
         if (!$this->getUser() || $this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
@@ -491,12 +474,8 @@ class BuilderController extends Controller
         return $response;
     }
 
-    public function saveAction(Request $request)
+    public function saveAction(Request $request, EntityManagerInterface $entityManager)
     {
-
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $user = $this->getUser();
         if (count($user->getDecks()) > $user->getMaxNbDecks()) {
             return new Response('You have reached the maximum number of decks allowed. Delete some decks or increase your reputation.');
@@ -506,7 +485,7 @@ class BuilderController extends Controller
         $deck = null;
         $source_deck = null;
         if ($id) {
-            $deck = $em->getRepository('AppBundle:Deck')->find($id);
+            $deck = $entityManager->getRepository('AppBundle:Deck')->find($id);
             if (!$deck instanceof Deck || $user->getId() != $deck->getUser()->getId()) {
                 throw $this->createAccessDeniedException();
             }
@@ -525,7 +504,7 @@ class BuilderController extends Controller
         $is_copy = (boolean) filter_var($request->get('copy'), FILTER_SANITIZE_NUMBER_INT);
         if ($is_copy || !$id) {
             $deck = new Deck();
-            $em->persist($deck);
+            $entityManager->persist($deck);
         }
 
         $content = (array) json_decode($request->get('content'));
@@ -543,13 +522,10 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $deck_id = filter_var($request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
-        $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
+        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
         if (!$deck instanceof Deck) {
             return $this->redirect($this->generateUrl('decks_list'));
         }
@@ -560,8 +536,8 @@ class BuilderController extends Controller
         foreach ($deck->getChildren() as $decklist) {
             $decklist->setParent(null);
         }
-        $em->remove($deck);
-        $em->flush();
+        $entityManager->remove($deck);
+        $entityManager->flush();
 
         $this->get('session')
              ->getFlashBag()
@@ -570,16 +546,13 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function deleteListAction(Request $request)
+    public function deleteListAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $list_id = explode('-', $request->get('ids'));
 
         foreach ($list_id as $id) {
-            /* @var $deck Deck */
-            $deck = $em->getRepository('AppBundle:Deck')->find($id);
+            /** @var Deck $deck */
+            $deck = $entityManager->getRepository('AppBundle:Deck')->find($id);
             if (!$deck) {
                 continue;
             }
@@ -590,9 +563,9 @@ class BuilderController extends Controller
             foreach ($deck->getChildren() as $decklist) {
                 $decklist->setParent(null);
             }
-            $em->remove($deck);
+            $entityManager->remove($deck);
         }
-        $em->flush();
+        $entityManager->flush();
 
         $this->get('session')
              ->getFlashBag()
@@ -601,9 +574,9 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function editAction($deck_id)
+    public function editAction($deck_id, EntityManagerInterface $entityManager)
     {
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery("SELECT
 				d.id,
 				d.name,
@@ -778,9 +751,9 @@ class BuilderController extends Controller
         );
     }
 
-    public function viewAction($deck_id)
+    public function viewAction($deck_id, EntityManagerInterface $entityManager)
     {
-        $dbh = $this->get('doctrine')->getConnection();
+        $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery("SELECT
 				d.id,
 				d.name,
@@ -891,9 +864,14 @@ class BuilderController extends Controller
         );
     }
 
-    public function listAction()
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function listAction(EntityManagerInterface $entityManager)
     {
-        /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
 
         $decks = $this->get(Decks::class)->getByUser($user, false);
@@ -906,9 +884,7 @@ class BuilderController extends Controller
                 ORDER BY t.description DESC"
         )->fetchAll();
 
-        $em = $this->get('doctrine')->getManager();
-
-        $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
+        $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
 
         return $this->render(
 
@@ -927,13 +903,14 @@ class BuilderController extends Controller
         );
     }
 
-    public function copyAction($decklist_id)
+    public function copyAction($decklist_id, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
+        /** @var Decklist|null $decklist */
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
 
-        /* @var $decklist \AppBundle\Entity\Decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        if (!$decklist instanceof Decklist) {
+            throw $this->createNotFoundException();
+        }
 
         $content = [];
         foreach ($decklist->getSlots() as $slot) {
@@ -947,18 +924,15 @@ class BuilderController extends Controller
                 'name'        => $decklist->getName(),
                 'content'     => json_encode($content),
                 'decklist_id' => $decklist_id,
-                'mwl_code'    => $mwl == null ? null : $mwl->getCode(),
+                'mwl_code'    => $mwl instanceof Mwl ? $mwl->getCode() : null,
             ]
         );
     }
 
-    public function duplicateAction($deck_id)
+    public function duplicateAction($deck_id, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $deck \AppBundle\Entity\Deck */
-        $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
+        /** @var Deck $deck */
+        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
 
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
@@ -971,7 +945,7 @@ class BuilderController extends Controller
         $description = strlen($deck->getDescription()) > 0 ? ("Original deck notes:\n\n" . $deck->getDescription()) : '';
 
         $mwl = $deck->getMwl();
-        if ($mwl != null) {
+        if ($mwl instanceof Mwl) {
             $mwl = $mwl->getCode();
         }
 
@@ -987,12 +961,10 @@ class BuilderController extends Controller
         );
     }
 
-    public function downloadallAction()
+    public function downloadallAction(EntityManagerInterface $entityManager)
     {
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
 
         $decks = $this->get(Decks::class)->getByUser($user, false);
 
@@ -1003,7 +975,7 @@ class BuilderController extends Controller
             foreach ($decks as $deck) {
                 $content = [];
                 foreach ($deck['cards'] as $slot) {
-                    $card = $em->getRepository('AppBundle:Card')->findOneBy(['code' => $slot['card_code']]);
+                    $card = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $slot['card_code']]);
                     if (!$card instanceof Card) {
                         continue;
                     }
@@ -1030,7 +1002,7 @@ class BuilderController extends Controller
         return $response;
     }
 
-    public function uploadallAction(Request $request)
+    public function uploadallAction(Request $request, EntityManagerInterface $entityManager)
     {
         // time-consuming task
         ini_set('max_execution_time', 300);
@@ -1057,7 +1029,7 @@ class BuilderController extends Controller
         if ($res === true) {
             for ($i = 0; $i < $zip->numFiles; $i++) {
                 $name = $zip->getNameIndex($i);
-                $parse = $this->parseTextImport($zip->getFromIndex($i));
+                $parse = $this->parseTextImport($zip->getFromIndex($i), $entityManager);
 
                 $deck = new Deck();
                 $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content'], null);
@@ -1072,17 +1044,14 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function autosaveAction($deck_id, Request $request)
+    public function autosaveAction($deck_id, Request $request, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException();
         }
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        $deck = $em->getRepository('AppBundle:Deck')->find($deck_id);
+        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
         if (!$deck instanceof Deck) {
             throw $this->createNotFoundException();
         }
@@ -1100,8 +1069,8 @@ class BuilderController extends Controller
             $change->setDeck($deck);
             $change->setVariation(json_encode($diff));
             $change->setSaved(false);
-            $em->persist($change);
-            $em->flush();
+            $entityManager->persist($change);
+            $entityManager->flush();
 
             return new Response($change->getDateCreation()->format('c'));
         }

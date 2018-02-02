@@ -3,12 +3,14 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Entity\User;
 use AppBundle\Service\Decks;
 use AppBundle\Service\Judge;
 use AppBundle\Service\RotationService;
 use AppBundle\Service\Texts;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -72,7 +74,7 @@ class PrivateApi20Controller extends FOSRestController
      */
     public function loadDeckAction($deck_id, Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
         
         if (!$user) {
@@ -103,7 +105,7 @@ class PrivateApi20Controller extends FOSRestController
             $result = $query->getResult();
             
             foreach ($result as $deckchange) {
-                /* @var $deckchange \AppBundle\Entity\Deckchange */
+                /** @var Deckchange $deckchange */
                 $variation = json_decode($deckchange->getVariation(), true);
                 $changes = [];
                 foreach ($variation[0] as $card_code => $addition) {
@@ -137,16 +139,13 @@ class PrivateApi20Controller extends FOSRestController
      *    {"name"="decklist_id", "dataType"="integer", "required"=false, "description"="ID of the parent decklist"}
      *  },
      * )
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function saveDeckAction(Request $request)
     {
-        /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
-    
-        if (!$user) {
-            throw $this->createAccessDeniedException("No user.");
-        }
-        
+
         $requestJsonBody = $request->getContent();
         $requestContent = json_decode($requestJsonBody, true);
         $last_error = json_last_error();
@@ -216,7 +215,7 @@ class PrivateApi20Controller extends FOSRestController
     {
         $entityManager = $this->getDoctrine()->getManager();
         
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
     
         if (!$user) {
@@ -321,7 +320,7 @@ class PrivateApi20Controller extends FOSRestController
      */
     public function decksAction()
     {
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
     
         if (!$user) {
@@ -346,7 +345,7 @@ class PrivateApi20Controller extends FOSRestController
      */
     public function decklistsAction()
     {
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
     
         if (!$user) {
@@ -371,7 +370,7 @@ class PrivateApi20Controller extends FOSRestController
      */
     public function accountInfoAction()
     {
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
     
         if (!$user) {

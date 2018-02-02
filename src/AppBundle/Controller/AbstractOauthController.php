@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class AbstractOauthController extends Controller
 {
-
     /**
      * @return Client
      */
@@ -57,7 +56,7 @@ abstract class AbstractOauthController extends Controller
      */
     public function createJsonResponse($data, $status = 200, $headers = [])
     {
-        /* @var $serializer Serializer */
+        /** @var Serializer $serializer */
         $serializer = $this->get('jms_serializer');
 
         $context = new SerializationContext();

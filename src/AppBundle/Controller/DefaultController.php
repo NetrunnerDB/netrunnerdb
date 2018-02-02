@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Faction;
 use AppBundle\Service\CardsData;
+use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,11 +13,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends Controller
 {
-    public function profileAction()
+    public function profileAction(EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
-        $factions = $this->get('doctrine')->getRepository('AppBundle:Faction')->findAll();
+        $factions = $entityManager->getRepository('AppBundle:Faction')->findAll();
         /** @var Faction $faction */
         foreach ($factions as $i => $faction) {
             $factions[$i]->localizedName = $faction->getName();
@@ -25,9 +27,15 @@ class DefaultController extends Controller
             'user' => $user, 'factions' => $factions]);
     }
 
-    public function saveProfileAction(Request $request)
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
+    public function saveProfileAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $user \AppBundle\Entity\User */
         $user = $this->getUser();
         $em = $this->getDoctrine()->getManager();
 
@@ -67,7 +75,7 @@ class DefaultController extends Controller
         $user->setShareDecks($shareDecks);
         $user->setAutoloadImages($autoloadImages);
 
-        $this->get('doctrine')->getManager()->flush();
+        $entityManager->flush();
 
         $this->get('session')
              ->getFlashBag()

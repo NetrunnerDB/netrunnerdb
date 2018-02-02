@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
+use AppBundle\Entity\Deck;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Translation;
@@ -391,7 +392,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function deckAction($deck_id, Request $request)
     {
-        /* @var $deck \AppBundle\Entity\Deck */
+        /** @var Deck $deck */
         $deck = $this->getDoctrine()->getManager()->getRepository('AppBundle:Deck')->find($deck_id);
     
         if (!$deck) {

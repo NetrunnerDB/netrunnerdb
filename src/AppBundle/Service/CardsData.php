@@ -847,7 +847,7 @@ class CardsData
         $response = [];
         $packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy([], ["dateRelease" => "ASC"]);
         foreach ($reviews as $review) {
-            /* @var $review \AppBundle\Entity\Review */
+            /** @var Review $review */
             $user = $review->getUser();
 
             $response[] = [

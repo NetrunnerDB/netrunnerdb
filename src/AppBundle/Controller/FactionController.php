@@ -33,7 +33,6 @@ class FactionController extends Controller
 
             // build the list of identites for the faction
 
-            /* @var $qb \Doctrine\ORM\QueryBuilder */
             $qb = $entityManager->createQueryBuilder();
             $qb->select('c')
                ->from('AppBundle:Card', 'c')

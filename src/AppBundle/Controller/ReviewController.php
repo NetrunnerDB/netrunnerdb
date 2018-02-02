@@ -2,28 +2,25 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\User;
 use AppBundle\Service\Texts;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\Card;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
 use AppBundle\Entity\Reviewcomment;
-use \Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ReviewController extends Controller
 {
-    public function postAction(Request $request)
+    public function postAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
             throw new UnauthorizedHttpException("You are not logged in.");
@@ -35,8 +32,8 @@ class ReviewController extends Controller
         }
 
         $card_id = filter_var($request->get('card_id'), FILTER_SANITIZE_NUMBER_INT);
-        /* @var $card Card */
-        $card = $em->getRepository('AppBundle:Card')->find($card_id);
+        /** @var Card $card */
+        $card = $entityManager->getRepository('AppBundle:Card')->find($card_id);
         if (!$card) {
             throw new BadRequestHttpException("Unable to find card.");
         }
@@ -45,7 +42,7 @@ class ReviewController extends Controller
         }
 
         // checking the user didn't already write a review for that card
-        $review = $em->getRepository('AppBundle:Review')->findOneBy(['card' => $card, 'user' => $user]);
+        $review = $entityManager->getRepository('AppBundle:Review')->findOneBy(['card' => $card, 'user' => $user]);
         if ($review) {
             return new Response(json_encode("You cannot write more than 1 review for a given card."));
         }
@@ -72,28 +69,24 @@ class ReviewController extends Controller
         $review->setText($review_html);
         $review->setNbvotes(0);
 
-        $em->persist($review);
+        $entityManager->persist($review);
 
-        $em->flush();
+        $entityManager->flush();
 
         return new Response(json_encode(true));
     }
 
-    public function editAction(Request $request)
+    public function editAction(Request $request, EntityManagerInterface $entityManager)
     {
-
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
             throw new UnauthorizedHttpException("You are not logged in.");
         }
 
         $review_id = filter_var($request->get('review_id'), FILTER_SANITIZE_NUMBER_INT);
-        /* @var $review Review */
-        $review = $em->getRepository('AppBundle:Review')->find($review_id);
+        /** @var Review $review */
+        $review = $entityManager->getRepository('AppBundle:Review')->find($review_id);
         if (!$review) {
             throw new BadRequestHttpException("Unable to find review.");
         }
@@ -119,24 +112,21 @@ class ReviewController extends Controller
         $review->setRawtext($review_raw);
         $review->setText($review_html);
 
-        $em->flush();
+        $entityManager->flush();
 
         return new Response(json_encode(true));
     }
 
-    public function likeAction(Request $request)
+    public function likeAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $user = $this->getUser();
         if (!$user) {
             throw new UnauthorizedHttpException("You are not logged in.");
         }
 
         $review_id = filter_var($request->request->get('id'), FILTER_SANITIZE_NUMBER_INT);
-        /* @var $review Review */
-        $review = $em->getRepository('AppBundle:Review')->find($review_id);
+        /** @var Review $review */
+        $review = $entityManager->getRepository('AppBundle:Review')->find($review_id);
         if (!$review) {
             throw new NotFoundHttpException("Unable to find review.");
         }
@@ -144,14 +134,16 @@ class ReviewController extends Controller
         // a user cannot vote on her own review
         if ($review->getUser()->getId() != $user->getId()) {
             // checking if the user didn't already vote on that review
-            $query = $em->getRepository('AppBundle:Review')
-                        ->createQueryBuilder('r')
-                        ->innerJoin('r.votes', 'u')
-                        ->where('r.id = :review_id')
-                        ->andWhere('u.id = :user_id')
-                        ->setParameter('review_id', $review_id)
-                        ->setParameter('user_id', $user->getId())
-                        ->getQuery();
+            $query = $entityManager
+                ->createQueryBuilder()
+                ->select('r')
+                ->from(Review::class, 'r')
+                ->innerJoin('r.votes', 'u')
+                ->where('r.id = :review_id')
+                ->andWhere('u.id = :user_id')
+                ->setParameter('review_id', $review_id)
+                ->setParameter('user_id', $user->getId())
+                ->getQuery();
 
             $result = $query->getResult();
             if (empty($result)) {
@@ -159,27 +151,23 @@ class ReviewController extends Controller
                 $author->setReputation($author->getReputation() + 1);
                 $user->addReviewVote($review);
                 $review->setNbvotes($review->getNbvotes() + 1);
-                $em->flush();
+                $entityManager->flush();
             }
         }
 
         return new Response(count($review->getVotes()));
     }
 
-    public function removeAction(Request $request)
+    public function removeAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $user = $this->getUser();
         if (!$user || !in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
             throw new UnauthorizedHttpException('No user or not admin');
         }
 
-
         $review_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
-        /* @var $review Review */
-        $review = $em->getRepository('AppBundle:Review')->find($review_id);
+        /** @var Review $review */
+        $review = $entityManager->getRepository('AppBundle:Review')->find($review_id);
         if (!$review) {
             throw new NotFoundHttpException("Unable to find review.");
         }
@@ -188,13 +176,13 @@ class ReviewController extends Controller
         foreach ($votes as $vote) {
             $review->removeVote($vote);
         }
-        $em->remove($review);
-        $em->flush();
+        $entityManager->remove($review);
+        $entityManager->flush();
 
         return new Response('Done');
     }
 
-    public function listAction($page = 1, Request $request)
+    public function listAction($page = 1, Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -208,11 +196,8 @@ class ReviewController extends Controller
 
         $pagetitle = "Card Reviews";
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
         $dql = "SELECT r FROM AppBundle:Review r JOIN r.card c JOIN c.pack p WHERE p.dateRelease IS NOT NULL ORDER BY r.dateCreation DESC";
-        $query = $em->createQuery($dql)->setFirstResult($start)->setMaxResults($limit);
+        $query = $entityManager->createQuery($dql)->setFirstResult($start)->setMaxResults($limit);
 
         $paginator = new Paginator($query, false);
         $maxcount = count($paginator);
@@ -268,7 +253,7 @@ class ReviewController extends Controller
         );
     }
 
-    public function byauthorAction($user_id, $page = 1, Request $request)
+    public function byauthorAction($user_id, $page = 1, Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -280,15 +265,13 @@ class ReviewController extends Controller
         }
         $start = ($page - 1) * $limit;
 
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
+        /** @var User|null $user */
+        $user = $entityManager->getRepository('AppBundle:User')->find($user_id);
 
-        $user = $em->getRepository('AppBundle:User')->find($user_id);
-
-        $pagetitle = "Card Reviews by " . $user->getUsername();
+        $pagetitle = "Card Reviews" . ($user instanceof User ? " by " . $user->getUsername() : "");
 
         $dql = "SELECT r FROM AppBundle:Review r WHERE r.user = :user ORDER BY r.dateCreation DESC";
-        $query = $em->createQuery($dql)->setFirstResult($start)->setMaxResults($limit)->setParameter('user', $user);
+        $query = $entityManager->createQuery($dql)->setFirstResult($start)->setMaxResults($limit)->setParameter('user', $user);
 
         $paginator = new Paginator($query, false);
         $maxcount = count($paginator);
@@ -347,21 +330,17 @@ class ReviewController extends Controller
         );
     }
 
-    public function commentAction(Request $request)
+    public function commentAction(Request $request, EntityManagerInterface $entityManager)
     {
-
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->get('doctrine')->getManager();
-
-        /* @var $user \AppBundle\Entity\User */
+        /** @var User $user */
         $user = $this->getUser();
         if (!$user) {
             throw new UnauthorizedHttpException("You are not logged in.");
         }
 
         $review_id = filter_var($request->get('comment_review_id'), FILTER_SANITIZE_NUMBER_INT);
-        /* @var $review Review */
-        $review = $em->getRepository('AppBundle:Review')->find($review_id);
+        /** @var Review $review */
+        $review = $entityManager->getRepository('AppBundle:Review')->find($review_id);
         if (!$review) {
             throw new BadRequestHttpException("Unable to find review.");
         }
@@ -377,9 +356,9 @@ class ReviewController extends Controller
         $comment->setAuthor($user);
         $comment->setText($comment_text);
 
-        $em->persist($comment);
+        $entityManager->persist($comment);
 
-        $em->flush();
+        $entityManager->flush();
 
         return new Response(json_encode(true));
     }
