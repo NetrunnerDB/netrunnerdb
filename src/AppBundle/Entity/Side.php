@@ -14,19 +14,6 @@ use Doctrine\Common\Collections\Collection;
  */
 class Side extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
-    public function __toString()
-    {
-        return $this->name ?: '(unknown)';
-    }
-
-    public function normalize()
-    {
-        return [
-                'code' => $this->code,
-                'name' => $this->name
-        ];
-    }
-
     /**
      * @var integer
      */
@@ -38,39 +25,6 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
     private $name;
 
     /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set text
-     *
-     * @param string $name
-     * @return Side
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    
-        return $this;
-    }
-
-    /**
-     * Get text
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
      * @var Collection
      */
     private $cards;
@@ -79,7 +33,7 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
      * @var Collection
      */
     private $factions;
-    
+
     /**
      * @var Collection
      */
@@ -89,6 +43,21 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
      * @var Collection
      */
     private $decklists;
+
+    /**
+     * @var string
+     */
+    private $code;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateCreation;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateUpdate;
     
     /**
      * Constructor
@@ -100,23 +69,61 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
         $this->decks = new ArrayCollection();
         $this->decklists = new ArrayCollection();
     }
+
+    public function __toString()
+    {
+        return $this->name ?: '(unknown)';
+    }
+    
+    public function normalize()
+    {
+        return [
+                'code' => $this->code,
+                'name' => $this->name
+        ];
+    }
     
     /**
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return Side
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
      * Add cards
-     *
      * @param Card $cards
      * @return Side
      */
     public function addCard(Card $cards)
     {
         $this->cards[] = $cards;
-    
+
         return $this;
     }
 
     /**
      * Remove cards
-     *
      * @param Card $cards
      */
     public function removeCard(Card $cards)
@@ -125,51 +132,43 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Get cards
-     *
      * @return Collection
      */
     public function getCards()
     {
         return $this->cards;
     }
-
+    
     /**
      * Add decks
-     *
      * @param Deck $decks
      * @return Side
      */
     public function addDeck(Deck $decks)
     {
         $this->decks[] = $decks;
-    
+
         return $this;
     }
 
     /**
      * Remove decks
-     *
      * @param Deck $decks
      */
     public function removeDeck(Deck $decks)
     {
         $this->decks->removeElement($decks);
     }
-
+    
     /**
-     * Get decks
-     *
      * @return Collection
      */
     public function getDecks()
     {
         return $this->decks;
     }
-    
+
     /**
-     * Get decklists
-     *
      * @return Collection
      */
     public function getDecklists()
@@ -178,18 +177,15 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Get decklists
-     *
      * @return Collection
      */
     public function getFactions()
     {
         return $this->factions;
     }
-    
+
     /**
      * Add factions
-     *
      * @param Faction $factions
      * @return Side
      */
@@ -202,7 +198,6 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
 
     /**
      * Remove factions
-     *
      * @param Faction $factions
      */
     public function removeFaction(Faction $factions)
@@ -212,7 +207,6 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
 
     /**
      * Add decklists
-     *
      * @param Decklist $decklists
      * @return Side
      */
@@ -225,7 +219,6 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
 
     /**
      * Remove decklists
-     *
      * @param Decklist $decklists
      */
     public function removeDecklist(Decklist $decklists)
@@ -234,19 +227,18 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * @var string
+     * @return string
      */
-    private $code;
-
+    public function getCode()
+    {
+        return $this->code;
+    }
 
     /**
-     * Set code
-     *
      * @param string $code
-     *
      * @return Side
      */
-    public function setCode($code)
+    public function setCode(string $code)
     {
         $this->code = $code;
 
@@ -254,42 +246,6 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Get code
-     *
-     * @return string
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-    /**
-     * @var \DateTime
-     */
-    private $dateCreation;
-
-    /**
-     * @var \DateTime
-     */
-    private $dateUpdate;
-
-
-    /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
-     * @return Side
-     */
-    public function setDateCreation($dateCreation)
-    {
-        $this->dateCreation = $dateCreation;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -298,26 +254,32 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     *
+     * @param \DateTime $dateCreation
      * @return Side
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
     {
         return $this->dateUpdate;
+    }
+
+    /**
+     * @param \DateTime $dateUpdate
+     * @return Side
+     */
+    public function setDateUpdate(\DateTime $dateUpdate)
+    {
+        $this->dateUpdate = $dateUpdate;
+
+        return $this;
     }
 }

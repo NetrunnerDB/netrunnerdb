@@ -8,6 +8,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends Controller
 {
+    /**
+     * @param AuthenticationUtils $authenticationUtils
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function loginAction(AuthenticationUtils $authenticationUtils)
     {
         return $this->render(
@@ -17,9 +21,5 @@ class SecurityController extends Controller
                 'error'         => $authenticationUtils->getLastAuthenticationError(),
             ]
         );
-    }
-
-    public function loginCheckAction(Request $request)
-    {
     }
 }

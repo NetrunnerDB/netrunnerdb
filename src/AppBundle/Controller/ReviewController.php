@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,13 +19,17 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ReviewController extends Controller
 {
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param TextProcessor          $textProcessor
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
     public function postAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
-        /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
-            throw new UnauthorizedHttpException("You are not logged in.");
-        }
 
         // a user cannot post more reviews than her reputation
         if (count($user->getReviews()) >= $user->getReputation()) {
@@ -76,13 +81,17 @@ class ReviewController extends Controller
         return new Response(json_encode(true));
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param TextProcessor          $textProcessor
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
     public function editAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
-        /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
-            throw new UnauthorizedHttpException("You are not logged in.");
-        }
 
         $review_id = filter_var($request->get('review_id'), FILTER_SANITIZE_NUMBER_INT);
         /** @var Review $review */
@@ -117,12 +126,16 @@ class ReviewController extends Controller
         return new Response(json_encode(true));
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function likeAction(Request $request, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
-        if (!$user) {
-            throw new UnauthorizedHttpException("You are not logged in.");
-        }
 
         $review_id = filter_var($request->request->get('id'), FILTER_SANITIZE_NUMBER_INT);
         /** @var Review $review */
@@ -158,13 +171,15 @@ class ReviewController extends Controller
         return new Response(count($review->getVotes()));
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("ROLE_SUPER_ADMIN")
+     */
     public function removeAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $user = $this->getUser();
-        if (!$user || !in_array('ROLE_SUPER_ADMIN', $user->getRoles())) {
-            throw new UnauthorizedHttpException('No user or not admin');
-        }
-
         $review_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
         /** @var Review $review */
         $review = $entityManager->getRepository('AppBundle:Review')->find($review_id);
@@ -182,7 +197,13 @@ class ReviewController extends Controller
         return new Response('Done');
     }
 
-    public function listAction($page = 1, Request $request, EntityManagerInterface $entityManager)
+    /**
+     * @param int                    $page
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function listAction(int $page = 1, Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -253,7 +274,14 @@ class ReviewController extends Controller
         );
     }
 
-    public function byauthorAction($user_id, $page = 1, Request $request, EntityManagerInterface $entityManager)
+    /**
+     * @param int                    $user_id
+     * @param int                    $page
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function byauthorAction(int $user_id, int $page = 1, Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -330,13 +358,16 @@ class ReviewController extends Controller
         );
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function commentAction(Request $request, EntityManagerInterface $entityManager)
     {
-        /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
-            throw new UnauthorizedHttpException("You are not logged in.");
-        }
 
         $review_id = filter_var($request->get('comment_review_id'), FILTER_SANITIZE_NUMBER_INT);
         /** @var Review $review */

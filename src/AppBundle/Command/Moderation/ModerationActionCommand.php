@@ -98,7 +98,7 @@ class ModerationActionCommand extends ContainerAwareCommand
      * @param integer $decklistId
      * @return Decklist
      */
-    protected function getDecklist($decklistId)
+    protected function getDecklist(int $decklistId)
     {
         $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklistId);
         if ($decklist instanceof Decklist) {

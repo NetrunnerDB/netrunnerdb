@@ -20,9 +20,15 @@ class DecklistsController extends Controller
 {
 
     /**
-     * displays the lists of decklists
+     * @param string                 $type
+     * @param int                    $page
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param DecklistManager        $decklistManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function listAction($type, $page = 1, Request $request, EntityManagerInterface $entityManager, DecklistManager $decklistManager)
+    public function listAction(string $type, int $page = 1, Request $request, EntityManagerInterface $entityManager, DecklistManager $decklistManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -168,6 +174,12 @@ class DecklistsController extends Controller
         ], $response);
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function searchAction(Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
@@ -245,6 +257,12 @@ class DecklistsController extends Controller
         ], $response);
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return string
+     * @throws \Doctrine\DBAL\DBALException
+     */
     private function searchForm(Request $request, EntityManagerInterface $entityManager)
     {
         $dbh = $entityManager->getConnection();
@@ -341,7 +359,14 @@ class DecklistsController extends Controller
         return $this->renderView('/Search/form.html.twig', $params);
     }
 
-    public function diffAction($decklist1_id, $decklist2_id, EntityManagerInterface $entityManager, DiffService $diffService)
+    /**
+     * @param int                    $decklist1_id
+     * @param int                    $decklist2_id
+     * @param EntityManagerInterface $entityManager
+     * @param DiffService            $diffService
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function diffAction(int $decklist1_id, int $decklist2_id, EntityManagerInterface $entityManager, DiffService $diffService)
     {
         if ($decklist1_id > $decklist2_id) {
             return $this->redirect($this->generateUrl('decklists_diff', ['decklist1_id' => $decklist2_id, 'decklist2_id' => $decklist1_id]));

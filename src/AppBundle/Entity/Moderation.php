@@ -18,39 +18,6 @@ class Moderation
     private $dateCreation;
 
     /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
-     * @return Moderation
-     */
-    public function setDateCreation($dateCreation)
-    {
-        $this->dateCreation = $dateCreation;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreation
-     *
-     * @return \DateTime
-     */
-    public function getDateCreation()
-    {
-        return $this->dateCreation;
-    }
-    /**
      * @var Decklist
      */
     private $decklist;
@@ -60,54 +27,6 @@ class Moderation
      */
     private $moderator;
 
-
-    /**
-     * Set decklist
-     *
-     * @param Decklist $decklist
-     *
-     * @return Moderation
-     */
-    public function setDecklist(Decklist $decklist)
-    {
-        $this->decklist = $decklist;
-
-        return $this;
-    }
-
-    /**
-     * Get decklist
-     *
-     * @return Decklist
-     */
-    public function getDecklist()
-    {
-        return $this->decklist;
-    }
-
-    /**
-     * Set moderator
-     *
-     * @param User $moderator
-     *
-     * @return Moderation
-     */
-    public function setModerator(User $moderator)
-    {
-        $this->moderator = $moderator;
-
-        return $this;
-    }
-
-    /**
-     * Get moderator
-     *
-     * @return User
-     */
-    public function getModerator()
-    {
-        return $this->moderator;
-    }
     /**
      * @var integer
      */
@@ -118,24 +37,72 @@ class Moderation
      */
     private $statusAfter;
 
+    /**
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
-     * Set statusBefore
-     *
-     * @param integer $statusBefore
-     *
+     * @return \DateTime
+     */
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
+    }
+
+    /**
+     * @param \DateTime $dateCreation
      * @return Moderation
      */
-    public function setStatusBefore($statusBefore)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->statusBefore = $statusBefore;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get statusBefore
-     *
+     * @return Decklist
+     */
+    public function getDecklist()
+    {
+        return $this->decklist;
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @return Moderation
+     */
+    public function setDecklist(Decklist $decklist)
+    {
+        $this->decklist = $decklist;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getModerator()
+    {
+        return $this->moderator;
+    }
+
+    /**
+     * @param User $moderator
+     * @return Moderation
+     */
+    public function setModerator(User $moderator)
+    {
+        $this->moderator = $moderator;
+
+        return $this;
+    }
+
+    /**
      * @return integer
      */
     public function getStatusBefore()
@@ -144,26 +111,32 @@ class Moderation
     }
 
     /**
-     * Set statusAfter
-     *
-     * @param integer $statusAfter
-     *
+     * @param integer $statusBefore
      * @return Moderation
      */
-    public function setStatusAfter($statusAfter)
+    public function setStatusBefore(int $statusBefore)
     {
-        $this->statusAfter = $statusAfter;
+        $this->statusBefore = $statusBefore;
 
         return $this;
     }
 
     /**
-     * Get statusAfter
-     *
      * @return integer
      */
     public function getStatusAfter()
     {
         return $this->statusAfter;
+    }
+
+    /**
+     * @param integer $statusAfter
+     * @return Moderation
+     */
+    public function setStatusAfter(int $statusAfter)
+    {
+        $this->statusAfter = $statusAfter;
+
+        return $this;
     }
 }

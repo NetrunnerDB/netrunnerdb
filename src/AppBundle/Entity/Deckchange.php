@@ -27,11 +27,13 @@ class Deckchange
      */
     private $deck;
 
+    /**
+     * @var boolean
+     */
+    private $saved;
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -39,21 +41,6 @@ class Deckchange
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     * @return $this
-     */
-    public function setDatecreation($dateCreation)
-    {
-        $this->dateCreation = $dateCreation;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -62,21 +49,17 @@ class Deckchange
     }
 
     /**
-     * Set variation
-     *
-     * @param string $variation
+     * @param \DateTime $dateCreation
      * @return $this
      */
-    public function setVariation($variation)
+    public function setDatecreation(\DateTime $dateCreation)
     {
-        $this->variation = $variation;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get variation
-     *
      * @return string
      */
     public function getVariation()
@@ -85,8 +68,25 @@ class Deckchange
     }
 
     /**
-     * Set deck
-     *
+     * @param string $variation
+     * @return $this
+     */
+    public function setVariation(string $variation)
+    {
+        $this->variation = $variation;
+
+        return $this;
+    }
+
+    /**
+     * @return Deck
+     */
+    public function getDeck()
+    {
+        return $this->deck;
+    }
+
+    /**
      * @param Deck $deck
      * @return $this
      */
@@ -98,40 +98,21 @@ class Deckchange
     }
 
     /**
-     * Get deck
-     *
-     * @return Deck
-     */
-    public function getDeck()
-    {
-        return $this->deck;
-    }
-    /**
-     * @var boolean
-     */
-    private $saved;
-
-
-    /**
-     * Set saved
-     *
-     * @param boolean $saved
-     * @return Deckchange
-     */
-    public function setSaved($saved)
-    {
-        $this->saved = $saved;
-
-        return $this;
-    }
-
-    /**
-     * Get saved
-     *
      * @return boolean
      */
     public function getSaved()
     {
         return $this->saved;
+    }
+
+    /**
+     * @param boolean $saved
+     * @return Deckchange
+     */
+    public function setSaved(bool $saved)
+    {
+        $this->saved = $saved;
+
+        return $this;
     }
 }

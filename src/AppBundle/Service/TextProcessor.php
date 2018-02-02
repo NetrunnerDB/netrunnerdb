@@ -25,7 +25,7 @@ class TextProcessor
      * Returns a substring of $string that is $max_length length max and doesn't split
      * a word or a html tag
      */
-    public function truncate($string, $max_length)
+    public function truncate(string $string, int $max_length)
     {
         $response = '';
         $token = '';
@@ -57,7 +57,7 @@ class TextProcessor
     /**
      * Returns the processed version of a markdown text
      */
-    public function markdown($string)
+    public function markdown(string $string)
     {
         return $this->img_responsive($this->purify($this->transform($string)));
     }
@@ -68,7 +68,7 @@ class TextProcessor
      * @param string $string
      * @return string
      */
-    public function purify($string)
+    public function purify(string $string)
     {
         return $this->purifier->purify($string);
     }
@@ -79,7 +79,7 @@ class TextProcessor
      * @param string $string
      * @return string
      */
-    public function transform($string)
+    public function transform(string $string)
     {
         return $this->transformer->transform($string);
     }
@@ -90,7 +90,7 @@ class TextProcessor
      * @param string $string
      * @return null|string|string[]
      */
-    public function img_responsive($string)
+    public function img_responsive(string $string)
     {
         return preg_replace('/<img src=/', '<img data-src=', $string);
     }

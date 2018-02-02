@@ -15,7 +15,7 @@ class Reviews
         $this->entityManager = $entityManager;
     }
 
-    public function recent($start = 0, $limit = 30)
+    public function recent(int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -54,7 +54,7 @@ class Reviews
         ];
     }
 
-    public function by_author($user_id, $start = 0, $limit = 30)
+    public function by_author(int $user_id, int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 

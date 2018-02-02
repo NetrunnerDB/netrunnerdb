@@ -18,34 +18,37 @@ class Client extends BaseClient
      */
     protected $id;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-    
     protected $name;
     
-    public function getName()
-    {
-        return $this->name;
-    }
-    
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
     /**
      * @var Collection
      */
     private $claims;
-
+    
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
-     * Add claim
-     *
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @param Claim $claim
-     *
-     * @return Client
+     * @return $this
      */
     public function addClaim(Claim $claim)
     {
@@ -55,8 +58,6 @@ class Client extends BaseClient
     }
 
     /**
-     * Remove claim
-     *
      * @param Claim $claim
      */
     public function removeClaim(Claim $claim)
@@ -65,8 +66,6 @@ class Client extends BaseClient
     }
 
     /**
-     * Get claims
-     *
      * @return Collection
      */
     public function getClaims()

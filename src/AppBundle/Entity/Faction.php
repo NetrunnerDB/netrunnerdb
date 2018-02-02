@@ -14,22 +14,6 @@ use Doctrine\Common\Collections\Collection;
  */
 class Faction extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
-    public function __toString()
-    {
-        return $this->name ?: '(unknown)';
-    }
-
-    public function normalize()
-    {
-        return [
-                'code' => $this->code,
-                'color' => $this->color,
-                'is_mini' => $this->isMini,
-                'name' => $this->name,
-                'side_code' => $this->side ? $this->side->getCode() : null
-        ];
-    }
-
     /**
      * @var integer
      */
@@ -61,8 +45,51 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     private $side;
 
     /**
-     * Get id
-     *
+     * @var Collection
+     */
+    private $cards;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateCreation;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateUpdate;
+
+    /**
+     * @var string
+     */
+    private $color;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->cards = new ArrayCollection();
+        $this->decklists = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name ?: '(unknown)';
+    }
+
+    public function normalize()
+    {
+        return [
+                'code' => $this->code,
+                'color' => $this->color,
+                'is_mini' => $this->isMini,
+                'name' => $this->name,
+                'side_code' => $this->side ? $this->side->getCode() : null
+        ];
+    }
+
+    /**
      * @return integer
      */
     public function getId()
@@ -71,21 +98,6 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Set code
-     *
-     * @param string $code
-     * @return Faction
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
-    /**
-     * Get code
-     *
      * @return string
      */
     public function getCode()
@@ -94,12 +106,29 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Set text
-     *
+     * @param string $code
+     * @return Faction
+     */
+    public function setCode(string $code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * @param string $name
      * @return Faction
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
 
@@ -107,13 +136,11 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Get text
-     *
-     * @return string
+     * @return bool
      */
-    public function getName()
+    public function getIsMini()
     {
-        return $this->name;
+        return $this->isMini;
     }
 
     /**
@@ -128,30 +155,14 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * @return bool
+     * @return Side
      */
-    public function getIsMini()
+    public function getSide()
     {
-        return $this->isMini;
+        return $this->side;
     }
 
     /**
-     * @var Collection
-     */
-    private $cards;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->cards = new ArrayCollection();
-        $this->decklists = new ArrayCollection();
-    }
-
-    /**
-     * Set side
-     *
      * @param Side $side
      * @return $this
      */
@@ -163,18 +174,7 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Get side
-     *
-     * @return Side
-     */
-    public function getSide()
-    {
-        return $this->side;
-    }
-
-    /**
      * Add cards
-     *
      * @param Card $cards
      * @return Faction
      */
@@ -184,10 +184,9 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
 
         return $this;
     }
-
+    
     /**
      * Remove cards
-     *
      * @param Card $cards
      */
     public function removeCard(Card $cards)
@@ -196,8 +195,6 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Get cards
-     *
      * @return Collection
      */
     public function getCards()
@@ -206,18 +203,15 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Get decklists
-     *
      * @return Collection
      */
     public function getDecklists()
     {
         return $this->decklists;
     }
-    
+
     /**
      * Add decklists
-     *
      * @param Decklist $decklists
      * @return Faction
      */
@@ -230,7 +224,6 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
 
     /**
      * Remove decklists
-     *
      * @param Decklist $decklists
      */
     public function removeDecklist(Decklist $decklists)
@@ -239,33 +232,6 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * @var \DateTime
-     */
-    private $dateCreation;
-
-    /**
-     * @var \DateTime
-     */
-    private $dateUpdate;
-
-
-    /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
-     * @return Faction
-     */
-    public function setDateCreation($dateCreation)
-    {
-        $this->dateCreation = $dateCreation;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -274,13 +240,29 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     *
+     * @param \DateTime $dateCreation
      * @return Faction
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateUpdate()
+    {
+        return $this->dateUpdate;
+    }
+
+    /**
+     * @param \DateTime $dateUpdate
+     * @return Faction
+     */
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
 
@@ -288,41 +270,21 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
     }
 
     /**
-     * Get dateUpdate
-     *
-     * @return \DateTime
-     */
-    public function getDateUpdate()
-    {
-        return $this->dateUpdate;
-    }
-    /**
-     * @var string
-     */
-    private $color;
-
-
-    /**
-     * Set color
-     *
-     * @param string $color
-     *
-     * @return Faction
-     */
-    public function setColor($color)
-    {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    /**
-     * Get color
-     *
      * @return string
      */
     public function getColor()
     {
         return $this->color;
+    }
+
+    /**
+     * @param string $color
+     * @return Faction
+     */
+    public function setColor(string $color)
+    {
+        $this->color = $color;
+
+        return $this;
     }
 }

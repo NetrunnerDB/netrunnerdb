@@ -42,7 +42,11 @@ class ModerationHelper
         $this->logger = $logger;
     }
 
-    public function getLabel($moderationStatus)
+    /**
+     * @param int $moderationStatus
+     * @return mixed
+     */
+    public function getLabel(int $moderationStatus)
     {
         static $labels = [
             'Published',
@@ -54,7 +58,13 @@ class ModerationHelper
         return $labels[$moderationStatus];
     }
 
-    public function changeStatus(User $user, Decklist $decklist, $status, $modflag_id = null)
+    /**
+     * @param User     $user
+     * @param Decklist $decklist
+     * @param int      $status
+     * @param int|null $modflag_id
+     */
+    public function changeStatus(User $user, Decklist $decklist, int $status, int $modflag_id = null)
     {
         $previousStatus = $decklist->getModerationStatus();
 
@@ -82,6 +92,12 @@ class ModerationHelper
         $this->entityManager->persist($moderation);
     }
 
+    /**
+     * @param Decklist $decklist
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     public function sendEmail(Decklist $decklist)
     {
         $status = $decklist->getModerationStatus();

@@ -6,6 +6,7 @@ use AppBundle\Entity\Card;
 use AppBundle\Entity\Ruling;
 use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,10 +17,16 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RulingController extends Controller
 {
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param TextProcessor          $textProcessor
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("ROLE_GURU")
+     */
     public function postAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
-        $this->denyAccessUnlessGranted('ROLE_GURU');
-
         $card = $entityManager->getRepository('AppBundle:Card')->find($request->request->get('card_id'));
 
         if (!$card instanceof Card) {
@@ -39,10 +46,16 @@ class RulingController extends Controller
         return $this->redirectToRoute('cards_zoom', ['card_code' => $card->getCode()]);
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param TextProcessor          $textProcessor
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("ROLE_GURU")
+     */
     public function editAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
-        $this->denyAccessUnlessGranted('ROLE_GURU');
-
         $ruling = $entityManager->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
 
         if (!$ruling instanceof Ruling) {
@@ -59,10 +72,15 @@ class RulingController extends Controller
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("ROLE_GURU")
+     */
     public function deleteAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $this->denyAccessUnlessGranted('ROLE_GURU');
-
         $ruling = $entityManager->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
 
         if (!$ruling instanceof Ruling) {
@@ -75,6 +93,10 @@ class RulingController extends Controller
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function listAction(EntityManagerInterface $entityManager)
     {
         $list = $entityManager->getRepository('AppBundle:Card')->findAll();

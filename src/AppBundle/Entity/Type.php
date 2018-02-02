@@ -14,6 +14,59 @@ use Doctrine\Common\Collections\Collection;
  */
 class Type extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $code;
+
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var Side
+     */
+    private $side;
+    
+    /**
+     * @var boolean
+     */
+    private $isSubtype;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateCreation;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateUpdate;
+
+    /**
+     * @var integer
+     */
+    private $position;
+    
+    /**
+     * @var Collection
+     */
+    private $cards;
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->cards = new ArrayCollection();
+    }
+
     public function __toString()
     {
         return $this->name ?: '(unknown)';
@@ -29,63 +82,8 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
                 'side_code' => $this->side ? $this->side->getCode() : null
         ];
     }
-
-    /**
-     * @var integer
-     */
-    private $id;
-
-    /**
-     * @var string
-     */
-    private $code;
     
     /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var Side
-     */
-    private $side;
-
-    /**
-     * @var boolean
-     */
-    private $isSubtype;
-
-    /**
-     * @var \DateTime
-     */
-    private $dateCreation;
-    
-    /**
-     * @var \DateTime
-     */
-    private $dateUpdate;
-    
-    /**
-     * @var integer
-     */
-    private $position;
-
-    /**
-     * @var Collection
-     */
-    private $cards;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->cards = new ArrayCollection();
-    }
-    
-    /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -94,21 +92,6 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set text
-     *
-     * @param string $name
-     * @return Type
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    
-        return $this;
-    }
-
-    /**
-     * Get text
-     *
      * @return string
      */
     public function getName()
@@ -117,22 +100,17 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set code
-     *
-     * @param string $code
-     *
+     * @param string $name
      * @return Type
      */
-    public function setCode($code)
+    public function setName(string $name)
     {
-        $this->code = $code;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get code
-     *
      * @return string
      */
     public function getCode()
@@ -141,22 +119,17 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
+     * @param string $code
      * @return Type
      */
-    public function setDateCreation($dateCreation)
+    public function setCode(string $code)
     {
-        $this->dateCreation = $dateCreation;
+        $this->code = $code;
 
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -165,22 +138,17 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     *
+     * @param \DateTime $dateCreation
      * @return Type
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
@@ -189,22 +157,17 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set isSubtype
-     *
-     * @param boolean $isSubtype
-     *
+     * @param \DateTime $dateUpdate
      * @return Type
      */
-    public function setIsSubtype($isSubtype)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
-        $this->isSubtype = $isSubtype;
+        $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
 
     /**
-     * Get isSubtype
-     *
      * @return boolean
      */
     public function getIsSubtype()
@@ -213,22 +176,17 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set position
-     *
-     * @param integer $position
-     *
+     * @param boolean $isSubtype
      * @return Type
      */
-    public function setPosition($position)
+    public function setIsSubtype(bool $isSubtype)
     {
-        $this->position = $position;
+        $this->isSubtype = $isSubtype;
 
         return $this;
     }
 
     /**
-     * Get position
-     *
      * @return integer
      */
     public function getPosition()
@@ -237,31 +195,37 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set side
-     *
-     * @param Side $side
-     * @return $this
+     * @param integer $position
+     * @return Type
      */
-    public function setSide(Side $side)
+    public function setPosition(int $position)
     {
-        $this->side = $side;
-    
+        $this->position = $position;
+
         return $this;
     }
-    
+
     /**
-     * Get side
-     *
      * @return Side
      */
     public function getSide()
     {
         return $this->side;
     }
+    
+    /**
+     * @param Side $side
+     * @return $this
+     */
+    public function setSide(Side $side)
+    {
+        $this->side = $side;
+
+        return $this;
+    }
 
     /**
      * Add cards
-     *
      * @param Card $cards
      * @return Type
      */
@@ -274,7 +238,6 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
     
     /**
      * Remove cards
-     *
      * @param Card $cards
      */
     public function removeCard(Card $cards)
@@ -283,8 +246,6 @@ class Type extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
     
     /**
-     * Get cards
-     *
      * @return Collection
      */
     public function getCards()

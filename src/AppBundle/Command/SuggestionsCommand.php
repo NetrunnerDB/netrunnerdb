@@ -52,7 +52,7 @@ class SuggestionsCommand extends ContainerAwareCommand
         $output->writeln('done');
     }
 
-    private function addToMatrix(&$matrix, $cardIndexById, $card_id_1, $card_id_2)
+    private function addToMatrix(array &$matrix, array $cardIndexById, int $card_id_1, int $card_id_2)
     {
         $card_index_1 = $cardIndexById[$card_id_1];
         $card_index_2 = $cardIndexById[$card_id_2];
@@ -65,7 +65,7 @@ class SuggestionsCommand extends ContainerAwareCommand
         $matrix[$card_index_1][$card_index_2] += 1;
     }
     
-    private function fillMatrix(&$matrix, $cardIndexById, $side_id)
+    private function fillMatrix(array &$matrix, array $cardIndexById, int $side_id)
     {
         $dbh = $this->entityManager->getConnection();
         
@@ -102,7 +102,7 @@ class SuggestionsCommand extends ContainerAwareCommand
         }
     }
     
-    private function normalizeMatrix(&$matrix, $cardsByIndex)
+    private function normalizeMatrix(array &$matrix, array $cardsByIndex)
     {
         /*
     	 * now we have to weight the cards. The numbers in $matrix are the number of decklists
@@ -128,7 +128,7 @@ class SuggestionsCommand extends ContainerAwareCommand
         }
     }
     
-    private function getCardsByIndex($side_id)
+    private function getCardsByIndex(int $side_id)
     {
         $dbh = $this->entityManager->getConnection();
         

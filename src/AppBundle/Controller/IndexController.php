@@ -10,6 +10,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IndexController extends Controller
 {
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param DecklistManager        $decklistManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function indexAction(Request $request, EntityManagerInterface $entityManager, DecklistManager $decklistManager)
     {
         $response = new Response();

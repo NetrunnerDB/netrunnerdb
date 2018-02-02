@@ -8,7 +8,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PrebuiltController extends Controller
 {
-    public function viewAction($prebuilt_code, EntityManagerInterface $entityManager)
+    /**
+     * @param string                 $prebuilt_code
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function viewAction(string $prebuilt_code, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();

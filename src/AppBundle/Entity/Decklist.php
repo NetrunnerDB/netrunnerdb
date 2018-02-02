@@ -17,32 +17,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     const MODERATION_TRASHED = 2;
     const MODERATION_DELETED = 3;
 
-    public function __toString()
-    {
-        return "[$this->id] $this->name";
-    }
-
-    public function normalize()
-    {
-        $cards = [];
-        foreach ($this->slots as $slot) {
-            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-        }
-
-        return [
-            'id'               => $this->id,
-            'date_creation'    => $this->dateCreation->format('c'),
-            'date_update'      => $this->dateUpdate->format('c'),
-            'name'             => $this->name,
-            'description'      => $this->description,
-            'user_id'          => $this->user->getId(),
-            'user_name'        => $this->user->getUsername(),
-            'tournament_badge' => $this->tournament ? true : false,
-            'cards'            => $cards,
-            'mwl_code'         => $this->mwl ? $this->mwl->getCode() : null,
-        ];
-    }
-
     /**
      * @var integer
      */
@@ -154,7 +128,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     private $votes;
 
     /**
-     * @var Rotation
+     * @var Rotation|null
      */
     private $rotation;
 
@@ -162,6 +136,53 @@ class Decklist implements NormalizableInterface, TimestampableInterface
      * @var integer
      */
     private $moderationStatus;
+
+    /**
+     * @var Deck|null
+     */
+    private $parent;
+
+    /**
+     * @var Collection
+     */
+    private $successors;
+
+    /**
+     * @var Decklist|null
+     */
+    private $precedent;
+
+    /**
+     * @var Collection
+     */
+    private $children;
+
+    /**
+     * @var Tournament|null
+     */
+    private $tournament;
+
+    /**
+     * @var Collection
+     */
+    private $legalities;
+
+    /**
+     * @var Modflag|null
+     */
+    private $modflag;
+
+    /**
+     * @var Collection
+     */
+    private $claims;
+
+    private $isLegal;
+
+    /**
+     * @var Mwl|null
+     */
+    private $mwl;
 
     public function __construct()
     {
@@ -172,9 +193,33 @@ class Decklist implements NormalizableInterface, TimestampableInterface
         $this->isLegal = true;
     }
 
+    public function __toString()
+    {
+        return "[$this->id] $this->name";
+    }
+
+    public function normalize()
+    {
+        $cards = [];
+        foreach ($this->slots as $slot) {
+            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+
+        return [
+            'id'               => $this->id,
+            'date_creation'    => $this->dateCreation->format('c'),
+            'date_update'      => $this->dateUpdate->format('c'),
+            'name'             => $this->name,
+            'description'      => $this->description,
+            'user_id'          => $this->user->getId(),
+            'user_name'        => $this->user->getUsername(),
+            'tournament_badge' => $this->tournament ? true : false,
+            'cards'            => $cards,
+            'mwl_code'         => $this->mwl ? $this->mwl->getCode() : null,
+        ];
+    }
+
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -183,21 +228,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     * @return Decklist
-     */
-    public function setDateUpdate($dateUpdate)
-    {
-        $this->dateUpdate = $dateUpdate;
-
-        return $this;
-    }
-
-    /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
@@ -206,21 +236,17 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return $this
+     * @param \DateTime $dateUpdate
+     * @return Decklist
      */
-    public function setName($name)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
-        $this->name = $name;
+        $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
 
     /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -229,21 +255,17 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set prettyname
-     *
-     * @param string $prettyname
+     * @param string $name
      * @return $this
      */
-    public function setPrettyname($prettyname)
+    public function setName(string $name)
     {
-        $this->prettyname = $prettyname;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get prettyname
-     *
      * @return string
      */
     public function getPrettyname()
@@ -252,21 +274,17 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set summary
-     *
-     * @param string $summary
+     * @param string $prettyname
      * @return $this
      */
-    public function setSummary($summary)
+    public function setPrettyname(string $prettyname)
     {
-        $this->summary = $summary;
+        $this->prettyname = $prettyname;
 
         return $this;
     }
 
     /**
-     * Get summary
-     *
      * @return string
      */
     public function getSummary()
@@ -275,21 +293,17 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set rawdescription
-     *
-     * @param string $rawdescription
+     * @param string $summary
      * @return $this
      */
-    public function setRawdescription($rawdescription)
+    public function setSummary(string $summary)
     {
-        $this->rawdescription = $rawdescription;
+        $this->summary = $summary;
 
         return $this;
     }
 
     /**
-     * Get rawdescription
-     *
      * @return string
      */
     public function getRawdescription()
@@ -298,21 +312,17 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set description
-     *
-     * @param string $description
+     * @param string $rawdescription
      * @return $this
      */
-    public function setDescription($description)
+    public function setRawdescription(string $rawdescription)
     {
-        $this->description = $description;
+        $this->rawdescription = $rawdescription;
 
         return $this;
     }
 
     /**
-     * Get description
-     *
      * @return string
      */
     public function getDescription()
@@ -321,21 +331,17 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
+     * @param string $description
      * @return $this
      */
-    public function setDateCreation($dateCreation)
+    public function setDescription(string $description)
     {
-        $this->dateCreation = $dateCreation;
+        $this->description = $description;
 
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -344,12 +350,29 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set signature
-     *
+     * @param \DateTime $dateCreation
+     * @return $this
+     */
+    public function setDateCreation(\DateTime $dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSignature()
+    {
+        return $this->signature;
+    }
+
+    /**
      * @param string $signature
      * @return Decklist
      */
-    public function setSignature($signature)
+    public function setSignature(string $signature)
     {
         $this->signature = $signature;
 
@@ -357,13 +380,11 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get signature
-     *
-     * @return string
+     * @return int
      */
-    public function getSignature()
+    public function getNbvotes()
     {
-        return $this->signature;
+        return $this->nbvotes;
     }
 
     /**
@@ -380,9 +401,9 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     /**
      * @return int
      */
-    public function getNbvotes()
+    public function getNbfavorites()
     {
-        return $this->nbvotes;
+        return $this->nbfavorites;
     }
 
     /**
@@ -397,13 +418,11 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get nbfavorites
-     *
      * @return int
      */
-    public function getNbfavorites()
+    public function getNbcomments()
     {
-        return $this->nbfavorites;
+        return $this->nbcomments;
     }
 
     /**
@@ -420,9 +439,9 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     /**
      * @return int
      */
-    public function getNbcomments()
+    public function getDotw()
     {
-        return $this->nbcomments;
+        return $this->dotw;
     }
 
     /**
@@ -437,11 +456,11 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return int
+     * @return User
      */
-    public function getDotw()
+    public function getUser()
     {
-        return $this->dotw;
+        return $this->user;
     }
 
     /**
@@ -456,31 +475,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get user
-     *
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * Set side
-     *
-     * @param Side $side
-     * @return $this
-     */
-    public function setSide(Side $side)
-    {
-        $this->side = $side;
-
-        return $this;
-    }
-
-    /**
-     * Get side
-     *
      * @return Side
      */
     public function getSide()
@@ -489,14 +483,12 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set identity
-     *
-     * @param Card $identity
+     * @param Side $side
      * @return $this
      */
-    public function setIdentity($identity)
+    public function setSide(Side $side)
     {
-        $this->identity = $identity;
+        $this->side = $side;
 
         return $this;
     }
@@ -510,6 +502,17 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
+     * @param Card $identity
+     * @return $this
+     */
+    public function setIdentity(Card $identity)
+    {
+        $this->identity = $identity;
+
+        return $this;
+    }
+
+    /**
      * @return Decklistslot[]|Collection
      */
     public function getSlots()
@@ -518,8 +521,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get cards
-     *
      * @return Card[]
      */
     public function getCards()
@@ -532,23 +533,14 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
         return $arr;
     }
-
-    /**
-     * Set lastPack
-     *
-     * @param Pack $lastPack
-     * @return $this
-     */
-    public function setLastPack($lastPack)
+    /*
+    public function getPrettyName()
     {
-        $this->lastPack = $lastPack;
-
-        return $this;
+        return preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($this->name));
     }
+    */
 
     /**
-     * Get lastPack
-     *
      * @return Pack
      */
     public function getLastPack()
@@ -557,26 +549,33 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set faction
-     *
-     * @param Faction $faction
+     * @param Pack $lastPack
      * @return $this
      */
-    public function setFaction($faction)
+    public function setLastPack(Pack $lastPack)
     {
-        $this->faction = $faction;
+        $this->lastPack = $lastPack;
 
         return $this;
     }
 
     /**
-     * Get faction
-     *
      * @return Faction
      */
     public function getFaction()
     {
         return $this->faction;
+    }
+
+    /**
+     * @param Faction $faction
+     * @return $this
+     */
+    public function setFaction(Faction $faction)
+    {
+        $this->faction = $faction;
+
+        return $this;
     }
 
     /**
@@ -589,11 +588,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Add favorite
-     *
      * @param User $user
      * @return Decklist
      */
-    public function addFavorite($user)
+    public function addFavorite(User $user)
     {
         $this->favorites[] = $user;
 
@@ -610,11 +608,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Add vote
-     *
      * @param User $user
      * @return Decklist
      */
-    public function addVote($user)
+    public function addVote(User $user)
     {
         $this->votes[] = $user;
 
@@ -639,15 +636,9 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
         return $arr;
     }
-    /*
-    public function getPrettyName()
-    {
-        return preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($this->name));
-    }
-    */
+
     /**
      * Add slots
-     *
      * @param Decklistslot $slots
      * @return Decklist
      */
@@ -660,7 +651,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove slots
-     *
      * @param Decklistslot $slots
      */
     public function removeSlot(Decklistslot $slots)
@@ -670,7 +660,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Add comments
-     *
      * @param Comment $comments
      * @return Decklist
      */
@@ -683,7 +672,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove comments
-     *
      * @param Comment $comments
      */
     public function removeComment(Comment $comments)
@@ -693,7 +681,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove favorites
-     *
      * @param User $favorites
      */
     public function removeFavorite(User $favorites)
@@ -703,7 +690,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove votes
-     *
      * @param User $votes
      */
     public function removeVote(User $votes)
@@ -712,9 +698,12 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Deck|null
+     * @return Deck|null
      */
-    private $parent;
+    public function getParent()
+    {
+        return $this->parent;
+    }
 
     /**
      * @param Deck $parent
@@ -728,27 +717,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return Deck|null
-     */
-    public function getParent()
-    {
-        return $this->parent;
-    }
-
-    /**
-     * @var Collection
-     */
-    private $successors;
-
-    /**
-     * @var Decklist|null
-     */
-    private $precedent;
-
-
-    /**
      * Add successors
-     *
      * @param Decklist $successors
      * @return Decklist
      */
@@ -761,7 +730,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove successors
-     *
      * @param Decklist $successors
      */
     public function removeSuccessor(Decklist $successors)
@@ -770,13 +738,19 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get successors
-     *
      * @return Collection
      */
     public function getSuccessors()
     {
         return $this->successors;
+    }
+
+    /**
+     * @return Decklist|null
+     */
+    public function getPrecedent()
+    {
+        return $this->precedent;
     }
 
     /**
@@ -791,22 +765,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return Decklist|null
-     */
-    public function getPrecedent()
-    {
-        return $this->precedent;
-    }
-
-    /**
-     * @var Collection
-     */
-    private $children;
-
-
-    /**
      * Add children
-     *
      * @param Deck $children
      * @return Decklist
      */
@@ -819,7 +778,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove children
-     *
      * @param Deck $children
      */
     public function removeChildren(Deck $children)
@@ -828,8 +786,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get children
-     *
      * @return Collection
      */
     public function getChildren()
@@ -838,14 +794,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Tournament|null
-     */
-    private $tournament;
-
-
-    /**
      * Add children
-     *
      * @param Deck $children
      * @return Decklist
      */
@@ -858,12 +807,19 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove children
-     *
      * @param Deck $children
      */
     public function removeChild(Deck $children)
     {
         $this->children->removeElement($children);
+    }
+
+    /**
+     * @return Tournament|null
+     */
+    public function getTournament()
+    {
+        return $this->tournament;
     }
 
     /**
@@ -878,24 +834,8 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return Tournament|null
-     */
-    public function getTournament()
-    {
-        return $this->tournament;
-    }
-
-    /**
-     * @var Collection
-     */
-    private $legalities;
-
-
-    /**
      * Add legality
-     *
      * @param Legality $legality
-     *
      * @return Decklist
      */
     public function addLegality(Legality $legality)
@@ -907,7 +847,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove legality
-     *
      * @param Legality $legality
      */
     public function removeLegality(Legality $legality)
@@ -916,8 +855,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get legalities
-     *
      * @return Collection
      */
     public function getLegalities()
@@ -926,22 +863,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set moderationStatus
-     *
-     * @param integer $moderationStatus
-     *
-     * @return Decklist
-     */
-    public function setModerationStatus($moderationStatus)
-    {
-        $this->moderationStatus = $moderationStatus;
-
-        return $this;
-    }
-
-    /**
-     * Get moderationStatus
-     *
      * @return integer
      */
     public function getModerationStatus()
@@ -950,17 +871,12 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Modflag|null
+     * @param integer $moderationStatus
+     * @return Decklist
      */
-    private $modflag;
-
-    /**
-     * @param Modflag $modflag
-     * @return $this
-     */
-    public function setModflag(Modflag $modflag)
+    public function setModerationStatus(int $moderationStatus)
     {
-        $this->modflag = $modflag;
+        $this->moderationStatus = $moderationStatus;
 
         return $this;
     }
@@ -974,16 +890,19 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Collection
+     * @param Modflag $modflag
+     * @return $this
      */
-    private $claims;
+    public function setModflag(Modflag $modflag)
+    {
+        $this->modflag = $modflag;
 
+        return $this;
+    }
 
     /**
      * Add claim
-     *
      * @param Claim $claim
-     *
      * @return Decklist
      */
     public function addClaim(Claim $claim)
@@ -995,7 +914,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove claim
-     *
      * @param Claim $claim
      */
     public function removeClaim(Claim $claim)
@@ -1004,8 +922,6 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get claims
-     *
      * @return Collection
      */
     public function getClaims()
@@ -1013,42 +929,31 @@ class Decklist implements NormalizableInterface, TimestampableInterface
         return $this->claims;
     }
 
-    private $isLegal;
-
     public function getIsLegal()
     {
         return $this->isLegal;
     }
 
-    public function setIsLegal($isLegal)
+    public function setIsLegal(bool $isLegal)
     {
         $this->isLegal = $isLegal;
     }
 
+    /**
+     * @return Rotation|null
+     */
     public function getRotation()
     {
         return $this->rotation;
     }
 
-    public function setRotation($rotation)
-    {
-        $this->rotation = $rotation;
-
-        return $this;
-    }
-
     /**
-     * @var Mwl|null
-     */
-    private $mwl;
-
-    /**
-     * @param Mwl|null $mwl
+     * @param Rotation|null $rotation
      * @return $this
      */
-    public function setMwl(Mwl $mwl = null)
+    public function setRotation(Rotation $rotation = null)
     {
-        $this->mwl = $mwl;
+        $this->rotation = $rotation;
 
         return $this;
     }
@@ -1059,5 +964,16 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     public function getMwl()
     {
         return $this->mwl;
+    }
+
+    /**
+     * @param Mwl|null $mwl
+     * @return $this
+     */
+    public function setMwl(Mwl $mwl = null)
+    {
+        $this->mwl = $mwl;
+
+        return $this;
     }
 }

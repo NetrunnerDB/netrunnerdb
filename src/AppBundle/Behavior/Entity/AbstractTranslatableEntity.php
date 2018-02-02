@@ -13,7 +13,7 @@ abstract class AbstractTranslatableEntity implements Translatable
 {
     protected $locale = 'en';
 
-    public function setTranslatableLocale($locale)
+    public function setTranslatableLocale(string $locale)
     {
         $this->locale = $locale;
     }

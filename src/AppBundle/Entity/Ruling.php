@@ -54,39 +54,14 @@ class Ruling implements TimestampableInterface
         return $this->dateCreation;
     }
 
-    public function getDateUpdate()
-    {
-        return $this->dateUpdate;
-    }
-
-    public function getRawtext()
-    {
-        return $this->rawtext;
-    }
-
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    public function getCard()
-    {
-        return $this->card;
-    }
-
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
     public function setDateCreation(\DateTime $dateCreation)
     {
         $this->dateCreation = $dateCreation;
+    }
+
+    public function getDateUpdate()
+    {
+        return $this->dateUpdate;
     }
 
     public function setDateUpdate(\DateTime $dateUpdate)
@@ -94,19 +69,39 @@ class Ruling implements TimestampableInterface
         $this->dateUpdate = $dateUpdate;
     }
 
-    public function setRawtext($rawtext)
+    public function getRawtext()
+    {
+        return $this->rawtext;
+    }
+
+    public function setRawtext(string $rawtext)
     {
         $this->rawtext = $rawtext;
     }
 
-    public function setText($text)
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text)
     {
         $this->text = $text;
+    }
+
+    public function getCard()
+    {
+        return $this->card;
     }
 
     public function setCard(Card $card)
     {
         $this->card = $card;
+    }
+
+    public function getUser()
+    {
+        return $this->user;
     }
 
     public function setUser(User $user)

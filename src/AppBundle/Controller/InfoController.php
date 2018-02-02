@@ -19,7 +19,7 @@ class InfoController extends Controller
      * @param EntityManagerInterface $entityManager
      * @return JsonResponse
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
     public function getAction(Request $request, EntityManagerInterface $entityManager, PersonalizationHelper $helper)
     {

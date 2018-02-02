@@ -14,6 +14,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SearchController extends Controller
 {
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param CardsData              $cardsData
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
     public function formAction(EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $response = new Response();
@@ -91,7 +97,13 @@ class SearchController extends Controller
         ], $response);
     }
 
-    public function zoomAction($card_code, Request $request, EntityManagerInterface $entityManager)
+    /**
+     * @param string                 $card_code
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function zoomAction(string $card_code, Request $request, EntityManagerInterface $entityManager)
     {
         $card = $entityManager->getRepository('AppBundle:Card')->findOneBy(["code" => $card_code]);
         if (!$card instanceof Card) {
@@ -114,7 +126,16 @@ class SearchController extends Controller
         );
     }
 
-    public function listAction($pack_code, $view, $sort, $page, Request $request, EntityManagerInterface $entityManager)
+    /**
+     * @param string                 $pack_code
+     * @param string                 $view
+     * @param string                 $sort
+     * @param int                    $page
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function listAction(string $pack_code, string $view, string $sort, int $page, Request $request, EntityManagerInterface $entityManager)
     {
         $pack = $entityManager->getRepository('AppBundle:Pack')->findOneBy(["code" => $pack_code]);
         if (!$pack instanceof Pack) {
@@ -140,7 +161,16 @@ class SearchController extends Controller
         );
     }
 
-    public function cycleAction($cycle_code, $view, $sort, $page, Request $request, EntityManagerInterface $entityManager)
+    /**
+     * @param string                 $cycle_code
+     * @param string                 $view
+     * @param string                 $sort
+     * @param int                    $page
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function cycleAction(string $cycle_code, string $view, string $sort, int $page, Request $request, EntityManagerInterface $entityManager)
     {
         $cycle = $entityManager->getRepository('AppBundle:Cycle')->findOneBy(["code" => $cycle_code]);
         if (!$cycle instanceof Cycle) {
@@ -164,7 +194,10 @@ class SearchController extends Controller
         );
     }
 
-    // target of the search form
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function processAction(Request $request)
     {
         $view = $request->query->get('view') ?: 'list';
@@ -214,7 +247,12 @@ class SearchController extends Controller
         return $this->redirect($this->generateUrl('cards_find') . '?' . http_build_query($find));
     }
 
-    // target of the search input
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param CardsData              $cardsData
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
     public function findAction(Request $request, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $q = $request->query->get('q');
@@ -258,18 +296,43 @@ class SearchController extends Controller
         );
     }
 
-    public function displayAction($q, $view = "card", $sort, $page = 1, $title = "", $meta = "", $locale = null, $locales = null, Request $request, EntityManagerInterface $entityManager, CardsData $cardsData)
-    {
+    /**
+     * @param string                 $q
+     * @param string                 $view
+     * @param string                 $sort
+     * @param int                    $page
+     * @param string                 $title
+     * @param string                 $meta
+     * @param string|null            $locale
+     * @param array|null             $locales
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param CardsData              $cardsData
+     * @return Response
+     */
+    public function displayAction(
+        string $q,
+        string $view = "card",
+        string $sort,
+        int $page = 1,
+        string $title = "",
+        string $meta = "",
+        string $locale = null,
+        array $locales = null,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CardsData $cardsData
+    ) {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('short_cache'));
 
         static $availability = [];
 
-        if (empty($locale)) {
-            $locale = $request->getLocale();
-        } else {
+        if ($locale !== null) {
             $request->setLocale($locale);
+        } else {
+            $locale = $request->getLocale();
         }
 
         $cards = [];
@@ -423,7 +486,13 @@ class SearchController extends Controller
         ], $response);
     }
 
-    public function setnavigation(Card $card, $locale, EntityManagerInterface $entityManager)
+    /**
+     * @param Card                   $card
+     * @param string                 $locale
+     * @param EntityManagerInterface $entityManager
+     * @return string
+     */
+    public function setnavigation(Card $card, string $locale, EntityManagerInterface $entityManager)
     {
         $prev = $entityManager->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() - 1]);
         $next = $entityManager->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() + 1]);
@@ -439,7 +508,17 @@ class SearchController extends Controller
         ]);
     }
 
-    public function paginationItem($q = null, $v, $s, $ps, $pi, $total, $locale)
+    /**
+     * @param string|null $q
+     * @param string      $v
+     * @param string      $s
+     * @param int         $ps
+     * @param int         $pi
+     * @param int         $total
+     * @param string      $locale
+     * @return string
+     */
+    public function paginationItem(string $q = null, string $v, string $s, int $ps, int $pi, int $total, string $locale)
     {
         return $this->renderView('/Search/paginationitem.html.twig', [
             "href" => $q == null ? "" : $this->generateUrl('cards_find', ['q' => $q, 'view' => $v, 'sort' => $s, 'page' => $pi, '_locale' => $locale]),
@@ -450,7 +529,17 @@ class SearchController extends Controller
         ]);
     }
 
-    public function pagination($pagesize, $total, $current, $q, $view, $sort, $locale)
+    /**
+     * @param int    $pagesize
+     * @param int    $total
+     * @param int    $current
+     * @param string $q
+     * @param string $view
+     * @param string $sort
+     * @param string $locale
+     * @return string
+     */
+    public function pagination(int $pagesize, int $total, int $current, string $q, string $view, string $sort, string $locale)
     {
         if ($total < $pagesize) {
             $pagesize = $total;

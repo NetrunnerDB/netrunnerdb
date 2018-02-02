@@ -12,29 +12,6 @@ use Doctrine\Common\Collections\Collection;
  */
 class Deck implements NormalizableInterface, TimestampableInterface
 {
-    public function __toString()
-    {
-        return "[$this->id] $this->name";
-    }
-
-    public function normalize()
-    {
-        $cards = [];
-        foreach ($this->slots as $slot) {
-            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-        }
-
-        return [
-            'id'            => $this->id,
-            'date_creation' => $this->dateCreation->format('c'),
-            'date_update'   => $this->dateUpdate->format('c'),
-            'name'          => $this->name,
-            'description'   => $this->description,
-            'mwl_code'      => $this->mwl ? $this->mwl->getCode() : null,
-            'cards'         => $cards,
-        ];
-    }
-
     /**
      * @var integer
      */
@@ -85,6 +62,9 @@ class Deck implements NormalizableInterface, TimestampableInterface
      */
     private $tags;
 
+    /**
+     * @var string
+     */
     private $message;
 
     /**
@@ -113,6 +93,26 @@ class Deck implements NormalizableInterface, TimestampableInterface
     private $lastPack;
 
     /**
+     * @var Collection
+     */
+    private $children;
+
+    /**
+     * @var Decklist|null
+     */
+    private $parent;
+
+    /**
+     * @var Collection
+     */
+    private $changes;
+
+    /**
+     * @var Mwl|null
+     */
+    private $mwl;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -122,9 +122,36 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @return string
+     */
+    public function __toString()
+    {
+        return "[$this->id] $this->name";
+    }
+
+    /**
+     * @return array
+     */
+    public function normalize()
+    {
+        $cards = [];
+        foreach ($this->slots as $slot) {
+            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+
+        return [
+            'id'            => $this->id,
+            'date_creation' => $this->dateCreation->format('c'),
+            'date_update'   => $this->dateUpdate->format('c'),
+            'name'          => $this->name,
+            'description'   => $this->description,
+            'mwl_code'      => $this->mwl ? $this->mwl->getCode() : null,
+            'cards'         => $cards,
+        ];
+    }
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -132,21 +159,6 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return Deck
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -155,21 +167,17 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     * @return Deck
+     * @param string $name
+     * @return $this
      */
-    public function setDateCreation($dateCreation)
+    public function setName(string $name)
     {
-        $this->dateCreation = $dateCreation;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -178,21 +186,17 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     * @return Deck
+     * @param \DateTime $dateCreation
+     * @return $this
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
@@ -201,21 +205,17 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set description
-     *
-     * @param string $description
+     * @param \DateTime $dateUpdate
      * @return $this
      */
-    public function setDescription($description)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
-        $this->description = $description;
+        $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
 
     /**
-     * Get description
-     *
      * @return string
      */
     public function getDescription()
@@ -224,14 +224,12 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set problem
-     *
-     * @param string $problem
-     * @return Deck
+     * @param string $description
+     * @return $this
      */
-    public function setProblem($problem = null)
+    public function setDescription(string $description)
     {
-        $this->problem = $problem;
+        $this->description = $description;
 
         return $this;
     }
@@ -245,10 +243,19 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Add slots
-     *
+     * @param string|null $problem
+     * @return $this
+     */
+    public function setProblem(string $problem = null)
+    {
+        $this->problem = $problem;
+
+        return $this;
+    }
+
+    /**
      * @param Deckslot $slots
-     * @return Deck
+     * @return $this
      */
     public function addSlot(Deckslot $slots)
     {
@@ -258,8 +265,6 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Remove slots
-     *
      * @param Deckslot $slots
      */
     public function removeSlot(Deckslot $slots)
@@ -268,7 +273,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return Deckslot[]|Collection
+     * @return Deckslot[]|ArrayCollection|Collection
      */
     public function getSlots()
     {
@@ -276,10 +281,16 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set user
-     *
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
      * @param User $user
-     * @return Deck
+     * @return $this
      */
     public function setUser(User $user)
     {
@@ -289,20 +300,16 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get user
-     *
-     * @return User
+     * @return Side
      */
-    public function getUser()
+    public function getSide()
     {
-        return $this->user;
+        return $this->side;
     }
 
     /**
-     * Set side
-     *
      * @param Side $side
-     * @return Deck
+     * @return $this
      */
     public function setSide(Side $side)
     {
@@ -312,22 +319,18 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get side
-     *
-     * @return Side
+     * @return Card
      */
-    public function getSide()
+    public function getIdentity()
     {
-        return $this->side;
+        return $this->identity;
     }
 
     /**
-     * Set identity
-     *
      * @param Card $identity
-     * @return Deck
+     * @return $this
      */
-    public function setIdentity($identity)
+    public function setIdentity(Card $identity)
     {
         $this->identity = $identity;
 
@@ -335,13 +338,11 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get identity
-     *
-     * @return Card
+     * @return Pack
      */
-    public function getIdentity()
+    public function getLastPack()
     {
-        return $this->identity;
+        return $this->lastPack;
     }
 
     /**
@@ -356,32 +357,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get lastPack
-     *
-     * @return Pack
-     */
-    public function getLastPack()
-    {
-        return $this->lastPack;
-    }
-
-    /**
-     * Set deckSize
-     *
-     * @param integer $deckSize
-     * @return Deck
-     */
-    public function setDeckSize($deckSize)
-    {
-        $this->deckSize = $deckSize;
-
-        return $this;
-    }
-
-    /**
-     * Get deckSize
-     *
-     * @return integer
+     * @return int
      */
     public function getDeckSize()
     {
@@ -389,22 +365,18 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set influenceSpent
-     *
-     * @param integer $influenceSpent
-     * @return Deck
+     * @param int $deckSize
+     * @return $this
      */
-    public function setInfluenceSpent($influenceSpent)
+    public function setDeckSize(int $deckSize)
     {
-        $this->influenceSpent = $influenceSpent;
+        $this->deckSize = $deckSize;
 
         return $this;
     }
 
     /**
-     * Get influenceSpent
-     *
-     * @return integer
+     * @return int
      */
     public function getInfluenceSpent()
     {
@@ -412,22 +384,18 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set agendaPoints
-     *
-     * @param integer $agendaPoints
-     * @return Deck
+     * @param int $influenceSpent
+     * @return $this
      */
-    public function setAgendaPoints($agendaPoints)
+    public function setInfluenceSpent(int $influenceSpent)
     {
-        $this->agendaPoints = $agendaPoints;
+        $this->influenceSpent = $influenceSpent;
 
         return $this;
     }
 
     /**
-     * Get agendaPoints
-     *
-     * @return integer
+     * @return int
      */
     public function getAgendaPoints()
     {
@@ -435,21 +403,17 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set tags
-     *
-     * @param string $tags
-     * @return Deck
+     * @param int $agendaPoints
+     * @return $this
      */
-    public function setTags($tags)
+    public function setAgendaPoints(int $agendaPoints)
     {
-        $this->tags = $tags;
+        $this->agendaPoints = $agendaPoints;
 
         return $this;
     }
 
     /**
-     * Get tags
-     *
      * @return string
      */
     public function getTags()
@@ -458,9 +422,18 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get cards
-     *
-     * @return Card[]
+     * @param string $tags
+     * @return $this
+     */
+    public function setTags(string $tags)
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * @return array
      */
     public function getCards()
     {
@@ -473,6 +446,9 @@ class Deck implements NormalizableInterface, TimestampableInterface
         return $arr;
     }
 
+    /**
+     * @return array
+     */
     public function getContent()
     {
         $arr = [];
@@ -484,12 +460,19 @@ class Deck implements NormalizableInterface, TimestampableInterface
         return $arr;
     }
 
+    /**
+     * @return string
+     */
     public function getMessage()
     {
         return $this->message;
     }
 
-    public function setMessage($message)
+    /**
+     * @param string $message
+     * @return $this
+     */
+    public function setMessage(string $message)
     {
         $this->message = $message;
 
@@ -497,21 +480,8 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Collection
-     */
-    private $children;
-
-    /**
-     * @var Decklist|null
-     */
-    private $parent;
-
-
-    /**
-     * Add children
-     *
      * @param Decklist $children
-     * @return Deck
+     * @return $this
      */
     public function addChildren(Decklist $children)
     {
@@ -521,8 +491,6 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Remove children
-     *
      * @param Decklist $children
      */
     public function removeChildren(Decklist $children)
@@ -531,13 +499,19 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get children
-     *
-     * @return Collection
+     * @return ArrayCollection|Collection
      */
     public function getChildren()
     {
         return $this->children;
+    }
+
+    /**
+     * @return Decklist|null
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     /**
@@ -552,24 +526,8 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return Decklist|null
-     */
-    public function getParent()
-    {
-        return $this->parent;
-    }
-
-    /**
-     * @var Collection
-     */
-    private $changes;
-
-
-    /**
-     * Add children
-     *
      * @param Decklist $children
-     * @return Deck
+     * @return $this
      */
     public function addChild(Decklist $children)
     {
@@ -579,8 +537,6 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Remove children
-     *
      * @param Decklist $children
      */
     public function removeChild(Decklist $children)
@@ -589,10 +545,8 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Add changes
-     *
      * @param Deckchange $changes
-     * @return Deck
+     * @return $this
      */
     public function addChange(Deckchange $changes)
     {
@@ -602,8 +556,6 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Remove changes
-     *
      * @param Deckchange $changes
      */
     public function removeChange(Deckchange $changes)
@@ -612,8 +564,6 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get changes
-     *
      * @return Collection
      */
     public function getChanges()
@@ -622,9 +572,12 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Mwl|null
+     * @return Mwl|null
      */
-    private $mwl;
+    public function getMwl()
+    {
+        return $this->mwl;
+    }
 
     /**
      * @param Mwl|null $mwl
@@ -635,13 +588,5 @@ class Deck implements NormalizableInterface, TimestampableInterface
         $this->mwl = $mwl;
 
         return $this;
-    }
-
-    /**
-     * @return Mwl|null
-     */
-    public function getMwl()
-    {
-        return $this->mwl;
     }
 }

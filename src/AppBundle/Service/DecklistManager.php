@@ -140,7 +140,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function popular($start = 0, $limit = 30)
+    public function popular(int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -191,7 +191,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function dotw($start = 0, $limit = 30)
+    public function dotw(int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -240,7 +240,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function halloffame($start = 0, $limit = 30)
+    public function halloffame(int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -290,7 +290,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function hottopics($start = 0, $limit = 30)
+    public function hottopics(int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -341,7 +341,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function tournaments($start = 0, $limit = 30)
+    public function tournaments(int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -391,7 +391,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function faction($faction_code, $start = 0, $limit = 30)
+    public function faction(string $faction_code, int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -445,7 +445,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function lastpack($pack_code, $start = 0, $limit = 30)
+    public function lastpack(string $pack_code, int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -498,7 +498,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function recent($start = 0, $limit = 30, $includeEmptyDesc = true)
+    public function recent(int $start = 0, int $limit = 30, bool $includeEmptyDesc = true)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -551,7 +551,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function trashed($start = 0, $limit = 30)
+    public function trashed(int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -600,7 +600,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function restored($start = 0, $limit = 30)
+    public function restored(int $start = 0, int $limit = 30)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -649,7 +649,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function find($start = 0, $limit = 30, Request $request)
+    public function find(int $start = 0, int $limit = 30, Request $request)
     {
         $dbh = $this->entityManager->getConnection();
 

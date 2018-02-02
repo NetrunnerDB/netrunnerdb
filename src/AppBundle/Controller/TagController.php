@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Deck;
@@ -10,6 +11,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TagController extends Controller
 {
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function addAction(Request $request, EntityManagerInterface $entityManager)
     {
         $list_id = $request->get('ids');
@@ -47,6 +55,13 @@ class TagController extends Controller
         return new Response(json_encode($response));
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function removeAction(Request $request, EntityManagerInterface $entityManager)
     {
         $list_id = $request->get('ids');
@@ -72,6 +87,13 @@ class TagController extends Controller
         return new Response(json_encode($response));
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function clearAction(Request $request, EntityManagerInterface $entityManager)
     {
         $list_id = $request->get('ids');

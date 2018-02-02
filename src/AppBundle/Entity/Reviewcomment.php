@@ -39,8 +39,6 @@ class Reviewcomment
 
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -49,21 +47,6 @@ class Reviewcomment
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     * @return Reviewcomment
-     */
-    public function setDatecreation($dateCreation)
-    {
-        $this->dateCreation = $dateCreation;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -72,21 +55,17 @@ class Reviewcomment
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
+     * @param \DateTime $dateCreation
      * @return Reviewcomment
      */
-    public function setDateupdate($dateUpdate)
+    public function setDatecreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateupdate()
@@ -95,21 +74,17 @@ class Reviewcomment
     }
 
     /**
-     * Set text
-     *
-     * @param string $text
+     * @param \DateTime $dateUpdate
      * @return Reviewcomment
      */
-    public function setText($text)
+    public function setDateupdate(\DateTime $dateUpdate)
     {
-        $this->text = $text;
+        $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
 
     /**
-     * Get text
-     *
      * @return string
      */
     public function getText()
@@ -118,8 +93,25 @@ class Reviewcomment
     }
 
     /**
-     * Set author
-     *
+     * @param string $text
+     * @return Reviewcomment
+     */
+    public function setText(string $text)
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
      * @param User $author
      * @return Reviewcomment
      */
@@ -131,18 +123,14 @@ class Reviewcomment
     }
 
     /**
-     * Get author
-     *
-     * @return User
+     * @return Review
      */
-    public function getAuthor()
+    public function getReview()
     {
-        return $this->author;
+        return $this->review;
     }
 
     /**
-     * Set review
-     *
      * @param Review $review
      * @return Reviewcomment
      */
@@ -151,15 +139,5 @@ class Reviewcomment
         $this->review = $review;
 
         return $this;
-    }
-
-    /**
-     * Get review
-     *
-     * @return Review
-     */
-    public function getReview()
-    {
-        return $this->review;
     }
 }

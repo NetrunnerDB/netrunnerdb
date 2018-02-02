@@ -27,41 +27,6 @@ class Modflag
      */
     private $decklists;
 
-    
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set reason
-     *
-     * @param string $reason
-     *
-     * @return Modflag
-     */
-    public function setReason($reason)
-    {
-        $this->reason = $reason;
-
-        return $this;
-    }
-
-    /**
-     * Get reason
-     *
-     * @return string
-     */
-    public function getReason()
-    {
-        return $this->reason;
-    }
-    
     /**
      * Constructor
      */
@@ -71,10 +36,35 @@ class Modflag
     }
 
     /**
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReason()
+    {
+        return $this->reason;
+    }
+    
+    /**
+     * @param string $reason
+     * @return Modflag
+     */
+    public function setReason(string $reason)
+    {
+        $this->reason = $reason;
+
+        return $this;
+    }
+
+    /**
      * Add decklist
-     *
      * @param Decklist $decklist
-     *
      * @return Modflag
      */
     public function addDecklist(Decklist $decklist)
@@ -86,7 +76,6 @@ class Modflag
 
     /**
      * Remove decklist
-     *
      * @param Decklist $decklist
      */
     public function removeDecklist(Decklist $decklist)
@@ -95,8 +84,6 @@ class Modflag
     }
 
     /**
-     * Get decklists
-     *
      * @return Collection
      */
     public function getDecklists()

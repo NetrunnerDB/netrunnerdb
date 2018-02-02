@@ -84,8 +84,6 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -94,8 +92,6 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get code
-     *
      * @return string
      */
     public function getCode()
@@ -104,13 +100,10 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set code
-     *
      * @param string $code
-     *
      * @return Mwl
      */
-    public function setCode($code)
+    public function setCode(string $code)
     {
         $this->code = $code;
 
@@ -118,8 +111,6 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -128,13 +119,10 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set name
-     *
      * @param string $name
-     *
      * @return Mwl
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
 
@@ -142,8 +130,6 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get dateStart
-     *
      * @return \DateTime
      */
     public function getDateStart()
@@ -152,13 +138,10 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set dateStart
-     *
      * @param \DateTime $dateStart
-     *
      * @return Mwl
      */
-    public function setDateStart($dateStart)
+    public function setDateStart(\DateTime $dateStart)
     {
         $this->dateStart = $dateStart;
 
@@ -166,8 +149,6 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get active
-     *
      * @return boolean
      */
     public function getActive()
@@ -176,13 +157,10 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set active
-     *
      * @param boolean $active
-     *
      * @return Mwl
      */
-    public function setActive($active)
+    public function setActive(bool $active)
     {
         $this->active = $active;
 
@@ -191,9 +169,7 @@ class Mwl implements NormalizableInterface, TimestampableInterface
 
     /**
      * Add legality
-     *
      * @param Legality $legality
-     *
      * @return Mwl
      */
     public function addLegality(Legality $legality)
@@ -205,7 +181,6 @@ class Mwl implements NormalizableInterface, TimestampableInterface
 
     /**
      * Remove legality
-     *
      * @param Legality $legality
      */
     public function removeLegality(Legality $legality)
@@ -214,8 +189,6 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get legalities
-     *
      * @return Collection
      */
     public function getLegalities()
@@ -224,8 +197,6 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -234,13 +205,10 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set dateCreation
-     *
      * @param \DateTime $dateCreation
-     *
      * @return Mwl
      */
-    public function setDateCreation($dateCreation)
+    public function setDateCreation(\DateTime $dateCreation)
     {
         $this->dateCreation = $dateCreation;
 
@@ -248,8 +216,6 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
@@ -258,13 +224,10 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set dateUpdate
-     *
      * @param \DateTime $dateUpdate
-     *
      * @return Mwl
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
 
@@ -277,17 +240,5 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     public function getCards()
     {
         return $this->cards;
-    }
-
-    /**
-     * @param array $cards
-     *
-     * @return self
-     */
-    public function setCards($cards)
-    {
-        $this->cards = $cards;
-
-        return $this;
     }
 }

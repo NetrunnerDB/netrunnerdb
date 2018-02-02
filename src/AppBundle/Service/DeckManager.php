@@ -37,7 +37,7 @@ class DeckManager
     }
 
 
-    public function getByUser(User $user, $decode_variation = false)
+    public function getByUser(User $user, bool $decode_variation = false)
     {
         $dbh = $this->entityManager->getConnection();
         $decks = $dbh->executeQuery(
@@ -159,7 +159,7 @@ class DeckManager
         return $decks;
     }
 
-    public function getById($deck_id, $decode_variation = false)
+    public function getById(int $deck_id, bool $decode_variation = false)
     {
         $dbh = $this->entityManager->getConnection();
         $deck = $dbh->executeQuery(
@@ -245,9 +245,29 @@ class DeckManager
         return $deck;
     }
 
-
-    public function saveDeck(User $user, Deck $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, Deck $source_deck = null)
-    {
+    /**
+     * @param User        $user
+     * @param Deck        $deck
+     * @param int|null    $decklist_id
+     * @param string      $name
+     * @param string      $description
+     * @param array       $tags
+     * @param string|null $mwl_code
+     * @param array       $content
+     * @param Deck|null   $source_deck
+     * @return int
+     */
+    public function saveDeck(
+        User $user,
+        Deck $deck,
+        int $decklist_id = null,
+        string $name,
+        string $description,
+        array $tags = [],
+        string $mwl_code = null,
+        array $content,
+        Deck $source_deck = null
+    ) {
         $deck_content = [];
         if ($decklist_id) {
             $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
@@ -307,15 +327,12 @@ class DeckManager
             $content[$identity->getCode()] = 1;
             $deck->setIdentity($identity);
         }
-        if (empty($tags)) {
+        if (count($tags) === 0) {
             // tags can never be empty. if it is we put faction in
             $faction_code = $identity->getFaction()->getCode();
             $tags = [$faction_code];
         }
-        if (is_array($tags)) {
-            $tags = implode(' ', $tags);
-        }
-        $deck->setTags($tags);
+        $deck->setTags(implode(' ', $tags));
         $this->entityManager->persist($deck);
 
         // on the deck content
@@ -373,7 +390,7 @@ class DeckManager
         return $deck->getId();
     }
 
-    public function revertDeck($deck)
+    public function revertDeck(Deck $deck)
     {
         $changes = $this->getUnsavedChanges($deck);
         foreach ($changes as $change) {
@@ -382,7 +399,7 @@ class DeckManager
         $this->entityManager->flush();
     }
 
-    public function getUnsavedChanges($deck)
+    public function getUnsavedChanges(Deck $deck)
     {
         return $this->entityManager->getRepository('AppBundle:Deckchange')->findBy(['deck' => $deck, 'saved' => false]);
     }

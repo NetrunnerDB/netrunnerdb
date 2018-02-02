@@ -13,32 +13,11 @@ use Doctrine\Common\Collections\Collection;
  */
 class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface
 {
-    public function __toString()
-    {
-        return $this->name ?: '(unknown)';
-    }
-    
-    public function normalize()
-    {
-        $cards = [];
-        foreach ($this->slots as $slot) {
-            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-        }
-        
-        return [
-                'code' => $this->code,
-                'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
-                'name' => $this->name,
-                'position' => $this->position,
-                'cards' => $cards
-        ];
-    }
-
     /**
      * @var integer
      */
     private $id;
-
+    
     /**
      * @var string
      */
@@ -97,9 +76,28 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
         $this->slots = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->name ?: '(unknown)';
+    }
+
+    public function normalize()
+    {
+        $cards = [];
+        foreach ($this->slots as $slot) {
+            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+
+        return [
+                'code' => $this->code,
+                'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
+                'name' => $this->name,
+                'position' => $this->position,
+                'cards' => $cards
+        ];
+    }
+
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -108,22 +106,6 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Set code
-     *
-     * @param string $code
-     *
-     * @return Prebuilt
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
-    /**
-     * Get code
-     *
      * @return string
      */
     public function getCode()
@@ -132,22 +114,17 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     *
+     * @param string $code
      * @return Prebuilt
      */
-    public function setName($name)
+    public function setCode(string $code)
     {
-        $this->name = $name;
+        $this->code = $code;
 
         return $this;
     }
 
     /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -156,22 +133,17 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Set dateRelease
-     *
-     * @param \DateTime $dateRelease
-     *
+     * @param string $name
      * @return Prebuilt
      */
-    public function setDateRelease($dateRelease)
+    public function setName(string $name)
     {
-        $this->dateRelease = $dateRelease;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get dateRelease
-     *
      * @return \DateTime
      */
     public function getDateRelease()
@@ -180,22 +152,17 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Set position
-     *
-     * @param integer $position
-     *
+     * @param \DateTime $dateRelease
      * @return Prebuilt
      */
-    public function setPosition($position)
+    public function setDateRelease(\DateTime $dateRelease)
     {
-        $this->position = $position;
+        $this->dateRelease = $dateRelease;
 
         return $this;
     }
 
     /**
-     * Get position
-     *
      * @return integer
      */
     public function getPosition()
@@ -204,22 +171,17 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
+     * @param integer $position
      * @return Prebuilt
      */
-    public function setDateCreation($dateCreation)
+    public function setPosition(int $position)
     {
-        $this->dateCreation = $dateCreation;
+        $this->position = $position;
 
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -228,22 +190,17 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     *
+     * @param \DateTime $dateCreation
      * @return Prebuilt
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
@@ -252,10 +209,19 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
+     * @param \DateTime $dateUpdate
+     * @return Prebuilt
+     */
+    public function setDateUpdate(\DateTime $dateUpdate)
+    {
+        $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    /**
      * Add slot
-     *
      * @param Prebuiltslot $slot
-     *
      * @return Prebuilt
      */
     public function addSlot(Prebuiltslot $slot)
@@ -267,7 +233,6 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
 
     /**
      * Remove slot
-     *
      * @param Prebuiltslot $slot
      */
     public function removeSlot(Prebuiltslot $slot)
@@ -276,13 +241,19 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Get slots
-     *
      * @return Collection
      */
     public function getSlots()
     {
         return $this->slots;
+    }
+
+    /**
+     * @return Side
+     */
+    public function getSide()
+    {
+        return $this->side;
     }
 
     /**
@@ -297,13 +268,11 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Get side
-     *
-     * @return Side
+     * @return Card
      */
-    public function getSide()
+    public function getIdentity()
     {
-        return $this->side;
+        return $this->identity;
     }
 
     /**
@@ -318,13 +287,11 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Get identity
-     *
-     * @return Card
+     * @return Faction
      */
-    public function getIdentity()
+    public function getFaction()
     {
-        return $this->identity;
+        return $this->faction;
     }
 
     /**
@@ -336,15 +303,5 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
         $this->faction = $faction;
 
         return $this;
-    }
-
-    /**
-     * Get faction
-     *
-     * @return Faction
-     */
-    public function getFaction()
-    {
-        return $this->faction;
     }
 }

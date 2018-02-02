@@ -9,33 +9,24 @@ use Doctrine\Common\Collections\Collection;
 
 /**
  * Description of Rotation
- *
  * @author Alsciende <alsciende@icloud.com>
  */
 class Rotation implements NormalizableInterface, TimestampableInterface
 {
-    public function __toString()
-    {
-        return $this->name ?: '(unknown)';
-    }
-
-    public function normalize()
-    {
-        $cycles = [];
-        foreach ($this->cycles as $cycle) {
-            $cycles[] = $cycle->getCode();
-        }
-
-        return  [
-            'id' => $this->id,
-            'date_creation' => $this->dateCreation ? $this->dateCreation->format('c') : null,
-            'date_update' => $this->dateUpdate ? $this->dateUpdate->format('c') : null,
-            'code' => $this->code,
-            'name' => $this->name,
-            'date_start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
-            'cycles' => $cycles
-        ];
-    }
+    /**
+     * @var Collection|Cycle[]
+     * @ORM\ManyToMany(targetEntity="Cycle", inversedBy="rotations")
+     * @ORM\JoinTable(
+     *     name="rotation_cycle",
+     *     joinColumns={
+     *         @ORM\JoinColumn(name="rotation_id", referencedColumnName="id")
+     *     },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(name="cycle_id", referencedColumnName="id")
+     *     }
+     * )
+     */
+    protected $cycles;
 
     /**
      * @var integer
@@ -73,25 +64,32 @@ class Rotation implements NormalizableInterface, TimestampableInterface
      */
     private $decklists;
 
-    /** @param Collection|Decklist[] $decklists */
-    public function setDecklists(Collection $decklists)
+    public function __construct()
     {
-        $this->clearDecklists();
-        foreach ($decklists as $decklist) {
-            $this->addDecklist($decklist);
-        }
-
-        return $this;
+        $this->cycles = new ArrayCollection();
     }
 
-    public function addDecklist(Decklist $decklist)
+    public function __toString()
     {
-        if ($this->decklists->contains($decklist) === false) {
-            $this->decklists->add($decklist);
-            $decklist->setRotation($this);
+        return $this->name ?: '(unknown)';
+    }
+
+    public function normalize()
+    {
+        $cycles = [];
+        foreach ($this->cycles as $cycle) {
+            $cycles[] = $cycle->getCode();
         }
 
-        return $this;
+        return  [
+            'id' => $this->id,
+            'date_creation' => $this->dateCreation ? $this->dateCreation->format('c') : null,
+            'date_update' => $this->dateUpdate ? $this->dateUpdate->format('c') : null,
+            'code' => $this->code,
+            'name' => $this->name,
+            'date_start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
+            'cycles' => $cycles
+        ];
     }
 
     /** @return Collection|Decklist[] */
@@ -100,11 +98,12 @@ class Rotation implements NormalizableInterface, TimestampableInterface
         return $this->decklists;
     }
 
-    public function removeDecklist(Decklist $decklist)
+    /** @param Collection|Decklist[] $decklists */
+    public function setDecklists(Collection $decklists)
     {
-        if ($this->decklists->contains($decklist)) {
-            $this->decklists->removeElement($decklist);
-            $decklist->setRotation(null);
+        $this->clearDecklists();
+        foreach ($decklists as $decklist) {
+            $this->addDecklist($decklist);
         }
 
         return $this;
@@ -120,42 +119,21 @@ class Rotation implements NormalizableInterface, TimestampableInterface
         return $this;
     }
 
-    /**
-     * @var Collection|Cycle[]
-     * @ORM\ManyToMany(targetEntity="Cycle", inversedBy="rotations")
-     * @ORM\JoinTable(
-     *     name="rotation_cycle",
-     *     joinColumns={
-     *         @ORM\JoinColumn(name="rotation_id", referencedColumnName="id")
-     *     },
-     *     inverseJoinColumns={
-     *         @ORM\JoinColumn(name="cycle_id", referencedColumnName="id")
-     *     }
-     * )
-     */
-    protected $cycles;
-
-    public function __construct()
+    public function removeDecklist(Decklist $decklist)
     {
-        $this->cycles = new ArrayCollection();
-    }
-
-    /** @param Collection|Cycle[] $cycles */
-    public function setCycles(Collection $cycles)
-    {
-        $this->clearCycles();
-        foreach ($cycles as $cycle) {
-            $this->addCycle($cycle);
+        if ($this->decklists->contains($decklist)) {
+            $this->decklists->removeElement($decklist);
+            $decklist->setRotation(null);
         }
 
         return $this;
     }
 
-    public function addCycle(Cycle $cycle)
+    public function addDecklist(Decklist $decklist)
     {
-        if ($this->cycles->contains($cycle) === false) {
-            $this->cycles->add($cycle);
-            $cycle->addRotation($this);
+        if ($this->decklists->contains($decklist) === false) {
+            $this->decklists->add($decklist);
+            $decklist->setRotation($this);
         }
 
         return $this;
@@ -167,11 +145,12 @@ class Rotation implements NormalizableInterface, TimestampableInterface
         return $this->cycles;
     }
 
-    public function removeCycle(Cycle $cycle)
+    /** @param Collection|Cycle[] $cycles */
+    public function setCycles(Collection $cycles)
     {
-        if ($this->cycles->contains($cycle)) {
-            $this->cycles->removeElement($cycle);
-            $cycle->removeRotation($this);
+        $this->clearCycles();
+        foreach ($cycles as $cycle) {
+            $this->addCycle($cycle);
         }
 
         return $this;
@@ -187,6 +166,26 @@ class Rotation implements NormalizableInterface, TimestampableInterface
         return $this;
     }
 
+    public function removeCycle(Cycle $cycle)
+    {
+        if ($this->cycles->contains($cycle)) {
+            $this->cycles->removeElement($cycle);
+            $cycle->removeRotation($this);
+        }
+
+        return $this;
+    }
+
+    public function addCycle(Cycle $cycle)
+    {
+        if ($this->cycles->contains($cycle) === false) {
+            $this->cycles->add($cycle);
+            $cycle->addRotation($this);
+        }
+
+        return $this;
+    }
+
     public function getId()
     {
         return $this->id;
@@ -197,7 +196,7 @@ class Rotation implements NormalizableInterface, TimestampableInterface
         return $this->code;
     }
 
-    public function setCode($code)
+    public function setCode(string $code)
     {
         $this->code = $code;
 
@@ -209,7 +208,7 @@ class Rotation implements NormalizableInterface, TimestampableInterface
         return $this->name;
     }
 
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
 
@@ -221,7 +220,7 @@ class Rotation implements NormalizableInterface, TimestampableInterface
         return $this->dateStart;
     }
 
-    public function setDateStart($dateStart)
+    public function setDateStart(\DateTime $dateStart)
     {
         $this->dateStart = $dateStart;
 
@@ -233,7 +232,7 @@ class Rotation implements NormalizableInterface, TimestampableInterface
         return $this->dateCreation;
     }
 
-    public function setDateCreation($dateCreation)
+    public function setDateCreation(\DateTime $dateCreation)
     {
         $this->dateCreation = $dateCreation;
 
@@ -245,7 +244,7 @@ class Rotation implements NormalizableInterface, TimestampableInterface
         return $this->dateUpdate;
     }
 
-    public function setDateUpdate($dateUpdate)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
 

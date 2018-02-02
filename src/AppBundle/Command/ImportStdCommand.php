@@ -427,7 +427,7 @@ class ImportStdCommand extends ContainerAwareCommand
         return $result;
     }
 
-    protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
+    protected function copyFieldValueToEntity($entity, string $entityName, string $fieldName, $newJsonValue)
     {
         $metadata = $this->entityManager->getClassMetadata($entityName);
         $type = $metadata->fieldMappings[$fieldName]['type'];
@@ -468,7 +468,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function copyKeyToEntity($entity, $entityName, $data, $key, $isMandatory = true)
+    protected function copyKeyToEntity($entity, string $entityName, array $data, string $key, bool $isMandatory = true)
     {
         $metadata = $this->entityManager->getClassMetadata($entityName);
 
@@ -499,7 +499,7 @@ class ImportStdCommand extends ContainerAwareCommand
      * @throws \Exception
      * @return object|null
      */
-    protected function getEntityFromData($entityName, $data, $mandatoryKeys, $foreignKeys, $optionalKeys)
+    protected function getEntityFromData(string $entityName, array $data, array $mandatoryKeys, array $foreignKeys, array $optionalKeys)
     {
         if (!key_exists('code', $data)) {
             throw new \Exception("Missing key [code] in " . json_encode($data));
@@ -581,7 +581,7 @@ class ImportStdCommand extends ContainerAwareCommand
      * @param array $data
      * @return string
      */
-    protected function uniquelyEncodeJson($data)
+    protected function uniquelyEncodeJson(array $data)
     {
         ksort($data);
 
@@ -598,7 +598,7 @@ class ImportStdCommand extends ContainerAwareCommand
         return $this->uniquelyEncodeJson($array1) === $this->uniquelyEncodeJson($array2);
     }
 
-    protected function importAgendaData(Card $card, $data)
+    protected function importAgendaData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'advancement_cost',
@@ -610,7 +610,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importAssetData(Card $card, $data)
+    protected function importAssetData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'cost',
@@ -623,7 +623,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importEventData(Card $card, $data)
+    protected function importEventData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'cost',
@@ -635,7 +635,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importHardwareData(Card $card, $data)
+    protected function importHardwareData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'cost',
@@ -647,7 +647,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importICEData(Card $card, $data)
+    protected function importICEData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'cost',
@@ -660,7 +660,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importIdentityData(Card $card, $data)
+    protected function importIdentityData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'minimum_deck_size',
@@ -679,7 +679,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importOperationData(Card $card, $data)
+    protected function importOperationData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'cost',
@@ -691,7 +691,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importProgramData(Card $card, $data)
+    protected function importProgramData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'cost',
@@ -708,7 +708,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importResourceData(Card $card, $data)
+    protected function importResourceData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'cost',
@@ -720,7 +720,7 @@ class ImportStdCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importUpgradeData(Card $card, $data)
+    protected function importUpgradeData(Card $card, array $data)
     {
         $mandatoryKeys = [
             'cost',
@@ -755,7 +755,7 @@ class ImportStdCommand extends ContainerAwareCommand
         return $data;
     }
 
-    protected function getFileInfo($path, $filename)
+    protected function getFileInfo(string $path, string $filename)
     {
         $fs = new Filesystem();
 
@@ -772,7 +772,7 @@ class ImportStdCommand extends ContainerAwareCommand
         return new \SplFileInfo($filepath);
     }
 
-    protected function getFileSystemIterator($path)
+    protected function getFileSystemIterator(string $path)
     {
         $fs = new Filesystem();
 
@@ -795,7 +795,7 @@ class ImportStdCommand extends ContainerAwareCommand
         return $iterator;
     }
 
-    protected function loadCollection($entityShortName)
+    protected function loadCollection(string $entityShortName)
     {
         $this->collections[$entityShortName] = [];
 

@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Claim;
+use AppBundle\Entity\Client;
 use AppBundle\Entity\Decklist;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -48,10 +49,10 @@ class ClaimsController extends AbstractOauthController
      * @Route("")
      * @Method("POST")
      */
-    public function postAction($decklist_id, Request $request, EntityManagerInterface $entityManager)
+    public function postAction(int $decklist_id, Request $request, EntityManagerInterface $entityManager)
     {
         $client = $this->getOauthClient();
-        if (!$client) {
+        if (!$client instanceof Client) {
             throw $this->createAccessDeniedException();
         }
 
@@ -83,7 +84,7 @@ class ClaimsController extends AbstractOauthController
     {
         $user = $this->getUser();
         $client = $this->getOauthClient();
-        if (!$client) {
+        if (!$client instanceof Client) {
             throw $this->createAccessDeniedException();
         }
 
@@ -116,7 +117,7 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("GET")
      */
-    public function getAction($decklist_id, $id, EntityManagerInterface $entityManager)
+    public function getAction(int $decklist_id, $id, EntityManagerInterface $entityManager)
     {
         $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
         $jsend = $this->getJsendResponse('success', ['claim' => $claim]);
@@ -129,8 +130,13 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("PUT")
      */
-    public function putAction($decklist_id, $id, Request $request, EntityManagerInterface $entityManager)
+    public function putAction(int $decklist_id, int $id, Request $request, EntityManagerInterface $entityManager)
     {
+        $client = $this->getOauthClient();
+        if (!$client instanceof Client) {
+            throw $this->createAccessDeniedException();
+        }
+
         $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
         /** @var Claim $updatingClaim */
         $updatingClaim = $this->deserializeClaim($request);
@@ -152,8 +158,13 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("DELETE")
      */
-    public function deleteAction($decklist_id, $id, EntityManagerInterface $entityManager)
+    public function deleteAction(int $decklist_id, int $id, EntityManagerInterface $entityManager)
     {
+        $client = $this->getOauthClient();
+        if (!$client instanceof Client) {
+            throw $this->createAccessDeniedException();
+        }
+
         $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
 
         $entityManager->remove($claim);

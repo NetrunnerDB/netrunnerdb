@@ -90,7 +90,7 @@ class ImportTransCommand extends ContainerAwareCommand
         }
     }
     
-    protected function importThingsJsonFile(\SplFileInfo $fileinfo, $locale, $thing)
+    protected function importThingsJsonFile(\SplFileInfo $fileinfo, string $locale, string $thing)
     {
         $list = $this->getDataFromFile($fileinfo);
         foreach ($list as $data) {
@@ -101,7 +101,7 @@ class ImportTransCommand extends ContainerAwareCommand
         }
     }
 
-    protected function importCardsJsonFile(\SplFileInfo $fileinfo, $locale)
+    protected function importCardsJsonFile(\SplFileInfo $fileinfo, string $locale)
     {
         $cardsData = $this->getDataFromFile($fileinfo);
         
@@ -126,7 +126,7 @@ class ImportTransCommand extends ContainerAwareCommand
         $this->output->write("\n");
     }
 
-    protected function copyFieldValueToEntity($entity, $entityName, $fieldName, $newJsonValue)
+    protected function copyFieldValueToEntity($entity, string $entityName, string $fieldName, $newJsonValue)
     {
         $metadata = $this->entityManager->getClassMetadata($entityName);
         $type = $metadata->fieldMappings[$fieldName]['type'];
@@ -163,7 +163,7 @@ class ImportTransCommand extends ContainerAwareCommand
         }
     }
     
-    protected function copyKeyToEntity($entity, $entityName, $data, $key, $isMandatory = true)
+    protected function copyKeyToEntity($entity, string $entityName, array $data, string $key, bool $isMandatory = true)
     {
         $metadata = $this->entityManager->getClassMetadata($entityName);
     
@@ -184,7 +184,7 @@ class ImportTransCommand extends ContainerAwareCommand
         $this->copyFieldValueToEntity($entity, $entityName, $fieldName, $value);
     }
     
-    protected function updateEntityFromData($locale, $entityName, $data, $mandatoryKeys, $optionalKeys)
+    protected function updateEntityFromData(string $locale, string $entityName, array $data, array $mandatoryKeys, array $optionalKeys)
     {
         if (!key_exists('code', $data)) {
             throw new \Exception("Missing key [code] in ".json_encode($data));
@@ -236,7 +236,7 @@ class ImportTransCommand extends ContainerAwareCommand
     /**
      * @return \SplFileInfo
      */
-    protected function getFileInfo($path, $filename)
+    protected function getFileInfo(string $path, string $filename)
     {
         $fs = new Filesystem();
         

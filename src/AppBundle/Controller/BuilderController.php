@@ -23,7 +23,14 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BuilderController extends Controller
 {
-    public function buildformAction($side_text, EntityManagerInterface $entityManager)
+    /**
+     * @param string                 $side_text
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function buildformAction(string $side_text, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -57,7 +64,14 @@ class BuilderController extends Controller
         );
     }
 
-    public function initbuildAction($card_code, EntityManagerInterface $entityManager)
+    /**
+     * @param string                 $card_code
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function initbuildAction(string $card_code, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -103,6 +117,12 @@ class BuilderController extends Controller
         );
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function importAction(EntityManagerInterface $entityManager)
     {
         $response = new Response();
@@ -124,6 +144,13 @@ class BuilderController extends Controller
         );
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function fileimportAction(Request $request, EntityManagerInterface $entityManager)
     {
         $filetype = filter_var($request->get('type'), FILTER_SANITIZE_STRING);
@@ -162,7 +189,12 @@ class BuilderController extends Controller
         );
     }
 
-    public function parseTextImport($text, EntityManagerInterface $entityManager)
+    /**
+     * @param string                 $text
+     * @param EntityManagerInterface $entityManager
+     * @return array
+     */
+    public function parseTextImport(string $text, EntityManagerInterface $entityManager)
     {
         $content = [];
         $lines = explode("\n", $text);
@@ -196,7 +228,12 @@ class BuilderController extends Controller
         ];
     }
 
-    public function parseOctgnImport($octgn, EntityManagerInterface $entityManager)
+    /**
+     * @param string                 $octgn
+     * @param EntityManagerInterface $entityManager
+     * @return array
+     */
+    public function parseOctgnImport(string $octgn, EntityManagerInterface $entityManager)
     {
         $crawler = new Crawler();
         $crawler->addXmlContent($octgn);
@@ -231,6 +268,14 @@ class BuilderController extends Controller
         ];
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param DeckManager            $deckManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function meteorimportAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
         // first build an array to match meteor card names with our card codes
@@ -336,7 +381,15 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function textexportAction($deck_id, EntityManagerInterface $entityManager, Judge $judge)
+    /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @param Judge                  $judge
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function textexportAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge)
     {
         /** @var Deck $deck */
         $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
@@ -344,7 +397,7 @@ class BuilderController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        $classement = $judge->classe($deck->getSlots(), $deck->getIdentity());
+        $classement = $judge->classe($deck->getSlots()->toArray(), $deck->getIdentity());
 
         $lines = [];
         $types = [
@@ -408,7 +461,14 @@ class BuilderController extends Controller
         return $response;
     }
 
-    public function octgnexportAction($deck_id, EntityManagerInterface $entityManager)
+    /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function octgnexportAction(int $deck_id, EntityManagerInterface $entityManager)
     {
         /** @var Deck $deck */
         $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
@@ -445,7 +505,14 @@ class BuilderController extends Controller
         return $this->octgnexport("$name.o8d", $identity, $rd, $deck->getDescription());
     }
 
-    public function octgnexport($filename, $identity, $rd, $description)
+    /**
+     * @param string $filename
+     * @param string $identity
+     * @param array  $rd
+     * @param string $description
+     * @return Response
+     */
+    public function octgnexport(string $filename, string $identity, array $rd, string $description)
     {
         $content = $this->renderView(
             '/octgn.xml.twig',
@@ -466,6 +533,14 @@ class BuilderController extends Controller
         return $response;
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param DeckManager            $deckManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function saveAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
         $user = $this->getUser();
@@ -516,6 +591,13 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
     public function deleteAction(Request $request, EntityManagerInterface $entityManager)
     {
         $deck_id = filter_var($request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
@@ -538,6 +620,13 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
     public function deleteListAction(Request $request, EntityManagerInterface $entityManager)
     {
         $list_id = explode('-', $request->get('ids'));
@@ -564,7 +653,15 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function editAction($deck_id, EntityManagerInterface $entityManager)
+    /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function editAction(int $deck_id, EntityManagerInterface $entityManager)
     {
         $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery("SELECT
@@ -741,7 +838,14 @@ class BuilderController extends Controller
         );
     }
 
-    public function viewAction($deck_id, EntityManagerInterface $entityManager, Judge $judge)
+    /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @param Judge                  $judge
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function viewAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge)
     {
         $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery("SELECT
@@ -856,7 +960,9 @@ class BuilderController extends Controller
 
     /**
      * @param EntityManagerInterface $entityManager
+     * @param DeckManager            $deckManager
      * @return Response
+     * @throws \Doctrine\DBAL\DBALException
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
@@ -893,7 +999,14 @@ class BuilderController extends Controller
         );
     }
 
-    public function copyAction($decklist_id, EntityManagerInterface $entityManager)
+    /**
+     * @param int                    $decklist_id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function copyAction(int $decklist_id, EntityManagerInterface $entityManager)
     {
         /** @var Decklist|null $decklist */
         $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
@@ -919,7 +1032,14 @@ class BuilderController extends Controller
         );
     }
 
-    public function duplicateAction($deck_id, EntityManagerInterface $entityManager)
+    /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function duplicateAction(int $deck_id, EntityManagerInterface $entityManager)
     {
         /** @var Deck $deck */
         $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
@@ -951,6 +1071,13 @@ class BuilderController extends Controller
         );
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param DeckManager            $deckManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function downloadallAction(EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
         $user = $this->getUser();
@@ -991,6 +1118,14 @@ class BuilderController extends Controller
         return $response;
     }
 
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param DeckManager            $deckManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function uploadallAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
         // time-consuming task
@@ -1021,7 +1156,7 @@ class BuilderController extends Controller
                 $parse = $this->parseTextImport($zip->getFromIndex($i), $entityManager);
 
                 $deck = new Deck();
-                $deckManager->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content'], null);
+                $deckManager->saveDeck($this->getUser(), $deck, null, $name, '', [], null, $parse['content'], null);
             }
         }
         $zip->close();
@@ -1031,12 +1166,17 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function autosaveAction($deck_id, Request $request, EntityManagerInterface $entityManager)
+    /**
+     * @param int                    $deck_id
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function autosaveAction(int $deck_id, Request $request, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
-        if (!$user) {
-            throw $this->createAccessDeniedException();
-        }
 
         $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
         if (!$deck instanceof Deck) {

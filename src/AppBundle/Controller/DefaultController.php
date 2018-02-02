@@ -13,6 +13,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController extends Controller
 {
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
     public function profileAction(EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
@@ -80,22 +86,22 @@ class DefaultController extends Controller
     }
 
     /**
-     * tags an introduction as completed
+     * @param string                 $introduction
+     * @param EntityManagerInterface $entityManager
+     * @return JsonResponse
      *
-     * @param string $introduction
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function validateIntroductionAction($introduction, EntityManagerInterface $entityManager)
+    public function validateIntroductionAction(string $introduction, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
-        if ($user) {
-            $introductions = $user->getIntroductions();
-            if (!$introductions) {
-                $introductions = [];
-            }
-            $introductions[$introduction] = true;
-            $user->setIntroductions($introductions);
-            $entityManager->flush();
+        $introductions = $user->getIntroductions();
+        if (!$introductions) {
+            $introductions = [];
         }
+        $introductions[$introduction] = true;
+        $user->setIntroductions($introductions);
+        $entityManager->flush();
 
         return new JsonResponse([
             'success' => true,
@@ -103,21 +109,26 @@ class DefaultController extends Controller
     }
 
     /**
-     * resets all introductions to "uncompleted"
+     * @param EntityManagerInterface $entityManager
+     * @return JsonResponse
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
     public function resetIntroductionsAction(EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
-        if ($user) {
-            $user->setIntroductions(null);
-            $entityManager->flush();
-        }
+        $user->setIntroductions(null);
+        $entityManager->flush();
 
         return new JsonResponse([
             'success' => true,
         ]);
     }
 
+    /**
+     * @param CardsData $cardsData
+     * @return Response
+     */
     public function rulesAction(CardsData $cardsData)
     {
         $response = new Response();
@@ -131,6 +142,9 @@ class DefaultController extends Controller
         return $response;
     }
 
+    /**
+     * @return Response
+     */
     public function aboutAction()
     {
         $response = new Response();

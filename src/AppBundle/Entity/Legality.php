@@ -29,8 +29,6 @@ class Legality
 
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -39,13 +37,18 @@ class Legality
     }
 
     /**
-     * Set isLegal
-     *
+     * @return boolean
+     */
+    public function getIsLegal()
+    {
+        return $this->isLegal;
+    }
+
+    /**
      * @param boolean $isLegal
-     *
      * @return Legality
      */
-    public function setIsLegal($isLegal)
+    public function setIsLegal(bool $isLegal)
     {
         $this->isLegal = $isLegal;
 
@@ -53,13 +56,11 @@ class Legality
     }
 
     /**
-     * Get isLegal
-     *
-     * @return boolean
+     * @return Decklist
      */
-    public function getIsLegal()
+    public function getDecklist()
     {
-        return $this->isLegal;
+        return $this->decklist;
     }
 
     /**
@@ -74,13 +75,11 @@ class Legality
     }
 
     /**
-     * Get decklist
-     *
-     * @return Decklist
+     * @return Mwl
      */
-    public function getDecklist()
+    public function getMwl()
     {
-        return $this->decklist;
+        return $this->mwl;
     }
 
     /**
@@ -92,15 +91,5 @@ class Legality
         $this->mwl = $mwl;
 
         return $this;
-    }
-
-    /**
-     * Get mwl
-     *
-     * @return Mwl
-     */
-    public function getMwl()
-    {
-        return $this->mwl;
     }
 }

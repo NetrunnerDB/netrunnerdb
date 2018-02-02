@@ -56,6 +56,11 @@ class Review
     private $votes;
 
     /**
+     * @var Collection
+     */
+    private $comments;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -64,8 +69,6 @@ class Review
     }
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -74,21 +77,6 @@ class Review
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     * @return Review
-     */
-    public function setDatecreation($dateCreation)
-    {
-        $this->dateCreation = $dateCreation;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -97,21 +85,17 @@ class Review
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
+     * @param \DateTime $dateCreation
      * @return Review
      */
-    public function setDateupdate($dateUpdate)
+    public function setDatecreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateupdate()
@@ -120,21 +104,17 @@ class Review
     }
 
     /**
-     * Set rawtext
-     *
-     * @param string $rawtext
+     * @param \DateTime $dateUpdate
      * @return Review
      */
-    public function setRawtext($rawtext)
+    public function setDateupdate(\DateTime $dateUpdate)
     {
-        $this->rawtext = $rawtext;
+        $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
 
     /**
-     * Get rawtext
-     *
      * @return string
      */
     public function getRawtext()
@@ -143,21 +123,17 @@ class Review
     }
 
     /**
-     * Set text
-     *
-     * @param string $text
+     * @param string $rawtext
      * @return Review
      */
-    public function setText($text)
+    public function setRawtext(string $rawtext)
     {
-        $this->text = $text;
+        $this->rawtext = $rawtext;
 
         return $this;
     }
 
     /**
-     * Get text
-     *
      * @return string
      */
     public function getText()
@@ -166,21 +142,17 @@ class Review
     }
 
     /**
-     * Set nbvotes
-     *
-     * @param integer $nbvotes
+     * @param string $text
      * @return Review
      */
-    public function setNbvotes($nbvotes)
+    public function setText(string $text)
     {
-        $this->nbvotes = $nbvotes;
+        $this->text = $text;
 
         return $this;
     }
 
     /**
-     * Get nbvotes
-     *
      * @return integer
      */
     public function getNbvotes()
@@ -189,8 +161,25 @@ class Review
     }
 
     /**
-     * Set card
-     *
+     * @param integer $nbvotes
+     * @return Review
+     */
+    public function setNbvotes(int $nbvotes)
+    {
+        $this->nbvotes = $nbvotes;
+
+        return $this;
+    }
+
+    /**
+     * @return Card
+     */
+    public function getCard()
+    {
+        return $this->card;
+    }
+
+    /**
      * @param Card $card
      * @return Review
      */
@@ -202,18 +191,14 @@ class Review
     }
 
     /**
-     * Get card
-     *
-     * @return Card
+     * @return User
      */
-    public function getCard()
+    public function getUser()
     {
-        return $this->card;
+        return $this->user;
     }
 
     /**
-     * Set user
-     *
      * @param User $user
      * @return Review
      */
@@ -222,16 +207,6 @@ class Review
         $this->user = $user;
 
         return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 
     /**
@@ -247,7 +222,6 @@ class Review
 
     /**
      * Remove votes
-     *
      * @param User $votes
      */
     public function removeVote(User $votes)
@@ -256,23 +230,15 @@ class Review
     }
 
     /**
-     * Get votes
-     *
      * @return Collection
      */
     public function getVotes()
     {
         return $this->votes;
     }
-    /**
-     * @var Collection
-     */
-    private $comments;
-
 
     /**
      * Add comments
-     *
      * @param Reviewcomment $comments
      * @return Review
      */
@@ -285,7 +251,6 @@ class Review
 
     /**
      * Remove comments
-     *
      * @param Reviewcomment $comments
      */
     public function removeComment(Reviewcomment $comments)
@@ -294,8 +259,6 @@ class Review
     }
 
     /**
-     * Get comments
-     *
      * @return Collection
      */
     public function getComments()

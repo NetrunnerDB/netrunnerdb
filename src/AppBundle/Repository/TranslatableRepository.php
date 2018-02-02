@@ -26,7 +26,7 @@ class TranslatableRepository extends EntityRepository
      *
      * @param string $locale
      */
-    public function setDefaultLocale($locale)
+    public function setDefaultLocale(string $locale)
     {
         $this->defaultLocale = $locale;
         return $this;
@@ -38,7 +38,7 @@ class TranslatableRepository extends EntityRepository
      * @param int|null $hydrationMode
      * @return mixed
      */
-    public function getOneOrNullResult(QueryBuilder $qb, $locale = null, $hydrationMode = null)
+    public function getOneOrNullResult(QueryBuilder $qb, string $locale = null, int $hydrationMode = null)
     {
         return $this->getTranslatedQuery($qb, $locale)->getOneOrNullResult($hydrationMode);
     }
@@ -49,7 +49,7 @@ class TranslatableRepository extends EntityRepository
      * @param int $hydrationMode
      * @return mixed
      */
-    public function getResult(QueryBuilder $qb, $locale = null, $hydrationMode = AbstractQuery::HYDRATE_OBJECT)
+    public function getResult(QueryBuilder $qb, string $locale = null, int $hydrationMode = AbstractQuery::HYDRATE_OBJECT)
     {
         return $this->getTranslatedQuery($qb, $locale)->getResult($hydrationMode);
     }
@@ -59,7 +59,7 @@ class TranslatableRepository extends EntityRepository
      * @param string|null $locale
      * @return array
      */
-    public function getArrayResult(QueryBuilder $qb, $locale = null)
+    public function getArrayResult(QueryBuilder $qb, string $locale = null)
     {
         return $this->getTranslatedQuery($qb, $locale)->getArrayResult();
     }
@@ -70,7 +70,7 @@ class TranslatableRepository extends EntityRepository
      * @param int|null $hydrationMode
      * @return mixed
      */
-    public function getSingleResult(QueryBuilder $qb, $locale = null, $hydrationMode = null)
+    public function getSingleResult(QueryBuilder $qb, string $locale = null, int $hydrationMode = null)
     {
         return $this->getTranslatedQuery($qb, $locale)->getSingleResult($hydrationMode);
     }
@@ -80,7 +80,7 @@ class TranslatableRepository extends EntityRepository
      * @param string|null $locale
      * @return array
      */
-    public function getScalarResult(QueryBuilder $qb, $locale = null)
+    public function getScalarResult(QueryBuilder $qb, string $locale = null)
     {
         return $this->getTranslatedQuery($qb, $locale)->getScalarResult();
     }
@@ -90,7 +90,7 @@ class TranslatableRepository extends EntityRepository
      * @param string|null $locale
      * @return mixed
      */
-    public function getSingleScalarResult(QueryBuilder $qb, $locale = null)
+    public function getSingleScalarResult(QueryBuilder $qb, string $locale = null)
     {
         return $this->getTranslatedQuery($qb, $locale)->getSingleScalarResult();
     }
@@ -100,7 +100,7 @@ class TranslatableRepository extends EntityRepository
      * @param string|null $locale
      * @return Query
      */
-    protected function getTranslatedQuery(QueryBuilder $qb, $locale = null)
+    protected function getTranslatedQuery(QueryBuilder $qb, string $locale = null)
     {
         $locale = null === $locale ? $this->defaultLocale : $locale;
 

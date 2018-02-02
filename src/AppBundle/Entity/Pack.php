@@ -14,23 +14,6 @@ use Doctrine\Common\Collections\Collection;
  */
 class Pack extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
-    public function __toString()
-    {
-        return $this->name ?: '(unknown)';
-    }
-
-    public function normalize()
-    {
-        return [
-                'code' => $this->code,
-                'cycle_code' => $this->cycle ? $this->cycle->getCode() : null,
-                'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
-                'name' => $this->name,
-                'position' => $this->position,
-                'size' => $this->size
-        ];
-    }
-
     /**
      * @var integer
      */
@@ -72,8 +55,52 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     private $decklists;
 
     /**
-     * Get id
-     *
+     * @var Collection
+     */
+    private $cards;
+
+    /**
+     * @var Cycle
+     */
+    private $cycle;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateCreation;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateUpdate;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->cards = new ArrayCollection();
+        $this->decklists = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name ?: '(unknown)';
+    }
+
+    public function normalize()
+    {
+        return [
+                'code' => $this->code,
+                'cycle_code' => $this->cycle ? $this->cycle->getCode() : null,
+                'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
+                'name' => $this->name,
+                'position' => $this->position,
+                'size' => $this->size
+        ];
+    }
+
+    /**
      * @return integer
      */
     public function getId()
@@ -82,21 +109,6 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set code
-     *
-     * @param string $code
-     * @return Pack
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-    
-        return $this;
-    }
-
-    /**
-     * Get code
-     *
      * @return string
      */
     public function getCode()
@@ -105,21 +117,17 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
+     * @param string $code
      * @return Pack
      */
-    public function setName($name)
+    public function setCode(string $code)
     {
-        $this->name = $name;
-    
+        $this->code = $code;
+
         return $this;
     }
 
     /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -128,15 +136,13 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set dateRelease
-     *
-     * @param \DateTime $dateRelease
+     * @param string $name
      * @return Pack
      */
-    public function setDateRelease($dateRelease)
+    public function setName(string $name)
     {
-        $this->dateRelease = $dateRelease;
-    
+        $this->name = $name;
+
         return $this;
     }
 
@@ -149,44 +155,36 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set size
-     *
-     * @param integer $size
+     * @param \DateTime $dateRelease
      * @return Pack
      */
-    public function setSize($size)
+    public function setDateRelease(\DateTime $dateRelease)
     {
-        $this->size = $size;
-    
+        $this->dateRelease = $dateRelease;
+
         return $this;
     }
 
     /**
-     * Get size
-     *
      * @return integer
      */
     public function getSize()
     {
         return $this->size;
     }
-
+    
     /**
-     * Set ffgId
-     *
-     * @param integer $ffgId
+     * @param integer $size
      * @return Pack
      */
-    public function setFfgId($ffgId)
+    public function setSize(int $size)
     {
-        $this->ffgId = $ffgId;
+        $this->size = $size;
 
         return $this;
     }
 
     /**
-     * Get ffgId
-     *
      * @return integer|null
      */
     public function getFfgId()
@@ -195,63 +193,49 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set position
-     *
-     * @param integer $position
-     * @return $this
+     * @param integer $ffgId
+     * @return Pack
      */
-    public function setPosition($position)
+    public function setFfgId(int $ffgId)
     {
-        $this->position = $position;
-    
+        $this->ffgId = $ffgId;
+
         return $this;
     }
-
+    
     /**
-     * Get position
-     *
      * @return integer
      */
     public function getPosition()
     {
         return $this->position;
     }
-    
-    /**
-     * @var Collection
-     */
-    private $cards;
 
     /**
-     * @var Cycle
+     * @param integer $position
+     * @return $this
      */
-    private $cycle;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
+    public function setPosition(int $position)
     {
-        $this->cards = new ArrayCollection();
-        $this->decklists = new ArrayCollection();
+        $this->position = $position;
+
+        return $this;
     }
-    
+
     /**
      * Add cards
-     *
      * @param Card $cards
      * @return Pack
      */
     public function addCard(Card $cards)
     {
         $this->cards[] = $cards;
-    
+
         return $this;
     }
 
     /**
      * Remove cards
-     *
      * @param Card $cards
      */
     public function removeCard(Card $cards)
@@ -260,8 +244,6 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Get cards
-     *
      * @return Collection
      */
     public function getCards()
@@ -270,21 +252,6 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set cycle
-     *
-     * @param Cycle $cycle
-     * @return Pack
-     */
-    public function setCycle(Cycle $cycle)
-    {
-        $this->cycle = $cycle;
-    
-        return $this;
-    }
-
-    /**
-     * Get cycle
-     *
      * @return Cycle
      */
     public function getCycle()
@@ -293,8 +260,17 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Get decklists
-     *
+     * @param Cycle $cycle
+     * @return Pack
+     */
+    public function setCycle(Cycle $cycle)
+    {
+        $this->cycle = $cycle;
+
+        return $this;
+    }
+
+    /**
      * @return Collection
      */
     public function getDecklists()
@@ -304,7 +280,6 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
 
     /**
      * Add decklists
-     *
      * @param Decklist $decklists
      * @return Pack
      */
@@ -317,7 +292,6 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
 
     /**
      * Remove decklists
-     *
      * @param Decklist $decklists
      */
     public function removeDecklist(Decklist $decklists)
@@ -326,33 +300,6 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * @var \DateTime
-     */
-    private $dateCreation;
-
-    /**
-     * @var \DateTime
-     */
-    private $dateUpdate;
-
-
-    /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
-     * @return Pack
-     */
-    public function setDateCreation($dateCreation)
-    {
-        $this->dateCreation = $dateCreation;
-
-        return $this;
-    }
-
-    /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -361,26 +308,32 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     *
+     * @param \DateTime $dateCreation
      * @return Pack
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
     {
         return $this->dateUpdate;
+    }
+
+    /**
+     * @param \DateTime $dateUpdate
+     * @return Pack
+     */
+    public function setDateUpdate(\DateTime $dateUpdate)
+    {
+        $this->dateUpdate = $dateUpdate;
+
+        return $this;
     }
 }

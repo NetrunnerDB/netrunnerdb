@@ -53,7 +53,7 @@ class CardsData
      * @param string $text
      * @return string
      */
-    public function replaceSymbols($text)
+    public function replaceSymbols(string $text)
     {
         $map = [
             '[subroutine]'         => '<span class="icon icon-subroutine"></span>',
@@ -137,7 +137,7 @@ class CardsData
         return $cycles;
     }
 
-    public function get_search_rows($conditions, $sortorder, $locale)
+    public function get_search_rows(array $conditions, string $sortorder, string $locale)
     {
         $i = 0;
 
@@ -698,7 +698,7 @@ class CardsData
         return $cardinfo;
     }
 
-    public function syntax($query)
+    public function syntax(string $query)
     {
         // renvoie une liste de conditions (array)
         // chaque condition est un tableau à n>1 éléments
@@ -769,7 +769,7 @@ class CardsData
         return $list;
     }
 
-    public function validateConditions(&$conditions)
+    public function validateConditions(array &$conditions)
     {
         // suppression des conditions invalides
         $canDoNumeric = ['o', 'n', 'p', 'r', 'y', 'e', 'h', 'c'];
@@ -797,7 +797,7 @@ class CardsData
         }
     }
 
-    public function buildQueryFromConditions($conditions)
+    public function buildQueryFromConditions(array $conditions)
     {
         // reconstruction de la bonne chaine de recherche pour affichage
         return implode(" ", array_map(
@@ -840,7 +840,7 @@ class CardsData
         return $response;
     }
 
-    public function get_reviews($card)
+    public function get_reviews(Card $card)
     {
         $reviews = $this->entityManager->getRepository('AppBundle:Review')->findBy(['card' => $card], ['nbvotes' => 'DESC']);
 
@@ -868,7 +868,7 @@ class CardsData
         return $response;
     }
 
-    public function last_pack_for_review($packs, Review $review)
+    public function last_pack_for_review(array $packs, Review $review)
     {
         /** @var Pack $pack */
         foreach (array_reverse($packs) as $pack) {
@@ -881,7 +881,7 @@ class CardsData
         return 'Unknown';
     }
 
-    public function get_rulings($card)
+    public function get_rulings(Card $card)
     {
         $rulings = $this->entityManager->getRepository('AppBundle:Ruling')->findBy(['card' => $card], ['dateCreation' => 'ASC']);
 
@@ -901,7 +901,7 @@ class CardsData
      * Searches a Identity card by its partial title
      * @return \AppBundle\Entity\Card
      */
-    public function find_identity($partialTitle)
+    public function find_identity(string $partialTitle)
     {
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('c')->from('AppBundle:Card', 'c')->join('AppBundle:Type', 't', 'WITH', 'c.type = t');

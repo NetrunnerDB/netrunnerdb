@@ -29,8 +29,6 @@ class Prebuiltslot
 
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -39,22 +37,6 @@ class Prebuiltslot
     }
 
     /**
-     * Set quantity
-     *
-     * @param integer $quantity
-     *
-     * @return Prebuiltslot
-     */
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    /**
-     * Get quantity
-     *
      * @return integer
      */
     public function getQuantity()
@@ -63,10 +45,26 @@ class Prebuiltslot
     }
 
     /**
-     * Set prebuilt
-     *
+     * @param integer $quantity
+     * @return Prebuiltslot
+     */
+    public function setQuantity(int $quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
+     * @return Prebuilt
+     */
+    public function getPrebuilt()
+    {
+        return $this->prebuilt;
+    }
+
+    /**
      * @param Prebuilt $prebuilt
-     *
      * @return Prebuiltslot
      */
     public function setPrebuilt(Prebuilt $prebuilt)
@@ -77,20 +75,15 @@ class Prebuiltslot
     }
 
     /**
-     * Get prebuilt
-     *
-     * @return Prebuilt
+     * @return Card
      */
-    public function getPrebuilt()
+    public function getCard()
     {
-        return $this->prebuilt;
+        return $this->card;
     }
 
     /**
-     * Set card
-     *
      * @param Card $card
-     *
      * @return Prebuiltslot
      */
     public function setCard(Card $card)
@@ -98,15 +91,5 @@ class Prebuiltslot
         $this->card = $card;
 
         return $this;
-    }
-
-    /**
-     * Get card
-     *
-     * @return Card
-     */
-    public function getCard()
-    {
-        return $this->card;
     }
 }

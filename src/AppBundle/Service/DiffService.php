@@ -15,7 +15,7 @@ class DiffService
         $this->entityManager = $entityManager;
     }
 
-    public function diffContents($decks)
+    public function diffContents(array $decks)
     {
 
         // n flat lists of the cards of each decklist

@@ -11,6 +11,7 @@ use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Card;
 
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\Tests\Fixtures\Discriminator\Car;
 
 class Judge
 {
@@ -30,7 +31,7 @@ class Judge
      * @param Card $card
      * @param Mwl $mwl
      */
-    private function getModifiedCard($card, $mwl)
+    private function getModifiedCard(Card $card, Mwl $mwl)
     {
         if (isset($this->mwlCards[$mwl->getId()]) && isset($this->mwlCards[$mwl->getId()][$card->getCode()])) {
             return $this->mwlCards[$mwl->getId()][$card->getCode()];
@@ -52,7 +53,7 @@ class Judge
         return $modifiedCard;
     }
 
-    private function getTrainCase($string)
+    private function getTrainCase(string $string)
     {
         return implode('', array_map(function ($segment) {
             return ucfirst($segment);
@@ -64,7 +65,7 @@ class Judge
      *
      * @param \AppBundle\Entity\Card $identity
      */
-    public function classe($slots, $identity)
+    public function classe(array $slots, Card $identity)
     {
         $analyse = $this->analyse($slots);
 
@@ -115,7 +116,7 @@ class Judge
         return $classeur;
     }
 
-    public function countCards($slots, $skipIdentity = false)
+    public function countCards(array $slots, bool $skipIdentity = false)
     {
         return array_reduce($slots, function ($carry, SlotInterface $item) use ($skipIdentity) {
             if ($skipIdentity && $item->getCard()->getType()->getName() === 'Identity') {
@@ -132,7 +133,7 @@ class Judge
      * @param Card $identity
      * @return float|int
      */
-    public function getInfluenceCostOfCard(SlotInterface $slot, $slots, Card $identity)
+    public function getInfluenceCostOfCard(SlotInterface $slot, array $slots, Card $identity)
     {
         $card = $slot->getCard();
         $qty = $slot->getQuantity();
@@ -202,7 +203,7 @@ class Judge
      * @param SlotInterface[] $slots
      * @return array|string
      */
-    public function analyse($slots)
+    public function analyse(array $slots)
     {
         $identity = null;
         $deckSize = 0;

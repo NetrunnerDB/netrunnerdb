@@ -63,9 +63,6 @@ AppBundle\Entity\User:
         resume:
             type: text
             nullable: true
-        role:
-            type: integer
-            nullable: true
         status:
             type: integer
             nullable: true

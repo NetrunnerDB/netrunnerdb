@@ -39,7 +39,7 @@ abstract class AbstractOauthController extends Controller
     /**
      * @return Client
      */
-    public function getOauthClient()
+    public function getOauthClient(): Client
     {
         return $this
             ->accessTokenManager
@@ -55,7 +55,7 @@ abstract class AbstractOauthController extends Controller
      * @param string|null $message
      * @return array
      */
-    public function getJsendResponse(string $status, array $data = [], string $message = null)
+    public function getJsendResponse(string $status, array $data = [], string $message = null): array
     {
         $response = [
             "status" => $status,
@@ -70,13 +70,12 @@ abstract class AbstractOauthController extends Controller
     }
 
     /**
-     *
-     * @param array   $data
-     * @param integer $status
-     * @param array   $headers
+     * @param array $data
+     * @param int   $status
+     * @param array $headers
      * @return Response
      */
-    public function createJsonResponse($data, $status = 200, $headers = [])
+    public function createJsonResponse(array $data, int $status = 200, array $headers = []): Response
     {
         $context = new SerializationContext();
         $context->setSerializeNull(true);

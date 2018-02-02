@@ -44,7 +44,7 @@ class PrivateApi20Controller extends FOSRestController
         return $response;
     }
     
-    private function prepareFailedResponse($msg)
+    private function prepareFailedResponse(string $msg)
     {
         $response = new JsonResponse();
         $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -73,7 +73,7 @@ class PrivateApi20Controller extends FOSRestController
      *  }
      * )
      */
-    public function loadDeckAction($deck_id, Request $request, EntityManagerInterface $entityManager)
+    public function loadDeckAction(int $deck_id, Request $request, EntityManagerInterface $entityManager)
     {
         /** @var User $user */
         $user = $this->getUser();

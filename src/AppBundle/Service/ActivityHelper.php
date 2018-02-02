@@ -20,7 +20,7 @@ class ActivityHelper
         $this->entityManager = $entityManager;
     }
 
-    public function getItems(User $user, $max_items = 30, $nb_days = 7)
+    public function getItems(User $user, int $max_items = 30, int $nb_days = 7)
     {
         $items = [];
 
@@ -130,7 +130,7 @@ class ActivityHelper
         return $items;
     }
 
-    public function countUncheckedItems($items)
+    public function countUncheckedItems(array $items)
     {
         $count = 0;
         foreach ($items as $item) {
@@ -141,7 +141,7 @@ class ActivityHelper
         return $count;
     }
 
-    public function sortByDay($items)
+    public function sortByDay(array $items)
     {
         usort($items, function ($a, $b) {
             return $a['date'] < $b['date'] ? 1 : -1;

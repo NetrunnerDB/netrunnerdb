@@ -80,7 +80,7 @@ class PublicApi20Controller extends FOSRestController
         return $response;
     }
 
-    private function prepareFailedResponse($msg)
+    private function prepareFailedResponse(string $msg)
     {
         $response = new JsonResponse();
         $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -106,7 +106,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function typeAction($type_code, Request $request)
+    public function typeAction(string $type_code, Request $request)
     {
         $type = $this->entityManager->getRepository('AppBundle:Type')->findOneBy(['code' => $type_code]);
     
@@ -146,7 +146,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function sideAction($side_code, Request $request)
+    public function sideAction(string $side_code, Request $request)
     {
         $side = $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
     
@@ -186,7 +186,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function factionAction($faction_code, Request $request)
+    public function factionAction(string $faction_code, Request $request)
     {
         $faction = $this->entityManager->getRepository('AppBundle:Faction')->findOneBy(['code' => $faction_code]);
     
@@ -226,7 +226,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function cycleAction($cycle_code, Request $request)
+    public function cycleAction(string $cycle_code, Request $request)
     {
         $cycle = $this->entityManager->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
     
@@ -266,7 +266,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function packAction($pack_code, Request $request)
+    public function packAction(string $pack_code, Request $request)
     {
         $pack = $this->entityManager->getRepository('AppBundle:Pack')->findOneBy(['code' => $pack_code]);
     
@@ -306,7 +306,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function cardAction($card_code, Request $request)
+    public function cardAction(string $card_code, Request $request)
     {
         $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
 
@@ -346,7 +346,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function decklistAction($decklist_id, Request $request)
+    public function decklistAction(int $decklist_id, Request $request)
     {
         $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
     
@@ -368,7 +368,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function decklistsByDateAction($date, Request $request, EntityManagerInterface $entityManager)
+    public function decklistsByDateAction(string $date, Request $request, EntityManagerInterface $entityManager)
     {
         $date_from = new \DateTime($date);
         $date_to = clone($date_from);
@@ -400,7 +400,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function deckAction($deck_id, Request $request)
+    public function deckAction(int $deck_id, Request $request)
     {
         /** @var Deck $deck */
         $deck = $this->entityManager->getRepository('AppBundle:Deck')->find($deck_id);

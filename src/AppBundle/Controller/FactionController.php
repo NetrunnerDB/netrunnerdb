@@ -8,7 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FactionController extends Controller
 {
-    public function factionAction($faction_code, EntityManagerInterface $entityManager)
+    /**
+     * @param string                 $faction_code
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function factionAction(string $faction_code, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();

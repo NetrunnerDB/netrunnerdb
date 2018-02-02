@@ -9,7 +9,6 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class Claim
 {
-
     /**
      * @var integer
      * @Serializer\Expose
@@ -59,9 +58,7 @@ class Claim
     private $user;
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -69,22 +66,6 @@ class Claim
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return Claim
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -93,22 +74,17 @@ class Claim
     }
 
     /**
-     * Set url
-     *
-     * @param string $url
-     *
-     * @return Claim
+     * @param string $name
+     * @return $this
      */
-    public function setUrl($url)
+    public function setName(string $name)
     {
-        $this->url = $url;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get url
-     *
      * @return string
      */
     public function getUrl()
@@ -117,23 +93,18 @@ class Claim
     }
 
     /**
-     * Set rank
-     *
-     * @param integer $rank
-     *
-     * @return Claim
+     * @param string $url
+     * @return $this
      */
-    public function setRank($rank)
+    public function setUrl(string $url)
     {
-        $this->rank = $rank;
+        $this->url = $url;
 
         return $this;
     }
 
     /**
-     * Get rank
-     *
-     * @return integer
+     * @return int
      */
     public function getRank()
     {
@@ -141,9 +112,18 @@ class Claim
     }
 
     /**
-     * Get participants
-     *
-     * @return integer
+     * @param int $rank
+     * @return $this
+     */
+    public function setRank(int $rank)
+    {
+        $this->rank = $rank;
+
+        return $this;
+    }
+
+    /**
+     * @return int
      */
     public function getParticipants()
     {
@@ -151,13 +131,10 @@ class Claim
     }
 
     /**
-     * Set participants
-     *
-     * @param integer $participants
-     *
-     * @return Claim
+     * @param int $participants
+     * @return $this
      */
-    public function setParticipants($participants)
+    public function setParticipants(int $participants)
     {
         $this->participants = $participants;
 
@@ -165,11 +142,16 @@ class Claim
     }
 
     /**
-     * Set decklist
-     *
+     * @return Decklist
+     */
+    public function getDecklist()
+    {
+        return $this->decklist;
+    }
+
+    /**
      * @param Decklist $decklist
-     *
-     * @return Claim
+     * @return $this
      */
     public function setDecklist(Decklist $decklist)
     {
@@ -179,21 +161,16 @@ class Claim
     }
 
     /**
-     * Get decklist
-     *
-     * @return Decklist
+     * @return Client
      */
-    public function getDecklist()
+    public function getClient()
     {
-        return $this->decklist;
+        return $this->client;
     }
 
     /**
-     * Set client
-     *
      * @param Client $client
-     *
-     * @return Claim
+     * @return $this
      */
     public function setClient(Client $client)
     {
@@ -203,18 +180,6 @@ class Claim
     }
 
     /**
-     * Get client
-     *
-     * @return Client
-     */
-    public function getClient()
-    {
-        return $this->client;
-    }
-
-    /**
-     * Get user
-     *
      * @return User
      */
     public function getUser()
@@ -223,11 +188,8 @@ class Claim
     }
 
     /**
-     * Set user
-     *
      * @param User $user
-     *
-     * @return Claim
+     * @return $this
      */
     public function setUser(User $user)
     {
