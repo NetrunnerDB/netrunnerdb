@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Card;
+use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Type;
 use AppBundle\Service\CardsData;
@@ -22,7 +23,7 @@ class SearchController extends Controller
 
         $dbh = $entityManager->getConnection();
 
-        $list_packs = $this->getDoctrine()->getRepository('AppBundle:Pack')->findBy([], [
+        $list_packs = $entityManager->getRepository('AppBundle:Pack')->findBy([], [
             "dateRelease" => "ASC",
             "position"    => "ASC",
         ]);
@@ -34,7 +35,7 @@ class SearchController extends Controller
             ];
         }
 
-        $list_cycles = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findBy([], [
+        $list_cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], [
             "position" => "ASC",
         ]);
         $cycles = [];
@@ -45,7 +46,7 @@ class SearchController extends Controller
             ];
         }
 
-        $list_types = $this->getDoctrine()->getRepository('AppBundle:Type')->findBy([
+        $list_types = $entityManager->getRepository('AppBundle:Type')->findBy([
             "isSubtype" => false,
         ], [
             "name" => "ASC",
@@ -70,7 +71,7 @@ class SearchController extends Controller
             return $elt ["illustrator"];
         }, $list_illustrators);
 
-        $prebuilts = $this->getDoctrine()->getRepository('AppBundle:Prebuilt')->findBy([], [
+        $prebuilts = $entityManager->getRepository('AppBundle:Prebuilt')->findBy([], [
             "position" => "ASC",
         ]);
 
@@ -91,9 +92,9 @@ class SearchController extends Controller
         ], $response);
     }
 
-    public function zoomAction($card_code, Request $request)
+    public function zoomAction($card_code, Request $request, EntityManagerInterface $entityManager)
     {
-        $card = $this->getDoctrine()->getRepository('AppBundle:Card')->findOneBy(["code" => $card_code]);
+        $card = $entityManager->getRepository('AppBundle:Card')->findOneBy(["code" => $card_code]);
         if (!$card instanceof Card) {
             throw $this->createNotFoundException('Sorry, this card is not in the database (yet?)');
         }
@@ -114,9 +115,9 @@ class SearchController extends Controller
         );
     }
 
-    public function listAction($pack_code, $view, $sort, $page, Request $request)
+    public function listAction($pack_code, $view, $sort, $page, Request $request, EntityManagerInterface $entityManager)
     {
-        $pack = $this->getDoctrine()->getRepository('AppBundle:Pack')->findOneBy(["code" => $pack_code]);
+        $pack = $entityManager->getRepository('AppBundle:Pack')->findOneBy(["code" => $pack_code]);
         if (!$pack instanceof Pack) {
             throw $this->createNotFoundException('This pack does not exist');
         }
@@ -140,10 +141,10 @@ class SearchController extends Controller
         );
     }
 
-    public function cycleAction($cycle_code, $view, $sort, $page, Request $request)
+    public function cycleAction($cycle_code, $view, $sort, $page, Request $request, EntityManagerInterface $entityManager)
     {
-        $cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(["code" => $cycle_code]);
-        if (!$cycle) {
+        $cycle = $entityManager->getRepository('AppBundle:Cycle')->findOneBy(["code" => $cycle_code]);
+        if (!$cycle instanceof Cycle) {
             throw $this->createNotFoundException('This cycle does not exist');
         }
         $meta = $cycle->getName() . ", a cycle of datapack for Android:Netrunner published by Fantasy Flight Games.";
@@ -215,7 +216,7 @@ class SearchController extends Controller
     }
 
     // target of the search input
-    public function findAction(Request $request, RouterInterface $router)
+    public function findAction(Request $request, RouterInterface $router, EntityManagerInterface $entityManager)
     {
         $q = $request->query->get('q');
         $page = $request->query->get('page') ?: 1;
@@ -235,8 +236,8 @@ class SearchController extends Controller
             }
             if ($conditions[0][0] == "c") {
                 $cycle_position = $conditions[0][2];
-                $cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(['position' => $cycle_position]);
-                if ($cycle) {
+                $cycle = $entityManager->getRepository('AppBundle:Cycle')->findOneBy(['position' => $cycle_position]);
+                if ($cycle instanceof Cycle) {
                     $url = $router->generate('cards_cycle', ['cycle_code' => $cycle->getCode(), 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()]);
 
                     return $this->redirect($url);
@@ -258,7 +259,7 @@ class SearchController extends Controller
         );
     }
 
-    public function displayAction(Request $request, RouterInterface $router, $q, $view = "card", $sort, $page = 1, $title = "", $meta = "", $locale = null, $locales = null)
+    public function displayAction($q, $view = "card", $sort, $page = 1, $title = "", $meta = "", $locale = null, $locales = null, Request $request, RouterInterface $router, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -314,14 +315,14 @@ class SearchController extends Controller
             if ($title == "") {
                 if (count($conditions) == 1 && count($conditions[0]) == 3 && $conditions[0][1] == ":") {
                     if ($conditions[0][0] == "e") {
-                        $pack = $this->getDoctrine()->getRepository('AppBundle:Pack')->findOneBy(["code" => $conditions[0][2]]);
-                        if ($pack) {
+                        $pack = $entityManager->getRepository('AppBundle:Pack')->findOneBy(["code" => $conditions[0][2]]);
+                        if ($pack instanceof Pack) {
                             $title = $pack->getName();
                         }
                     }
                     if ($conditions[0][0] == "c") {
-                        $cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(["code" => $conditions[0][2]]);
-                        if ($cycle) {
+                        $cycle = $entityManager->getRepository('AppBundle:Cycle')->findOneBy(["code" => $conditions[0][2]]);
+                        if ($cycle instanceof Cycle) {
                             $title = $cycle->getName();
                         }
                     }
@@ -366,7 +367,7 @@ class SearchController extends Controller
             // si on a des cartes on affiche une bande de navigation/pagination
             if (count($rows) && $card instanceof Card) {
                 if (count($rows) == 1) {
-                    $pagination = $this->setnavigation($card, $locale, $router);
+                    $pagination = $this->setnavigation($card, $locale, $router, $entityManager);
                 } else {
                     $pagination = $this->pagination($nb_per_page, count($rows), $first, $q, $view, $sort, $locale, $router);
                 }
@@ -423,17 +424,16 @@ class SearchController extends Controller
         ], $response);
     }
 
-    public function setnavigation(Card $card, $locale, RouterInterface $router)
+    public function setnavigation(Card $card, $locale, RouterInterface $router, EntityManagerInterface $entityManager)
     {
-        $em = $this->getDoctrine();
-        $prev = $em->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() - 1]);
-        $next = $em->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() + 1]);
+        $prev = $entityManager->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() - 1]);
+        $next = $entityManager->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() + 1]);
 
         return $this->renderView('/Search/setnavigation.html.twig', [
-            "prevtitle" => $prev ? $prev->getTitle() : "",
-            "prevhref"  => $prev ? $router->generate('cards_zoom', ['card_code' => $prev->getCode(), "_locale" => $locale]) : "",
-            "nexttitle" => $next ? $next->getTitle() : "",
-            "nexthref"  => $next ? $router->generate('cards_zoom', ['card_code' => $next->getCode(), "_locale" => $locale]) : "",
+            "prevtitle" => $prev instanceof Card ? $prev->getTitle() : "",
+            "prevhref"  => $prev instanceof Card ? $router->generate('cards_zoom', ['card_code' => $prev->getCode(), "_locale" => $locale]) : "",
+            "nexttitle" => $next instanceof Card ? $next->getTitle() : "",
+            "nexthref"  => $next instanceof Card ? $router->generate('cards_zoom', ['card_code' => $next->getCode(), "_locale" => $locale]) : "",
             "settitle"  => $card->getPack()->getName(),
             "sethref"   => $router->generate('cards_list', ['pack_code' => $card->getPack()->getCode(), "_locale" => $locale]),
             "_locale"   => $locale,

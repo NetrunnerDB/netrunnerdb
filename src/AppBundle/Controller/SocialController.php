@@ -70,7 +70,7 @@ class SocialController extends Controller
 
         $new_content = json_encode($deck->getContent());
         $new_signature = md5($new_content);
-        $old_decklists = $this->getDoctrine()
+        $old_decklists = $entityManager
                               ->getRepository('AppBundle:Decklist')
                               ->findBy([
                                   'signature' => $new_signature,
@@ -107,7 +107,7 @@ class SocialController extends Controller
 
         $deck_id = filter_var($request->request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         /** @var Deck $deck */
-        $deck = $this->getDoctrine()
+        $deck = $entityManager
                      ->getRepository('AppBundle:Deck')
                      ->find($deck_id);
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
@@ -483,12 +483,15 @@ class SocialController extends Controller
         }
 
         $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
-        $decklist = $this->getDoctrine()
+        $decklist = $entityManager
                          ->getRepository('AppBundle:Decklist')
                          ->find($decklist_id);
+        if (!$decklist instanceof Decklist) {
+            throw $this->createNotFoundException();
+        }
 
         $comment_text = trim($request->get('comment'));
-        if ($decklist instanceof Decklist && !empty($comment_text)) {
+        if (!empty($comment_text)) {
             $comment_text = preg_replace(
                 '%(?<!\()\b(?:(?:https?|ftp)://)(?:((?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?)(?:[^\s]*)?%iu',
                 '[$1]($0)',
@@ -533,7 +536,7 @@ class SocialController extends Controller
             }
             foreach ($mentionned_usernames as $mentionned_username) {
                 /** @var User $mentionned_user */
-                $mentionned_user = $this->getDoctrine()->getRepository('AppBundle:User')->findOneBy(['username' => $mentionned_username]);
+                $mentionned_user = $entityManager->getRepository('AppBundle:User')->findOneBy(['username' => $mentionned_username]);
                 if ($mentionned_user && $mentionned_user->getNotifMention()) {
                     if (!isset($spool[$mentionned_user->getEmail()])) {
                         $spool[$mentionned_user->getEmail()] = '/Emails/newcomment_mentionned.html.twig';
@@ -561,7 +564,7 @@ class SocialController extends Controller
 
         return $this->redirect($this->generateUrl('decklist_detail', [
             'decklist_id'   => $decklist_id,
-            'decklist_name' => $decklist->getPrettyName(),
+            'decklist_name' => $decklist->getPrettyname(),
         ]));
     }
 
@@ -903,14 +906,14 @@ class SocialController extends Controller
         ], $response);
     }
 
-    public function followAction($user_id, Request $request)
+    public function followAction($user_id, Request $request, EntityManagerInterface $entityManager)
     {
         /* who is following */
         $follower = $this->getUser();
         /* who is followed */
-        $following = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->find($user_id);
+        $following = $entityManager->getRepository('AppBundle:User')->find($user_id);
 
-        if (!$follower instanceof User) {
+        if (!$follower instanceof User || !$following instanceof User) {
             throw $this->createAccessDeniedException("No user.");
         }
 
@@ -924,7 +927,7 @@ class SocialController extends Controller
 
         if (!$found) {
             $follower->addFollowing($following);
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
         }
 
         return $this->redirect($this->generateUrl('user_profile_view', [
@@ -934,15 +937,15 @@ class SocialController extends Controller
         ]));
     }
 
-    public function unfollowAction($user_id, Request $request)
+    public function unfollowAction($user_id, Request $request, EntityManagerInterface $entityManager)
     {
         /* who is following */
         /** @var User $follower */
         $follower = $this->getUser();
         /* who is followed */
-        $following = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->find($user_id);
+        $following = $entityManager->getRepository('AppBundle:User')->find($user_id);
 
-        if (!$follower) {
+        if (!$follower instanceof User || !$following instanceof User) {
             throw $this->createAccessDeniedException("No user.");
         }
 
@@ -956,7 +959,7 @@ class SocialController extends Controller
 
         if ($found) {
             $follower->removeFollowing($following);
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
         }
 
         return $this->redirect($this->generateUrl('user_profile_view', [
@@ -1139,13 +1142,11 @@ class SocialController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function activityAction($days)
+    public function activityAction($days, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPrivate();
         $response->setMaxAge($this->container->getParameter('short_cache'));
-
-        $em = $this->getDoctrine()->getManager();
 
         // max number of displayed items for each category
         $max_items = 30;
@@ -1155,7 +1156,7 @@ class SocialController extends Controller
 
         // recording date of activity check
         $this->getUser()->setLastActivityCheck(new \DateTime());
-        $em->flush();
+        $entityManager->flush();
 
         return $this->render('/Activity/activity.html.twig', [
             'pagetitle'    => 'Activity',
@@ -1172,23 +1173,21 @@ class SocialController extends Controller
      *
      * @IsGranted("ROLE_MODERATOR")
      */
-    public function moderateAction($decklist_id, $status, $modflag_id = null)
+    public function moderateAction($decklist_id, $status, $modflag_id = null, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPrivate();
         $response->setMaxAge($this->container->getParameter('short_cache'));
 
-        $em = $this->getDoctrine()->getManager();
-
         /** @var Decklist $decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
 
         $this->get(ModerationHelper::class)->changeStatus($this->getUser(), $decklist, $status, $modflag_id);
 
-        $em->flush();
+        $entityManager->flush();
 
         return new JsonResponse(['success' => true]);
     }

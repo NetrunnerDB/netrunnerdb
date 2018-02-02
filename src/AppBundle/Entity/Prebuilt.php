@@ -15,7 +15,7 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
 {
     public function __toString()
     {
-        return $this->name;
+        return $this->name ?: '(unknown)';
     }
     
     public function normalize()

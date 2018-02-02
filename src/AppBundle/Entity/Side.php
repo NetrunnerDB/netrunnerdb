@@ -16,7 +16,7 @@ class Side extends AbstractTranslatableEntity implements NormalizableInterface, 
 {
     public function __toString()
     {
-        return $this->name;
+        return $this->name ?: '(unknown)';
     }
 
     public function normalize()

@@ -142,7 +142,7 @@ class PrivateApi20Controller extends FOSRestController
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function saveDeckAction(Request $request)
+    public function saveDeckAction(Request $request, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
@@ -161,7 +161,7 @@ class PrivateApi20Controller extends FOSRestController
         $deck_id = $requestContent['deck_id'];
         
         if ($deck_id) {
-            $deck = $this->getDoctrine()->getManager()->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
+            $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
             if (!$deck) {
                 throw $this->createNotFoundException("Deck not found");
             }
@@ -211,11 +211,8 @@ class PrivateApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function publishDeckAction(Request $request)
+    public function publishDeckAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        
-        /** @var User $user */
         $user = $this->getUser();
     
         if (!$user) {
@@ -318,7 +315,7 @@ class PrivateApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function decksAction()
+    public function decksAction(EntityManagerInterface $entityManager)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -327,7 +324,7 @@ class PrivateApi20Controller extends FOSRestController
             throw $this->createAccessDeniedException("No user.");
         }
     
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Deck')->findBy(['user' => $user]);
+        $data = $entityManager->getRepository('AppBundle:Deck')->findBy(['user' => $user]);
     
         return $this->prepareResponse($data);
     }
@@ -343,7 +340,7 @@ class PrivateApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function decklistsAction()
+    public function decklistsAction(EntityManagerInterface $entityManager)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -352,7 +349,7 @@ class PrivateApi20Controller extends FOSRestController
             throw $this->createAccessDeniedException("No user.");
         }
     
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Decklist')->findBy(['user' => $user]);
+        $data = $entityManager->getRepository('AppBundle:Decklist')->findBy(['user' => $user]);
     
         return $this->prepareResponse($data);
     }

@@ -7,6 +7,7 @@ use AppBundle\Behavior\Entity\TimestampableInterface;
 use AppBundle\Entity\Deck;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
+use Gedmo\Translatable\Entity\Repository\TranslationRepository;
 use Gedmo\Translatable\Entity\Translation;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,14 @@ use FOS\RestBundle\Controller\FOSRestController;
 
 class PublicApi20Controller extends FOSRestController
 {
+    /** @var EntityManagerInterface $entityManager */
+    protected $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     private function prepareResponse(array $entities, Request $request, array $additionalTopLevelProperties = [])
     {
         $response = new JsonResponse();
@@ -39,7 +48,8 @@ class PublicApi20Controller extends FOSRestController
         }
 
         $locale = $request->query->get('_locale');
-        $translationRepository = $this->getDoctrine()->getManager()->getRepository(Translation::class);
+        /** @var TranslationRepository $translationRepository */
+        $translationRepository = $this->entityManager->getRepository(Translation::class);
         
         $content = $additionalTopLevelProperties;
 
@@ -98,7 +108,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function typeAction($type_code, Request $request)
     {
-        $type = $this->getDoctrine()->getManager()->getRepository('AppBundle:Type')->findOneBy(['code' => $type_code]);
+        $type = $this->entityManager->getRepository('AppBundle:Type')->findOneBy(['code' => $type_code]);
     
         if (!$type) {
             throw $this->createNotFoundException("Type not found");
@@ -120,7 +130,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function typesAction(Request $request)
     {
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Type')->findAll();
+        $data = $this->entityManager->getRepository('AppBundle:Type')->findAll();
     
         return $this->prepareResponse($data, $request);
     }
@@ -138,7 +148,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function sideAction($side_code, Request $request)
     {
-        $side = $this->getDoctrine()->getManager()->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
+        $side = $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
     
         if (!$side) {
             throw $this->createNotFoundException("Side not found");
@@ -160,7 +170,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function sidesAction(Request $request)
     {
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Side')->findAll();
+        $data = $this->entityManager->getRepository('AppBundle:Side')->findAll();
     
         return $this->prepareResponse($data, $request);
     }
@@ -178,7 +188,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function factionAction($faction_code, Request $request)
     {
-        $faction = $this->getDoctrine()->getManager()->getRepository('AppBundle:Faction')->findOneBy(['code' => $faction_code]);
+        $faction = $this->entityManager->getRepository('AppBundle:Faction')->findOneBy(['code' => $faction_code]);
     
         if (!$faction) {
             throw $this->createNotFoundException("Faction not found");
@@ -200,7 +210,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function factionsAction(Request $request)
     {
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Faction')->findAll();
+        $data = $this->entityManager->getRepository('AppBundle:Faction')->findAll();
     
         return $this->prepareResponse($data, $request);
     }
@@ -218,7 +228,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function cycleAction($cycle_code, Request $request)
     {
-        $cycle = $this->getDoctrine()->getManager()->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
+        $cycle = $this->entityManager->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
     
         if (!$cycle) {
             throw $this->createNotFoundException("Cycle not found");
@@ -240,7 +250,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function cyclesAction(Request $request)
     {
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Cycle')->findAll();
+        $data = $this->entityManager->getRepository('AppBundle:Cycle')->findAll();
         
         return $this->prepareResponse($data, $request);
     }
@@ -258,7 +268,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function packAction($pack_code, Request $request)
     {
-        $pack = $this->getDoctrine()->getManager()->getRepository('AppBundle:Pack')->findOneBy(['code' => $pack_code]);
+        $pack = $this->entityManager->getRepository('AppBundle:Pack')->findOneBy(['code' => $pack_code]);
     
         if (!$pack) {
             throw $this->createNotFoundException("Pack not found");
@@ -280,7 +290,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function packsAction(Request $request)
     {
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Pack')->findAll();
+        $data = $this->entityManager->getRepository('AppBundle:Pack')->findAll();
     
         return $this->prepareResponse($data, $request);
     }
@@ -298,7 +308,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function cardAction($card_code, Request $request)
     {
-        $card = $this->getDoctrine()->getManager()->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
+        $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
 
         if (!$card) {
             throw $this->createNotFoundException("Card not found");
@@ -320,7 +330,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function cardsAction(Request $request)
     {
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Card')->findAll();
+        $data = $this->entityManager->getRepository('AppBundle:Card')->findAll();
         
         return $this->prepareResponse($data, $request, ['imageUrlTemplate' => $request->getSchemeAndHttpHost() . '/card_image/{code}.png']);
     }
@@ -338,7 +348,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function decklistAction($decklist_id, Request $request)
     {
-        $decklist = $this->getDoctrine()->getManager()->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
     
         if (!$decklist) {
             throw $this->createNotFoundException("Decklist not found");
@@ -393,7 +403,7 @@ class PublicApi20Controller extends FOSRestController
     public function deckAction($deck_id, Request $request)
     {
         /** @var Deck $deck */
-        $deck = $this->getDoctrine()->getManager()->getRepository('AppBundle:Deck')->find($deck_id);
+        $deck = $this->entityManager->getRepository('AppBundle:Deck')->find($deck_id);
     
         if (!$deck) {
             throw $this->createNotFoundException("Deck not found");
@@ -419,7 +429,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function prebuiltsAction(Request $request)
     {
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Prebuilt')->findAll();
+        $data = $this->entityManager->getRepository('AppBundle:Prebuilt')->findAll();
     
         return $this->prepareResponse($data, $request);
     }
@@ -437,7 +447,7 @@ class PublicApi20Controller extends FOSRestController
      */
     public function mwlAction(Request $request)
     {
-        $data = $this->getDoctrine()->getManager()->getRepository('AppBundle:Mwl')->findAll();
+        $data = $this->entityManager->getRepository('AppBundle:Mwl')->findAll();
     
         return $this->prepareResponse($data, $request);
     }

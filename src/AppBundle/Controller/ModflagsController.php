@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -19,9 +20,9 @@ class ModflagsController extends Controller
      *
      * @IsGranted("ROLE_MODERATOR")
      */
-    public function getAction()
+    public function getAction(EntityManagerInterface $entityManager)
     {
-        $modflags = $this->getDoctrine()->getManager()->getRepository('AppBundle:Modflag')->findAll();
+        $modflags = $entityManager->getRepository('AppBundle:Modflag')->findAll();
         
         $content = [
             'count' => count($modflags),

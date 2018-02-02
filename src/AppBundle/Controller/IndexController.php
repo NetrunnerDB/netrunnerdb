@@ -3,20 +3,21 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Service\DecklistManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class IndexController extends Controller
 {
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->container->getParameter('short_cache'));
 
         // decklist of the week
-        $dbh = $this->getDoctrine()->getConnection();
+        $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery("SELECT decklist FROM highlight WHERE id=?", [1])->fetchAll();
         $decklist = count($rows) ? json_decode($rows[0]['decklist']) : null;
 

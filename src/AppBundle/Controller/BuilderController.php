@@ -739,7 +739,7 @@ class BuilderController extends Controller
 
         )->fetchAll();
 
-        $list_mwl = $this->getDoctrine()->getManager()->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
+        $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
 
         return $this->render(
             '/Builder/deck.html.twig',
@@ -878,7 +878,7 @@ class BuilderController extends Controller
 
         $decks = $this->get(Decks::class)->getByUser($user, false);
 
-        $tournaments = $this->getDoctrine()->getConnection()->executeQuery(
+        $tournaments = $entityManager->getConnection()->executeQuery(
             "SELECT
 					t.id,
 					t.description

@@ -66,7 +66,7 @@ class Mwl implements NormalizableInterface, TimestampableInterface
 
     public function __toString()
     {
-        return $this->name;
+        return $this->name ?: '(unknown)';
     }
 
     public function normalize()

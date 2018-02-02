@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Claim;
 use AppBundle\Entity\Decklist;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Serializer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -47,15 +48,15 @@ class ClaimsController extends AbstractOauthController
      * @Route("")
      * @Method("POST")
      */
-    public function postAction($decklist_id, Request $request)
+    public function postAction($decklist_id, Request $request, EntityManagerInterface $entityManager)
     {
         $client = $this->getOauthClient();
         if (!$client) {
             throw $this->createAccessDeniedException();
         }
-        $em = $this->getDoctrine()->getManager();
+
         /** @var Decklist $decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
@@ -64,8 +65,8 @@ class ClaimsController extends AbstractOauthController
         $claim->setDecklist($decklist);
         $claim->setClient($client);
         $claim->setUser($this->getUser());
-        $em->persist($claim);
-        $em->flush();
+        $entityManager->persist($claim);
+        $entityManager->flush();
 
         $jsend = $this->getJsendResponse('success', ['claim' => $claim]);
         $url = $this->generateUrl('app_claims_get', ['decklist_id' => $decklist_id, 'id' => $claim->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -78,21 +79,21 @@ class ClaimsController extends AbstractOauthController
      * @param int $id
      * @return Claim
      */
-    protected function retrieveClaim(int $decklist_id, int $id)
+    protected function retrieveClaim(int $decklist_id, int $id, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
         $client = $this->getOauthClient();
         if (!$client) {
             throw $this->createAccessDeniedException();
         }
-        $em = $this->getDoctrine()->getManager();
+
         /** @var Decklist $decklist */
-        $decklist = $em->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
         /** @var Claim|null $claim */
-        $claim = $em->getRepository('AppBundle:Claim')->find($id);
+        $claim = $entityManager->getRepository('AppBundle:Claim')->find($id);
         if (!$claim instanceof Claim) {
             throw $this->createNotFoundException();
         }
@@ -115,9 +116,9 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("GET")
      */
-    public function getAction($decklist_id, $id)
+    public function getAction($decklist_id, $id, EntityManagerInterface $entityManager)
     {
-        $claim = $this->retrieveClaim($decklist_id, $id);
+        $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
         $jsend = $this->getJsendResponse('success', ['claim' => $claim]);
         return $this->createJsonResponse($jsend);
     }
@@ -128,17 +129,17 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("PUT")
      */
-    public function putAction($decklist_id, $id, Request $request)
+    public function putAction($decklist_id, $id, Request $request, EntityManagerInterface $entityManager)
     {
-        $claim = $this->retrieveClaim($decklist_id, $id);
+        $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
         /** @var Claim $updatingClaim */
         $updatingClaim = $this->deserializeClaim($request);
         $claim->setName($updatingClaim->getName());
         $claim->setRank($updatingClaim->getRank());
         $claim->setParticipants($updatingClaim->getParticipants());
         $claim->setUrl($updatingClaim->getUrl());
-        $em = $this->getDoctrine()->getManager();
-        $em->flush();
+
+        $entityManager->flush();
 
         $jsend = $this->getJsendResponse('success', ['claim' => $claim]);
 
@@ -151,12 +152,11 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("DELETE")
      */
-    public function deleteAction($decklist_id, $id)
+    public function deleteAction($decklist_id, $id, EntityManagerInterface $entityManager)
     {
-        $claim = $this->retrieveClaim($decklist_id, $id);
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($claim);
-        $em->flush();
+        $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
+        
+        $entityManager->flush();
 
         $jsend = $this->getJsendResponse('success');
 

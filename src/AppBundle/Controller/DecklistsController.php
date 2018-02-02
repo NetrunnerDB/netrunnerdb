@@ -222,9 +222,8 @@ class DecklistsController extends Controller
             }
         }
 
-        $em = $this->getDoctrine()->getManager();
-        $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
-        $list_rotations = $em->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
+        $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
+        $list_rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
 
         return $this->render('/Search/search.html.twig', [
             'pagetitle' => 'Decklist Search',
@@ -301,10 +300,8 @@ class DecklistsController extends Controller
             }
         }
 
-        $em = $this->getDoctrine()->getManager();
-        $list_mwl = $em->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
-        $list_rotations = $em->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
-
+        $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
+        $list_rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
 
         $params = [
             'allowed'        => $categories,

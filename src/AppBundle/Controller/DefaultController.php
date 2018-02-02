@@ -38,11 +38,10 @@ class DefaultController extends Controller
     public function saveProfileAction(Request $request, EntityManagerInterface $entityManager, Session $session)
     {
         $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
 
         $username = filter_var($request->get('username'), FILTER_SANITIZE_STRING);
         if ($username !== $user->getUsername()) {
-            $user_existing = $em->getRepository('AppBundle:User')->findOneBy(['username' => $username]);
+            $user_existing = $entityManager->getRepository('AppBundle:User')->findOneBy(['username' => $username]);
 
             if ($user_existing) {
                 $session
@@ -90,7 +89,7 @@ class DefaultController extends Controller
      *
      * @param string $introduction
      */
-    public function validateIntroductionAction($introduction)
+    public function validateIntroductionAction($introduction, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
         if ($user) {
@@ -100,7 +99,7 @@ class DefaultController extends Controller
             }
             $introductions[$introduction] = true;
             $user->setIntroductions($introductions);
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
         }
 
         return new JsonResponse([
@@ -111,12 +110,12 @@ class DefaultController extends Controller
     /**
      * resets all introductions to "uncompleted"
      */
-    public function resetIntroductionsAction()
+    public function resetIntroductionsAction(EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
         if ($user) {
             $user->setIntroductions(null);
-            $this->getDoctrine()->getManager()->flush();
+            $entityManager->flush();
         }
 
         return new JsonResponse([
