@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Connects a user via oauth2
@@ -61,13 +60,13 @@ class OauthController extends Controller
      * @Route("/callback")
      * @Method("GET")
      */
-    public function callbackAction(Request $request, RouterInterface $router)
+    public function callbackAction(Request $request)
     {
         // receive the aothorization code
         $code = $request->get('code');
 
         // request the access-token to the oauth server
-        $url = $router->generate(
+        $url = $this->generateUrl(
             'fos_oauth_server_token',
             [
                 'client_id'     => $this->getParameter('oauth_test_client_id'),

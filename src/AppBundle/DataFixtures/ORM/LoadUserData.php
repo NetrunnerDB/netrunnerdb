@@ -6,15 +6,13 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use FOS\UserBundle\Model\UserManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Description of LoadUserData
  *
  * @author Alsciende <alsciende@icloud.com>
  */
-class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
 {
     /** @var UserManagerInterface $userManager */
     private $userManager;
@@ -24,22 +22,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
         $this->userManager = $userManager;
     }
 
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @var ContainerInterface|null
-     */
-    private $container;
-
     public function load(ObjectManager $manager)
     {
-        if (!$this->container instanceof ContainerInterface) {
-            throw new \Exception('No Container.');
-        }
-
         $userAdmin = $this->userManager->createUser();
         $userAdmin->setUsername('admin');
         $userAdmin->setEmail('admin@example.org');

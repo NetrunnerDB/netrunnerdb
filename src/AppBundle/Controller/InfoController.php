@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Card;
+use AppBundle\Entity\Decklist;
 use AppBundle\Service\PersonalizationHelper;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,24 +21,22 @@ class InfoController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function getAction(Request $request, EntityManagerInterface $entityManager)
+    public function getAction(Request $request, EntityManagerInterface $entityManager, PersonalizationHelper $helper)
     {
         $user = $this->getUser();
-
-        $helper = $this->get(PersonalizationHelper::class);
 
         $content = $helper->defaultBlock($user);
 
         if ($request->query->has('decklist_id')) {
             $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($request->query->get('decklist_id'));
-            if ($decklist) {
+            if ($decklist instanceof Decklist) {
                 $content = array_merge($content, $helper->decklistBlock($user, $decklist));
             }
         }
 
         if ($request->query->has('card_id')) {
             $card = $entityManager->getRepository('AppBundle:Card')->find($request->query->get('card_id'));
-            if ($card) {
+            if ($card instanceof Card) {
                 $content = array_merge($content, $helper->cardBlock($user, $card));
             }
         }

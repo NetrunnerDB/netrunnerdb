@@ -14,7 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Deckchange;
 
-class Decks
+class DeckManager
 {
     /** @var EntityManagerInterface $entityManager */
     private $entityManager;
@@ -22,13 +22,13 @@ class Decks
     /** @var Judge $judge */
     private $judge;
 
-    /** @var Diff $diff */
+    /** @var DiffService $diff */
     private $diff;
 
     /** @var LoggerInterface $logger */
     private $logger;
 
-    public function __construct(EntityManagerInterface $entityManager, Judge $judge, Diff $diff, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, Judge $judge, DiffService $diff, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
         $this->judge = $judge;
@@ -246,7 +246,7 @@ class Decks
     }
 
 
-    public function saveDeck(User $user, Deck $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, Deck $source_deck)
+    public function saveDeck(User $user, Deck $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, Deck $source_deck = null)
     {
         $deck_content = [];
         if ($decklist_id) {

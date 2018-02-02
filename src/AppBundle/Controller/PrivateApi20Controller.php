@@ -3,11 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Entity\Deckchange;
 use AppBundle\Entity\User;
-use AppBundle\Service\Decks;
+use AppBundle\Service\DeckManager;
 use AppBundle\Service\Judge;
 use AppBundle\Service\RotationService;
-use AppBundle\Service\Texts;
+use AppBundle\Service\TextProcessor;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -78,7 +79,7 @@ class PrivateApi20Controller extends FOSRestController
         $user = $this->getUser();
         
         if (!$user) {
-            throw $this->createAccessDeniedException("No user.");
+            throw $this->createAccessDeniedException();
         }
         
         $includeHistory = $request->query->has('include_history') && $request->query->get('include_history');
@@ -87,7 +88,7 @@ class PrivateApi20Controller extends FOSRestController
         $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
         
         if (!$deck) {
-            throw $this->createNotFoundException("Deck not found");
+            throw $this->createNotFoundException();
         }
         
         $history = [];
@@ -142,7 +143,7 @@ class PrivateApi20Controller extends FOSRestController
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function saveDeckAction(Request $request, EntityManagerInterface $entityManager)
+    public function saveDeckAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
         $user = $this->getUser();
 
@@ -163,7 +164,7 @@ class PrivateApi20Controller extends FOSRestController
         if ($deck_id) {
             $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
             if (!$deck) {
-                throw $this->createNotFoundException("Deck not found");
+                throw $this->createNotFoundException();
             }
         } else {
             if (count($user->getDecks()) >= $user->getMaxNbDecks()) {
@@ -187,9 +188,11 @@ class PrivateApi20Controller extends FOSRestController
         if (!count($content)) {
             return $this->prepareFailedResponse("Empty parameter 'content'.");
         }
-        
-        $deck_id = $this->get(Decks::class)->saveDeck($user, $deck, $decklist_id, $name, $description, $tags, null, $content, $deck_id ? $deck : null);
-        
+
+        if ($deck instanceof Deck) {
+            $deck_id = $deckManager->saveDeck($user, $deck, $decklist_id, $name, $description, $tags, null, $content, $deck_id ? $deck : null);
+        }
+
         if (isset($deck_id)) {
             return $this->prepareResponse([$deck]);
         } else {
@@ -211,12 +214,12 @@ class PrivateApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function publishDeckAction(Request $request, EntityManagerInterface $entityManager)
+    public function publishDeckAction(Request $request, EntityManagerInterface $entityManager, Judge $judge, TextProcessor $textProcessor, RotationService $rotationService)
     {
         $user = $this->getUser();
     
         if (!$user) {
-            throw $this->createAccessDeniedException("No user.");
+            throw $this->createAccessDeniedException();
         }
     
         $requestJsonBody = $request->getContent();
@@ -234,11 +237,10 @@ class PrivateApi20Controller extends FOSRestController
         $deck_id = $requestContent['deck_id'];
         $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
         if (!$deck instanceof Deck) {
-            throw $this->createNotFoundException("Deck not found");
+            throw $this->createNotFoundException();
         }
         
-        $judge = $this->get(Judge::class);
-        $analyse = $judge->analyse($deck->getSlots());
+        $analyse = $judge->analyse($deck->getSlots()->toArray());
         if (is_string($analyse)) {
             return $this->prepareFailedResponse($judge->problem($analyse));
         }
@@ -262,7 +264,7 @@ class PrivateApi20Controller extends FOSRestController
         if (empty($rawdescription)) {
             $rawdescription = $deck->getDescription();
         }
-        $description = $this->get(Texts::class)->markdown($rawdescription);
+        $description = $textProcessor->markdown($rawdescription);
         
         $decklist = new Decklist();
         $decklist->setName($name);
@@ -296,7 +298,7 @@ class PrivateApi20Controller extends FOSRestController
             }
         }
         $decklist->setParent($deck);
-        $decklist->setRotation($this->get(RotationService::class)->findCompatibleRotation($decklist));
+        $decklist->setRotation($rotationService->findCompatibleRotation($decklist));
 
         $entityManager->persist($decklist);
         $entityManager->flush();
@@ -321,7 +323,7 @@ class PrivateApi20Controller extends FOSRestController
         $user = $this->getUser();
     
         if (!$user) {
-            throw $this->createAccessDeniedException("No user.");
+            throw $this->createAccessDeniedException();
         }
     
         $data = $entityManager->getRepository('AppBundle:Deck')->findBy(['user' => $user]);
@@ -346,7 +348,7 @@ class PrivateApi20Controller extends FOSRestController
         $user = $this->getUser();
     
         if (!$user) {
-            throw $this->createAccessDeniedException("No user.");
+            throw $this->createAccessDeniedException();
         }
     
         $data = $entityManager->getRepository('AppBundle:Decklist')->findBy(['user' => $user]);
@@ -371,7 +373,7 @@ class PrivateApi20Controller extends FOSRestController
         $user = $this->getUser();
     
         if (!$user) {
-            throw $this->createAccessDeniedException("No user.");
+            throw $this->createAccessDeniedException();
         }
     
         $info = [

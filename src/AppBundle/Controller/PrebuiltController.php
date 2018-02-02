@@ -34,7 +34,7 @@ class PrebuiltController extends Controller
         )->fetchAll();
         
         if (empty($rows)) {
-            throw $this->createNotFoundException("No prebuilt found");
+            throw $this->createNotFoundException();
         }
         
         $prebuilt = $rows[0];

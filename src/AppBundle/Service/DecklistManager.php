@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Card;
+use AppBundle\Entity\Deck;
 use AppBundle\Entity\Decklist;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -821,9 +822,9 @@ class DecklistManager
             $successor->setPrecedent(null);
         }
 
+        /** @var Deck[] $children */
         $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(['parent' => $decklist]);
         foreach ($children as $child) {
-            /** @var Deck $child */
             $child->setParent(null);
         }
     }
@@ -836,9 +837,9 @@ class DecklistManager
             $successor->setPrecedent(null);
         }
 
+        /** @var Deck[] $children */
         $children = $this->entityManager->getRepository('AppBundle:Deck')->findBy(['parent' => $decklist]);
         foreach ($children as $child) {
-            /** @var Deck $child */
             $child->setParent(null);
         }
 

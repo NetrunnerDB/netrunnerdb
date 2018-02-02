@@ -111,7 +111,7 @@ class PublicApi20Controller extends FOSRestController
         $type = $this->entityManager->getRepository('AppBundle:Type')->findOneBy(['code' => $type_code]);
     
         if (!$type) {
-            throw $this->createNotFoundException("Type not found");
+            throw $this->createNotFoundException();
         }
     
         return $this->prepareResponse([$type], $request);
@@ -151,7 +151,7 @@ class PublicApi20Controller extends FOSRestController
         $side = $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
     
         if (!$side) {
-            throw $this->createNotFoundException("Side not found");
+            throw $this->createNotFoundException();
         }
     
         return $this->prepareResponse([$side], $request);
@@ -191,7 +191,7 @@ class PublicApi20Controller extends FOSRestController
         $faction = $this->entityManager->getRepository('AppBundle:Faction')->findOneBy(['code' => $faction_code]);
     
         if (!$faction) {
-            throw $this->createNotFoundException("Faction not found");
+            throw $this->createNotFoundException();
         }
     
         return $this->prepareResponse([$faction], $request);
@@ -231,7 +231,7 @@ class PublicApi20Controller extends FOSRestController
         $cycle = $this->entityManager->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
     
         if (!$cycle) {
-            throw $this->createNotFoundException("Cycle not found");
+            throw $this->createNotFoundException();
         }
         
         return $this->prepareResponse([$cycle], $request);
@@ -271,7 +271,7 @@ class PublicApi20Controller extends FOSRestController
         $pack = $this->entityManager->getRepository('AppBundle:Pack')->findOneBy(['code' => $pack_code]);
     
         if (!$pack) {
-            throw $this->createNotFoundException("Pack not found");
+            throw $this->createNotFoundException();
         }
         
         return $this->prepareResponse([$pack], $request);
@@ -311,7 +311,7 @@ class PublicApi20Controller extends FOSRestController
         $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
 
         if (!$card) {
-            throw $this->createNotFoundException("Card not found");
+            throw $this->createNotFoundException();
         }
         
         return $this->prepareResponse([$card], $request, ['imageUrlTemplate' => $request->getSchemeAndHttpHost() . '/card_image/{code}.png']);
@@ -351,7 +351,7 @@ class PublicApi20Controller extends FOSRestController
         $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
     
         if (!$decklist) {
-            throw $this->createNotFoundException("Decklist not found");
+            throw $this->createNotFoundException();
         }
         
         return $this->prepareResponse([$decklist], $request);
@@ -406,11 +406,11 @@ class PublicApi20Controller extends FOSRestController
         $deck = $this->entityManager->getRepository('AppBundle:Deck')->find($deck_id);
     
         if (!$deck) {
-            throw $this->createNotFoundException("Deck not found");
+            throw $this->createNotFoundException();
         }
         
         if (!$deck->getUser()->getShareDecks()) {
-            throw $this->createAccessDeniedException("Deck not shared");
+            throw $this->createAccessDeniedException();
         }
         
         return $this->prepareResponse([$deck], $request);

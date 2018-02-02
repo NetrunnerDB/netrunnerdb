@@ -42,7 +42,7 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     globals:
-        texts: '@AppBundle\Service\Texts'
+        texts: '@AppBundle\Service\TextProcessor'
         supported_locales: "%supported_locales%"
     form_themes:
         - 'bootstrap_3_layout.html.twig'

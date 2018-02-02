@@ -5,7 +5,7 @@ namespace AppBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-class Diff
+class DiffService
 {
     /** @var EntityManagerInterface $entityManager */
     private $entityManager;

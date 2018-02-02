@@ -11,11 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\RouterInterface;
 
 class SearchController extends Controller
 {
-    public function formAction(EntityManagerInterface $entityManager)
+    public function formAction(EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -76,7 +75,7 @@ class SearchController extends Controller
         ]);
 
         $allsets = $this->renderView('/Default/allsets.html.twig', [
-            "data" => $this->get(CardsData::class)->allsetsdata(),
+            "data" => $cardsData->allsetsdata(),
         ]);
 
         return $this->render('/Search/searchform.html.twig', [
@@ -96,7 +95,7 @@ class SearchController extends Controller
     {
         $card = $entityManager->getRepository('AppBundle:Card')->findOneBy(["code" => $card_code]);
         if (!$card instanceof Card) {
-            throw $this->createNotFoundException('Sorry, this card is not in the database (yet?)');
+            throw $this->createNotFoundException();
         }
         $meta = $card->getTitle() . ", a " . $card->getFaction()->getName() . " " . $card->getType()->getName() . " card for Android:Netrunner from the set " . $card->getPack()->getName() . " published by Fantasy Flight Games.";
 
@@ -119,7 +118,7 @@ class SearchController extends Controller
     {
         $pack = $entityManager->getRepository('AppBundle:Pack')->findOneBy(["code" => $pack_code]);
         if (!$pack instanceof Pack) {
-            throw $this->createNotFoundException('This pack does not exist');
+            throw $this->createNotFoundException();
         }
         $meta = $pack->getName() . ", a set of cards for Android:Netrunner"
             . ($pack->getDateRelease() ? " published on " . $pack->getDateRelease()->format('Y/m/d') : "")
@@ -145,7 +144,7 @@ class SearchController extends Controller
     {
         $cycle = $entityManager->getRepository('AppBundle:Cycle')->findOneBy(["code" => $cycle_code]);
         if (!$cycle instanceof Cycle) {
-            throw $this->createNotFoundException('This cycle does not exist');
+            throw $this->createNotFoundException();
         }
         $meta = $cycle->getName() . ", a cycle of datapack for Android:Netrunner published by Fantasy Flight Games.";
 
@@ -216,7 +215,7 @@ class SearchController extends Controller
     }
 
     // target of the search input
-    public function findAction(Request $request, RouterInterface $router, EntityManagerInterface $entityManager)
+    public function findAction(Request $request, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $q = $request->query->get('q');
         $page = $request->query->get('page') ?: 1;
@@ -227,10 +226,10 @@ class SearchController extends Controller
         $request->setLocale($locale);
 
         // we may be able to redirect to a better url if the search is on a single set
-        $conditions = $this->get(CardsData::class)->syntax($q);
+        $conditions = $cardsData->syntax($q);
         if (count($conditions) == 1 && count($conditions[0]) == 3 && $conditions[0][1] == ":") {
             if ($conditions[0][0] == "e") {
-                $url = $router->generate('cards_list', ['pack_code' => $conditions[0][2], 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()]);
+                $url = $this->generateUrl('cards_list', ['pack_code' => $conditions[0][2], 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()]);
 
                 return $this->redirect($url);
             }
@@ -238,7 +237,7 @@ class SearchController extends Controller
                 $cycle_position = $conditions[0][2];
                 $cycle = $entityManager->getRepository('AppBundle:Cycle')->findOneBy(['position' => $cycle_position]);
                 if ($cycle instanceof Cycle) {
-                    $url = $router->generate('cards_cycle', ['cycle_code' => $cycle->getCode(), 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()]);
+                    $url = $this->generateUrl('cards_cycle', ['cycle_code' => $cycle->getCode(), 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()]);
 
                     return $this->redirect($url);
                 }
@@ -259,7 +258,7 @@ class SearchController extends Controller
         );
     }
 
-    public function displayAction($q, $view = "card", $sort, $page = 1, $title = "", $meta = "", $locale = null, $locales = null, Request $request, RouterInterface $router, EntityManagerInterface $entityManager)
+    public function displayAction($q, $view = "card", $sort, $page = 1, $title = "", $meta = "", $locale = null, $locales = null, Request $request, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -301,13 +300,13 @@ class SearchController extends Controller
             $view = 'list';
         }
 
-        $conditions = $this->get(CardsData::class)->syntax($q);
+        $conditions = $cardsData->syntax($q);
 
-        $this->get(CardsData::class)->validateConditions($conditions);
+        $cardsData->validateConditions($conditions);
 
         // reconstruction de la bonne chaine de recherche pour affichage
-        $q = $this->get(CardsData::class)->buildQueryFromConditions($conditions);
-        if ($q && $rows = $this->get(CardsData::class)->get_search_rows($conditions, $sort, $locale)) {
+        $q = $cardsData->buildQueryFromConditions($conditions);
+        if ($q && $rows = $cardsData->get_search_rows($conditions, $sort, $locale)) {
             if (count($rows) == 1) {
                 $view = 'zoom';
             }
@@ -343,7 +342,7 @@ class SearchController extends Controller
                 /** @var Card $card */
                 $card = $rows[$rowindex];
                 $pack = $card->getPack();
-                $cardinfo = $this->get(CardsData::class)->getCardInfo($card, $locale);
+                $cardinfo = $cardsData->getCardInfo($card, $locale);
                 if (empty($availability[$pack->getCode()])) {
                     $availability[$pack->getCode()] = false;
                     if ($pack->getDateRelease() && $pack->getDateRelease() <= new \DateTime()) {
@@ -352,12 +351,12 @@ class SearchController extends Controller
                 }
                 $cardinfo['available'] = $availability[$pack->getCode()];
                 if ($view == "zoom") {
-                    $cardinfo['reviews'] = $this->get(CardsData::class)->get_reviews($card);
-                    $cardinfo['rulings'] = $this->get(CardsData::class)->get_rulings($card);
-                    $cardinfo['mwl_info'] = $this->get(CardsData::class)->get_mwl_info($card);
+                    $cardinfo['reviews'] = $cardsData->get_reviews($card);
+                    $cardinfo['rulings'] = $cardsData->get_rulings($card);
+                    $cardinfo['mwl_info'] = $cardsData->get_mwl_info($card);
                 }
                 if ($view == "rulings") {
-                    $cardinfo['rulings'] = $this->get(CardsData::class)->get_rulings($card);
+                    $cardinfo['rulings'] = $cardsData->get_rulings($card);
                 }
                 $cards[] = $cardinfo;
             }
@@ -367,9 +366,9 @@ class SearchController extends Controller
             // si on a des cartes on affiche une bande de navigation/pagination
             if (count($rows) && $card instanceof Card) {
                 if (count($rows) == 1) {
-                    $pagination = $this->setnavigation($card, $locale, $router, $entityManager);
+                    $pagination = $this->setnavigation($card, $locale, $entityManager);
                 } else {
-                    $pagination = $this->pagination($nb_per_page, count($rows), $first, $q, $view, $sort, $locale, $router);
+                    $pagination = $this->pagination($nb_per_page, count($rows), $first, $q, $view, $sort, $locale);
                 }
             }
 
@@ -424,26 +423,26 @@ class SearchController extends Controller
         ], $response);
     }
 
-    public function setnavigation(Card $card, $locale, RouterInterface $router, EntityManagerInterface $entityManager)
+    public function setnavigation(Card $card, $locale, EntityManagerInterface $entityManager)
     {
         $prev = $entityManager->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() - 1]);
         $next = $entityManager->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() + 1]);
 
         return $this->renderView('/Search/setnavigation.html.twig', [
             "prevtitle" => $prev instanceof Card ? $prev->getTitle() : "",
-            "prevhref"  => $prev instanceof Card ? $router->generate('cards_zoom', ['card_code' => $prev->getCode(), "_locale" => $locale]) : "",
+            "prevhref"  => $prev instanceof Card ? $this->generateUrl('cards_zoom', ['card_code' => $prev->getCode(), "_locale" => $locale]) : "",
             "nexttitle" => $next instanceof Card ? $next->getTitle() : "",
-            "nexthref"  => $next instanceof Card ? $router->generate('cards_zoom', ['card_code' => $next->getCode(), "_locale" => $locale]) : "",
+            "nexthref"  => $next instanceof Card ? $this->generateUrl('cards_zoom', ['card_code' => $next->getCode(), "_locale" => $locale]) : "",
             "settitle"  => $card->getPack()->getName(),
-            "sethref"   => $router->generate('cards_list', ['pack_code' => $card->getPack()->getCode(), "_locale" => $locale]),
+            "sethref"   => $this->generateUrl('cards_list', ['pack_code' => $card->getPack()->getCode(), "_locale" => $locale]),
             "_locale"   => $locale,
         ]);
     }
 
-    public function paginationItem($q = null, $v, $s, $ps, $pi, $total, $locale, RouterInterface $router)
+    public function paginationItem($q = null, $v, $s, $ps, $pi, $total, $locale)
     {
         return $this->renderView('/Search/paginationitem.html.twig', [
-            "href" => $q == null ? "" : $router->generate('cards_find', ['q' => $q, 'view' => $v, 'sort' => $s, 'page' => $pi, '_locale' => $locale]),
+            "href" => $q == null ? "" : $this->generateUrl('cards_find', ['q' => $q, 'view' => $v, 'sort' => $s, 'page' => $pi, '_locale' => $locale]),
             "ps"   => $ps,
             "pi"   => $pi,
             "s"    => $ps * ($pi - 1) + 1,
@@ -451,7 +450,7 @@ class SearchController extends Controller
         ]);
     }
 
-    public function pagination($pagesize, $total, $current, $q, $view, $sort, $locale, RouterInterface $router)
+    public function pagination($pagesize, $total, $current, $q, $view, $sort, $locale)
     {
         if ($total < $pagesize) {
             $pagesize = $total;
@@ -462,24 +461,24 @@ class SearchController extends Controller
 
         $first = "";
         if ($pageindex > 2) {
-            $first = $this->paginationItem($q, $view, $sort, $pagesize, 1, $total, $locale, $router);
+            $first = $this->paginationItem($q, $view, $sort, $pagesize, 1, $total, $locale);
         }
 
         $prev = "";
         if ($pageindex > 1) {
-            $prev = $this->paginationItem($q, $view, $sort, $pagesize, $pageindex - 1, $total, $locale, $router);
+            $prev = $this->paginationItem($q, $view, $sort, $pagesize, $pageindex - 1, $total, $locale);
         }
 
-        $current = $this->paginationItem(null, $view, $sort, $pagesize, $pageindex, $total, $locale, $router);
+        $current = $this->paginationItem(null, $view, $sort, $pagesize, $pageindex, $total, $locale);
 
         $next = "";
         if ($pageindex < $pagecount) {
-            $next = $this->paginationItem($q, $view, $sort, $pagesize, $pageindex + 1, $total, $locale, $router);
+            $next = $this->paginationItem($q, $view, $sort, $pagesize, $pageindex + 1, $total, $locale);
         }
 
         $last = "";
         if ($pageindex < $pagecount - 1) {
-            $last = $this->paginationItem($q, $view, $sort, $pagesize, $pagecount, $total, $locale, $router);
+            $last = $this->paginationItem($q, $view, $sort, $pagesize, $pagecount, $total, $locale);
         }
 
         return $this->renderView('/Search/pagination.html.twig', [

@@ -539,6 +539,7 @@ class ImportStdCommand extends ContainerAwareCommand
             if (!key_exists($foreignCode, $this->collections[$foreignEntityShortName])) {
                 throw new \Exception("Invalid code [$foreignCode] for key [$key] in " . json_encode($data));
             }
+            /** @var NormalizableInterface $foreignEntity */
             $foreignEntity = $this->collections[$foreignEntityShortName][$foreignCode];
 
             $getter = 'get' . $foreignEntityShortName;

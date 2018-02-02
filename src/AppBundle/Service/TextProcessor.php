@@ -5,7 +5,7 @@ namespace AppBundle\Service;
 
 use Michelf\Markdown;
 
-class Texts
+class TextProcessor
 {
     /** @var \HTMLPurifier $purifier */
     private $purifier;

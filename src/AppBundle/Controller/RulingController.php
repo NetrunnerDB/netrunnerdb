@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Ruling;
-use AppBundle\Service\Texts;
+use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RulingController extends Controller
 {
-    public function postAction(Request $request, EntityManagerInterface $entityManager)
+    public function postAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
         $this->denyAccessUnlessGranted('ROLE_GURU');
 
@@ -27,7 +27,7 @@ class RulingController extends Controller
         }
 
         $rawtext = $request->request->get('text');
-        $text = $this->get(Texts::class)->transform($rawtext);
+        $text = $textProcessor->transform($rawtext);
 
         $ruling = new Ruling();
         $ruling->setCard($card);
@@ -39,7 +39,7 @@ class RulingController extends Controller
         return $this->redirectToRoute('cards_zoom', ['card_code' => $card->getCode()]);
     }
 
-    public function editAction(Request $request, EntityManagerInterface $entityManager)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
         $this->denyAccessUnlessGranted('ROLE_GURU');
 
@@ -50,7 +50,7 @@ class RulingController extends Controller
         }
 
         $rawtext = $request->request->get('text');
-        $text = $this->get(Texts::class)->transform($rawtext);
+        $text = $textProcessor->transform($rawtext);
 
         $ruling->setRawtext($rawtext);
         $ruling->setText($text);

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Mwl;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,7 +37,7 @@ class LegalityActiveMwlCommand extends ContainerAwareCommand
                 ->orderBy('m.dateStart', 'DESC');
         $query = $qb->getQuery();
 
-        /** @var Mwl $mwl */
+        /** @var Mwl[] $list */
         $list = $query->getResult();
 
         if (!count($list)) {

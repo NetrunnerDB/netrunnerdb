@@ -4,15 +4,11 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Client;
 use FOS\OAuthServerBundle\Entity\AccessTokenManager;
-use FOS\OAuthServerBundle\Model\ClientManager;
 use JMS\Serializer\ArrayTransformerInterface;
 use JMS\Serializer\SerializationContext;
-use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Description of AbstractOauthController
@@ -27,21 +23,16 @@ abstract class AbstractOauthController extends Controller
     /** @var ArrayTransformerInterface $arrayTransformer */
     protected $arrayTransformer;
 
-    /** @var TokenStorageInterface $tokenStorage */
-    private $tokenStorage;
-
     /** @var AccessTokenManager $accessTokenManager */
     private $accessTokenManager;
 
     public function __construct(
         SerializerInterface $serializer,
         ArrayTransformerInterface $arrayTransformer,
-        TokenStorageInterface $tokenStorage,
         AccessTokenManager $accessTokenManager
     ) {
         $this->serializer = $serializer;
         $this->arrayTransformer = $arrayTransformer;
-        $this->tokenStorage = $tokenStorage;
         $this->accessTokenManager = $accessTokenManager;
     }
 
@@ -50,15 +41,10 @@ abstract class AbstractOauthController extends Controller
      */
     public function getOauthClient()
     {
-        $token = $this->tokenStorage->getToken();
-        if (!$token instanceof TokenInterface) {
-            throw $this->createAccessDeniedException();
-        }
-
         return $this
             ->accessTokenManager
             ->findTokenBy([
-                'user' => $token->getUser(),
+                'user' => $this->getUser(),
             ])
             ->getClient();
     }

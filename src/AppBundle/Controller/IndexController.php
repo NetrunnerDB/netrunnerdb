@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IndexController extends Controller
 {
-    public function indexAction(Request $request, EntityManagerInterface $entityManager)
+    public function indexAction(Request $request, EntityManagerInterface $entityManager, DecklistManager $decklistManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -22,7 +22,7 @@ class IndexController extends Controller
         $decklist = count($rows) ? json_decode($rows[0]['decklist']) : null;
 
         // recent decklists
-        $decklists_recent = $this->get(DecklistManager::class)->recent(0, 10, false)['decklists'];
+        $decklists_recent = $decklistManager->recent(0, 10, false)['decklists'];
 
         return $this->render(
 

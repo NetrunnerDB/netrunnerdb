@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FactionController extends Controller
 {
@@ -21,7 +20,7 @@ class FactionController extends Controller
         } else {
             $factions = $entityManager->getRepository('AppBundle:Faction')->findBy(['code' => $faction_code]);
             if (!count($factions)) {
-                throw new NotFoundHttpException("Faction $faction_code not found.");
+                throw $this->createNotFoundException();
             }
             $faction_name = $factions[0]->getName();
         }

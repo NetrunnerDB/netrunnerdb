@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
-use AppBundle\Service\Texts;
+use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -11,14 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\Card;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use AppBundle\Entity\Reviewcomment;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ReviewController extends Controller
 {
-    public function postAction(Request $request, EntityManagerInterface $entityManager)
+    public function postAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -57,7 +57,7 @@ class ReviewController extends Controller
 
         );
 
-        $review_html = $this->get(Texts::class)->markdown($review_raw);
+        $review_html = $textProcessor->markdown($review_raw);
         if (!$review_html) {
             return new Response(json_encode("Your review is empty."));
         }
@@ -76,7 +76,7 @@ class ReviewController extends Controller
         return new Response(json_encode(true));
     }
 
-    public function editAction(Request $request, EntityManagerInterface $entityManager)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -104,7 +104,7 @@ class ReviewController extends Controller
 
         );
 
-        $review_html = $this->get(Texts::class)->markdown($review_raw);
+        $review_html = $textProcessor->markdown($review_raw);
         if (!$review_html) {
             return new Response('Your review is empty.');
         }
@@ -128,7 +128,7 @@ class ReviewController extends Controller
         /** @var Review $review */
         $review = $entityManager->getRepository('AppBundle:Review')->find($review_id);
         if (!$review) {
-            throw new NotFoundHttpException("Unable to find review.");
+            throw $this->createNotFoundException();
         }
 
         // a user cannot vote on her own review
@@ -169,7 +169,7 @@ class ReviewController extends Controller
         /** @var Review $review */
         $review = $entityManager->getRepository('AppBundle:Review')->find($review_id);
         if (!$review) {
-            throw new NotFoundHttpException("Unable to find review.");
+            throw $this->createNotFoundException();
         }
 
         $votes = $review->getVotes();

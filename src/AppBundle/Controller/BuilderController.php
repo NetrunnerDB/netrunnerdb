@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Mwl;
-use AppBundle\Service\Decks;
+use AppBundle\Service\DeckManager;
 use AppBundle\Service\Judge;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -18,8 +18,7 @@ use AppBundle\Entity\Card;
 
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Deckchange;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BuilderController extends Controller
@@ -232,7 +231,7 @@ class BuilderController extends Controller
         ];
     }
 
-    public function meteorimportAction(Request $request, EntityManagerInterface $entityManager, Session $session)
+    public function meteorimportAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
         // first build an array to match meteor card names with our card codes
         $glossary = [];
@@ -282,9 +281,7 @@ class BuilderController extends Controller
         $url = $request->request->get('urlmeteor');
         $matches = [];
         if (!preg_match('~http://netrunner.meteor.com/users/([^/]+)~', $url, $matches)) {
-            $session
-                ->getFlashBag()
-                ->set('error', "Wrong URL. Please go to \"Your decks\" on Meteor Decks and copy the content of the address bar into the required field.");
+            $this->addFlash('error', "Wrong URL. Please go to \"Your decks\" on Meteor DeckManager and copy the content of the address bar into the required field.");
 
             return $this->redirect($this->generateUrl('decks_list'));
         }
@@ -297,11 +294,9 @@ class BuilderController extends Controller
         $slots_left = $user->getMaxNbDecks() - count($user->getDecks());
         $slots_required = count($meteor_data);
         if ($slots_required > $slots_left) {
-            $session
-                 ->getFlashBag()
-                 ->set(
+            $this->addFlash(
                      'error',
-                     "You don't have enough available deck slots to import the $slots_required decks from Meteor (only $slots_left slots left). You must either delete some decks here or on Meteor Decks."
+                     "You don't have enough available deck slots to import the $slots_required decks from Meteor (only $slots_left slots left). You must either delete some decks here or on Meteor DeckManager."
                  );
 
             return $this->redirect($this->generateUrl('decks_list'));
@@ -324,9 +319,7 @@ class BuilderController extends Controller
             ];
             foreach ($meteor_deck['entries'] as $entry => $qty) {
                 if (!isset($glossary[$entry])) {
-                    $session
-                        ->getFlashBag()
-                        ->set('error', "Error importing a deck. The name \"$entry\" doesn't match any known card. Please contact the administrator.");
+                    $this->addFlash('error', "Error importing a deck. The name \"$entry\" doesn't match any known card. Please contact the administrator.");
 
                     return $this->redirect($this->generateUrl('decks_list'));
                 }
@@ -335,25 +328,22 @@ class BuilderController extends Controller
 
             /** @var Deck $deck */
             $deck = new Deck();
-            $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $meteor_deck['name'], "", $tags, null, $content, null);
+            $deckManager->saveDeck($this->getUser(), $deck, null, $meteor_deck['name'], "", $tags, null, $content, null);
         }
 
-        $session
-             ->getFlashBag()
-             ->set('notice', "Successfully imported $slots_required decks from Meteor Decks.");
+        $this->addFlash('notice', "Successfully imported $slots_required decks from Meteor DeckManager.");
 
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function textexportAction($deck_id, EntityManagerInterface $entityManager)
+    public function textexportAction($deck_id, EntityManagerInterface $entityManager, Judge $judge)
     {
         /** @var Deck $deck */
         $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
         if (!$this->getUser() || $this->getUser()->getId() != $deck->getUser()->getId()) {
-            throw $this->createAccessDeniedException("Access denied");
+            throw $this->createAccessDeniedException();
         }
 
-        $judge = $this->get(Judge::class);
         $classement = $judge->classe($deck->getSlots(), $deck->getIdentity());
 
         $lines = [];
@@ -476,7 +466,7 @@ class BuilderController extends Controller
         return $response;
     }
 
-    public function saveAction(Request $request, EntityManagerInterface $entityManager)
+    public function saveAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
         $user = $this->getUser();
         if (count($user->getDecks()) > $user->getMaxNbDecks()) {
@@ -497,7 +487,7 @@ class BuilderController extends Controller
         $cancel_edits = (boolean) filter_var($request->get('cancel_edits'), FILTER_SANITIZE_NUMBER_INT);
         if ($cancel_edits) {
             if ($deck) {
-                $this->get(Decks::class)->revertDeck($deck);
+                $deckManager->revertDeck($deck);
             }
 
             return $this->redirect($this->generateUrl('decks_list'));
@@ -519,12 +509,14 @@ class BuilderController extends Controller
         $tags = filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
         $mwl_code = $request->get('mwl_code');
 
-        $this->get(Decks::class)->saveDeck($this->getUser(), $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck ? $source_deck : null);
+        if ($deck instanceof Deck) {
+            $deckManager->saveDeck($this->getUser(), $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck ? $source_deck : null);
+        }
 
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function deleteAction(Request $request, EntityManagerInterface $entityManager, Session $session)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager)
     {
         $deck_id = filter_var($request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
@@ -541,14 +533,12 @@ class BuilderController extends Controller
         $entityManager->remove($deck);
         $entityManager->flush();
 
-        $session
-             ->getFlashBag()
-             ->set('notice', "Deck deleted.");
+        $this->addFlash('notice', "Deck deleted.");
 
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function deleteListAction(Request $request, EntityManagerInterface $entityManager, Session $session)
+    public function deleteListAction(Request $request, EntityManagerInterface $entityManager)
     {
         $list_id = explode('-', $request->get('ids'));
 
@@ -569,9 +559,7 @@ class BuilderController extends Controller
         }
         $entityManager->flush();
 
-        $session
-             ->getFlashBag()
-             ->set('notice', "Decks deleted.");
+        $this->addFlash('notice', "DeckManager deleted.");
 
         return $this->redirect($this->generateUrl('decks_list'));
     }
@@ -753,7 +741,7 @@ class BuilderController extends Controller
         );
     }
 
-    public function viewAction($deck_id, EntityManagerInterface $entityManager)
+    public function viewAction($deck_id, EntityManagerInterface $entityManager, Judge $judge)
     {
         $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery("SELECT
@@ -782,7 +770,7 @@ class BuilderController extends Controller
         ])->fetchAll();
 
         if (!count($rows)) {
-            throw $this->createNotFoundException("Deck not found");
+            throw $this->createNotFoundException();
         }
         $deck = $rows[0];
 
@@ -850,7 +838,7 @@ class BuilderController extends Controller
         )->fetchAll();
 
         $problem = $deck['problem'];
-        $deck['message'] = isset($problem) ? $this->get(Judge::class)->problem($problem) : '';
+        $deck['message'] = isset($problem) ? $judge->problem($problem) : '';
 
         return $this->render(
 
@@ -872,11 +860,11 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function listAction(EntityManagerInterface $entityManager)
+    public function listAction(EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
         $user = $this->getUser();
 
-        $decks = $this->get(Decks::class)->getByUser($user, false);
+        $decks = $deckManager->getByUser($user, false);
 
         $tournaments = $entityManager->getConnection()->executeQuery(
             "SELECT
@@ -892,7 +880,7 @@ class BuilderController extends Controller
 
             '/Builder/decks.html.twig',
             [
-                'pagetitle'       => "My Decks",
+                'pagetitle'       => "My DeckManager",
                 'pagedescription' => "Create custom decks with the help of a powerful deckbuilder.",
                 'decks'           => $decks,
                 'nbmax'           => $user->getMaxNbDecks(),
@@ -963,12 +951,11 @@ class BuilderController extends Controller
         );
     }
 
-    public function downloadallAction(EntityManagerInterface $entityManager)
+    public function downloadallAction(EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
-        /** @var User $user */
         $user = $this->getUser();
 
-        $decks = $this->get(Decks::class)->getByUser($user, false);
+        $decks = $deckManager->getByUser($user, false);
 
         $file = tempnam("tmp", "zip");
         $zip = new \ZipArchive();
@@ -1004,7 +991,7 @@ class BuilderController extends Controller
         return $response;
     }
 
-    public function uploadallAction(Request $request, EntityManagerInterface $entityManager, Session $session)
+    public function uploadallAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
         // time-consuming task
         ini_set('max_execution_time', 300);
@@ -1034,14 +1021,12 @@ class BuilderController extends Controller
                 $parse = $this->parseTextImport($zip->getFromIndex($i), $entityManager);
 
                 $deck = new Deck();
-                $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content'], null);
+                $deckManager->saveDeck($this->getUser(), $deck, null, $name, '', '', null, $parse['content'], null);
             }
         }
         $zip->close();
 
-        $session
-             ->getFlashBag()
-             ->set('notice', "Decks imported.");
+        $this->addFlash('notice', "DeckManager imported.");
 
         return $this->redirect($this->generateUrl('decks_list'));
     }

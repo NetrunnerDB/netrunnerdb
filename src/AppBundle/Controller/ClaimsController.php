@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Claim;
 use AppBundle\Entity\Decklist;
 use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\Serializer;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -155,7 +155,8 @@ class ClaimsController extends AbstractOauthController
     public function deleteAction($decklist_id, $id, EntityManagerInterface $entityManager)
     {
         $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
-        
+
+        $entityManager->remove($claim);
         $entityManager->flush();
 
         $jsend = $this->getJsendResponse('success');

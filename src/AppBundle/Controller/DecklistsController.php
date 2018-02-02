@@ -3,18 +3,18 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Card;
+use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Rotation;
 use AppBundle\Service\DecklistManager;
-use AppBundle\Service\Diff;
+use AppBundle\Service\DiffService;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use AppBundle\Entity\Decklist;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Service\CardsData;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DecklistsController extends Controller
 {
@@ -22,7 +22,7 @@ class DecklistsController extends Controller
     /**
      * displays the lists of decklists
      */
-    public function listAction($type, $page = 1, Request $request, EntityManagerInterface $entityManager, AuthorizationCheckerInterface $authorizationChecker)
+    public function listAction($type, $page = 1, Request $request, EntityManagerInterface $entityManager, DecklistManager $decklistManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -38,7 +38,7 @@ class DecklistsController extends Controller
 
         switch ($type) {
             case 'find':
-                $result = $this->get(DecklistManager::class)->find($start, $limit, $request);
+                $result = $decklistManager->find($start, $limit, $request);
                 $pagetitle = "Decklist search results";
                 $header = $this->searchForm($request, $entityManager);
                 break;
@@ -48,7 +48,7 @@ class DecklistsController extends Controller
                 if (!$user) {
                     $result = ['decklists' => [], 'count' => 0];
                 } else {
-                    $result = $this->get(DecklistManager::class)->favorites($user->getId(), $start, $limit);
+                    $result = $decklistManager->favorites($user->getId(), $start, $limit);
                 }
                 $pagetitle = "Favorite Decklists";
                 break;
@@ -58,47 +58,43 @@ class DecklistsController extends Controller
                 if (!$user) {
                     $result = ['decklists' => [], 'count' => 0];
                 } else {
-                    $result = $this->get(DecklistManager::class)->by_author($user->getId(), $start, $limit);
+                    $result = $decklistManager->by_author($user->getId(), $start, $limit);
                 }
                 $pagetitle = "My Decklists";
                 break;
             case 'recent':
-                $result = $this->get(DecklistManager::class)->recent($start, $limit);
+                $result = $decklistManager->recent($start, $limit);
                 $pagetitle = "Recent Decklists";
                 break;
             case 'dotw':
-                $result = $this->get(DecklistManager::class)->dotw($start, $limit);
+                $result = $decklistManager->dotw($start, $limit);
                 $pagetitle = "Decklist of the week";
                 break;
             case 'halloffame':
-                $result = $this->get(DecklistManager::class)->halloffame($start, $limit);
+                $result = $decklistManager->halloffame($start, $limit);
                 $pagetitle = "Hall of Fame";
                 break;
             case 'hottopics':
-                $result = $this->get(DecklistManager::class)->hottopics($start, $limit);
+                $result = $decklistManager->hottopics($start, $limit);
                 $pagetitle = "Hot Topics";
                 break;
             case 'tournament':
-                $result = $this->get(DecklistManager::class)->tournaments($start, $limit);
+                $result = $decklistManager->tournaments($start, $limit);
                 $pagetitle = "Tournaments";
                 break;
             case 'trashed':
-                if (!$authorizationChecker->isGranted('ROLE_MODERATOR')) {
-                    throw $this->createAccessDeniedException('Access denied');
-                }
-                $result = $this->get(DecklistManager::class)->trashed($start, $limit);
+                $this->denyAccessUnlessGranted('ROLE_MODERATOR');
+                $result = $decklistManager->trashed($start, $limit);
                 $pagetitle = "Trashed decklists";
                 break;
             case 'restored':
-                if (!$authorizationChecker->isGranted('ROLE_MODERATOR')) {
-                    throw $this->createAccessDeniedException('Access denied');
-                }
-                $result = $this->get(DecklistManager::class)->restored($start, $limit);
+                $this->denyAccessUnlessGranted('ROLE_MODERATOR');
+                $result = $decklistManager->restored($start, $limit);
                 $pagetitle = "Restored decklists";
                 break;
             case 'popular':
             default:
-                $result = $this->get(DecklistManager::class)->popular($start, $limit);
+                $result = $decklistManager->popular($start, $limit);
                 $pagetitle = "Popular Decklists";
                 break;
         }
@@ -192,6 +188,7 @@ class DecklistsController extends Controller
         $on = 0;
         $off = 0;
         $categories[] = ["label" => "Core / Deluxe", "packs" => []];
+        /** @var Cycle[] $list_cycles */
         $list_cycles = $$entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
         foreach ($list_cycles as $cycle) {
             $size = count($cycle->getPacks());
@@ -344,7 +341,7 @@ class DecklistsController extends Controller
         return $this->renderView('/Search/form.html.twig', $params);
     }
 
-    public function diffAction($decklist1_id, $decklist2_id, EntityManagerInterface $entityManager)
+    public function diffAction($decklist1_id, $decklist2_id, EntityManagerInterface $entityManager, DiffService $diffService)
     {
         if ($decklist1_id > $decklist2_id) {
             return $this->redirect($this->generateUrl('decklists_diff', ['decklist1_id' => $decklist2_id, 'decklist2_id' => $decklist1_id]));
@@ -359,12 +356,12 @@ class DecklistsController extends Controller
         $d2 = $entityManager->getRepository('AppBundle:Decklist')->find($decklist2_id);
 
         if (!$d1 || !$d2) {
-            throw new NotFoundHttpException("Unable to find decklists.");
+            throw $this->createNotFoundException();
         }
 
         $decks = [$d1->getContent(), $d2->getContent()];
 
-        list($listings, $intersect) = $this->get(Diff::class)->diffContents($decks);
+        list($listings, $intersect) = $diffService->diffContents($decks);
 
         $content1 = [];
         foreach ($listings[0] as $code => $qty) {

@@ -47,7 +47,7 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     private $name;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     private $dateRelease;
 
@@ -141,9 +141,7 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
     }
 
     /**
-     * Get dateRelease
-     *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDateRelease()
     {

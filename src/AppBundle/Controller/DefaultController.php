@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class DefaultController extends Controller
 {
@@ -35,7 +34,7 @@ class DefaultController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function saveProfileAction(Request $request, EntityManagerInterface $entityManager, Session $session)
+    public function saveProfileAction(Request $request, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
@@ -44,9 +43,7 @@ class DefaultController extends Controller
             $user_existing = $entityManager->getRepository('AppBundle:User')->findOneBy(['username' => $username]);
 
             if ($user_existing) {
-                $session
-                     ->getFlashBag()
-                     ->set('error', "Username $username is already taken.");
+                $this->addFlash('error', "Username $username is already taken.");
 
                 return $this->redirect($this->generateUrl('user_profile'));
             }
@@ -77,9 +74,7 @@ class DefaultController extends Controller
 
         $entityManager->flush();
 
-        $session
-             ->getFlashBag()
-             ->set('notice', "Successfully saved your profile.");
+        $this->addFlash('notice', "Successfully saved your profile.");
 
         return $this->redirect($this->generateUrl('user_profile'));
     }
@@ -123,13 +118,13 @@ class DefaultController extends Controller
         ]);
     }
 
-    public function rulesAction()
+    public function rulesAction(CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('long_cache'));
 
-        $page = $this->get(CardsData::class)->replaceSymbols($this->renderView('/Default/rules.html.twig', ["pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game."]));
+        $page = $cardsData->replaceSymbols($this->renderView('/Default/rules.html.twig', ["pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game."]));
 
         $response->setContent($page);
 
