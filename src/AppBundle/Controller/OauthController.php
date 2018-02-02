@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Connects a user via oauth2
@@ -32,7 +33,7 @@ class OauthController extends Controller
 
         if ($session instanceof SessionInterface && $session->has('oauth_token_response')) {
             return [
-                'token' => $session->get('oauth_token_response')
+                'token' => $session->get('oauth_token_response'),
             ];
         }
 
@@ -49,8 +50,8 @@ class OauthController extends Controller
     public function initiateAction()
     {
         return [
-            'client_id' => $this->getParameter('oauth_test_client_id'),
-            'redirect_uri' => $this->getParameter('oauth_test_redirect_uri')
+            'client_id'    => $this->getParameter('oauth_test_client_id'),
+            'redirect_uri' => $this->getParameter('oauth_test_redirect_uri'),
         ];
     }
 
@@ -60,33 +61,37 @@ class OauthController extends Controller
      * @Route("/callback")
      * @Method("GET")
      */
-    public function callbackAction(Request $request)
+    public function callbackAction(Request $request, RouterInterface $router)
     {
         // receive the aothorization code
         $code = $request->get('code');
 
         // request the access-token to the oauth server
-        $url = $this->get('router')->generate('fos_oauth_server_token', [
-            'client_id' => $this->getParameter('oauth_test_client_id'),
-            'client_secret' => $this->getParameter('oauth_test_client_secret'),
-            'redirect_uri' => $this->getParameter('oauth_test_redirect_uri'),
-            'grant_type' => 'authorization_code',
-            'code' => $code
-                ], UrlGenerator::ABSOLUTE_URL);
+        $url = $router->generate(
+            'fos_oauth_server_token',
+            [
+                'client_id'     => $this->getParameter('oauth_test_client_id'),
+                'client_secret' => $this->getParameter('oauth_test_client_secret'),
+                'redirect_uri'  => $this->getParameter('oauth_test_redirect_uri'),
+                'grant_type'    => 'authorization_code',
+                'code'          => $code,
+            ],
+            UrlGenerator::ABSOLUTE_URL
+        );
 
         $client = new Client();
         $res = $client->request('GET', $url);
         if ($res->getStatusCode() !== 200) {
             throw new \Exception($res->getReasonPhrase());
         }
-        
+
         // process the response
         $response = json_decode($res->getBody(), true);
         $now = new \DateTime();
         $response['creation_date'] = $now->format('c');
-        $now->add(\DateInterval::createFromDateString($response['expires_in'].' seconds'));
+        $now->add(\DateInterval::createFromDateString($response['expires_in'] . ' seconds'));
         $response['expiration_date'] = $now->format('c');
-        
+
         // store the response
         $session = $request->getSession();
         if (!$session instanceof SessionInterface) {
@@ -94,7 +99,7 @@ class OauthController extends Controller
             $session->start();
         }
         $session->set('oauth_token_response', $response);
-        
+
         // redirect to the explorer
         return $this->redirectToRoute('app_oauth_explorer');
     }

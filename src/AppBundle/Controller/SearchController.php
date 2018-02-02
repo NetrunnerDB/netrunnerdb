@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
 
 class SearchController extends Controller
 {
@@ -215,7 +216,7 @@ class SearchController extends Controller
     }
 
     // target of the search input
-    public function findAction(Request $request)
+    public function findAction(Request $request, RouterInterface $router)
     {
         $q = $request->query->get('q');
         $page = $request->query->get('page') ?: 1;
@@ -229,7 +230,7 @@ class SearchController extends Controller
         $conditions = $this->get(CardsData::class)->syntax($q);
         if (count($conditions) == 1 && count($conditions[0]) == 3 && $conditions[0][1] == ":") {
             if ($conditions[0][0] == "e") {
-                $url = $this->get('router')->generate('cards_list', ['pack_code' => $conditions[0][2], 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()]);
+                $url = $router->generate('cards_list', ['pack_code' => $conditions[0][2], 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()]);
 
                 return $this->redirect($url);
             }
@@ -237,7 +238,7 @@ class SearchController extends Controller
                 $cycle_position = $conditions[0][2];
                 $cycle = $this->getDoctrine()->getRepository('AppBundle:Cycle')->findOneBy(['position' => $cycle_position]);
                 if ($cycle) {
-                    $url = $this->get('router')->generate('cards_cycle', ['cycle_code' => $cycle->getCode(), 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()]);
+                    $url = $router->generate('cards_cycle', ['cycle_code' => $cycle->getCode(), 'view' => $view, 'sort' => $sort, 'page' => $page, '_locale' => $request->getLocale()]);
 
                     return $this->redirect($url);
                 }
@@ -258,7 +259,7 @@ class SearchController extends Controller
         );
     }
 
-    public function displayAction($q, $view = "card", $sort, $page = 1, $title = "", $meta = "", $locale = null, $locales = null, Request $request)
+    public function displayAction(Request $request, RouterInterface $router, $q, $view = "card", $sort, $page = 1, $title = "", $meta = "", $locale = null, $locales = null)
     {
         $response = new Response();
         $response->setPublic();
@@ -367,9 +368,9 @@ class SearchController extends Controller
             // si on a des cartes on affiche une bande de navigation/pagination
             if (count($rows) && $card instanceof Card) {
                 if (count($rows) == 1) {
-                    $pagination = $this->setnavigation($card, $locale);
+                    $pagination = $this->setnavigation($card, $locale, $router);
                 } else {
-                    $pagination = $this->pagination($nb_per_page, count($rows), $first, $q, $view, $sort, $locale);
+                    $pagination = $this->pagination($nb_per_page, count($rows), $first, $q, $view, $sort, $locale, $router);
                 }
             }
 
@@ -424,7 +425,7 @@ class SearchController extends Controller
         ], $response);
     }
 
-    public function setnavigation(Card $card, $locale)
+    public function setnavigation(Card $card, $locale, RouterInterface $router)
     {
         $em = $this->getDoctrine();
         $prev = $em->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() - 1]);
@@ -432,19 +433,19 @@ class SearchController extends Controller
 
         return $this->renderView('/Search/setnavigation.html.twig', [
             "prevtitle" => $prev ? $prev->getTitle() : "",
-            "prevhref"  => $prev ? $this->get('router')->generate('cards_zoom', ['card_code' => $prev->getCode(), "_locale" => $locale]) : "",
+            "prevhref"  => $prev ? $router->generate('cards_zoom', ['card_code' => $prev->getCode(), "_locale" => $locale]) : "",
             "nexttitle" => $next ? $next->getTitle() : "",
-            "nexthref"  => $next ? $this->get('router')->generate('cards_zoom', ['card_code' => $next->getCode(), "_locale" => $locale]) : "",
+            "nexthref"  => $next ? $router->generate('cards_zoom', ['card_code' => $next->getCode(), "_locale" => $locale]) : "",
             "settitle"  => $card->getPack()->getName(),
-            "sethref"   => $this->get('router')->generate('cards_list', ['pack_code' => $card->getPack()->getCode(), "_locale" => $locale]),
+            "sethref"   => $router->generate('cards_list', ['pack_code' => $card->getPack()->getCode(), "_locale" => $locale]),
             "_locale"   => $locale,
         ]);
     }
 
-    public function paginationItem($q = null, $v, $s, $ps, $pi, $total, $locale)
+    public function paginationItem($q = null, $v, $s, $ps, $pi, $total, $locale, RouterInterface $router)
     {
         return $this->renderView('/Search/paginationitem.html.twig', [
-            "href" => $q == null ? "" : $this->get('router')->generate('cards_find', ['q' => $q, 'view' => $v, 'sort' => $s, 'page' => $pi, '_locale' => $locale]),
+            "href" => $q == null ? "" : $router->generate('cards_find', ['q' => $q, 'view' => $v, 'sort' => $s, 'page' => $pi, '_locale' => $locale]),
             "ps"   => $ps,
             "pi"   => $pi,
             "s"    => $ps * ($pi - 1) + 1,
@@ -452,7 +453,7 @@ class SearchController extends Controller
         ]);
     }
 
-    public function pagination($pagesize, $total, $current, $q, $view, $sort, $locale)
+    public function pagination($pagesize, $total, $current, $q, $view, $sort, $locale, RouterInterface $router)
     {
         if ($total < $pagesize) {
             $pagesize = $total;
@@ -463,24 +464,24 @@ class SearchController extends Controller
 
         $first = "";
         if ($pageindex > 2) {
-            $first = $this->paginationItem($q, $view, $sort, $pagesize, 1, $total, $locale);
+            $first = $this->paginationItem($q, $view, $sort, $pagesize, 1, $total, $locale, $router);
         }
 
         $prev = "";
         if ($pageindex > 1) {
-            $prev = $this->paginationItem($q, $view, $sort, $pagesize, $pageindex - 1, $total, $locale);
+            $prev = $this->paginationItem($q, $view, $sort, $pagesize, $pageindex - 1, $total, $locale, $router);
         }
 
-        $current = $this->paginationItem(null, $view, $sort, $pagesize, $pageindex, $total, $locale);
+        $current = $this->paginationItem(null, $view, $sort, $pagesize, $pageindex, $total, $locale, $router);
 
         $next = "";
         if ($pageindex < $pagecount) {
-            $next = $this->paginationItem($q, $view, $sort, $pagesize, $pageindex + 1, $total, $locale);
+            $next = $this->paginationItem($q, $view, $sort, $pagesize, $pageindex + 1, $total, $locale, $router);
         }
 
         $last = "";
         if ($pageindex < $pagecount - 1) {
-            $last = $this->paginationItem($q, $view, $sort, $pagesize, $pagecount, $total, $locale);
+            $last = $this->paginationItem($q, $view, $sort, $pagesize, $pagecount, $total, $locale, $router);
         }
 
         return $this->renderView('/Search/pagination.html.twig', [
