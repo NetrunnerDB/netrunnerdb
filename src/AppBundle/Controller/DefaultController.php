@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class DefaultController extends Controller
 {
@@ -34,7 +35,7 @@ class DefaultController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
-    public function saveProfileAction(Request $request, EntityManagerInterface $entityManager)
+    public function saveProfileAction(Request $request, EntityManagerInterface $entityManager, Session $session)
     {
         $user = $this->getUser();
         $em = $this->getDoctrine()->getManager();
@@ -44,7 +45,7 @@ class DefaultController extends Controller
             $user_existing = $em->getRepository('AppBundle:User')->findOneBy(['username' => $username]);
 
             if ($user_existing) {
-                $this->get('session')
+                $session
                      ->getFlashBag()
                      ->set('error', "Username $username is already taken.");
 
@@ -77,7 +78,7 @@ class DefaultController extends Controller
 
         $entityManager->flush();
 
-        $this->get('session')
+        $session
              ->getFlashBag()
              ->set('notice', "Successfully saved your profile.");
 

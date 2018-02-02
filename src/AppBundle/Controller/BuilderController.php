@@ -18,6 +18,8 @@ use AppBundle\Entity\Card;
 
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Deckchange;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BuilderController extends Controller
@@ -230,7 +232,7 @@ class BuilderController extends Controller
         ];
     }
 
-    public function meteorimportAction(Request $request, EntityManagerInterface $entityManager)
+    public function meteorimportAction(Request $request, EntityManagerInterface $entityManager, Session $session)
     {
         // first build an array to match meteor card names with our card codes
         $glossary = [];
@@ -280,9 +282,9 @@ class BuilderController extends Controller
         $url = $request->request->get('urlmeteor');
         $matches = [];
         if (!preg_match('~http://netrunner.meteor.com/users/([^/]+)~', $url, $matches)) {
-            $this->get('session')
-                 ->getFlashBag()
-                 ->set('error', "Wrong URL. Please go to \"Your decks\" on Meteor Decks and copy the content of the address bar into the required field.");
+            $session
+                ->getFlashBag()
+                ->set('error', "Wrong URL. Please go to \"Your decks\" on Meteor Decks and copy the content of the address bar into the required field.");
 
             return $this->redirect($this->generateUrl('decks_list'));
         }
@@ -295,7 +297,7 @@ class BuilderController extends Controller
         $slots_left = $user->getMaxNbDecks() - count($user->getDecks());
         $slots_required = count($meteor_data);
         if ($slots_required > $slots_left) {
-            $this->get('session')
+            $session
                  ->getFlashBag()
                  ->set(
                      'error',
@@ -322,9 +324,9 @@ class BuilderController extends Controller
             ];
             foreach ($meteor_deck['entries'] as $entry => $qty) {
                 if (!isset($glossary[$entry])) {
-                    $this->get('session')
-                         ->getFlashBag()
-                         ->set('error', "Error importing a deck. The name \"$entry\" doesn't match any known card. Please contact the administrator.");
+                    $session
+                        ->getFlashBag()
+                        ->set('error', "Error importing a deck. The name \"$entry\" doesn't match any known card. Please contact the administrator.");
 
                     return $this->redirect($this->generateUrl('decks_list'));
                 }
@@ -336,7 +338,7 @@ class BuilderController extends Controller
             $this->get(Decks::class)->saveDeck($this->getUser(), $deck, null, $meteor_deck['name'], "", $tags, null, $content, null);
         }
 
-        $this->get('session')
+        $session
              ->getFlashBag()
              ->set('notice', "Successfully imported $slots_required decks from Meteor Decks.");
 
@@ -522,7 +524,7 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function deleteAction(Request $request, EntityManagerInterface $entityManager)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, Session $session)
     {
         $deck_id = filter_var($request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
@@ -539,14 +541,14 @@ class BuilderController extends Controller
         $entityManager->remove($deck);
         $entityManager->flush();
 
-        $this->get('session')
+        $session
              ->getFlashBag()
              ->set('notice', "Deck deleted.");
 
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    public function deleteListAction(Request $request, EntityManagerInterface $entityManager)
+    public function deleteListAction(Request $request, EntityManagerInterface $entityManager, Session $session)
     {
         $list_id = explode('-', $request->get('ids'));
 
@@ -567,7 +569,7 @@ class BuilderController extends Controller
         }
         $entityManager->flush();
 
-        $this->get('session')
+        $session
              ->getFlashBag()
              ->set('notice', "Decks deleted.");
 
@@ -1002,7 +1004,7 @@ class BuilderController extends Controller
         return $response;
     }
 
-    public function uploadallAction(Request $request, EntityManagerInterface $entityManager)
+    public function uploadallAction(Request $request, EntityManagerInterface $entityManager, Session $session)
     {
         // time-consuming task
         ini_set('max_execution_time', 300);
@@ -1037,7 +1039,7 @@ class BuilderController extends Controller
         }
         $zip->close();
 
-        $this->get('session')
+        $session
              ->getFlashBag()
              ->set('notice', "Decks imported.");
 
