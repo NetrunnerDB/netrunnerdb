@@ -880,7 +880,7 @@ class BuilderController extends Controller
 
             '/Builder/decks.html.twig',
             [
-                'pagetitle'       => "My DeckManager",
+                'pagetitle'       => "My Decks",
                 'pagedescription' => "Create custom decks with the help of a powerful deckbuilder.",
                 'decks'           => $decks,
                 'nbmax'           => $user->getMaxNbDecks(),
