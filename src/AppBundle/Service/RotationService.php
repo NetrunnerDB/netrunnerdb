@@ -5,7 +5,6 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Rotation;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**

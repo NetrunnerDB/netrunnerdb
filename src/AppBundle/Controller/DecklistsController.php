@@ -11,7 +11,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-
 use AppBundle\Entity\Decklist;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Service\CardsData;

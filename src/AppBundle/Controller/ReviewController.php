@@ -6,13 +6,13 @@ use AppBundle\Entity\User;
 use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\Card;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use AppBundle\Entity\Reviewcomment;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -275,13 +275,15 @@ class ReviewController extends Controller
     }
 
     /**
-     * @param int                    $user_id
+     * @param User $user
      * @param int                    $page
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @return Response
+     *
+     * @ParamConverter("user", class="AppBundle:User", options={"id" = "user_id"})
      */
-    public function byauthorAction(int $user_id, int $page = 1, Request $request, EntityManagerInterface $entityManager)
+    public function byauthorAction(User $user, int $page = 1, Request $request, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
@@ -293,10 +295,7 @@ class ReviewController extends Controller
         }
         $start = ($page - 1) * $limit;
 
-        /** @var User|null $user */
-        $user = $entityManager->getRepository('AppBundle:User')->find($user_id);
-
-        $pagetitle = "Card Reviews" . ($user instanceof User ? " by " . $user->getUsername() : "");
+        $pagetitle = "Card Reviews by " . $user->getUsername();
 
         $dql = "SELECT r FROM AppBundle:Review r WHERE r.user = :user ORDER BY r.dateCreation DESC";
         $query = $entityManager->createQuery($dql)->setFirstResult($start)->setMaxResults($limit)->setParameter('user', $user);
@@ -326,7 +325,7 @@ class ReviewController extends Controller
             $pages[] = [
                 "numero"  => $page,
                 "url"     => $this->generateUrl($route, $params + [
-                        "user_id" => $user_id,
+                        "user_id" => $user->getId(),
                         "page"    => $page,
                     ]),
                 "current" => $page == $currpage,
@@ -344,11 +343,11 @@ class ReviewController extends Controller
                 'route'           => $route,
                 'pages'           => $pages,
                 'prevurl'         => $currpage == 1 ? null : $this->generateUrl($route, $params + [
-                        "user_id" => $user_id,
+                        "user_id" => $user->getId(),
                         "page"    => $prevpage,
                     ]),
                 'nexturl'         => $currpage == $nbpages ? null : $this->generateUrl($route, $params + [
-                        "user_id" => $user_id,
+                        "user_id" => $user->getId(),
                         "page"    => $nextpage,
                     ]),
             ],

@@ -5,11 +5,12 @@ namespace AppBundle\Controller;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use AppBundle\Entity\Deck;
+use AppBundle\Entity\Decklist;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\Entity\Repository\TranslationRepository;
 use Gedmo\Translatable\Entity\Translation;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -345,15 +346,11 @@ class PublicApi20Controller extends FOSRestController
      *  parameters={
      *  },
      * )
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function decklistAction(int $decklist_id, Request $request)
+    public function decklistAction(Decklist $decklist, Request $request)
     {
-        $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-    
-        if (!$decklist) {
-            throw $this->createNotFoundException();
-        }
-        
         return $this->prepareResponse([$decklist], $request);
     }
 
@@ -399,16 +396,11 @@ class PublicApi20Controller extends FOSRestController
      *  parameters={
      *  },
      * )
+     *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function deckAction(int $deck_id, Request $request)
+    public function deckAction(Deck $deck, Request $request)
     {
-        /** @var Deck $deck */
-        $deck = $this->entityManager->getRepository('AppBundle:Deck')->find($deck_id);
-    
-        if (!$deck) {
-            throw $this->createNotFoundException();
-        }
-        
         if (!$deck->getUser()->getShareDecks()) {
             throw $this->createAccessDeniedException();
         }

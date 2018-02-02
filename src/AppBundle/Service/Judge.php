@@ -9,9 +9,7 @@ use AppBundle\Entity\Deckslot;
 use AppBundle\Entity\Legality;
 use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Card;
-
 use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\Tests\Fixtures\Discriminator\Car;
 
 class Judge
 {

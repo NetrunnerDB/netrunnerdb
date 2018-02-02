@@ -7,7 +7,6 @@ use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\Reviewcomment;
 use AppBundle\Entity\User;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 class ActivityHelper

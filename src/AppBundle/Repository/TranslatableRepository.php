@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
-
 use Gedmo\Translatable\TranslatableListener;
 
 /**

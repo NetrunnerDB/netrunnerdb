@@ -13,6 +13,7 @@ use AppBundle\Service\RotationService;
 use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Deck;
@@ -29,19 +30,18 @@ class SocialController extends Controller
 {
 
     /**
-     * @param int                    $deck_id
+     * @param Deck $deck
      * @param EntityManagerInterface $entityManager
      * @param Judge                  $judge
      * @return JsonResponse
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function publishAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge)
+    public function publishAction(Deck $deck, EntityManagerInterface $entityManager, Judge $judge)
     {
         $response = new JsonResponse();
-
-        /** @var Deck $deck */
-        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
 
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
@@ -492,9 +492,7 @@ class SocialController extends Controller
         $user = $this->getUser();
 
         $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
-        $decklist = $entityManager
-                         ->getRepository('AppBundle:Decklist')
-                         ->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
         if (!$decklist instanceof Decklist) {
             throw $this->createNotFoundException();
         }
@@ -578,24 +576,21 @@ class SocialController extends Controller
     }
 
     /**
-     * @param int                    $comment_id
+     * @param Comment $comment
      * @param int                    $hidden
      * @param EntityManagerInterface $entityManager
      * @return JsonResponse
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("comment", class="AppBundle:Comment", options={"id" = "comment_id"})
      */
-    public function hidecommentAction(int $comment_id, int $hidden, EntityManagerInterface $entityManager)
+    public function hidecommentAction(Comment $comment, int $hidden, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
-        $comment = $entityManager->getRepository('AppBundle:Comment')->find($comment_id);
-        if (!$comment instanceof Comment) {
-            throw $this->createNotFoundException();
-        }
-
         if ($comment->getDecklist()->getUser()->getId() !== $user->getId()) {
-            return new JsonResponse("You don't have permission to edit this comment.");
+            throw $this->createAccessDeniedException();
         }
 
         $comment->setHidden((boolean) $hidden);
@@ -646,22 +641,17 @@ class SocialController extends Controller
     }
 
     /**
-     * @param int                    $decklist_id
-     * @param EntityManagerInterface $entityManager
+     * @param Decklist $decklist
      * @param Judge                  $judge
      * @return Response
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function textexportAction(int $decklist_id, EntityManagerInterface $entityManager, Judge $judge)
+    public function textexportAction(Decklist $decklist, Judge $judge)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('long_cache'));
-
-        /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-        if (!$decklist) {
-            throw $this->createNotFoundException();
-        }
 
         $classement = $judge->classe($decklist->getSlots()->toArray(), $decklist->getIdentity());
 
@@ -721,21 +711,16 @@ class SocialController extends Controller
     }
 
     /**
-     * @param int                    $decklist_id
-     * @param EntityManagerInterface $entityManager
+     * @param Decklist $decklist
      * @return Response
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function octgnexportAction(int $decklist_id, EntityManagerInterface $entityManager)
+    public function octgnexportAction(Decklist $decklist)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('long_cache'));
-
-        /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-        if (!$decklist) {
-            throw $this->createNotFoundException();
-        }
 
         $rd = [];
         $identity = null;
@@ -768,13 +753,13 @@ class SocialController extends Controller
 
     /**
      * @param string   $filename
-     * @param string   $identity
+     * @param array   $identity
      * @param array    $rd
      * @param string   $description
      * @param Response $response
      * @return Response
      */
-    public function octgnexport(string $filename, string $identity, array $rd, string $description, Response $response)
+    public function octgnexport(string $filename, array $identity, array $rd, string $description, Response $response)
     {
         $content = $this->renderView('/octgn.xml.twig', [
             "identity"    => $identity,
@@ -791,7 +776,7 @@ class SocialController extends Controller
     }
 
     /**
-     * @param int                    $decklist_id
+     * @param Decklist $decklist
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @param TextProcessor          $textProcessor
@@ -799,14 +784,14 @@ class SocialController extends Controller
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function editAction(int $decklist_id, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
+    public function editAction(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
     {
         $user = $this->getUser();
 
-        /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-        if (!$decklist || $decklist->getUser()->getId() != $user->getId()) {
+        if ($decklist->getUser()->getId() != $user->getId()) {
             throw $this->createAccessDeniedException();
         }
 
@@ -855,25 +840,25 @@ class SocialController extends Controller
         $entityManager->flush();
 
         return $this->redirect($this->generateUrl('decklist_detail', [
-            'decklist_id'   => $decklist_id,
+            'decklist_id'   => $decklist->getId(),
             'decklist_name' => $decklist->getPrettyname(),
         ]));
     }
 
     /**
-     * @param int                    $decklist_id
+     * @param Decklist $decklist
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function deleteAction(int $decklist_id, EntityManagerInterface $entityManager)
+    public function deleteAction(Decklist $decklist, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
-        /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-        if (!$decklist || $decklist->getUser()->getId() != $user->getId()) {
+        if ($decklist->getUser()->getId() != $user->getId()) {
             throw $this->createAccessDeniedException();
         }
         if ($decklist->getNbvotes() || $decklist->getNbfavorites() || $decklist->getNbcomments()) {
@@ -903,21 +888,17 @@ class SocialController extends Controller
     }
 
     /**
-     * @param int                    $user_id
+     * @param User $user
      * @param EntityManagerInterface $entityManager
      * @return Response
+     *
+     * @ParamConverter("user", class="AppBundle:User", options={"id" = "user_id"})
      */
-    public function profileAction(int $user_id, EntityManagerInterface $entityManager)
+    public function profileAction(User $user, EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('short_cache'));
-
-        /** @var User $user */
-        $user = $entityManager->getRepository('AppBundle:User')->find($user_id);
-        if (!$user) {
-            throw $this->createNotFoundException();
-        }
 
         $decklists = $entityManager->getRepository('AppBundle:Decklist')->findBy(['user' => $user]);
         $nbdecklists = count($decklists);
@@ -935,23 +916,19 @@ class SocialController extends Controller
     }
 
     /**
-     * @param int                    $user_id
+     * @param User $following
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("following", class="AppBundle:User", options={"id" = "user_id"})
      */
-    public function followAction(int $user_id, Request $request, EntityManagerInterface $entityManager)
+    public function followAction(User $following, Request $request, EntityManagerInterface $entityManager)
     {
-        /* who is following */
+        /** @var User $follower */
         $follower = $this->getUser();
-        /* who is followed */
-        $following = $entityManager->getRepository('AppBundle:User')->find($user_id);
-
-        if (!$following instanceof User) {
-            throw $this->createAccessDeniedException();
-        }
 
         $found = false;
         foreach ($follower->getFollowing() as $user) {
@@ -974,24 +951,20 @@ class SocialController extends Controller
     }
 
     /**
-     * @param int                    $user_id
+     * @param User $following
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("following", class="AppBundle:User", options={"id" = "user_id"})
      */
-    public function unfollowAction(int $user_id, Request $request, EntityManagerInterface $entityManager)
+    public function unfollowAction(User $following, Request $request, EntityManagerInterface $entityManager)
     {
         /* who is following */
         /** @var User $follower */
         $follower = $this->getUser();
-        /* who is followed */
-        $following = $entityManager->getRepository('AppBundle:User')->find($user_id);
-
-        if (!$following instanceof User) {
-            throw $this->createAccessDeniedException();
-        }
 
         $found = false;
         foreach ($follower->getFollowing() as $user) {
@@ -1224,7 +1197,7 @@ class SocialController extends Controller
     }
 
     /**
-     * @param int                    $decklist_id
+     * @param Decklist $decklist
      * @param int                    $status
      * @param int|null               $modflag_id
      * @param EntityManagerInterface $entityManager
@@ -1232,18 +1205,14 @@ class SocialController extends Controller
      * @return JsonResponse
      *
      * @IsGranted("ROLE_MODERATOR")
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function moderateAction(int $decklist_id, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
+    public function moderateAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
     {
         $response = new Response();
         $response->setPrivate();
         $response->setMaxAge($this->getParameter('short_cache'));
-
-        /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-        if (!$decklist) {
-            throw $this->createNotFoundException();
-        }
 
         $moderationHelper->changeStatus($this->getUser(), $decklist, $status, $modflag_id);
 

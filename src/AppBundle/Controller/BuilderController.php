@@ -8,17 +8,15 @@ use AppBundle\Service\DeckManager;
 use AppBundle\Service\Judge;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Deck;
 use AppBundle\Entity\Deckslot;
 use AppBundle\Entity\Card;
-
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Deckchange;
-
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BuilderController extends Controller
@@ -382,18 +380,17 @@ class BuilderController extends Controller
     }
 
     /**
-     * @param int                    $deck_id
-     * @param EntityManagerInterface $entityManager
+     * @param Deck $deck
      * @param Judge                  $judge
      * @return Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function textexportAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge)
+    public function textexportAction(Deck $deck, Judge $judge)
     {
-        /** @var Deck $deck */
-        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
-        if (!$this->getUser() || $this->getUser()->getId() != $deck->getUser()->getId()) {
+        if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
 
@@ -462,17 +459,16 @@ class BuilderController extends Controller
     }
 
     /**
-     * @param int                    $deck_id
-     * @param EntityManagerInterface $entityManager
+     * @param Deck $deck
      * @return Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function octgnexportAction(int $deck_id, EntityManagerInterface $entityManager)
+    public function octgnexportAction(Deck $deck)
     {
-        /** @var Deck $deck */
-        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
-        if (!$this->getUser() || $this->getUser()->getId() != $deck->getUser()->getId()) {
+        if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
 
@@ -507,12 +503,12 @@ class BuilderController extends Controller
 
     /**
      * @param string $filename
-     * @param string $identity
+     * @param array $identity
      * @param array  $rd
      * @param string $description
      * @return Response
      */
-    public function octgnexport(string $filename, string $identity, array $rd, string $description)
+    public function octgnexport(string $filename, array $identity, array $rd, string $description)
     {
         $content = $this->renderView(
             '/octgn.xml.twig',
@@ -579,9 +575,9 @@ class BuilderController extends Controller
             return new Response('Cannot import empty deck');
         }
         $name = filter_var($request->get('name'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-        $decklist_id = filter_var($request->get('decklist_id'), FILTER_SANITIZE_NUMBER_INT);
+        $decklist_id = intval(filter_var($request->get('decklist_id'), FILTER_SANITIZE_NUMBER_INT));
         $description = trim($request->get('description'));
-        $tags = filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+        $tags = explode(',', filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES));
         $mwl_code = $request->get('mwl_code');
 
         if ($deck instanceof Deck) {
@@ -1000,21 +996,15 @@ class BuilderController extends Controller
     }
 
     /**
-     * @param int                    $decklist_id
-     * @param EntityManagerInterface $entityManager
+     * @param Decklist $decklist
      * @return Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function copyAction(int $decklist_id, EntityManagerInterface $entityManager)
+    public function copyAction(Decklist $decklist)
     {
-        /** @var Decklist|null $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-
-        if (!$decklist instanceof Decklist) {
-            throw $this->createNotFoundException();
-        }
-
         $content = [];
         foreach ($decklist->getSlots() as $slot) {
             $content[$slot->getCard()->getCode()] = $slot->getQuantity();
@@ -1026,24 +1016,22 @@ class BuilderController extends Controller
             [
                 'name'        => $decklist->getName(),
                 'content'     => json_encode($content),
-                'decklist_id' => $decklist_id,
+                'decklist_id' => $decklist->getId(),
                 'mwl_code'    => $mwl instanceof Mwl ? $mwl->getCode() : null,
             ]
         );
     }
 
     /**
-     * @param int                    $deck_id
-     * @param EntityManagerInterface $entityManager
+     * @param Deck $deck
      * @return Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function duplicateAction(int $deck_id, EntityManagerInterface $entityManager)
+    public function duplicateAction(Deck $deck)
     {
-        /** @var Deck $deck */
-        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
-
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
@@ -1167,21 +1155,19 @@ class BuilderController extends Controller
     }
 
     /**
-     * @param int                    $deck_id
+     * @param Deck $deck
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @return Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function autosaveAction(int $deck_id, Request $request, EntityManagerInterface $entityManager)
+    public function autosaveAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
-        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
-        if (!$deck instanceof Deck) {
-            throw $this->createNotFoundException();
-        }
         if ($user->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }

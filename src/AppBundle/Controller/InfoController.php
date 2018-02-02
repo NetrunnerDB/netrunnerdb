@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Decklist;
 use AppBundle\Service\PersonalizationHelper;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

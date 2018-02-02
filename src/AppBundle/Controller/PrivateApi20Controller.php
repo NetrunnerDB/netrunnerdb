@@ -9,7 +9,6 @@ use AppBundle\Service\DeckManager;
 use AppBundle\Service\Judge;
 use AppBundle\Service\RotationService;
 use AppBundle\Service\TextProcessor;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;

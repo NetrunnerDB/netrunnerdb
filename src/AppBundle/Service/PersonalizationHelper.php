@@ -6,9 +6,7 @@ use AppBundle\Entity\Card;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\User;
-
 use Doctrine\ORM\EntityManagerInterface;
-use PDO;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
@@ -70,14 +68,14 @@ class PersonalizationHelper
                             FROM decklist d
                             JOIN vote v ON v.decklist_id=d.id
                             WHERE v.user_id=?
-                            AND d.id=?", [$user->getId(), $decklist->getId()])->fetch(PDO::FETCH_NUM)[0];
+                            AND d.id=?", [$user->getId(), $decklist->getId()])->fetch(\PDO::FETCH_NUM)[0];
 
         $content['is_favorite'] = (boolean) $dbh->executeQuery("SELECT
                             count(*)
                             FROM decklist d
                             JOIN favorite f ON f.decklist_id=d.id
                             WHERE f.user_id=?
-                            AND d.id=?", [$user->getId(), $decklist->getId()])->fetch(PDO::FETCH_NUM)[0];
+                            AND d.id=?", [$user->getId(), $decklist->getId()])->fetch(\PDO::FETCH_NUM)[0];
 
         $content['is_author'] = ($user->getId() == $decklist->getUser()->getId());
 
