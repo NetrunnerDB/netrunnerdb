@@ -90,7 +90,7 @@ class Deckchange
      * @param Deck $deck
      * @return $this
      */
-    public function setDeck(Deck $deck = null)
+    public function setDeck(Deck $deck)
     {
         $this->deck = $deck;
 

@@ -68,7 +68,7 @@ class Moderation
      *
      * @return Moderation
      */
-    public function setDecklist(Decklist $decklist = null)
+    public function setDecklist(Decklist $decklist)
     {
         $this->decklist = $decklist;
 
@@ -92,7 +92,7 @@ class Moderation
      *
      * @return Moderation
      */
-    public function setModerator(User $moderator = null)
+    public function setModerator(User $moderator)
     {
         $this->moderator = $moderator;
 

@@ -305,7 +305,7 @@ class SearchController extends Controller
 
         // reconstruction de la bonne chaine de recherche pour affichage
         $q = $this->get(CardsData::class)->buildQueryFromConditions($conditions);
-        if ($q && $rows = $this->get(CardsData::class)->get_search_rows($conditions, $sort)) {
+        if ($q && $rows = $this->get(CardsData::class)->get_search_rows($conditions, $sort, $locale)) {
             if (count($rows) == 1) {
                 $view = 'zoom';
             }
@@ -342,7 +342,7 @@ class SearchController extends Controller
                 /** @var Card $card */
                 $card = $rows[$rowindex];
                 $pack = $card->getPack();
-                $cardinfo = $this->get(CardsData::class)->getCardInfo($card);
+                $cardinfo = $this->get(CardsData::class)->getCardInfo($card, $locale);
                 if (empty($availability[$pack->getCode()])) {
                     $availability[$pack->getCode()] = false;
                     if ($pack->getDateRelease() && $pack->getDateRelease() <= new \DateTime()) {

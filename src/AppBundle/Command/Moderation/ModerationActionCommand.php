@@ -5,7 +5,7 @@ namespace AppBundle\Command\Moderation;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\User;
 use AppBundle\Service\ModerationHelper;
-use Doctrine\ORM\EntityManager;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;

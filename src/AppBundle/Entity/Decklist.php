@@ -471,7 +471,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
      * @param Side $side
      * @return $this
      */
-    public function setSide(Side $side = null)
+    public function setSide(Side $side)
     {
         $this->side = $side;
 
@@ -712,18 +712,15 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Deck
+     * @var Deck|null
      */
     private $parent;
 
-
     /**
-     * Set parent
-     *
      * @param Deck $parent
-     * @return Decklist
+     * @return $this
      */
-    public function setParent(Deck $parent = null)
+    public function setParent(Deck $parent)
     {
         $this->parent = $parent;
 
@@ -731,9 +728,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get parent
-     *
-     * @return Deck
+     * @return Deck|null
      */
     public function getParent()
     {
@@ -746,7 +741,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     private $successors;
 
     /**
-     * @var Decklist
+     * @var Decklist|null
      */
     private $precedent;
 
@@ -785,12 +780,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set precedent
-     *
      * @param Decklist $precedent
-     * @return Decklist
+     * @return $this
      */
-    public function setPrecedent(Decklist $precedent = null)
+    public function setPrecedent(Decklist $precedent)
     {
         $this->precedent = $precedent;
 
@@ -798,9 +791,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get precedent
-     *
-     * @return Decklist
+     * @return Decklist|null
      */
     public function getPrecedent()
     {
@@ -847,7 +838,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Tournament
+     * @var Tournament|null
      */
     private $tournament;
 
@@ -876,12 +867,10 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set tournament
-     *
      * @param Tournament $tournament
-     * @return Decklist
+     * @return $this
      */
-    public function setTournament(Tournament $tournament = null)
+    public function setTournament(Tournament $tournament)
     {
         $this->tournament = $tournament;
 
@@ -889,9 +878,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get tournament
-     *
-     * @return Tournament
+     * @return Tournament|null
      */
     public function getTournament()
     {
@@ -963,19 +950,15 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Modflag
+     * @var Modflag|null
      */
     private $modflag;
 
-
     /**
-     * Set modflag
-     *
      * @param Modflag $modflag
-     *
-     * @return Decklist
+     * @return $this
      */
-    public function setModflag(Modflag $modflag = null)
+    public function setModflag(Modflag $modflag)
     {
         $this->modflag = $modflag;
 
@@ -983,9 +966,7 @@ class Decklist implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get modflag
-     *
-     * @return Modflag
+     * @return Modflag|null
      */
     public function getModflag()
     {
@@ -1061,15 +1042,11 @@ class Decklist implements NormalizableInterface, TimestampableInterface
      */
     private $mwl;
 
-
     /**
-     * Set mwl
-     *
      * @param Mwl $mwl
-     *
-     * @return Decklist
+     * @return $this
      */
-    public function setMwl(Mwl $mwl = null)
+    public function setMwl(Mwl $mwl)
     {
         $this->mwl = $mwl;
 

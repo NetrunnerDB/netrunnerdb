@@ -27,7 +27,11 @@ framework:
         save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
     fragments: ~
     http_method_override: true
-    assets: ~
+    assets:
+        packages:
+            card_image:
+                base_urls:
+                 - '%card_image_url%'
     php_errors:
         log: true
     templating:

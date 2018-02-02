@@ -4,14 +4,13 @@ namespace AppBundle\Command;
 
 use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use Doctrine\ORM\EntityManagerInterface;
-use Gedmo\Translatable\Translatable;
+
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Filesystem\Filesystem;
-use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Console\Helper\ProgressBar;
 

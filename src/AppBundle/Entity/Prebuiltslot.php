@@ -69,7 +69,7 @@ class Prebuiltslot
      *
      * @return Prebuiltslot
      */
-    public function setPrebuilt(Prebuilt $prebuilt = null)
+    public function setPrebuilt(Prebuilt $prebuilt)
     {
         $this->prebuilt = $prebuilt;
 
@@ -93,7 +93,7 @@ class Prebuiltslot
      *
      * @return Prebuiltslot
      */
-    public function setCard(Card $card = null)
+    public function setCard(Card $card)
     {
         $this->card = $card;
 

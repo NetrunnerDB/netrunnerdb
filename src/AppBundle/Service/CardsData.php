@@ -8,8 +8,7 @@ use AppBundle\Entity\Review;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Gedmo\Translatable\TranslatableListener;
-use Symfony\Component\HttpFoundation\RequestStack;
-
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -33,17 +32,20 @@ class CardsData
     /** @var EntityManagerInterface $entityManager */
     private $entityManager;
 
-    /** @var RequestStack $request_stack */
-    private $request_stack;
-
     /** @var RouterInterface $router */
     private $router;
 
-    public function __construct(EntityManagerInterface $entityManager, RequestStack $request_stack, RouterInterface $router)
-    {
+    /** @var Packages $packages */
+    private $packages;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        RouterInterface $router,
+        Packages $packages
+    ) {
         $this->entityManager = $entityManager;
-        $this->request_stack = $request_stack;
         $this->router = $router;
+        $this->packages = $packages;
     }
 
     /**
@@ -135,10 +137,8 @@ class CardsData
         return $cycles;
     }
 
-    public function get_search_rows($conditions, $sortorder, $forceempty = false)
+    public function get_search_rows($conditions, $sortorder, $locale)
     {
-        $locale = $this->request_stack->getCurrentRequest()->getLocale();
-
         $i = 0;
 
         // construction de la requete sql
@@ -563,7 +563,7 @@ class CardsData
             }
         }
 
-        if (count($clauses) === 0 && !$forceempty) {
+        if (count($clauses) === 0) {
             return [];
         }
 
@@ -618,11 +618,9 @@ class CardsData
      * @param Card $card
      * @return array
      */
-    public function getCardInfo(Card $card)
+    public function getCardInfo(Card $card, string $locale)
     {
         static $cache = [];
-
-        $locale = $this->request_stack->getCurrentRequest()->getLocale();
 
         if (isset($cache[$card->getId()]) && isset($cache[$card->getId()][$locale])) {
             return $cache[$card->getId()][$locale];
@@ -675,7 +673,7 @@ class CardsData
         }
 
         $cardinfo['url'] = $this->router->generate('cards_zoom', ['card_code' => $card->getCode(), '_locale' => $locale], UrlGeneratorInterface::ABSOLUTE_URL);
-        $cardinfo['imageUrl'] = $cardinfo['imageUrl'] ?: $this->request_stack->getCurrentRequest()->getSchemeAndHttpHost() . "/card_image/" . $card->getCode() . ".png";
+        $cardinfo['imageUrl'] = $cardinfo['imageUrl'] ?: $this->packages->getUrl($card->getCode() . ".png", "card_image");
 
         // replacing <trace>
         $cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1<sup>\2</sup></strong>–', $cardinfo['text']);
@@ -736,7 +734,7 @@ class CardsData
                 if (preg_match('/^"([^"]*)"(.*)/u', $query, $match) // jeton "texte libre entre guillements"
                     || preg_match('/^([\p{L}\p{N}\-\&\.\!\'\;]+)(.*)/u', $query, $match) // jeton "texte autorisé sans guillements"
                 ) {
-                    if (($etat == 2 && count($cond) == 2) || $etat == 3) {
+                    if (($etat == 2 && isset($cond) && count($cond) == 2) || $etat == 3) {
                         $cond[] = $match[1];
                         $query = $match[2];
                         $etat = 2;
@@ -746,7 +744,7 @@ class CardsData
                         $etat = 4;
                     }
                 } elseif (preg_match('/^\|(.*)/u', $query, $match)) { // jeton "|"
-                    if (($cond[1] == ':' || $cond[1] == '!') && (($etat == 2 && count($cond) > 2) || $etat == 3)) {
+                    if (($cond[1] == ':' || $cond[1] == '!') && (($etat == 2 && isset($cond) && count($cond) > 2) || $etat == 3)) {
                         $query = $match[1];
                         $etat = 3;
                     } else {

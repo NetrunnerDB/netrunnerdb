@@ -8,6 +8,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
@@ -26,18 +28,15 @@ class OauthController extends Controller
      */
     public function explorerAction(Request $request)
     {
-        // we check if we have an access-token in session
         $session = $request->getSession();
-        if (!$session->has('oauth_token_response')) {
-            // no token, we redirect to a login page
-            return $this->redirectToRoute('app_oauth_initiate');
+
+        if ($session instanceof SessionInterface && $session->has('oauth_token_response')) {
+            return [
+                'token' => $session->get('oauth_token_response')
+            ];
         }
-        
-        $oauthTokenResponse = $session->get('oauth_token_response');
-        
-        return [
-            'token' => $oauthTokenResponse
-        ];
+
+        return $this->redirectToRoute('app_oauth_initiate');
     }
 
     /**
@@ -89,7 +88,12 @@ class OauthController extends Controller
         $response['expiration_date'] = $now->format('c');
         
         // store the response
-        $request->getSession()->set('oauth_token_response', $response);
+        $session = $request->getSession();
+        if (!$session instanceof SessionInterface) {
+            $session = new Session();
+            $session->start();
+        }
+        $session->set('oauth_token_response', $response);
         
         // redirect to the explorer
         return $this->redirectToRoute('app_oauth_explorer');

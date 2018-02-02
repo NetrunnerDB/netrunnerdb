@@ -286,13 +286,10 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Set side
-     *
      * @param Side $side
-     *
-     * @return Prebuilt
+     * @return $this
      */
-    public function setSide(Side $side = null)
+    public function setSide(Side $side)
     {
         $this->side = $side;
 
@@ -310,13 +307,10 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Set identity
-     *
      * @param Card $identity
-     *
-     * @return Prebuilt
+     * @return $this
      */
-    public function setIdentity(Card $identity = null)
+    public function setIdentity(Card $identity)
     {
         $this->identity = $identity;
 
@@ -334,13 +328,10 @@ class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterfa
     }
 
     /**
-     * Set faction
-     *
      * @param Faction $faction
-     *
-     * @return Prebuilt
+     * @return $this
      */
-    public function setFaction(Faction $faction = null)
+    public function setFaction(Faction $faction)
     {
         $this->faction = $faction;
 

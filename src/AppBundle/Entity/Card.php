@@ -26,11 +26,12 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
     
     public function normalize()
     {
-        $normalized = [];
         if (empty($this->code)) {
-            return $normalized;
+            return [];
         }
-        
+
+        $normalized = [];
+
         $mandatoryFields = [
                 'code',
                 'title',
@@ -102,23 +103,24 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
         }
 
         foreach ($optionalFields as $optionalField) {
-            $getter = 'get' . $this->snakeToCamel($optionalField);
+            $getter = $this->snakeToCamel('get_' . $optionalField);
             $normalized[$optionalField] = $this->$getter();
+
             if (!isset($normalized[$optionalField]) || $normalized[$optionalField] === '') {
                 unset($normalized[$optionalField]);
             }
         }
-        
+
         foreach ($mandatoryFields as $mandatoryField) {
-            $getter = 'get' . $this->snakeToCamel($mandatoryField);
+            $getter = $this->snakeToCamel('get_' . $mandatoryField);
             $normalized[$mandatoryField] = $this->$getter();
         }
 
         foreach ($externalFields as $externalField) {
-            $getter = 'get' . $this->snakeToCamel($externalField);
+            $getter = $this->snakeToCamel('get_' . $externalField);
             $normalized[$externalField.'_code'] = $this->$getter()->getCode();
         }
-        
+
         ksort($normalized);
         return $normalized;
     }
@@ -804,7 +806,7 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
      * @param Pack $pack
      * @return Card
      */
-    public function setPack(Pack $pack = null)
+    public function setPack(Pack $pack)
     {
         $this->pack = $pack;
 
@@ -827,7 +829,7 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
      * @param Type $type
      * @return Card
      */
-    public function setType(Type $type = null)
+    public function setType(Type $type)
     {
         $this->type = $type;
 
@@ -850,7 +852,7 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
      * @param Faction $faction
      * @return Card
      */
-    public function setFaction(Faction $faction = null)
+    public function setFaction(Faction $faction)
     {
         $this->faction = $faction;
 
@@ -873,7 +875,7 @@ class Card extends AbstractTranslatableEntity implements NormalizableInterface, 
      * @param Side $side
      * @return Card
      */
-    public function setSide(Side $side = null)
+    public function setSide(Side $side)
     {
         $this->side = $side;
 

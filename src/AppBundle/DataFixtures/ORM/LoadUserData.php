@@ -22,12 +22,16 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
     }
 
     /**
-     * @var ContainerInterface
+     * @var ContainerInterface|null
      */
     private $container;
 
     public function load(ObjectManager $manager)
     {
+        if (!$this->container instanceof ContainerInterface) {
+            throw new \Exception('No Container.');
+        }
+
         /** @var UserManagerInterface $userManager */
         $userManager = $this->container->get('fos_user.user_manager');
 

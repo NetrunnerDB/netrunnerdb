@@ -277,7 +277,7 @@ class Pack extends AbstractTranslatableEntity implements NormalizableInterface, 
      * @param Cycle $cycle
      * @return Pack
      */
-    public function setCycle(Cycle $cycle = null)
+    public function setCycle(Cycle $cycle)
     {
         $this->cycle = $cycle;
     

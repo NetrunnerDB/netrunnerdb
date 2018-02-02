@@ -194,7 +194,7 @@ class Review
      * @param Card $card
      * @return Review
      */
-    public function setCard(Card $card = null)
+    public function setCard(Card $card)
     {
         $this->card = $card;
 
@@ -217,7 +217,7 @@ class Review
      * @param User $user
      * @return Review
      */
-    public function setUser(User $user = null)
+    public function setUser(User $user)
     {
         $this->user = $user;
 

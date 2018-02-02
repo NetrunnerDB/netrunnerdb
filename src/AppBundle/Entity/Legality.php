@@ -63,13 +63,10 @@ class Legality
     }
 
     /**
-     * Set decklist
-     *
      * @param Decklist $decklist
-     *
-     * @return Legality
+     * @return $this
      */
-    public function setDecklist(Decklist $decklist = null)
+    public function setDecklist(Decklist $decklist)
     {
         $this->decklist = $decklist;
 
@@ -87,13 +84,10 @@ class Legality
     }
 
     /**
-     * Set mwl
-     *
      * @param Mwl $mwl
-     *
-     * @return Legality
+     * @return $this
      */
-    public function setMwl(Mwl $mwl = null)
+    public function setMwl(Mwl $mwl)
     {
         $this->mwl = $mwl;
 

@@ -39,3 +39,4 @@ parameters:
     oauth_test_client_secret: ~
     oauth_test_redirect_uri: ~
     images_path: ~
+    card_image_url: 'https://netrunnerdb.com/card_image'

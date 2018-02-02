@@ -171,7 +171,7 @@ class Claim
      *
      * @return Claim
      */
-    public function setDecklist(Decklist $decklist = null)
+    public function setDecklist(Decklist $decklist)
     {
         $this->decklist = $decklist;
 
@@ -195,7 +195,7 @@ class Claim
      *
      * @return Claim
      */
-    public function setClient(Client $client = null)
+    public function setClient(Client $client)
     {
         $this->client = $client;
 

@@ -8,7 +8,7 @@ use AppBundle\Entity\Decklistslot;
 use AppBundle\Entity\Legality;
 use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Card;
-use Doctrine\Common\Collections\Collection;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 class Judge

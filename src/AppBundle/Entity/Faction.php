@@ -155,7 +155,7 @@ class Faction extends AbstractTranslatableEntity implements NormalizableInterfac
      * @param Side $side
      * @return $this
      */
-    public function setSide(Side $side = null)
+    public function setSide(Side $side)
     {
         $this->side = $side;
 

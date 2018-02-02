@@ -123,7 +123,7 @@ class Reviewcomment
      * @param User $author
      * @return Reviewcomment
      */
-    public function setAuthor(User $author = null)
+    public function setAuthor(User $author)
     {
         $this->author = $author;
 
@@ -146,7 +146,7 @@ class Reviewcomment
      * @param Review $review
      * @return Reviewcomment
      */
-    public function setReview(Review $review = null)
+    public function setReview(Review $review)
     {
         $this->review = $review;
 

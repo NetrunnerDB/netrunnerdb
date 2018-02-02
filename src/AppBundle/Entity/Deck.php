@@ -237,9 +237,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get problem
-     *
-     * @return string
+     * @return null|string
      */
     public function getProblem()
     {
@@ -283,7 +281,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
      * @param User $user
      * @return Deck
      */
-    public function setUser(User $user = null)
+    public function setUser(User $user)
     {
         $this->user = $user;
 
@@ -306,7 +304,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
      * @param Side $side
      * @return Deck
      */
-    public function setSide(Side $side = null)
+    public function setSide(Side $side)
     {
         $this->side = $side;
 
@@ -347,12 +345,10 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Set lastPack
-     *
      * @param Pack $lastPack
-     * @return Deck
+     * @return $this
      */
-    public function setLastPack($lastPack)
+    public function setLastPack(Pack $lastPack)
     {
         $this->lastPack = $lastPack;
 
@@ -506,7 +502,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     private $children;
 
     /**
-     * @var Decklist
+     * @var Decklist|null
      */
     private $parent;
 
@@ -550,7 +546,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
      * @param Decklist $parent
      * @return Deck
      */
-    public function setParent(Decklist $parent = null)
+    public function setParent(Decklist $parent)
     {
         $this->parent = $parent;
 
@@ -558,9 +554,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get parent
-     *
-     * @return Decklist
+     * @return Decklist|null
      */
     public function getParent()
     {
@@ -630,17 +624,13 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @var Mwl
+     * @var Mwl|null
      */
     private $mwl;
 
-
     /**
-     * Set mwl
-     *
-     * @param Mwl $mwl
-     *
-     * @return Deck
+     * @param Mwl|null $mwl
+     * @return $this
      */
     public function setMwl(Mwl $mwl = null)
     {
@@ -650,9 +640,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * Get mwl
-     *
-     * @return Mwl
+     * @return Mwl|null
      */
     public function getMwl()
     {

@@ -8,6 +8,7 @@ use AppBundle\Entity\Deck;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Deckslot;
 use AppBundle\Entity\Mwl;
+use AppBundle\Entity\Pack;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -268,7 +269,6 @@ class Decks
         $deck->setUser($user);
         $identity = null;
         $cards = [];
-        /* @var $latestPack \AppBundle\Entity\Pack */
         $latestPack = null;
         foreach ($content as $card_code => $qty) {
             /** @var Card $card */
@@ -279,7 +279,7 @@ class Decks
                 continue;
             }
             $pack = $card->getPack();
-            if (!$latestPack) {
+            if (!$latestPack instanceof Pack) {
                 $latestPack = $pack;
             } elseif ($latestPack->getCycle()->getPosition() < $pack->getCycle()->getPosition()) {
                 $latestPack = $pack;
@@ -291,7 +291,9 @@ class Decks
             }
             $cards[$card_code] = $card;
         }
-        $deck->setLastPack($latestPack);
+        if ($latestPack instanceof Pack) {
+            $deck->setLastPack($latestPack);
+        }
         if ($identity) {
             $deck->setSide($identity->getSide());
             $deck->setIdentity($identity);
