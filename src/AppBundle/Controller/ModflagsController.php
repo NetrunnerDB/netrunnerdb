@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use JMS\Serializer\SerializerBuilder;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,12 +14,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ModflagsController extends Controller
 {
+    /**
+     * @return Response
+     *
+     * @IsGranted("ROLE_MODERATOR")
+     */
     public function getAction()
     {
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_MODERATOR')) {
-            throw $this->createAccessDeniedException('Access denied');
-        }
-        
         $modflags = $this->getDoctrine()->getManager()->getRepository('AppBundle:Modflag')->findAll();
         
         $content = [

@@ -5,19 +5,22 @@ namespace AppBundle\Controller;
 use AppBundle\Service\PersonalizationHelper;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class InfoController extends Controller
 {
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return JsonResponse
+     *
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     */
     public function getAction(Request $request, EntityManagerInterface $entityManager)
     {
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-            return new JsonResponse(['is_authenticated' => false]);
-        }
-
-        /** @var User $user */
         $user = $this->getUser();
 
         $helper = $this->get(PersonalizationHelper::class);

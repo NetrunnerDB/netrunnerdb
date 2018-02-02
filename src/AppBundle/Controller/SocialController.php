@@ -1136,17 +1136,14 @@ class SocialController extends Controller
      *  - review comment
      *
      * @param integer $days number of days of activity to display
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
     public function activityAction($days)
     {
         $response = new Response();
         $response->setPrivate();
         $response->setMaxAge($this->container->getParameter('short_cache'));
-
-        $securityContext = $this->get('security.authorization_checker');
-        if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            throw $this->createAccessDeniedException("Access denied");
-        }
 
         $em = $this->getDoctrine()->getManager();
 
@@ -1172,17 +1169,14 @@ class SocialController extends Controller
      * @param integer $decklist_id
      * @param integer $status
      * @param integer $modflag_id
+     *
+     * @IsGranted("ROLE_MODERATOR")
      */
     public function moderateAction($decklist_id, $status, $modflag_id = null)
     {
         $response = new Response();
         $response->setPrivate();
         $response->setMaxAge($this->container->getParameter('short_cache'));
-
-        $securityContext = $this->get('security.authorization_checker');
-        if (!$securityContext->isGranted('ROLE_MODERATOR')) {
-            throw $this->createAccessDeniedException('Access denied');
-        }
 
         $em = $this->getDoctrine()->getManager();
 

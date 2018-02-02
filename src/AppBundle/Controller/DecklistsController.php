@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use AppBundle\Entity\Decklist;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Service\CardsData;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DecklistsController extends Controller
 {
@@ -21,7 +22,7 @@ class DecklistsController extends Controller
     /**
      * displays the lists of decklists
      */
-    public function listAction($type, $page = 1, Request $request, EntityManagerInterface $entityManager)
+    public function listAction($type, $page = 1, Request $request, EntityManagerInterface $entityManager, AuthorizationCheckerInterface $authorizationChecker)
     {
         $response = new Response();
         $response->setPublic();
@@ -34,8 +35,6 @@ class DecklistsController extends Controller
         $start = ($page - 1) * $limit;
 
         $header = '';
-
-        $securityContext = $this->get('security.authorization_checker');
 
         switch ($type) {
             case 'find':
@@ -84,14 +83,14 @@ class DecklistsController extends Controller
                 $pagetitle = "Tournaments";
                 break;
             case 'trashed':
-                if (!$securityContext->isGranted('ROLE_MODERATOR')) {
+                if (!$authorizationChecker->isGranted('ROLE_MODERATOR')) {
                     throw $this->createAccessDeniedException('Access denied');
                 }
                 $result = $this->get(DecklistManager::class)->trashed($start, $limit);
                 $pagetitle = "Trashed decklists";
                 break;
             case 'restored':
-                if (!$securityContext->isGranted('ROLE_MODERATOR')) {
+                if (!$authorizationChecker->isGranted('ROLE_MODERATOR')) {
                     throw $this->createAccessDeniedException('Access denied');
                 }
                 $result = $this->get(DecklistManager::class)->restored($start, $limit);
