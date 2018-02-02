@@ -474,7 +474,7 @@ class SocialController extends Controller
     /**
      * records a user's comment
      */
-    public function commentAction(Request $request, EntityManagerInterface $entityManager)
+    public function commentAction(Request $request, EntityManagerInterface $entityManager, \Swift_Mailer $mailer)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -555,7 +555,7 @@ class SocialController extends Controller
                                          ->setFrom(["alsciende@netrunnerdb.com" => $user->getUsername()])
                                          ->setTo($email)
                                          ->setBody($this->renderView($view, $email_data), 'text/html');
-                $this->get('mailer')->send($message);
+                $mailer->send($message);
             }
         }
 

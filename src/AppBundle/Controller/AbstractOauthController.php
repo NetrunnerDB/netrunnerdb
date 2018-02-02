@@ -3,8 +3,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Client;
+use JMS\Serializer\ArrayTransformerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,6 +17,18 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class AbstractOauthController extends Controller
 {
+    /** @var SerializerInterface $serializer */
+    protected $serializer;
+
+    /** @var ArrayTransformerInterface $arrayTransformer */
+    protected $arrayTransformer;
+
+    public function __construct(SerializerInterface $serializer, ArrayTransformerInterface $arrayTransformer)
+    {
+        $this->serializer = $serializer;
+        $this->arrayTransformer = $arrayTransformer;
+    }
+
     /**
      * @return Client
      */
@@ -56,13 +70,10 @@ abstract class AbstractOauthController extends Controller
      */
     public function createJsonResponse($data, $status = 200, $headers = [])
     {
-        /** @var Serializer $serializer */
-        $serializer = $this->get('jms_serializer');
-
         $context = new SerializationContext();
         $context->setSerializeNull(true);
 
-        $content = $serializer->serialize($data, 'json', $context);
+        $content = $this->serializer->serialize($data, 'json', $context);
         $response = new Response($content, $status, $headers);
         $response->headers->set('Content-Type', 'application/json');
         return $response;

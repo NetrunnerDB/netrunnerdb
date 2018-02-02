@@ -9,7 +9,6 @@ use AppBundle\Service\CardsData;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -328,7 +327,6 @@ class SearchController extends Controller
                     }
                 }
             }
-
 
             // calcul de la pagination
             $nb_per_page = $pagesizes[$view];

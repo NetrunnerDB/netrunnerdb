@@ -21,16 +21,13 @@ class ClaimsController extends AbstractOauthController
 {
     private function deserializeClaim(Request $request)
     {
-        /** @var Serializer $serializer */
-        $serializer = $this->get('jms_serializer');
-
         $data = json_decode($request->getContent(), true);
         if ($data === null) {
             throw new BadRequestHttpException("Malformed JSON");
         }
         
         /** @var Claim $claim */
-        $claim = $serializer->fromArray($data, 'AppBundle\Entity\Claim');
+        $claim = $this->arrayTransformer->fromArray($data, 'AppBundle\Entity\Claim');
 
         return $claim;
     }
