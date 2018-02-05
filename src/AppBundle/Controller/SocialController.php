@@ -170,7 +170,7 @@ class SocialController extends Controller
             $decklistslot->setDecklist($decklist);
             $decklist->getSlots()->add($decklistslot);
         }
-        if (count($deck->getChildren())) {
+        if ($deck->getChildren()->count()) {
             $decklist->setPrecedent($deck->getChildren()[0]);
         } elseif ($deck->getParent()) {
             $decklist->setPrecedent($deck->getParent());
@@ -475,7 +475,7 @@ class SocialController extends Controller
         }
         $entityManager->flush();
 
-        return new Response(count($decklist->getFavorites()));
+        return new Response($decklist->getFavorites()->count());
     }
 
     /**
@@ -637,7 +637,7 @@ class SocialController extends Controller
             }
         }
 
-        return new Response(count($decklist->getVotes()));
+        return new Response($decklist->getVotes()->count());
     }
 
     /**

@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Mwl;
+use AppBundle\Entity\User;
 use AppBundle\Service\DeckManager;
 use AppBundle\Service\Judge;
 use Doctrine\ORM\EntityManagerInterface;
@@ -333,8 +334,9 @@ class BuilderController extends Controller
         $meteor_data = json_decode($meteor_json, true);
 
         // check to see if the user has enough available deck slots
+        /** @var User $user */
         $user = $this->getUser();
-        $slots_left = $user->getMaxNbDecks() - count($user->getDecks());
+        $slots_left = $user->getMaxNbDecks() - $user->getDecks()->count();
         $slots_required = count($meteor_data);
         if ($slots_required > $slots_left) {
             $this->addFlash(
@@ -539,8 +541,9 @@ class BuilderController extends Controller
      */
     public function saveAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
+        /** @var User $user */
         $user = $this->getUser();
-        if (count($user->getDecks()) > $user->getMaxNbDecks()) {
+        if ($user->getDecks()->count() > $user->getMaxNbDecks()) {
             return new Response('You have reached the maximum number of decks allowed. Delete some decks or increase your reputation.');
         }
 

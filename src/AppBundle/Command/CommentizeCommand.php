@@ -63,7 +63,7 @@ class CommentizeCommand extends ContainerAwareCommand
         if (!$review_dest) {
             return "Dest review does not exist";
         }
-        if (count($review_orig->getComments())) {
+        if ($review_orig->getComments()->count()) {
             return "Review has comments";
         }
         

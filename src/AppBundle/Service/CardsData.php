@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Card;
+use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Review;
 use Doctrine\ORM\EntityManagerInterface;
@@ -80,7 +81,7 @@ class CardsData
         $list_packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy([], ["dateRelease" => "ASC", "position" => "ASC"]);
         $packs = [];
         foreach ($list_packs as $pack) {
-            $real = count($pack->getCards());
+            $real = $pack->getCards()->count();
             $max = $pack->getSize();
             $packs[] = [
                 "name"      => $pack->getName(),
@@ -98,6 +99,7 @@ class CardsData
 
     public function allsetsdata()
     {
+        /** @var Cycle[] $list_cycles */
         $list_cycles = $this->entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
         $cycles = [];
         foreach ($list_cycles as $cycle) {
@@ -105,7 +107,7 @@ class CardsData
             $sreal = 0;
             $smax = 0;
             foreach ($cycle->getPacks() as $pack) {
-                $real = count($pack->getCards());
+                $real = $pack->getCards()->count();
                 $sreal += $real;
                 $max = $pack->getSize();
                 $smax += $max;
@@ -595,7 +597,7 @@ class CardsData
                 break;
         }
         $query = $qb->getQuery();
-
+/*
         $query->setHint(
             Query::HINT_CUSTOM_OUTPUT_WALKER,
             'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
@@ -608,7 +610,7 @@ class CardsData
             TranslatableListener::HINT_FALLBACK,
             1
         );
-
+*/
         $rows = $query->getResult();
 
         return $rows;

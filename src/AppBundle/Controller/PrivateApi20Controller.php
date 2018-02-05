@@ -144,6 +144,7 @@ class PrivateApi20Controller extends FOSRestController
      */
     public function saveDeckAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
     {
+        /** @var User $user */
         $user = $this->getUser();
 
         $requestJsonBody = $request->getContent();
@@ -166,7 +167,7 @@ class PrivateApi20Controller extends FOSRestController
                 throw $this->createNotFoundException();
             }
         } else {
-            if (count($user->getDecks()) >= $user->getMaxNbDecks()) {
+            if ($user->getDecks()->count() >= $user->getMaxNbDecks()) {
                 return $this->prepareFailedResponse("You have reached the maximum number of decks allowed. Delete some decks or increase your reputation.");
             }
             $deck = new Deck();
@@ -289,7 +290,7 @@ class PrivateApi20Controller extends FOSRestController
             $decklistslot->setDecklist($decklist);
             $decklist->getSlots()->add($decklistslot);
         }
-        if (count($deck->getChildren())) {
+        if ($deck->getChildren()->count()) {
             $decklist->setPrecedent($deck->getChildren()[0]);
         } else {
             if ($deck->getParent()) {

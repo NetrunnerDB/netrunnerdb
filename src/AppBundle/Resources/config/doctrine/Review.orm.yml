@@ -21,6 +21,7 @@ AppBundle\Entity\Review:
         comments:
             targetEntity: Reviewcomment
             mappedBy: review
+            fetch: EXTRA_LAZY
             cascade: ["persist"]
     manyToMany:
         votes:

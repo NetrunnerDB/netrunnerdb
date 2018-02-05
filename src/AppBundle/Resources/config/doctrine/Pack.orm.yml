@@ -22,6 +22,7 @@ AppBundle\Entity\Pack:
             orderBy: { 'position': 'ASC' }
             targetEntity: Card
             mappedBy: pack
+            fetch: EXTRA_LAZY
         decklists:
             targetEntity: Decklist
             mappedBy: lastPack

@@ -29,10 +29,11 @@ class ReviewController extends Controller
      */
     public function postAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
+        /** @var User $user */
         $user = $this->getUser();
 
         // a user cannot post more reviews than her reputation
-        if (count($user->getReviews()) >= $user->getReputation()) {
+        if ($user->getReviews()->count() >= $user->getReputation()) {
             return new Response(json_encode("Your reputation doesn't allow you to write more reviews."));
         }
 
@@ -168,7 +169,7 @@ class ReviewController extends Controller
             }
         }
 
-        return new Response(count($review->getVotes()));
+        return new Response($review->getVotes()->count());
     }
 
     /**
