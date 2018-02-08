@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use AppBundle\Behavior\Entity\CodeNameInterface;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
@@ -12,7 +11,7 @@ use Doctrine\Common\Collections\Collection;
 /**
  * Pack
  */
-class Pack extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
+class Pack implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
     /**
      * @var integer

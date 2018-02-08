@@ -8,8 +8,6 @@ use AppBundle\Entity\Deck;
 use AppBundle\Entity\Decklist;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
-use Gedmo\Translatable\Entity\Repository\TranslationRepository;
-use Gedmo\Translatable\Entity\Translation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -49,26 +47,11 @@ class PublicApi20Controller extends FOSRestController
         }
 
         $locale = $request->query->get('_locale');
-        /** @var TranslationRepository $translationRepository */
-        $translationRepository = $this->entityManager->getRepository(Translation::class);
-        
+
         $content = $additionalTopLevelProperties;
 
-        $content['data'] = array_map(function (NormalizableInterface $entity) use ($locale, $translationRepository) {
-            $data = $entity->normalize();
-                
-            if (isset($locale)) {
-                $translations = $translationRepository->findTranslations($entity);
-                if (isset($translations[$locale])) {
-                    $translation = $translations[$locale];
-                    $translation = array_filter($translation, function ($var) {
-                        return isset($var);
-                    });
-                    $data['_locale'] = [ $locale => $translation ];
-                }
-            }
-            
-            return $data;
+        $content['data'] = array_map(function (NormalizableInterface $entity) {
+            return $entity->normalize();
         }, $entities);
         
         $content['total'] = count($content['data']);

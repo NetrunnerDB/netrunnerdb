@@ -66,13 +66,6 @@ doctrine:
             string_functions:
                 replace: AppBundle\DQL\ReplaceFunction
                 binary: AppBundle\DQL\BinaryFunction
-        mappings:
-            gedmo_translatable:
-                type: annotation
-                prefix: Gedmo\Translatable\Entity
-                dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Entity"
-                alias: GedmoTranslatable # (optional) it will default to the name set for the mapping
-                is_bundle: false
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -119,7 +112,6 @@ stof_doctrine_extensions:
     orm:
         default:
             timestampable: true
-            translatable: true
 
 fos_rest: ~
 

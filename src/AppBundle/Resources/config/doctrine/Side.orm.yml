@@ -2,9 +2,6 @@ AppBundle\Entity\Side:
     type: entity
     table: side
     repositoryClass: AppBundle\Repository\SideRepository
-    gedmo:
-        translation:
-            locale: locale
     indexes:
         name_index:
             columns: [ name ]
@@ -34,8 +31,6 @@ AppBundle\Entity\Side:
         name:
             type: string
             length: 255
-            gedmo:
-                - translatable
         dateCreation:
             type: datetime
             nullable: false

@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,7 +10,7 @@ use Doctrine\Common\Collections\Collection;
 /**
  * Prebuilt
  */
-class Prebuilt extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface
+class Prebuilt implements NormalizableInterface, TimestampableInterface
 {
     /**
      * @var integer

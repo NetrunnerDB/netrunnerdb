@@ -2,9 +2,6 @@ AppBundle\Entity\Card:
     type: entity
     table: card
     repositoryClass: AppBundle\Repository\CardRepository
-    gedmo:
-        translation:
-            locale: locale
     indexes:
         title_index:
             columns: [ title ]
@@ -83,20 +80,14 @@ AppBundle\Entity\Card:
         title:
             type: string
             length: 255
-            gedmo:
-                - translatable
         keywords:
             type: string
             length: 255
             nullable: true
-            gedmo:
-                - translatable
         text:
             type: string
             length: '1024'
             nullable: true
-            gedmo:
-                - translatable
         advancementCost:
             type: smallint
             column: advancement_cost
@@ -120,8 +111,6 @@ AppBundle\Entity\Card:
             type: string
             length: '1024'
             nullable: true
-            gedmo:
-                - translatable
         illustrator:
             type: string
             length: 255

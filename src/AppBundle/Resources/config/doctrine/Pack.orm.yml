@@ -2,9 +2,6 @@ AppBundle\Entity\Pack:
     type: entity
     table: pack
     repositoryClass: AppBundle\Repository\PackRepository
-    gedmo:
-        translation:
-            locale: locale
     indexes:
         date_release_index:
             columns: [ date_release ]
@@ -39,8 +36,6 @@ AppBundle\Entity\Pack:
         name:
             type: string
             length: 255
-            gedmo:
-                - translatable
         dateRelease:
             type: date
             nullable: true

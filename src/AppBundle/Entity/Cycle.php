@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Behavior\Entity\AbstractTranslatableEntity;
 use AppBundle\Behavior\Entity\CodeNameInterface;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
@@ -12,7 +11,7 @@ use Doctrine\Common\Collections\Collection;
 /**
  * Cycle
  */
-class Cycle extends AbstractTranslatableEntity implements NormalizableInterface, TimestampableInterface, CodeNameInterface
+class Cycle implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
     /**
      * @var Collection|Rotation[]

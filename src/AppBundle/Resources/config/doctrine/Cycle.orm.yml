@@ -2,9 +2,6 @@ AppBundle\Entity\Cycle:
     type: entity
     table: cycle
     repositoryClass: AppBundle\Repository\CycleRepository
-    gedmo:
-        translation:
-            locale: locale
     indexes:
         position_index:
             columns: [ position ]
@@ -33,8 +30,6 @@ AppBundle\Entity\Cycle:
         name:
             type: string
             length: 255
-            gedmo:
-                - translatable
             nullable: false
         position:
             type: smallint

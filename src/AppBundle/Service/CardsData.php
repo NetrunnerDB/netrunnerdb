@@ -7,8 +7,6 @@ use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Review;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
-use Gedmo\Translatable\TranslatableListener;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -597,20 +595,7 @@ class CardsData
                 break;
         }
         $query = $qb->getQuery();
-/*
-        $query->setHint(
-            Query::HINT_CUSTOM_OUTPUT_WALKER,
-            'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
-        );
-        $query->setHint(
-            TranslatableListener::HINT_TRANSLATABLE_LOCALE,
-            $locale
-        );
-        $query->setHint(
-            TranslatableListener::HINT_FALLBACK,
-            1
-        );
-*/
+
         $rows = $query->getResult();
 
         return $rows;

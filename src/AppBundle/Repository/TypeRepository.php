@@ -3,8 +3,9 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
-class TypeRepository extends TranslatableRepository
+class TypeRepository extends EntityRepository
 {
     public function __construct(EntityManager $entityManager)
     {
