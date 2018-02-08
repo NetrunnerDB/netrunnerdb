@@ -21,6 +21,7 @@
     },
     "require": {
         "php": ">=7.0.0",
+        "ext-zip": "*",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "ezyang/htmlpurifier": "^4.9",
