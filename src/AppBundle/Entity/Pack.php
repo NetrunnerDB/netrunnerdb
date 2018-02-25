@@ -74,6 +74,11 @@ class Pack implements NormalizableInterface, TimestampableInterface, CodeNameInt
     private $dateUpdate;
 
     /**
+     * @var int
+     */
+    private $cardCount;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -90,12 +95,12 @@ class Pack implements NormalizableInterface, TimestampableInterface, CodeNameInt
     public function normalize()
     {
         return [
-                'code' => $this->code,
-                'cycle_code' => $this->cycle ? $this->cycle->getCode() : null,
-                'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
-                'name' => $this->name,
-                'position' => $this->position,
-                'size' => $this->size
+            'code'         => $this->code,
+            'cycle_code'   => $this->cycle ? $this->cycle->getCode() : null,
+            'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
+            'name'         => $this->name,
+            'position'     => $this->position,
+            'size'         => $this->size,
         ];
     }
 
@@ -171,7 +176,7 @@ class Pack implements NormalizableInterface, TimestampableInterface, CodeNameInt
     {
         return $this->size;
     }
-    
+
     /**
      * @param integer $size
      * @return Pack
@@ -201,7 +206,7 @@ class Pack implements NormalizableInterface, TimestampableInterface, CodeNameInt
 
         return $this;
     }
-    
+
     /**
      * @return integer
      */
@@ -332,6 +337,18 @@ class Pack implements NormalizableInterface, TimestampableInterface, CodeNameInt
     public function setDateUpdate(\DateTime $dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    public function getCardCount(): int
+    {
+        return $this->cardCount ?? $this->cards->count();
+    }
+
+    public function setCardCount(int $cardCount): self
+    {
+        $this->cardCount = $cardCount;
 
         return $this;
     }

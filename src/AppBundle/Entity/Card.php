@@ -33,7 +33,7 @@ class Card implements NormalizableInterface, TimestampableInterface
     private $title;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $keywords;
 
@@ -58,17 +58,17 @@ class Card implements NormalizableInterface, TimestampableInterface
     private $baseLink;
 
     /**
-     * @var integer
+     * @var integer|null
      */
     private $cost;
 
     /**
-     * @var integer
+     * @var integer|null
      */
     private $factionCost;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $flavor;
 
@@ -108,7 +108,7 @@ class Card implements NormalizableInterface, TimestampableInterface
     private $strength;
 
     /**
-     * @var integer
+     * @var integer|null
      */
     private $trashCost;
 
@@ -379,7 +379,7 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getKeywords()
     {
@@ -387,10 +387,10 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @param string $keywords
+     * @param string|null $keywords
      * @return $this
      */
-    public function setKeywords(string $keywords)
+    public function setKeywords(string $keywords = null)
     {
         $this->keywords = $keywords;
 
@@ -474,7 +474,7 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getCost()
     {
@@ -482,10 +482,10 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @param int $cost
+     * @param int|null $cost
      * @return $this
      */
-    public function setCost(int $cost)
+    public function setCost(int $cost = null)
     {
         $this->cost = $cost;
 
@@ -493,7 +493,7 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getFactionCost()
     {
@@ -501,10 +501,10 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @param int $factionCost
+     * @param int|null $factionCost
      * @return $this
      */
-    public function setFactionCost(int $factionCost)
+    public function setFactionCost(int $factionCost = null)
     {
         $this->factionCost = $factionCost;
 
@@ -512,7 +512,7 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFlavor()
     {
@@ -520,10 +520,10 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @param string $flavor
+     * @param string|null $flavor
      * @return $this
      */
-    public function setFlavor(string $flavor)
+    public function setFlavor(string $flavor = null)
     {
         $this->flavor = $flavor;
 
@@ -664,7 +664,7 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getTrashCost()
     {
@@ -672,10 +672,10 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @param int $trashCost
+     * @param int|null $trashCost
      * @return $this
      */
-    public function setTrashCost(int $trashCost)
+    public function setTrashCost(int $trashCost = null)
     {
         $this->trashCost = $trashCost;
 

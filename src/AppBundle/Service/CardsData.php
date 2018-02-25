@@ -6,6 +6,7 @@ use AppBundle\Entity\Card;
 use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Review;
+use AppBundle\Repository\PackRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -31,6 +32,9 @@ class CardsData
     /** @var EntityManagerInterface $entityManager */
     private $entityManager;
 
+    /** @var PackRepository $packRepository */
+    private $packRepository;
+
     /** @var RouterInterface $router */
     private $router;
 
@@ -39,10 +43,12 @@ class CardsData
 
     public function __construct(
         EntityManagerInterface $entityManager,
+        PackRepository $packRepository,
         RouterInterface $router,
         Packages $packages
     ) {
         $this->entityManager = $entityManager;
+        $this->packRepository = $packRepository;
         $this->router = $router;
         $this->packages = $packages;
     }
@@ -104,16 +110,16 @@ class CardsData
             $packs = [];
             $sreal = 0;
             $smax = 0;
-            foreach ($cycle->getPacks() as $pack) {
-                $real = $pack->getCards()->count();
-                $sreal += $real;
+
+            foreach ($this->packRepository->findByCycleWithCardCount($cycle) as $pack) {
+                $sreal += $pack->getCardCount();
                 $max = $pack->getSize();
                 $smax += $max;
                 $packs[] = [
                     "name"      => $pack->getName(),
                     "code"      => $pack->getCode(),
                     "available" => $pack->getDateRelease() ? $pack->getDateRelease()->format('Y-m-d') : '',
-                    "known"     => intval($real),
+                    "known"     => $pack->getCardCount(),
                     "total"     => $max,
                     "url"       => $this->router->generate('cards_list', ['pack_code' => $pack->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),
                     "search"    => "e:" . $pack->getCode(),

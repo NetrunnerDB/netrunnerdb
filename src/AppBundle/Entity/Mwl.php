@@ -241,4 +241,15 @@ class Mwl implements NormalizableInterface, TimestampableInterface
     {
         return $this->cards;
     }
+
+    /**
+     * @param array $cards
+     * @return Mwl
+     */
+    public function setCards(array $cards): self
+    {
+        $this->cards = $cards;
+
+        return $this;
+    }
 }
