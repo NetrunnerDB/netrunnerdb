@@ -499,7 +499,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return ArrayCollection|Collection
+     * @return Collection|Decklist[]
      */
     public function getChildren()
     {
