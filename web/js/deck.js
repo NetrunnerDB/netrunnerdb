@@ -642,7 +642,7 @@ function build_div(record) {
 
 		var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
 				+ Url_FactionImage.replace('xxx', record.faction_code)
-				+ '.png" alt="'+record.faction.name+'">';
+				+ '" alt="'+record.faction.name+'">';
 		div = $('<tr class="card-container" data-index="'
 				+ record.code
 				+ '"><td><div class="btn-group" data-toggle="buttons">'
