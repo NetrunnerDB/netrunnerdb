@@ -189,6 +189,8 @@ class PrivateApi20Controller extends FOSRestController
             return $this->prepareFailedResponse("Empty parameter 'content'.");
         }
 
+        $tags = explode(' ', $tags);
+
         if ($deck instanceof Deck) {
             $deck_id = $deckManager->saveDeck($user, $deck, $decklist_id, $name, $description, $tags, null, $content, $deck_id ? $deck : null);
         }
