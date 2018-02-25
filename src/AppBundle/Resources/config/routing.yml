@@ -113,15 +113,6 @@ deck_import:
     requirements:
         _locale: \w\w
 
-deck_textimport:
-    path: /{_locale}/deck/textimport
-    methods: [POST]
-    defaults:
-        _controller: AppBundle:Builder:textimport
-        _locale: en
-    requirements:
-        _locale: \w\w
-
 deck_fileimport:
     path: /{_locale}/deck/fileimport
     methods: [POST]
@@ -166,25 +157,6 @@ deck_export_text:
     defaults:
         _controller: AppBundle:Builder:textexport
     requirements:
-        deck_id: \d+
-
-deck_export_octgn_list:
-    path: /deck/export/octgn/list
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Builder:octgnexportList
-
-deck_export_text_list:
-    path: /deck/export/text/list
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Builder:textexportList
-
-deck_email:
-    path: /deck/export/email/{deck_id}
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Builder:email
         deck_id: \d+
 
 deck_copy:
@@ -359,12 +331,12 @@ user_validate_introduction:
     path: /user/validate_introduction/{introduction}
     methods: [POST]
     defaults:
-        _controller: AppBundle:Default:validateIntroduction  
+        _controller: AppBundle:Default:validateIntroduction
       
 user_reset_introductions:
     path: /user/reset_introductions
     defaults:
-        _controller: AppBundle:Default:resetIntroductions  
+        _controller: AppBundle:Default:resetIntroductions
       
 user_follow:
     path: /user/follow/{user_id}

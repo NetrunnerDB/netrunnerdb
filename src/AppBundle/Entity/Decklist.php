@@ -2,50 +2,21 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use AppBundle\Entity\User;
-use AppBundle\Entity\Decklistslot;
-use AppBundle\Entity\Comment;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Decklist
  */
-class Decklist implements \Serializable
+class Decklist implements NormalizableInterface, TimestampableInterface
 {
     const MODERATION_PUBLISHED = 0;
     const MODERATION_RESTORED = 1;
     const MODERATION_TRASHED = 2;
     const MODERATION_DELETED = 3;
-    
-    function __toString() {
-            return "[$this->id] $this->name";
-    }
 
-    function serialize() {
-            $cards = [];
-            foreach($this->slots as $slot) {
-                    $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-            }
-
-            return  [
-                            'id' => $this->id,
-                            'date_creation' => $this->dateCreation->format('c'),
-                            'date_update' => $this->dateUpdate->format('c'),
-                            'name' => $this->name,
-                            'description' => $this->description,
-                            'user_id' => $this->user->getId(),
-                            'user_name' => $this->user->getUsername(),
-                            'tournament_badge' => $this->tournament ? true : false,
-                            'cards' => $cards,
-							'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
-            ];
-    }
-
-    function unserialize($serialized) {
-            throw new \Exception("unserialize() method unsupported");
-    }
-
-	
     /**
      * @var integer
      */
@@ -55,7 +26,7 @@ class Decklist implements \Serializable
      * @var \DateTime
      */
     private $dateUpdate;
-    
+
     /**
      * @var string
      */
@@ -65,7 +36,7 @@ class Decklist implements \Serializable
      * @var string
      */
     private $prettyname;
-    
+
     /**
      * @var string
      */
@@ -75,7 +46,7 @@ class Decklist implements \Serializable
      * @var string
      */
     private $rawdescription;
-    
+
     /**
      * @var string
      */
@@ -85,7 +56,7 @@ class Decklist implements \Serializable
      * @var \DateTime
      */
     private $dateCreation;
-    
+
     /**
      * @var string
      */
@@ -110,54 +81,54 @@ class Decklist implements \Serializable
      * @var integer
      */
     private $dotw;
-    
+
     /**
-     * @var AppBundle\Entity\User
+     * @var User
      */
     private $user;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
 
     /**
-     * @var AppBundle\Entity\Card
+     * @var Card
      */
     private $identity;
 
     /**
-     * @var AppBundle\Entity\Faction
+     * @var Faction
      */
     private $faction;
-    
+
     /**
-     * @var AppBundle\Entity\Pack
+     * @var Pack
      */
     private $lastPack;
-    
+
     /**
-     * @var Deckslots[]
+     * @var Collection|Decklistslot[]
      */
     private $slots;
-    
+
     /**
-     * @var Comments[]
+     * @var Collection|Comment[]
      */
     private $comments;
-    
+
     /**
-     * @var User[]
+     * @var Collection|User[]
      */
     private $favorites;
 
     /**
-     * @var User[]
+     * @var Collection|User[]
      */
     private $votes;
 
     /**
-     * @var Rotation
+     * @var Rotation|null
      */
     private $rotation;
 
@@ -165,11 +136,91 @@ class Decklist implements \Serializable
      * @var integer
      */
     private $moderationStatus;
-    
+
     /**
-     * Get id
-     *
-     * @return integer 
+     * @var Deck|null
+     */
+    private $parent;
+
+    /**
+     * @var Collection
+     */
+    private $successors;
+
+    /**
+     * @var Decklist|null
+     */
+    private $precedent;
+
+    /**
+     * @var Collection
+     */
+    private $children;
+
+    /**
+     * @var Tournament|null
+     */
+    private $tournament;
+
+    /**
+     * @var Collection
+     */
+    private $legalities;
+
+    /**
+     * @var Modflag|null
+     */
+    private $modflag;
+
+    /**
+     * @var Collection
+     */
+    private $claims;
+
+    private $isLegal;
+
+    /**
+     * @var Mwl|null
+     */
+    private $mwl;
+
+    public function __construct()
+    {
+        $this->slots = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
+        $this->votes = new ArrayCollection();
+        $this->isLegal = true;
+    }
+
+    public function __toString()
+    {
+        return "[$this->id] $this->name";
+    }
+
+    public function normalize()
+    {
+        $cards = [];
+        foreach ($this->slots as $slot) {
+            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+
+        return [
+            'id'               => $this->id,
+            'date_creation'    => $this->dateCreation->format('c'),
+            'date_update'      => $this->dateUpdate->format('c'),
+            'name'             => $this->name,
+            'description'      => $this->description,
+            'user_id'          => $this->user->getId(),
+            'user_name'        => $this->user->getUsername(),
+            'tournament_badge' => $this->tournament ? true : false,
+            'cards'            => $cards,
+            'mwl_code'         => $this->mwl ? $this->mwl->getCode() : null,
+        ];
+    }
+
+    /**
+     * @return integer
      */
     public function getId()
     {
@@ -177,45 +228,26 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     * @return Decklist
-     */
-    public function setDateUpdate($dateUpdate)
-    {
-    	$this->dateUpdate = $dateUpdate;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
     {
-    	return $this->dateUpdate;
+        return $this->dateUpdate;
     }
-    
+
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return List
+     * @param \DateTime $dateUpdate
+     * @return Decklist
      */
-    public function setName($name)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
-        $this->name = $name;
-    
+        $this->dateUpdate = $dateUpdate;
+
         return $this;
     }
 
     /**
-     * Get name
-     *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -223,45 +255,37 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Set prettyname
-     *
-     * @param string $prettyname
-     * @return List
+     * @param string $name
+     * @return $this
      */
-    public function setPrettyname($prettyname)
+    public function setName(string $name)
     {
-    	$this->prettyname = $prettyname;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get prettyname
-     *
-     * @return string
-     */
-    public function getPrettyname()
-    {
-    	return $this->prettyname;
-    }
-    
-    /**
-     * Set summary
-     *
-     * @param string $summary
-     * @return List
-     */
-    public function setSummary($summary)
-    {
-        $this->summary = $summary;
-    
+        $this->name = $name;
+
         return $this;
     }
 
     /**
-     * Get summary
-     *
-     * @return string 
+     * @return string
+     */
+    public function getPrettyname()
+    {
+        return $this->prettyname;
+    }
+
+    /**
+     * @param string $prettyname
+     * @return $this
+     */
+    public function setPrettyname(string $prettyname)
+    {
+        $this->prettyname = $prettyname;
+
+        return $this;
+    }
+
+    /**
+     * @return string
      */
     public function getSummary()
     {
@@ -269,45 +293,37 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Set rawdescription
-     *
-     * @param string $rawdescription
-     * @return List
+     * @param string $summary
+     * @return $this
      */
-    public function setRawdescription($rawdescription)
+    public function setSummary(string $summary)
     {
-    	$this->rawdescription = $rawdescription;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get rawdescription
-     *
-     * @return string
-     */
-    public function getRawdescription()
-    {
-    	return $this->rawdescription;
-    }
-    
-    /**
-     * Set description
-     *
-     * @param string $description
-     * @return List
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    
+        $this->summary = $summary;
+
         return $this;
     }
 
     /**
-     * Get description
-     *
-     * @return string 
+     * @return string
+     */
+    public function getRawdescription()
+    {
+        return $this->rawdescription;
+    }
+
+    /**
+     * @param string $rawdescription
+     * @return $this
+     */
+    public function setRawdescription(string $rawdescription)
+    {
+        $this->rawdescription = $rawdescription;
+
+        return $this;
+    }
+
+    /**
+     * @return string
      */
     public function getDescription()
     {
@@ -315,22 +331,18 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     * @return List
+     * @param string $description
+     * @return $this
      */
-    public function setDateCreation($dateCreation)
+    public function setDescription(string $description)
     {
-        $this->dateCreation = $dateCreation;
-    
+        $this->description = $description;
+
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDateCreation()
     {
@@ -338,22 +350,18 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Set signature
-     *
-     * @param string $signature
-     * @return Decklist
+     * @param \DateTime $dateCreation
+     * @return $this
      */
-    public function setSignature($signature)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->signature = $signature;
-    
+        $this->dateCreation = $dateCreation;
+
         return $this;
     }
 
     /**
-     * Get signature
-     *
-     * @return string 
+     * @return string
      */
     public function getSignature()
     {
@@ -361,475 +369,376 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Set nbvotes
-     *
-     * @param string $nbvotes
+     * @param string $signature
      * @return Decklist
      */
-    public function setNbvotes($nbvotes)
+    public function setSignature(string $signature)
     {
-    	$this->nbvotes = $nbvotes;
-    
-    	return $this;
+        $this->signature = $signature;
+
+        return $this;
     }
-    
+
     /**
-     * Get nbvotes
-     *
-     * @return string
+     * @return int
      */
     public function getNbvotes()
     {
-    	return $this->nbvotes;
+        return $this->nbvotes;
     }
 
     /**
-     * Set nbfavorites
-     *
-     * @param string $nbfavorites
-     * @return Decklist
+     * @param int $nbvotes
+     * @return $this
      */
-    public function setNbfavorites($nbfavorites)
+    public function setNbvotes(int $nbvotes)
     {
-    	$this->nbfavorites = $nbfavorites;
-    
-    	return $this;
+        $this->nbvotes = $nbvotes;
+
+        return $this;
     }
-    
+
     /**
-     * Get nbfavorites
-     *
-     * @return string
+     * @return int
      */
     public function getNbfavorites()
     {
-    	return $this->nbfavorites;
+        return $this->nbfavorites;
     }
 
     /**
-     * Set nbcomments
-     *
-     * @param string $nbcomments
-     * @return Decklist
+     * @param int $nbfavorites
+     * @return $this
      */
-    public function setNbcomments($nbcomments)
+    public function setNbfavorites(int $nbfavorites)
     {
-    	$this->nbcomments = $nbcomments;
-    
-    	return $this;
+        $this->nbfavorites = $nbfavorites;
+
+        return $this;
     }
-    
+
     /**
-     * Get nbcomments
-     *
-     * @return string
+     * @return int
      */
     public function getNbcomments()
     {
-    	return $this->nbcomments;
+        return $this->nbcomments;
     }
 
     /**
-     * Set decklist of the week number
-     *
-     * @param string $dotw
-     * @return Decklist
+     * @param int $nbcomments
+     * @return $this
      */
-    public function setDotw($dotw)
+    public function setNbcomments(int $nbcomments)
     {
-    	$this->dotw = $dotw;
-    
-    	return $this;
+        $this->nbcomments = $nbcomments;
+
+        return $this;
     }
-    
+
     /**
-     * Get decklist of the week number
-     *
-     * @return string
+     * @return int
      */
     public function getDotw()
     {
-    	return $this->dotw;
+        return $this->dotw;
     }
-    
+
     /**
-     * Set user
-     *
-     * @param string $user
-     * @return User
+     * @param int $dotw
+     * @return $this
      */
-    public function setUser($user)
+    public function setDotw(int $dotw)
     {
-    	$this->user = $user;
-    
-    	return $this;
+        $this->dotw = $dotw;
+
+        return $this;
     }
-    
+
     /**
-     * Get user
-     *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
-    	return $this->user;
+        return $this->user;
     }
 
     /**
-     * Set side
-     *
-     * @param \AppBundle\Entity\Side $side
-     * @return Deck
+     * @param User $user
+     * @return $this
      */
-    public function setSide(\AppBundle\Entity\Side $side = null)
+    public function setUser(User $user)
     {
-    	$this->side = $side;
-    
-    	return $this;
+        $this->user = $user;
+
+        return $this;
     }
-    
+
     /**
-     * Get side
-     *
-     * @return \AppBundle\Entity\Side
+     * @return Side
      */
     public function getSide()
     {
-    	return $this->side;
+        return $this->side;
     }
 
     /**
-     * Set identity
-     *
-     * @param \AppBundle\Entity\Card $identity
-     * @return Deck
+     * @param Side $side
+     * @return $this
      */
-    public function setIdentity($identity)
+    public function setSide(Side $side)
     {
-    	$this->identity = $identity;
-    
-    	return $this;
+        $this->side = $side;
+
+        return $this;
     }
-    
+
     /**
-     * Get identity
-     *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getIdentity()
     {
-    	return $this->identity;
+        return $this->identity;
     }
-    
+
     /**
-     * Set slots
-     *
-     * @param string $slots
-     * @return Deck
+     * @param Card $identity
+     * @return $this
      */
-    public function setSlots($slots)
+    public function setIdentity(Card $identity)
     {
-    	$this->slots = $slots;
-    
-    	return $this;
+        $this->identity = $identity;
+
+        return $this;
     }
-    
+
     /**
-     * Get slots
-     *
-     * @return Deckslot[]
+     * @return Decklistslot[]|Collection
      */
     public function getSlots()
     {
-    	return $this->slots;
-    }    
+        return $this->slots;
+    }
 
     /**
-     * Get cards
-     *
-     * @return Cards[]
+     * @return Card[]
      */
     public function getCards()
     {
-    	$arr = array();
-    	foreach($this->slots as $slot) {
-    		$card = $slot->getCard();
-    		$arr[$card->getCode()] = array('qty' => $slot->getQuantity(), 'card' => $card);
-    	}
-    	return $arr;
-    }
+        $arr = [];
+        foreach ($this->slots as $slot) {
+            $card = $slot->getCard();
+            $arr[$card->getCode()] = ['qty' => $slot->getQuantity(), 'card' => $card];
+        }
 
-    /**
-     * Set lastPack
-     *
-     * @param \AppBundle\Entity\Pack $lastPack
-     * @return Deck
-     */
-    public function setLastPack($lastPack)
-    {
-    	$this->lastPack = $lastPack;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get lastPack
-     *
-     * @return \AppBundle\Entity\Pack
-     */
-    public function getLastPack()
-    {
-    	return $this->lastPack;
-    }
-
-    /**
-     * Set faction
-     *
-     * @param \AppBundle\Entity\Faction $faction
-     * @return Deck
-     */
-    public function setFaction($faction)
-    {
-    	$this->faction = $faction;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get faction
-     *
-     * @return \AppBundle\Entity\Faction
-     */
-    public function getFaction()
-    {
-    	return $this->faction;
-    }
-    
-
-    /**
-     * Set comments
-     *
-     * @param string $comments
-     * @return Deck
-     */
-    public function setComments($comments)
-    {
-    	$this->comments = $comments;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get comments
-     *
-     * @return string
-     */
-    public function getComments()
-    {
-    	return $this->comments;
-    }
-
-    /**
-     * Add favorite
-     *
-     * @param User $user
-     * @return Decklist
-     */
-    public function addFavorite($user)
-    {
-    	$this->favorites[] = $user;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get favorites
-     *
-     * @return User[]
-     */
-    public function getFavorites()
-    {
-    	return $this->favorites;
-    }
-
-    /**
-     * Add vote
-     *
-     * @param User $user
-     * @return Decklist
-     */
-    public function addVote($user)
-    {
-    	$this->votes[] = $user;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get votes
-     *
-     * @return User[]
-     */
-    public function getVotes()
-    {
-    	return $this->votes;
-    }
-    
-    public function __construct()
-    {
-    	$this->slots = new ArrayCollection();
-    	$this->comments = new ArrayCollection();
-      	$this->favorites = new ArrayCollection();
-       	$this->votes = new ArrayCollection();
-        $this->isLegal = true;
-    }
-    
-    public function getContent()
-    {
-    	$arr = array();
-    	foreach($this->slots as $slot) {
-    		$arr[$slot->getCard()->getCode()] = $slot->getQuantity();
-    	}
-    	ksort($arr);
-    	return $arr;
+        return $arr;
     }
     /*
     public function getPrettyName()
     {
-    	return preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($this->name));
+        return preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($this->name));
     }
-	*/
+    */
+
     /**
-     * Add slots
-     *
-     * @param \AppBundle\Entity\Decklistslot $slots
+     * @return Pack
+     */
+    public function getLastPack()
+    {
+        return $this->lastPack;
+    }
+
+    /**
+     * @param Pack $lastPack
+     * @return $this
+     */
+    public function setLastPack(Pack $lastPack)
+    {
+        $this->lastPack = $lastPack;
+
+        return $this;
+    }
+
+    /**
+     * @return Faction
+     */
+    public function getFaction()
+    {
+        return $this->faction;
+    }
+
+    /**
+     * @param Faction $faction
+     * @return $this
+     */
+    public function setFaction(Faction $faction)
+    {
+        $this->faction = $faction;
+
+        return $this;
+    }
+
+    /**
+     * @return Comment[]|Collection
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * Add favorite
+     * @param User $user
      * @return Decklist
      */
-    public function addSlot(\AppBundle\Entity\Decklistslot $slots)
+    public function addFavorite(User $user)
+    {
+        $this->favorites[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return User[]|Collection
+     */
+    public function getFavorites()
+    {
+        return $this->favorites;
+    }
+
+    /**
+     * Add vote
+     * @param User $user
+     * @return Decklist
+     */
+    public function addVote(User $user)
+    {
+        $this->votes[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return User[]|Collection
+     */
+    public function getVotes()
+    {
+        return $this->votes;
+    }
+
+    public function getContent()
+    {
+        $arr = [];
+        foreach ($this->slots as $slot) {
+            $arr[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+        ksort($arr);
+
+        return $arr;
+    }
+
+    /**
+     * Add slots
+     * @param Decklistslot $slots
+     * @return Decklist
+     */
+    public function addSlot(Decklistslot $slots)
     {
         $this->slots[] = $slots;
-    
+
         return $this;
     }
 
     /**
      * Remove slots
-     *
-     * @param \AppBundle\Entity\Decklistslot $slots
+     * @param Decklistslot $slots
      */
-    public function removeSlot(\AppBundle\Entity\Decklistslot $slots)
+    public function removeSlot(Decklistslot $slots)
     {
         $this->slots->removeElement($slots);
     }
 
     /**
      * Add comments
-     *
-     * @param \AppBundle\Entity\Comment $comments
+     * @param Comment $comments
      * @return Decklist
      */
-    public function addComment(\AppBundle\Entity\Comment $comments)
+    public function addComment(Comment $comments)
     {
         $this->comments[] = $comments;
-    
+
         return $this;
     }
 
     /**
      * Remove comments
-     *
-     * @param \AppBundle\Entity\Comment $comments
+     * @param Comment $comments
      */
-    public function removeComment(\AppBundle\Entity\Comment $comments)
+    public function removeComment(Comment $comments)
     {
         $this->comments->removeElement($comments);
     }
 
     /**
      * Remove favorites
-     *
-     * @param \AppBundle\Entity\User $favorites
+     * @param User $favorites
      */
-    public function removeFavorite(\AppBundle\Entity\User $favorites)
+    public function removeFavorite(User $favorites)
     {
         $this->favorites->removeElement($favorites);
     }
 
     /**
      * Remove votes
-     *
-     * @param \AppBundle\Entity\User $votes
+     * @param User $votes
      */
-    public function removeVote(\AppBundle\Entity\User $votes)
+    public function removeVote(User $votes)
     {
         $this->votes->removeElement($votes);
     }
-    /**
-     * @var \AppBundle\Entity\Deck
-     */
-    private $parent;
-
 
     /**
-     * Set parent
-     *
-     * @param \AppBundle\Entity\Deck $parent
-     * @return Decklist
-     */
-    public function setParent(\AppBundle\Entity\Deck $parent = null)
-    {
-        $this->parent = $parent;
-    
-        return $this;
-    }
-
-    /**
-     * Get parent
-     *
-     * @return \AppBundle\Entity\Deck 
+     * @return Deck|null
      */
     public function getParent()
     {
         return $this->parent;
     }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $successors;
 
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @param Deck $parent
+     * @return $this
      */
-    private $precedent;
+    public function setParent(Deck $parent)
+    {
+        $this->parent = $parent;
 
+        return $this;
+    }
 
     /**
      * Add successors
-     *
-     * @param \AppBundle\Entity\Decklist $successors
+     * @param Decklist $successors
      * @return Decklist
      */
-    public function addSuccessor(\AppBundle\Entity\Decklist $successors)
+    public function addSuccessor(Decklist $successors)
     {
         $this->successors[] = $successors;
-    
+
         return $this;
     }
 
     /**
      * Remove successors
-     *
-     * @param \AppBundle\Entity\Decklist $successors
+     * @param Decklist $successors
      */
-    public function removeSuccessor(\AppBundle\Entity\Decklist $successors)
+    public function removeSuccessor(Decklist $successors)
     {
         $this->successors->removeElement($successors);
     }
 
     /**
-     * Get successors
-     *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getSuccessors()
     {
@@ -837,78 +746,59 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Set precedent
-     *
-     * @param \AppBundle\Entity\Decklist $precedent
-     * @return Decklist
-     */
-    public function setPrecedent(\AppBundle\Entity\Decklist $precedent = null)
-    {
-        $this->precedent = $precedent;
-    
-        return $this;
-    }
-
-    /**
-     * Get precedent
-     *
-     * @return \AppBundle\Entity\Decklist 
+     * @return Decklist|null
      */
     public function getPrecedent()
     {
         return $this->precedent;
     }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $children;
 
+    /**
+     * @param Decklist|null $precedent
+     * @return $this
+     */
+    public function setPrecedent(Decklist $precedent = null)
+    {
+        $this->precedent = $precedent;
+
+        return $this;
+    }
 
     /**
      * Add children
-     *
-     * @param \AppBundle\Entity\Deck $children
+     * @param Deck $children
      * @return Decklist
      */
-    public function addChildren(\AppBundle\Entity\Deck $children)
+    public function addChildren(Deck $children)
     {
         $this->children[] = $children;
-    
+
         return $this;
     }
 
     /**
      * Remove children
-     *
-     * @param \AppBundle\Entity\Deck $children
+     * @param Deck $children
      */
-    public function removeChildren(\AppBundle\Entity\Deck $children)
+    public function removeChildren(Deck $children)
     {
         $this->children->removeElement($children);
     }
 
     /**
-     * Get children
-     *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getChildren()
     {
         return $this->children;
     }
-    /**
-     * @var \AppBundle\Entity\Tournament
-     */
-    private $tournament;
-
 
     /**
      * Add children
-     *
-     * @param \AppBundle\Entity\Deck $children
+     * @param Deck $children
      * @return Decklist
      */
-    public function addChild(\AppBundle\Entity\Deck $children)
+    public function addChild(Deck $children)
     {
         $this->children[] = $children;
 
@@ -917,21 +807,26 @@ class Decklist implements \Serializable
 
     /**
      * Remove children
-     *
-     * @param \AppBundle\Entity\Deck $children
+     * @param Deck $children
      */
-    public function removeChild(\AppBundle\Entity\Deck $children)
+    public function removeChild(Deck $children)
     {
         $this->children->removeElement($children);
     }
 
     /**
-     * Set tournament
-     *
-     * @param \AppBundle\Entity\Tournament $tournament
-     * @return Decklist
+     * @return Tournament|null
      */
-    public function setTournament(\AppBundle\Entity\Tournament $tournament = null)
+    public function getTournament()
+    {
+        return $this->tournament;
+    }
+
+    /**
+     * @param Tournament|null $tournament
+     * @return $this
+     */
+    public function setTournament(Tournament $tournament = null)
     {
         $this->tournament = $tournament;
 
@@ -939,28 +834,11 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Get tournament
-     *
-     * @return \AppBundle\Entity\Tournament 
-     */
-    public function getTournament()
-    {
-        return $this->tournament;
-    }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $legalities;
-
-
-    /**
      * Add legality
-     *
-     * @param \AppBundle\Entity\Legality $legality
-     *
+     * @param Legality $legality
      * @return Decklist
      */
-    public function addLegality(\AppBundle\Entity\Legality $legality)
+    public function addLegality(Legality $legality)
     {
         $this->legalities[] = $legality;
 
@@ -969,18 +847,15 @@ class Decklist implements \Serializable
 
     /**
      * Remove legality
-     *
-     * @param \AppBundle\Entity\Legality $legality
+     * @param Legality $legality
      */
-    public function removeLegality(\AppBundle\Entity\Legality $legality)
+    public function removeLegality(Legality $legality)
     {
         $this->legalities->removeElement($legality);
     }
 
     /**
-     * Get legalities
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getLegalities()
     {
@@ -988,13 +863,18 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Set moderationStatus
-     *
+     * @return integer
+     */
+    public function getModerationStatus()
+    {
+        return $this->moderationStatus;
+    }
+
+    /**
      * @param integer $moderationStatus
-     *
      * @return Decklist
      */
-    public function setModerationStatus($moderationStatus)
+    public function setModerationStatus(int $moderationStatus)
     {
         $this->moderationStatus = $moderationStatus;
 
@@ -1002,29 +882,18 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Get moderationStatus
-     *
-     * @return integer
+     * @return Modflag|null
      */
-    public function getModerationStatus()
+    public function getModflag()
     {
-        return $this->moderationStatus;
+        return $this->modflag;
     }
-    
-    /**
-     * @var \AppBundle\Entity\Modflag
-     */
-    private $modflag;
-
 
     /**
-     * Set modflag
-     *
-     * @param \AppBundle\Entity\Modflag $modflag
-     *
-     * @return Decklist
+     * @param Modflag $modflag
+     * @return $this
      */
-    public function setModflag(\AppBundle\Entity\Modflag $modflag = null)
+    public function setModflag(Modflag $modflag)
     {
         $this->modflag = $modflag;
 
@@ -1032,28 +901,11 @@ class Decklist implements \Serializable
     }
 
     /**
-     * Get modflag
-     *
-     * @return \AppBundle\Entity\Modflag
-     */
-    public function getModflag()
-    {
-        return $this->modflag;
-    }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $claims;
-
-
-    /**
      * Add claim
-     *
-     * @param \AppBundle\Entity\Claim $claim
-     *
+     * @param Claim $claim
      * @return Decklist
      */
-    public function addClaim(\AppBundle\Entity\Claim $claim)
+    public function addClaim(Claim $claim)
     {
         $this->claims[] = $claim;
 
@@ -1062,42 +914,44 @@ class Decklist implements \Serializable
 
     /**
      * Remove claim
-     *
-     * @param \AppBundle\Entity\Claim $claim
+     * @param Claim $claim
      */
-    public function removeClaim(\AppBundle\Entity\Claim $claim)
+    public function removeClaim(Claim $claim)
     {
         $this->claims->removeElement($claim);
     }
 
     /**
-     * Get claims
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getClaims()
     {
         return $this->claims;
     }
-    
-    private $isLegal;
-    
-    function getIsLegal ()
+
+    public function getIsLegal()
     {
         return $this->isLegal;
     }
 
-    function setIsLegal ($isLegal)
+    public function setIsLegal(bool $isLegal)
     {
         $this->isLegal = $isLegal;
     }
 
-    public function getRotation ()
+    /**
+     * @return Rotation|null
+     */
+    public function getRotation()
     {
         return $this->rotation;
     }
 
-    public function setRotation ($rotation)
+    /**
+     * @param Rotation|null $rotation
+     * @return $this
+     */
+    public function setRotation(Rotation $rotation = null)
     {
         $this->rotation = $rotation;
 
@@ -1105,32 +959,21 @@ class Decklist implements \Serializable
     }
 
     /**
-     * @var \AppBundle\Entity\Mwl
-     */
-    private $mwl;
-
-
-    /**
-     * Set mwl
-     *
-     * @param \AppBundle\Entity\Mwl $mwl
-     *
-     * @return Decklist
-     */
-    public function setMwl(\AppBundle\Entity\Mwl $mwl = null)
-    {
-        $this->mwl = $mwl;
-
-        return $this;
-    }
-
-    /**
-     * Get mwl
-     *
-     * @return \AppBundle\Entity\Mwl
+     * @return Mwl|null
      */
     public function getMwl()
     {
         return $this->mwl;
+    }
+
+    /**
+     * @param Mwl|null $mwl
+     * @return $this
+     */
+    public function setMwl(Mwl $mwl = null)
+    {
+        $this->mwl = $mwl;
+
+        return $this;
     }
 }

@@ -1,16 +1,19 @@
-<?php 
+<?php
 
 namespace AppBundle\Repository;
 
-class CardRepository extends TranslatableRepository
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
+class CardRepository extends EntityRepository
 {
-	function __construct($entityManager)
-	{
-		parent::__construct($entityManager, $entityManager->getClassMetadata('AppBundle\Entity\Card'));
-	}
-	
-	public function findAll()
-	{
-		return $this->findBy(array(), array('code' => 'ASC'));
-	}
+    public function __construct(EntityManager $entityManager)
+    {
+        parent::__construct($entityManager, $entityManager->getClassMetadata('AppBundle\Entity\Card'));
+    }
+
+    public function findAll()
+    {
+        return $this->findBy([], ['code' => 'ASC']);
+    }
 }

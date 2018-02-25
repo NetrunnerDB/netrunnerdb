@@ -2,7 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Card;
 use AppBundle\Entity\Ruling;
+use AppBundle\Service\TextProcessor;
+use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,76 +17,96 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RulingController extends Controller
 {
-
-    public function postAction (Request $request)
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param TextProcessor          $textProcessor
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("ROLE_GURU")
+     */
+    public function postAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
-        $this->denyAccessUnlessGranted('ROLE_GURU');
+        $card = $entityManager->getRepository('AppBundle:Card')->find($request->request->get('card_id'));
 
-        $card = $this->getDoctrine()->getRepository('AppBundle:Card')->find($request->request->get('card_id'));
-
-        if (!$card) {
+        if (!$card instanceof Card) {
             throw $this->createNotFoundException();
         }
 
         $rawtext = $request->request->get('text');
-        $text = $this->get('texts')->transform($rawtext);
+        $text = $textProcessor->transform($rawtext);
 
         $ruling = new Ruling();
         $ruling->setCard($card);
         $ruling->setRawtext($rawtext);
         $ruling->setText($text);
-        $this->getDoctrine()->getManager()->persist($ruling);
-        $this->getDoctrine()->getManager()->flush();
+        $entityManager->persist($ruling);
+        $entityManager->flush();
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $card->getCode()]);
     }
 
-    public function editAction (Request $request)
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param TextProcessor          $textProcessor
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("ROLE_GURU")
+     */
+    public function editAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
-        $this->denyAccessUnlessGranted('ROLE_GURU');
+        $ruling = $entityManager->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
 
-        $ruling = $this->getDoctrine()->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
-
-        if (!$ruling) {
+        if (!$ruling instanceof Ruling) {
             throw $this->createNotFoundException();
         }
 
         $rawtext = $request->request->get('text');
-        $text = $this->get('texts')->transform($rawtext);
+        $text = $textProcessor->transform($rawtext);
 
         $ruling->setRawtext($rawtext);
         $ruling->setText($text);
-        $this->getDoctrine()->getManager()->flush();
+        $entityManager->flush();
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }
 
-    public function deleteAction (Request $request)
+    /**
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("ROLE_GURU")
+     */
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $this->denyAccessUnlessGranted('ROLE_GURU');
+        $ruling = $entityManager->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
 
-        $ruling = $this->getDoctrine()->getRepository('AppBundle:Ruling')->find($request->request->get('ruling_id'));
-
-        if (!$ruling) {
+        if (!$ruling instanceof Ruling) {
             throw $this->createNotFoundException();
         }
 
-        $this->getDoctrine()->getManager()->remove($ruling);
-        $this->getDoctrine()->getManager()->flush();
+        $entityManager->remove($ruling);
+        $entityManager->flush();
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);
     }
 
-    public function listAction ()
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function listAction(EntityManagerInterface $entityManager)
     {
-        $list = $this->getDoctrine()->getRepository('AppBundle:Card')->findAll();
+        $list = $entityManager->getRepository('AppBundle:Card')->findAll();
 
-        $response = $this->render('AppBundle:Rulings:list.html.twig', array(
-                    'list' => $list
-        ));
+        $response = $this->render('/Rulings/list.html.twig', [
+            'list' => $list,
+        ]);
         $response->setPublic();
-        $response->setMaxAge($this->container->getParameter('short_cache'));
+        $response->setMaxAge($this->getParameter('short_cache'));
+
         return $response;
     }
-
 }

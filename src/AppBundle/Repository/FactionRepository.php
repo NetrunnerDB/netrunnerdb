@@ -2,10 +2,13 @@
 
 namespace AppBundle\Repository;
 
-class FactionRepository extends TranslatableRepository
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
+class FactionRepository extends EntityRepository
 {
-	function __construct($entityManager)
-	{
-		parent::__construct($entityManager, $entityManager->getClassMetadata('AppBundle\Entity\Faction'));
-	}
+    public function __construct(EntityManager $entityManager)
+    {
+        parent::__construct($entityManager, $entityManager->getClassMetadata('AppBundle\Entity\Faction'));
+    }
 }

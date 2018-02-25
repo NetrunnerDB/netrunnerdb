@@ -3,22 +3,24 @@
 
 namespace AppBundle\Service;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class Reviews
 {
-    public function __construct(EntityManager $doctrine)
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->doctrine = $doctrine;
+        $this->entityManager = $entityManager;
     }
-    
-    public function recent($start = 0, $limit = 30)
+
+    public function recent(int $start = 0, int $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->doctrine->getConnection();
-    
+        $dbh = $this->entityManager->getConnection();
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 r.id,
                 r.date_creation,
                 r.text,
@@ -40,24 +42,24 @@ class Reviews
                 where r.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
         		and p.date_release is not null
                 order by r.date_creation desc
-                limit $start, $limit")->fetchAll(\PDO::FETCH_ASSOC);
-    
+                limit $start, $limit"
+
+        )->fetchAll(\PDO::FETCH_ASSOC);
+
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
-        return array(
-                "count" => $count,
-                "reviews" => $rows
-        );
-    
+
+        return [
+            "count"   => $count,
+            "reviews" => $rows,
+        ];
     }
 
-    public function by_author($user_id, $start = 0, $limit = 30)
+    public function by_author(int $user_id, int $start = 0, int $limit = 30)
     {
-        /* @var $dbh \Doctrine\DBAL\Driver\PDOConnection */
-        $dbh = $this->doctrine->getConnection();
-    
+        $dbh = $this->entityManager->getConnection();
+
         $rows = $dbh->executeQuery(
-                "SELECT SQL_CALC_FOUND_ROWS
+            "SELECT SQL_CALC_FOUND_ROWS
                 r.id,
                 r.date_creation,
                 r.text,
@@ -79,16 +81,19 @@ class Reviews
                 where r.user_id=?
         		and p.date_release is not null
         		order by c.code asc
-                limit $start, $limit", array(
-                        $user_id
-                ))->fetchAll(\PDO::FETCH_ASSOC);
-    
+                limit $start, $limit",
+
+            [
+                $user_id,
+            ]
+
+        )->fetchAll(\PDO::FETCH_ASSOC);
+
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-    
-        return array(
-                "count" => $count,
-                "reviews" => $rows
-        );
-    
+
+        return [
+            "count"   => $count,
+            "reviews" => $rows,
+        ];
     }
 }

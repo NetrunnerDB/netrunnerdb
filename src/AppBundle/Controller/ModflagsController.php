@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerBuilder;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,13 +15,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ModflagsController extends Controller
 {
-    public function getAction()
+    /**
+     * @return Response
+     *
+     * @IsGranted("ROLE_MODERATOR")
+     */
+    public function getAction(EntityManagerInterface $entityManager)
     {
-        if(!$this->get('security.authorization_checker')->isGranted('ROLE_MODERATOR')) {
-            throw $this->createAccessDeniedException('Access denied');
-        }
-        
-        $modflags = $this->getDoctrine()->getManager()->getRepository('AppBundle:Modflag')->findAll();
+        $modflags = $entityManager->getRepository('AppBundle:Modflag')->findAll();
         
         $content = [
             'count' => count($modflags),

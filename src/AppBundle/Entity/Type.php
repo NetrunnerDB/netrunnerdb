@@ -2,29 +2,17 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\CodeNameInterface;
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Type
  */
-class Type implements \Gedmo\Translatable\Translatable, \Serializable
+class Type implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
-    public function toString() {
-		return $this->name;
-	}
-
-	public function serialize() {
-		return [
-				'code' => $this->code,
-				'name' => $this->name,
-				'position' => $this->position,
-				'is_subtype' => $this->isSubtype,
-				'side_code' => $this->side ? $this->side->getCode() : null
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
     /**
      * @var integer
      */
@@ -34,17 +22,17 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
      * @var string
      */
     private $code;
-    
+
     /**
      * @var string
      */
     private $name;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
-
+    
     /**
      * @var boolean
      */
@@ -54,36 +42,48 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
      * @var \DateTime
      */
     private $dateCreation;
-    
+
     /**
      * @var \DateTime
      */
     private $dateUpdate;
-    
+
     /**
      * @var integer
      */
     private $position;
-
+    
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $cards;
     
-    private $locale = 'en';
-
     /**
      * Constructor
      */
     public function __construct()
     {
-    	$this->cards = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->cards = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name ?: '(unknown)';
+    }
+
+    public function normalize()
+    {
+        return [
+                'code' => $this->code,
+                'name' => $this->name,
+                'position' => $this->position,
+                'is_subtype' => $this->isSubtype,
+                'side_code' => $this->side ? $this->side->getCode() : null
+        ];
     }
     
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -91,45 +91,25 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set text
-     *
-     * @param string $name
-     * @return Type
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    
-        return $this;
-    }
-
-    /**
-     * Get text
-     *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
-    	return $this->name;
+        return $this->name;
     }
 
     /**
-     * Set code
-     *
-     * @param string $code
-     *
+     * @param string $name
      * @return Type
      */
-    public function setCode($code)
+    public function setName(string $name)
     {
-        $this->code = $code;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get code
-     *
      * @return string
      */
     public function getCode()
@@ -138,22 +118,17 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
+     * @param string $code
      * @return Type
      */
-    public function setDateCreation($dateCreation)
+    public function setCode(string $code)
     {
-        $this->dateCreation = $dateCreation;
+        $this->code = $code;
 
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -162,22 +137,17 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     *
+     * @param \DateTime $dateCreation
      * @return Type
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
@@ -186,22 +156,17 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set isSubtype
-     *
-     * @param boolean $isSubtype
-     *
+     * @param \DateTime $dateUpdate
      * @return Type
      */
-    public function setIsSubtype($isSubtype)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
-        $this->isSubtype = $isSubtype;
+        $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
 
     /**
-     * Get isSubtype
-     *
      * @return boolean
      */
     public function getIsSubtype()
@@ -210,22 +175,17 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set position
-     *
-     * @param integer $position
-     *
+     * @param boolean $isSubtype
      * @return Type
      */
-    public function setPosition($position)
+    public function setIsSubtype(bool $isSubtype)
     {
-        $this->position = $position;
+        $this->isSubtype = $isSubtype;
 
         return $this;
     }
 
     /**
-     * Get position
-     *
      * @return integer
      */
     public function getPosition()
@@ -234,64 +194,61 @@ class Type implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set side
-     *
-     * @param \AppBundle\Entity\Side $side
-     * @return Card
+     * @param integer $position
+     * @return Type
      */
-    public function setSide(\AppBundle\Entity\Side $side = null)
+    public function setPosition(int $position)
     {
-    	$this->side = $side;
-    
-    	return $this;
+        $this->position = $position;
+
+        return $this;
     }
-    
+
     /**
-     * Get side
-     *
-     * @return \AppBundle\Entity\Side
+     * @return Side
      */
     public function getSide()
     {
-    	return $this->side;
+        return $this->side;
+    }
+    
+    /**
+     * @param Side $side
+     * @return $this
+     */
+    public function setSide(Side $side)
+    {
+        $this->side = $side;
+
+        return $this;
     }
 
     /**
      * Add cards
-     *
-     * @param \AppBundle\Entity\Card $cards
+     * @param Card $cards
      * @return Type
      */
-    public function addCard(\AppBundle\Entity\Card $cards)
+    public function addCard(Card $cards)
     {
-    	$this->cards[] = $cards;
+        $this->cards[] = $cards;
     
-    	return $this;
+        return $this;
     }
     
     /**
      * Remove cards
-     *
-     * @param \AppBundle\Entity\Card $cards
+     * @param Card $cards
      */
-    public function removeCard(\AppBundle\Entity\Card $cards)
+    public function removeCard(Card $cards)
     {
-    	$this->cards->removeElement($cards);
+        $this->cards->removeElement($cards);
     }
     
     /**
-     * Get cards
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getCards()
     {
-    	return $this->cards;
+        return $this->cards;
     }
-    
-    public function setTranslatableLocale($locale)
-    {
-    	$this->locale = $locale;
-    }
-    
 }

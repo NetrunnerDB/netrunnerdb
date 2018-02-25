@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use JMS\Serializer\Annotation\Exclude;
 
 /**
@@ -20,15 +22,20 @@ class Modflag
     private $reason;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      * @Exclude
      */
     private $decklists;
 
-    
     /**
-     * Get id
-     *
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->decklists = new ArrayCollection();
+    }
+
+    /**
      * @return integer
      */
     public function getId()
@@ -37,22 +44,6 @@ class Modflag
     }
 
     /**
-     * Set reason
-     *
-     * @param string $reason
-     *
-     * @return Modflag
-     */
-    public function setReason($reason)
-    {
-        $this->reason = $reason;
-
-        return $this;
-    }
-
-    /**
-     * Get reason
-     *
      * @return string
      */
     public function getReason()
@@ -61,21 +52,22 @@ class Modflag
     }
     
     /**
-     * Constructor
+     * @param string $reason
+     * @return Modflag
      */
-    public function __construct()
+    public function setReason(string $reason)
     {
-        $this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->reason = $reason;
+
+        return $this;
     }
 
     /**
      * Add decklist
-     *
-     * @param \AppBundle\Entity\Decklist $decklist
-     *
+     * @param Decklist $decklist
      * @return Modflag
      */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklist)
+    public function addDecklist(Decklist $decklist)
     {
         $this->decklists[] = $decklist;
 
@@ -84,18 +76,15 @@ class Modflag
 
     /**
      * Remove decklist
-     *
-     * @param \AppBundle\Entity\Decklist $decklist
+     * @param Decklist $decklist
      */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklist)
+    public function removeDecklist(Decklist $decklist)
     {
         $this->decklists->removeElement($decklist);
     }
 
     /**
-     * Get decklists
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getDecklists()
     {

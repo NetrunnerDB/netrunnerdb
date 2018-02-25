@@ -28,19 +28,17 @@ class Reviewcomment
     private $text;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      */
     private $author;
 
     /**
-     * @var \AppBundle\Entity\Review
+     * @var Review
      */
     private $review;
 
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -49,12 +47,18 @@ class Reviewcomment
     }
 
     /**
-     * Set dateCreation
-     *
+     * @return \DateTime
+     */
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
+    }
+
+    /**
      * @param \DateTime $dateCreation
      * @return Reviewcomment
      */
-    public function setDatecreation($dateCreation)
+    public function setDatecreation(\DateTime $dateCreation)
     {
         $this->dateCreation = $dateCreation;
 
@@ -62,31 +66,6 @@ class Reviewcomment
     }
 
     /**
-     * Get dateCreation
-     *
-     * @return \DateTime
-     */
-    public function getDatecreation()
-    {
-        return $this->dateCreation;
-    }
-
-    /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     * @return Reviewcomment
-     */
-    public function setDateupdate($dateUpdate)
-    {
-        $this->dateUpdate = $dateUpdate;
-
-        return $this;
-    }
-
-    /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateupdate()
@@ -95,21 +74,17 @@ class Reviewcomment
     }
 
     /**
-     * Set text
-     *
-     * @param string $text
+     * @param \DateTime $dateUpdate
      * @return Reviewcomment
      */
-    public function setText($text)
+    public function setDateupdate(\DateTime $dateUpdate)
     {
-        $this->text = $text;
+        $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
 
     /**
-     * Get text
-     *
      * @return string
      */
     public function getText()
@@ -118,22 +93,18 @@ class Reviewcomment
     }
 
     /**
-     * Set author
-     *
-     * @param \AppBundle\Entity\User $author
+     * @param string $text
      * @return Reviewcomment
      */
-    public function setAuthor(\AppBundle\Entity\User $author = null)
+    public function setText(string $text)
     {
-        $this->author = $author;
+        $this->text = $text;
 
         return $this;
     }
 
     /**
-     * Get author
-     *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getAuthor()
     {
@@ -141,25 +112,32 @@ class Reviewcomment
     }
 
     /**
-     * Set review
-     *
-     * @param \AppBundle\Entity\Review $review
+     * @param User $author
      * @return Reviewcomment
      */
-    public function setReview(\AppBundle\Entity\Review $review = null)
+    public function setAuthor(User $author)
     {
-        $this->review = $review;
+        $this->author = $author;
 
         return $this;
     }
 
     /**
-     * Get review
-     *
-     * @return \AppBundle\Entity\Review
+     * @return Review
      */
     public function getReview()
     {
         return $this->review;
+    }
+
+    /**
+     * @param Review $review
+     * @return Reviewcomment
+     */
+    public function setReview(Review $review)
+    {
+        $this->review = $review;
+
+        return $this;
     }
 }

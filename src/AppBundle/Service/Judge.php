@@ -5,32 +5,31 @@ namespace AppBundle\Service;
 use AppBundle\Behavior\Entity\SlotInterface;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Decklistslot;
+use AppBundle\Entity\Deckslot;
 use AppBundle\Entity\Legality;
 use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Card;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 
 class Judge
 {
-    /** @var \Doctrine\ORM\EntityManager */
-    private $em;
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
-    /**
-     * @var array
-     */
+    /** @var array $mwlCards */
     private $mwlCards;
 
-    public function __construct(\Doctrine\ORM\EntityManager $em)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
         $this->mwlCards = [];
     }
 
     /**
      * @param Card $card
-     * @param Mwl  $mwl
+     * @param Mwl $mwl
      */
-    private function getModifiedCard($card, $mwl)
+    private function getModifiedCard(Card $card, Mwl $mwl)
     {
         if (isset($this->mwlCards[$mwl->getId()]) && isset($this->mwlCards[$mwl->getId()][$card->getCode()])) {
             return $this->mwlCards[$mwl->getId()][$card->getCode()];
@@ -42,7 +41,7 @@ class Judge
             $modificationData = $mwl->getCards()[$card->getCode()];
             $modifiedCard = clone($card);
             foreach ($modificationData as $modificationKey => $modificationValue) {
-                $setter = 'set'.$this->getTrainCase($modificationKey);
+                $setter = 'set' . $this->getTrainCase($modificationKey);
                 $modifiedCard->$setter($modificationValue);
             }
         }
@@ -52,7 +51,7 @@ class Judge
         return $modifiedCard;
     }
 
-    private function getTrainCase($string)
+    private function getTrainCase(string $string)
     {
         return implode('', array_map(function ($segment) {
             return ucfirst($segment);
@@ -64,39 +63,45 @@ class Judge
      *
      * @param \AppBundle\Entity\Card $identity
      */
-    public function classe($slots, $identity)
+    public function classe(array $slots, Card $identity)
     {
         $analyse = $this->analyse($slots);
 
         $classeur = [];
-        /* @var $slot \AppBundle\Entity\Deckslot */
+        /** @var Deckslot $slot */
         foreach ($slots as $slot) {
-            /* @var $card \AppBundle\Entity\Card */
+            /** @var Card $card */
             $card = $slot->getCard();
             $qty = $slot->getQuantity();
             $elt = ['card' => $card, 'qty' => $qty];
             $type = $card->getType()->getName();
-            if ($type == "Identity")
+            if ($type == "Identity") {
                 continue;
+            }
             if ($type == "ICE") {
                 $keywords = explode(" - ", $card->getKeywords());
-                if (in_array("Barrier", $keywords))
+                if (in_array("Barrier", $keywords)) {
                     $type = "Barrier";
-                if (in_array("Code Gate", $keywords))
+                }
+                if (in_array("Code Gate", $keywords)) {
                     $type = "Code Gate";
-                if (in_array("Sentry", $keywords))
+                }
+                if (in_array("Sentry", $keywords)) {
                     $type = "Sentry";
+                }
             }
             if ($type == "Program") {
                 $keywords = explode(" - ", $card->getKeywords());
-                if (in_array("Icebreaker", $keywords))
+                if (in_array("Icebreaker", $keywords)) {
                     $type = "Icebreaker";
+                }
             }
             $elt['influence'] = $this->getInfluenceCostOfCard($slot, $slots, $identity);
             $elt['faction'] = str_replace(' ', '-', mb_strtolower($card->getFaction()->getName()));
 
-            if (!isset($classeur[$type]))
+            if (!isset($classeur[$type])) {
                 $classeur[$type] = ["qty" => 0, "slots" => []];
+            }
             $classeur[$type]["slots"][] = $elt;
             $classeur[$type]["qty"] += $qty;
         }
@@ -109,9 +114,9 @@ class Judge
         return $classeur;
     }
 
-    public function countCards($slots, $skipIdentity = false)
+    public function countCards(array $slots, bool $skipIdentity = false)
     {
-        return array_reduce($slots, function ($carry, $item) use ($skipIdentity) {
+        return array_reduce($slots, function ($carry, SlotInterface $item) use ($skipIdentity) {
             if ($skipIdentity && $item->getCard()->getType()->getName() === 'Identity') {
                 return $carry;
             }
@@ -121,14 +126,13 @@ class Judge
     }
 
     /**
-     * @param SlotInterface              $slot
-     * @param SlotInterface[]|Collection $slots
-     * @param Card                       $identity
-     * @return int
+     * @param SlotInterface $slot
+     * @param SlotInterface[] $slots
+     * @param Card $identity
+     * @return float|int
      */
-    public function getInfluenceCostOfCard($slot, $slots, Card $identity)
+    public function getInfluenceCostOfCard(SlotInterface $slot, array $slots, Card $identity)
     {
-        $arraySlots = $slots instanceof Collection ? $slots->toArray() : $slots;
         $card = $slot->getCard();
         $qty = $slot->getQuantity();
 
@@ -143,7 +147,7 @@ class Judge
         }
         if ($card->getCode() === '10018') {
             // Mumba Temple: 15 or fewer ice => 0 inf
-            $targets = array_filter($arraySlots, function ($potentialTarget) {
+            $targets = array_filter($slots, function ($potentialTarget) {
                 /** @var SlotInterface $potentialTarget */
                 return $potentialTarget->getCard()->getType()->getCode() === 'ice';
             });
@@ -153,13 +157,13 @@ class Judge
         }
         if ($card->getCode() === '10019') {
             // Museum of History: 50 or more cards => 0 inf
-            if ($this->countCards($arraySlots, true) >= 50) {
+            if ($this->countCards($slots, true) >= 50) {
                 return 0;
             }
         }
         if ($card->getCode() === '10038') {
             // PAD Factory: 3 PAD Campaign => 0 inf
-            $targets = array_filter($arraySlots, function ($potentialTarget) {
+            $targets = array_filter($slots, function ($potentialTarget) {
                 /** @var SlotInterface $potentialTarget */
                 $code = $potentialTarget->getCard()->getCode();
 
@@ -171,7 +175,7 @@ class Judge
         }
         if ($card->getCode() === '10076') {
             // Mumbad Virtual Tour: 7 or more assets => 0 inf
-            $targets = array_filter($arraySlots, function ($potentialTarget) {
+            $targets = array_filter($slots, function ($potentialTarget) {
                 /** @var SlotInterface $potentialTarget */
                 return $potentialTarget->getCard()->getType()->getCode() === 'asset';
             });
@@ -181,7 +185,7 @@ class Judge
         }
         if ($card->getKeywords() && strpos($card->getKeywords(), 'Alliance') !== false) {
             // 6 or more non-alliance cards of the same faction
-            $targets = array_filter($arraySlots, function ($potentialTarget) use ($card) {
+            $targets = array_filter($slots, function ($potentialTarget) use ($card) {
                 /** @var SlotInterface $potentialTarget */
                 return $potentialTarget->getCard()->getFaction()->getId() === $card->getFaction()->getId() && strpos($potentialTarget->getCard()->getKeywords(), 'Alliance') === false;
             });
@@ -197,7 +201,7 @@ class Judge
      * @param SlotInterface[] $slots
      * @return array|string
      */
-    public function analyse($slots)
+    public function analyse(array $slots)
     {
         $identity = null;
         $deckSize = 0;
@@ -210,8 +214,9 @@ class Judge
             $card = $slot->getCard();
             $qty = $slot->getQuantity();
             if ($card->getType()->getName() == "Identity") {
-                if (isset($identity))
+                if (isset($identity)) {
                     return 'identities';
+                }
                 $identity = $card;
             } else {
                 $deckSize += $qty;
@@ -284,8 +289,9 @@ class Judge
         // agenda points rule, except for draft identities because Cube
         if ($identity->getSide()->getCode() == "corp" && $identity->getPack()->getCode() != "draft") {
             $minAgendaPoints = floor($deckSize / 5) * 2 + 2;
-            if ($agendaPoints < $minAgendaPoints || $agendaPoints > $minAgendaPoints + 1)
+            if ($agendaPoints < $minAgendaPoints || $agendaPoints > $minAgendaPoints + 1) {
                 return 'agendapoints';
+            }
         }
 
         return [
@@ -303,21 +309,21 @@ class Judge
                 return $card->getInfluenceLimit();
             }
         }
+
+        return 0;
     }
 
     public function getSpentInfluence(Decklist $decklist)
     {
         $influenceSpent = 0;
 
-        $identity = $decklist->getIdentity();
-
-        if (!isset($identity)) {
-            return null;
-        }
-
-        /* @var $slot \AppBundle\Entity\Decklistslot */
+        /** @var Decklistslot $slot */
         foreach ($decklist->getSlots() as $slot) {
-            $influenceCostOfCard = $this->getInfluenceCostOfCard($slot, $decklist->getSlots(), $identity);
+            $influenceCostOfCard = $this->getInfluenceCostOfCard(
+                $slot,
+                $decklist->getSlots()->toArray(),
+                $decklist->getIdentity()
+            );
             $influenceSpent += $influenceCostOfCard;
         }
 
@@ -351,10 +357,12 @@ class Judge
             case 'agendapoints':
                 return "The deck has a wrong number of Agenda Points.";
                 break;
-            case 'copies' :
+            case 'copies':
                 return "The deck has too many copies of a card.";
                 break;
         }
+
+        return null;
     }
 
     /**

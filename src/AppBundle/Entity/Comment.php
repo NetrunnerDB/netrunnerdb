@@ -2,9 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\User;
-use AppBundle\Entity\Decklist;
-
 /**
  * Comment
  */
@@ -41,9 +38,7 @@ class Comment
     private $decklist;
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -51,21 +46,6 @@ class Comment
     }
 
     /**
-     * Set text
-     *
-     * @param string $text
-     * @return Comment
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-    
-        return $this;
-    }
-
-    /**
-     * Get text
-     *
      * @return string
      */
     public function getText()
@@ -74,21 +54,17 @@ class Comment
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     * @return Comment
+     * @param string $text
+     * @return $this
      */
-    public function setDateCreation($dateCreation)
+    public function setText(string $text)
     {
-        $this->dateCreation = $dateCreation;
-    
+        $this->text = $text;
+
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -97,71 +73,70 @@ class Comment
     }
 
     /**
-     * Set hidden
-     *
-     * @param boolean $hidden
-     * @return Comment
+     * @param \DateTime $dateCreation
+     * @return $this
      */
-    public function setHidden($hidden)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->hidden = $hidden;
-    
+        $this->dateCreation = $dateCreation;
+
         return $this;
     }
-    
+
     /**
-     * Get hidden
-     *
-     * @return boolean
+     * @return bool
      */
     public function getHidden()
     {
         return $this->hidden;
     }
-    
+
     /**
-     * Set author
-     *
-     * @param string $author
-     * @return User
+     * @param bool $hidden
+     * @return $this
      */
-    public function setAuthor($author)
+    public function setHidden(bool $hidden)
     {
-    	$this->author = $author;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get author
-     *
-     * @return string
-     */
-    public function getAuthor()
-    {
-    	return $this->author;
+        $this->hidden = $hidden;
+
+        return $this;
     }
 
     /**
-     * Set decklist
-     *
-     * @param string $decklist
-     * @return Decklist
+     * @return User
      */
-    public function setDecklist($decklist)
+    public function getAuthor()
     {
-    	$this->decklist = $decklist;
-    
-    	return $this;
+        return $this->author;
     }
-    
+
     /**
-     * Get decklist
-     *
-     * @return string
+     * @param User $author
+     * @return $this
+     */
+    public function setAuthor(User $author)
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * @return Decklist
      */
     public function getDecklist()
     {
-    	return $this->decklist;
+        return $this->decklist;
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @return $this
+     */
+    public function setDecklist(Decklist $decklist)
+    {
+        $this->decklist = $decklist;
+
+        return $this;
     }
 }

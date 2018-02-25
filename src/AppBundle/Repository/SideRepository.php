@@ -2,10 +2,13 @@
 
 namespace AppBundle\Repository;
 
-class SideRepository extends TranslatableRepository
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
+class SideRepository extends EntityRepository
 {
-	function __construct($entityManager)
-	{
-		parent::__construct($entityManager, $entityManager->getClassMetadata('AppBundle\Entity\Side'));
-	}
+    public function __construct(EntityManager $entityManager)
+    {
+        parent::__construct($entityManager, $entityManager->getClassMetadata('AppBundle\Entity\Side'));
+    }
 }

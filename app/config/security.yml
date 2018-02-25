@@ -1,4 +1,5 @@
 security:
+
     encoders:
         FOS\UserBundle\Model\UserInterface: sha512
 
@@ -29,6 +30,7 @@ security:
                 check_path: oauth_server_auth_login_check
                 login_path: oauth_server_auth_login
             anonymous: true
+            logout_on_user_change: true
         main:
             remember_me:
                 secret:      "%secret%"
@@ -44,6 +46,7 @@ security:
             anonymous: ~
             logout:
                 invalidate_session: false
+            logout_on_user_change: true
 
     access_control:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }

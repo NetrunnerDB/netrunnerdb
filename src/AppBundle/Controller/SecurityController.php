@@ -3,25 +3,22 @@
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends Controller
 {
-    public function loginAction()
+    /**
+     * @param AuthenticationUtils $authenticationUtils
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function loginAction(AuthenticationUtils $authenticationUtils)
     {
-        $helper = $this->get('security.authentication_utils');
-
         return $this->render(
-            'AppBundle:Security:login.html.twig',
-            array(
-                'last_username' => $helper->getLastUsername(),
-                'error'         => $helper->getLastAuthenticationError(),
-            )
+            '/Security/login.html.twig',
+            [
+                'last_username' => $authenticationUtils->getLastUsername(),
+                'error'         => $authenticationUtils->getLastAuthenticationError(),
+            ]
         );
-    }
-
-    public function loginCheckAction(Request $request)
-    {
-        
     }
 }

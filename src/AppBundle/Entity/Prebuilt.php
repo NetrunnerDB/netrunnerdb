@@ -2,39 +2,21 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Prebuilt
  */
-class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
+class Prebuilt implements NormalizableInterface, TimestampableInterface
 {
-	public function toString() {
-		return $this->name;
-	}
-	
-	public function serialize() {
-		$cards = [];
-		foreach($this->slots as $slot) {
-			$cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-		}
-		
-		return [
-				'code' => $this->code,
-				'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
-				'name' => $this->name,
-				'position' => $this->position,
-				'cards' => $cards
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
     /**
      * @var integer
      */
     private $id;
-
+    
     /**
      * @var string
      */
@@ -66,41 +48,55 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     private $dateUpdate;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $slots;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $identity;
 
     /**
-     * @var \AppBundle\Entity\Faction
+     * @var Faction
      */
     private $faction;
 
-    /**
-     * @var string
-     */
-    private $locale = 'en';
-    
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->slots = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->slots = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name ?: '(unknown)';
+    }
+
+    public function normalize()
+    {
+        $cards = [];
+        foreach ($this->slots as $slot) {
+            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+
+        return [
+                'code' => $this->code,
+                'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
+                'name' => $this->name,
+                'position' => $this->position,
+                'cards' => $cards
+        ];
     }
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -109,22 +105,6 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set code
-     *
-     * @param string $code
-     *
-     * @return Prebuilt
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
-    /**
-     * Get code
-     *
      * @return string
      */
     public function getCode()
@@ -133,22 +113,17 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     *
+     * @param string $code
      * @return Prebuilt
      */
-    public function setName($name)
+    public function setCode(string $code)
     {
-        $this->name = $name;
+        $this->code = $code;
 
         return $this;
     }
 
     /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -157,22 +132,17 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set dateRelease
-     *
-     * @param \DateTime $dateRelease
-     *
+     * @param string $name
      * @return Prebuilt
      */
-    public function setDateRelease($dateRelease)
+    public function setName(string $name)
     {
-        $this->dateRelease = $dateRelease;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get dateRelease
-     *
      * @return \DateTime
      */
     public function getDateRelease()
@@ -181,22 +151,17 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set position
-     *
-     * @param integer $position
-     *
+     * @param \DateTime $dateRelease
      * @return Prebuilt
      */
-    public function setPosition($position)
+    public function setDateRelease(\DateTime $dateRelease)
     {
-        $this->position = $position;
+        $this->dateRelease = $dateRelease;
 
         return $this;
     }
 
     /**
-     * Get position
-     *
      * @return integer
      */
     public function getPosition()
@@ -205,22 +170,17 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
+     * @param integer $position
      * @return Prebuilt
      */
-    public function setDateCreation($dateCreation)
+    public function setPosition(int $position)
     {
-        $this->dateCreation = $dateCreation;
+        $this->position = $position;
 
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -229,22 +189,17 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     *
+     * @param \DateTime $dateCreation
      * @return Prebuilt
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
@@ -253,13 +208,22 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Add slot
-     *
-     * @param \AppBundle\Entity\Prebuiltslot $slot
-     *
+     * @param \DateTime $dateUpdate
      * @return Prebuilt
      */
-    public function addSlot(\AppBundle\Entity\Prebuiltslot $slot)
+    public function setDateUpdate(\DateTime $dateUpdate)
+    {
+        $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    /**
+     * Add slot
+     * @param Prebuiltslot $slot
+     * @return Prebuilt
+     */
+    public function addSlot(Prebuiltslot $slot)
     {
         $this->slots[] = $slot;
 
@@ -268,18 +232,15 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
 
     /**
      * Remove slot
-     *
-     * @param \AppBundle\Entity\Prebuiltslot $slot
+     * @param Prebuiltslot $slot
      */
-    public function removeSlot(\AppBundle\Entity\Prebuiltslot $slot)
+    public function removeSlot(Prebuiltslot $slot)
     {
         $this->slots->removeElement($slot);
     }
 
     /**
-     * Get slots
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getSlots()
     {
@@ -287,23 +248,7 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set side
-     *
-     * @param \AppBundle\Entity\Side $side
-     *
-     * @return Prebuilt
-     */
-    public function setSide(\AppBundle\Entity\Side $side = null)
-    {
-        $this->side = $side;
-
-        return $this;
-    }
-
-    /**
-     * Get side
-     *
-     * @return \AppBundle\Entity\Side
+     * @return Side
      */
     public function getSide()
     {
@@ -311,23 +256,18 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set identity
-     *
-     * @param \AppBundle\Entity\Card $identity
-     *
-     * @return Prebuilt
+     * @param Side $side
+     * @return $this
      */
-    public function setIdentity(\AppBundle\Entity\Card $identity = null)
+    public function setSide(Side $side)
     {
-        $this->identity = $identity;
+        $this->side = $side;
 
         return $this;
     }
 
     /**
-     * Get identity
-     *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getIdentity()
     {
@@ -335,23 +275,18 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set faction
-     *
-     * @param \AppBundle\Entity\Faction $faction
-     *
-     * @return Prebuilt
+     * @param Card $identity
+     * @return $this
      */
-    public function setFaction(\AppBundle\Entity\Faction $faction = null)
+    public function setIdentity(Card $identity)
     {
-        $this->faction = $faction;
+        $this->identity = $identity;
 
         return $this;
     }
 
     /**
-     * Get faction
-     *
-     * @return \AppBundle\Entity\Faction
+     * @return Faction
      */
     public function getFaction()
     {
@@ -359,13 +294,13 @@ class Prebuilt implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Get translatableLocale
-     *
-     * @return string
+     * @param Faction $faction
+     * @return $this
      */
-    public function setTranslatableLocale($locale)
+    public function setFaction(Faction $faction)
     {
-    	$this->locale = $locale;
+        $this->faction = $faction;
+
+        return $this;
     }
 }
-

@@ -2,11 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\Common\Collections\ArrayCollection;
-use AppBundle\Entity\Deck;
-use AppBundle\Entity\Decklist;
-use AppBundle\Entity\Comment;
 
 /**
  * User
@@ -16,13 +14,18 @@ class User extends BaseUser
     /**
      * @var integer
      */
-    private $reputation;
+    protected $id;
 
+    /**
+     * @var integer
+     */
+    private $reputation;
+    
     /**
      * @var string
      */
     private $faction;
-    
+
     /**
      * @var \DateTime
      */
@@ -36,74 +39,133 @@ class User extends BaseUser
     /**
      * @var integer
      */
-    private $role;
+    private $status;
 
-    /**
+    /*
      * @var integer
      */
-    private $status;
 
     /**
      * @var string
      */
     private $avatar;
-
-    /*
-     * @var integer
-     */
-    private $donation;
     
+    private $donation;
+
     /**
-     * @var Deck[]
+     * @var Collection|Deck[]
      */
     private $decks;
-
+    
     /**
-     * @var Decklist[]
+     * @var Collection|Decklist[]
      */
     private $decklists;
     
     /**
-     * @var Comments[]
+     * @var Collection|Comment[]
      */
     private $comments;
     
     /**
-     * @var Decklist[]
+     * @var Collection|Decklist[]
      */
     private $favorites;
     
     /**
-     * @var Decklist[]
+     * @var Collection|Decklist[]
      */
     private $votes;
     
     /**
-     * @var User[]
+     * @var Collection|User[]
      */
     private $following;
     
     /**
-     * @var User[]
+     * @var Collection|User[]
      */
     private $followers;
+
+    /**
+     * @var boolean
+     */
+    private $notif_author = true;
+
+    /**
+     * @var boolean
+     */
+    private $notif_commenter = true;
+
+    /**
+     * @var boolean
+     */
+    private $notif_mention = true;
+
+    /**
+     * @var boolean
+     */
+    private $notif_follow = true;
+
+    /**
+     * @var boolean
+     */
+    private $notif_successor = true;
+
+    /**
+     * @var boolean
+     */
+    private $share_decks = false;
+
+    /**
+     * @var Collection
+     */
+    private $reviewvotes;
     
     /**
-     * Set reputation
-     *
-     * @param integer $reputation
-     * @return User
+     * @var Collection
      */
-    public function setReputation($reputation)
-    {
-        $this->reputation = $reputation;
+    private $reviews;
     
-        return $this;
+    /**
+     * @var boolean
+     */
+    private $soft_ban = false;
+    
+    /**
+     * @var \DateTime
+     */
+    private $last_activity_check;
+
+    /**
+     * @var boolean
+     */
+    private $autoload_images;
+
+    /**
+     * @var array
+     */
+
+    private $introductions;
+    
+    public function __construct()
+    {
+        $this->decks = new ArrayCollection();
+        $this->decklists = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
+        $this->votes = new ArrayCollection();
+        $this->following = new ArrayCollection();
+        $this->followers = new ArrayCollection();
+        $this->reputation = 1;
+        $this->faction = 'neutral-runner';
+        $this->creation = new \DateTime();
+        $this->donation = 0;
+
+        parent::__construct();
     }
 
     /**
-     * Get reputation
-     *
      * @return integer
      */
     public function getReputation()
@@ -112,21 +174,17 @@ class User extends BaseUser
     }
 
     /**
-     * Set creation
-     *
-     * @param \DateTime $creation
+     * @param integer $reputation
      * @return User
      */
-    public function setCreation($creation)
+    public function setReputation(int $reputation)
     {
-        $this->creation = $creation;
-    
+        $this->reputation = $reputation;
+
         return $this;
     }
 
     /**
-     * Get creation
-     *
      * @return \DateTime
      */
     public function getCreation()
@@ -135,21 +193,17 @@ class User extends BaseUser
     }
 
     /**
-     * Set resume
-     *
-     * @param string $resume
+     * @param \DateTime $creation
      * @return User
      */
-    public function setResume($resume)
+    public function setCreation(\DateTime $creation)
     {
-        $this->resume = $resume;
-    
+        $this->creation = $creation;
+
         return $this;
     }
 
     /**
-     * Get resume
-     *
      * @return string
      */
     public function getResume()
@@ -158,67 +212,55 @@ class User extends BaseUser
     }
 
     /**
-     * Set status
-     *
-     * @param integer $status
+     * @param string $resume
      * @return User
      */
-    public function setStatus($status)
+    public function setResume(string $resume)
     {
-        $this->status = $status;
-    
+        $this->resume = $resume;
+
         return $this;
     }
 
     /**
-     * Get status
-     *
      * @return integer
      */
     public function getStatus()
     {
         return $this->status;
     }
-    
+
     /**
-     * Set faction
-     *
-     * @param string $faction
+     * @param integer $status
      * @return User
      */
-    public function setFaction($faction)
+    public function setStatus(int $status)
     {
-    	$this->faction = $faction;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get faction
-     *
-     * @return string
-     */
-    public function getFaction()
-    {
-    	return $this->faction;
-    }
-    
-    /**
-     * Set avatar
-     *
-     * @param string $avatar
-     * @return User
-     */
-    public function setAvatar($avatar)
-    {
-        $this->avatar = $avatar;
-    
+        $this->status = $status;
+
         return $this;
     }
 
     /**
-     * Get avatar
-     *
+     * @return string
+     */
+    public function getFaction()
+    {
+        return $this->faction;
+    }
+
+    /**
+     * @param string $faction
+     * @return $this
+     */
+    public function setFaction(string $faction)
+    {
+        $this->faction = $faction;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getAvatar()
@@ -227,301 +269,181 @@ class User extends BaseUser
     }
 
     /**
-     * Set donation
-     *
-     * @param integer $donation
+     * @param string $avatar
      * @return User
      */
-    public function setDonation($donation)
+    public function setAvatar(string $avatar)
     {
-        $this->donation = $donation;
-    
+        $this->avatar = $avatar;
+
         return $this;
     }
-    
+
     /**
-     * Get donation
-     *
      * @return integer
      */
     public function getDonation()
     {
         return $this->donation;
     }
-    
+
     /**
-     * Set deck
-     *
-     * @param string $decks
+     * @param integer $donation
      * @return User
      */
-    public function setDecks($decks)
+    public function setDonation(int $donation)
     {
-    	$this->decks = $decks;
-    
-    	return $this;
+        $this->donation = $donation;
+
+        return $this;
     }
     
     /**
-     * Get deck
-     *
-     * @return \AppBundle\Entity\Deck[]
+     * @return Deck[]|Collection
      */
     public function getDecks()
     {
-    	return $this->decks;
-    }
-
-    /**
-     * Set decklists
-     *
-     * @param string $decklists
-     * @return Deck
-     */
-    public function setDecklists($decklists)
-    {
-    	$this->decklists = $decklists;
-    
-    	return $this;
+        return $this->decks;
     }
     
     /**
-     * Get decklists
-     *
-     * @return string
+     * @return Decklist[]|Collection
      */
     public function getDecklists()
     {
-    	return $this->decklists;
+        return $this->decklists;
     }
-    
+
     /**
-     * Set comments
-     *
-     * @param string $comments
-     * @return Deck
-     */
-    public function setComments($comments)
-    {
-    	$this->comments = $comments;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get comments
-     *
-     * @return string
+     * @return Comment[]|Collection
      */
     public function getComments()
     {
-    	return $this->comments;
+        return $this->comments;
     }
 
     /**
-     * Add to favorites
-     *
-     * @param Decklist $favorites
-     * @return User
+     * @param Decklist $decklist
+     * @return $this
      */
-    public function addFavorite($decklist)
+    public function addFavorite(Decklist $decklist)
     {
-    	$decklist->addFavorite($this);
-    	$this->favorites[] = $decklist;
-    
-    	return $this;
-    }
+        $decklist->addFavorite($this);
+        $this->favorites[] = $decklist;
 
-    /**
-     * Remove from favorites
-     *
-     * @param Decklist $favorites
-     * @return User
-     */
-    public function removeFavorite($decklist)
-    {
-    	$decklist->removeFavorite($this);
-    	$this->favorites->removeElement($decklist);
-    	
-    	return $this;
-    }
-    
-    
-    /**
-     * Get favorites
-     *
-     * @return Decklist
-     */
-    public function getFavorites()
-    {
-    	return $this->favorites;
-    }
-    
-    /**
-     * Set votes
-     *
-     * @param Decklist $votes
-     * @return User
-     */
-    public function addVote($decklist)
-    {
-    	$decklist->addVote($this);
-    	$this->votes[] = $decklist;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get votes
-     *
-     * @return Decklist
-     */
-    public function getVotes()
-    {
-    	return $this->votes;
-    }
-
-    /**
-     * Set following
-     *
-     * @param User $following
-     * @return User
-     */
-    public function addFollowing($user)
-    {
-    	$user->addFollower($this);
-    	$this->following[] = $user;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get following
-     *
-     * @return User
-     */
-    public function getFollowing()
-    {
-    	return $this->following;
-    }
-
-    /**
-     * Remove from following
-     *
-     * @param User $user
-     * @return User
-     */
-    public function removeFollowing($user)
-    {
-    	$user->removeFollower($this);
-    	$this->following->removeElement($user);
-    	 
-    	return $this;
-    }
-    
-    /**
-     * Add follower
-     *
-     * @param User $follower
-     * @return User
-     */
-    public function addFollower($user)
-    {
-    	$this->followers[] = $user;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get followers
-     *
-     * @return User
-     */
-    public function getFollowers()
-    {
-    	return $this->followers;
-    }
-
-    /**
-     * Remove from followers
-     *
-     * @param User $user
-     * @return User
-     */
-    public function removeFollower($user)
-    {
-    	$this->followers->removeElement($user);
-    
-    	return $this;
-    }
-    
-    public function getMaxNbDecks()
-    {
-    	return 2*(100+floor($this->reputation/ 10));
-    }
-    
-    public function __construct()
-    {
-    	$this->decks = new ArrayCollection();
-    	$this->decklists = new ArrayCollection();
-       	$this->comments = new ArrayCollection();
-       	$this->favorites = new ArrayCollection();
-       	$this->votes = new ArrayCollection();
-       	$this->following = new ArrayCollection();
-       	$this->followers = new ArrayCollection();
-       	$this->reputation = 1;
-       	$this->faction = 'neutral-runner';
-       	$this->creation = new \DateTime();
-       	$this->donation = 0;
-       	
-       	parent::__construct();
-    }
-    /**
-     * @var boolean
-     */
-    private $notif_author = TRUE;
-
-    /**
-     * @var boolean
-     */
-    private $notif_commenter = TRUE;
-
-    /**
-     * @var boolean
-     */
-    private $notif_mention = TRUE;
-
-    /**
-     * @var boolean
-     */
-    private $notif_follow = TRUE;
-
-    /**
-     * @var boolean
-     */
-    private $notif_successor = TRUE;
-
-    /**
-     * @var boolean
-     */
-    private $share_decks = FALSE;
-    
-    /**
-     * Set notif_author
-     *
-     * @param boolean $notifAuthor
-     * @return User
-     */
-    public function setNotifAuthor($notifAuthor)
-    {
-        $this->notif_author = $notifAuthor;
-    
         return $this;
     }
 
     /**
-     * Get notif_author
-     *
+     * @param Decklist $decklist
+     * @return $this
+     */
+    public function removeFavorite(Decklist $decklist)
+    {
+        $decklist->removeFavorite($this);
+        $this->favorites->removeElement($decklist);
+
+        return $this;
+    }
+
+    /**
+     * @return Decklist[]|Collection
+     */
+    public function getFavorites()
+    {
+        return $this->favorites;
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @return $this
+     */
+    public function addVote(Decklist $decklist)
+    {
+        $decklist->addVote($this);
+        $this->votes[] = $decklist;
+
+        return $this;
+    }
+
+    /**
+     * @return Decklist[]|Collection
+     */
+    public function getVotes()
+    {
+        return $this->votes;
+    }
+    
+    /**
+     * @param User $user
+     * @return $this
+     */
+    public function addFollowing(User $user)
+    {
+        $user->addFollower($this);
+        $this->following[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * @param User $user
+     * @return $this
+     */
+    public function addFollower(User $user)
+    {
+        $this->followers[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return User[]|Collection
+     */
+    public function getFollowing()
+    {
+        return $this->following;
+    }
+
+    /**
+     * Remove from following
+     * @param User $user
+     * @return User
+     */
+    public function removeFollowing(User $user)
+    {
+        $user->removeFollower($this);
+        $this->following->removeElement($user);
+
+        return $this;
+    }
+
+    /**
+     * Remove from followers
+     * @param User $user
+     * @return User
+     */
+    public function removeFollower(User $user)
+    {
+        $this->followers->removeElement($user);
+
+        return $this;
+    }
+
+    /**
+     * @return User[]|Collection
+     */
+    public function getFollowers()
+    {
+        return $this->followers;
+    }
+
+    public function getMaxNbDecks()
+    {
+        return 2*(100+floor($this->reputation/ 10));
+    }
+
+    /**
      * @return boolean
      */
     public function getNotifAuthor()
@@ -530,21 +452,17 @@ class User extends BaseUser
     }
 
     /**
-     * Set notif_commenter
-     *
-     * @param boolean $notifCommenter
+     * @param boolean $notifAuthor
      * @return User
      */
-    public function setNotifCommenter($notifCommenter)
+    public function setNotifAuthor(bool $notifAuthor)
     {
-        $this->notif_commenter = $notifCommenter;
-    
+        $this->notif_author = $notifAuthor;
+
         return $this;
     }
 
     /**
-     * Get notif_commenter
-     *
      * @return boolean
      */
     public function getNotifCommenter()
@@ -553,21 +471,17 @@ class User extends BaseUser
     }
 
     /**
-     * Set notif_mention
-     *
-     * @param boolean $notifMention
+     * @param boolean $notifCommenter
      * @return User
      */
-    public function setNotifMention($notifMention)
+    public function setNotifCommenter(bool $notifCommenter)
     {
-        $this->notif_mention = $notifMention;
-    
+        $this->notif_commenter = $notifCommenter;
+
         return $this;
     }
 
     /**
-     * Get notif_mention
-     *
      * @return boolean
      */
     public function getNotifMention()
@@ -576,21 +490,17 @@ class User extends BaseUser
     }
 
     /**
-     * Set notif_follow
-     *
-     * @param boolean $notifFollow
+     * @param boolean $notifMention
      * @return User
      */
-    public function setNotifFollow($notifFollow)
+    public function setNotifMention(bool $notifMention)
     {
-        $this->notif_follow = $notifFollow;
-    
+        $this->notif_mention = $notifMention;
+
         return $this;
     }
 
     /**
-     * Get notif_follow
-     *
      * @return boolean
      */
     public function getNotifFollow()
@@ -599,21 +509,17 @@ class User extends BaseUser
     }
 
     /**
-     * Set notif_successor
-     *
-     * @param boolean $notifSuccessor
+     * @param boolean $notifFollow
      * @return User
      */
-    public function setNotifSuccessor($notifSuccessor)
+    public function setNotifFollow(bool $notifFollow)
     {
-        $this->notif_successor = $notifSuccessor;
-    
+        $this->notif_follow = $notifFollow;
+
         return $this;
     }
 
     /**
-     * Get notif_successor
-     *
      * @return boolean
      */
     public function getNotifSuccessor()
@@ -622,93 +528,89 @@ class User extends BaseUser
     }
 
     /**
-     * Add decks
-     *
-     * @param \AppBundle\Entity\Deck $decks
+     * @param boolean $notifSuccessor
      * @return User
      */
-    public function addDeck(\AppBundle\Entity\Deck $decks)
+    public function setNotifSuccessor(bool $notifSuccessor)
+    {
+        $this->notif_successor = $notifSuccessor;
+
+        return $this;
+    }
+
+    /**
+     * Add decks
+     * @param Deck $decks
+     * @return User
+     */
+    public function addDeck(Deck $decks)
     {
         $this->decks[] = $decks;
-    
+
         return $this;
     }
 
     /**
      * Remove decks
-     *
-     * @param \AppBundle\Entity\Deck $decks
+     * @param Deck $decks
      */
-    public function removeDeck(\AppBundle\Entity\Deck $decks)
+    public function removeDeck(Deck $decks)
     {
         $this->decks->removeElement($decks);
     }
 
     /**
      * Add decklists
-     *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      * @return User
      */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function addDecklist(Decklist $decklists)
     {
         $this->decklists[] = $decklists;
-    
+
         return $this;
     }
 
     /**
      * Remove decklists
-     *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function removeDecklist(Decklist $decklists)
     {
         $this->decklists->removeElement($decklists);
     }
 
     /**
      * Add comments
-     *
-     * @param \AppBundle\Entity\Comment $comments
+     * @param Comment $comments
      * @return User
      */
-    public function addComment(\AppBundle\Entity\Comment $comments)
+    public function addComment(Comment $comments)
     {
         $this->comments[] = $comments;
-    
+
         return $this;
     }
-
+    
     /**
      * Remove comments
-     *
-     * @param \AppBundle\Entity\Comment $comments
+     * @param Comment $comments
      */
-    public function removeComment(\AppBundle\Entity\Comment $comments)
+    public function removeComment(Comment $comments)
     {
         $this->comments->removeElement($comments);
     }
 
     /**
      * Remove votes
-     *
-     * @param \AppBundle\Entity\Decklist $votes
+     * @param Decklist $votes
      */
-    public function removeVote(\AppBundle\Entity\Decklist $votes)
+    public function removeVote(Decklist $votes)
     {
         $this->votes->removeElement($votes);
     }
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $reviewvotes;
-
-
-    /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -717,56 +619,28 @@ class User extends BaseUser
     }
 
     /**
-     * Set role
-     *
-     * @param integer $role
-     * @return User
+     * @param Review $review
+     * @return $this
      */
-    public function setRole($role)
-    {
-        $this->role = $role;
-
-        return $this;
-    }
-
-    /**
-     * Get role
-     *
-     * @return integer
-     */
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    /**
-     * Add reviewvotes
-     *
-     * @param \AppBundle\Entity\Review $reviewvotes
-     * @return User
-     */
-    public function addReviewvote(\AppBundle\Entity\Review $review)
+    public function addReviewvote(Review $review)
     {
         $review->addVote($this);
         $this->reviewvotes[] = $review;
 
         return $this;
     }
-    
+
     /**
      * Remove reviewvotes
-     *
-     * @param \AppBundle\Entity\Review $reviewvotes
+     * @param Review $reviewvotes
      */
-    public function removeReviewvote(\AppBundle\Entity\Review $reviewvotes)
+    public function removeReviewvote(Review $reviewvotes)
     {
         $this->reviewvotes->removeElement($reviewvotes);
     }
 
     /**
-     * Get reviewvotes
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getReviewvotes()
     {
@@ -774,18 +648,11 @@ class User extends BaseUser
     }
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $reviews;
-
-
-    /**
      * Add reviews
-     *
-     * @param \AppBundle\Entity\Review $reviews
+     * @param Review $reviews
      * @return User
      */
-    public function addReview(\AppBundle\Entity\Review $reviews)
+    public function addReview(Review $reviews)
     {
         $this->reviews[] = $reviews;
 
@@ -794,41 +661,34 @@ class User extends BaseUser
 
     /**
      * Remove reviews
-     *
-     * @param \AppBundle\Entity\Review $reviews
+     * @param Review $reviews
      */
-    public function removeReview(\AppBundle\Entity\Review $reviews)
+    public function removeReview(Review $reviews)
     {
         $this->reviews->removeElement($reviews);
     }
 
     /**
-     * Get reviews
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getReviews()
     {
         return $this->reviews;
     }
-    /**
-     * @var integer
-     */
-    protected $id;
-
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @return boolean
      */
-    private $events;
-    
+    public function getShareDecks()
+    {
+        return $this->share_decks;
+    }
+
     /**
-     * Set share_decks
-     *
      * @param boolean $shareDecks
      * @return User
      */
-    public function setShareDecks($shareDecks)
+    public function setShareDecks(bool $shareDecks)
     {
         $this->share_decks = $shareDecks;
 
@@ -836,28 +696,18 @@ class User extends BaseUser
     }
 
     /**
-     * Get share_decks
-     *
      * @return boolean
      */
-    public function getShareDecks()
+    public function getSoftBan()
     {
-        return $this->share_decks;
+        return $this->soft_ban;
     }
-    /**
-     * @var boolean
-     */
-    private $soft_ban = false;
-
 
     /**
-     * Set softBan
-     *
      * @param boolean $softBan
-     *
      * @return User
      */
-    public function setSoftBan($softBan)
+    public function setSoftBan(bool $softBan)
     {
         $this->soft_ban = $softBan;
 
@@ -865,28 +715,18 @@ class User extends BaseUser
     }
 
     /**
-     * Get softBan
-     *
-     * @return boolean
+     * @return \DateTime
      */
-    public function getSoftBan()
+    public function getLastActivityCheck()
     {
-        return $this->soft_ban;
+        return $this->last_activity_check;
     }
-    /**
-     * @var \DateTime
-     */
-    private $last_activity_check;
-
 
     /**
-     * Set lastActivityCheck
-     *
      * @param \DateTime $lastActivityCheck
-     *
      * @return User
      */
-    public function setLastActivityCheck($lastActivityCheck)
+    public function setLastActivityCheck(\DateTime $lastActivityCheck)
     {
         $this->last_activity_check = $lastActivityCheck;
 
@@ -894,37 +734,6 @@ class User extends BaseUser
     }
 
     /**
-     * Get lastActivityCheck
-     *
-     * @return \DateTime
-     */
-    public function getLastActivityCheck()
-    {
-        return $this->last_activity_check;
-    }
-    /**
-     * @var boolean
-     */
-    private $autoload_images;
-
-
-    /**
-     * Set autoloadImages
-     *
-     * @param boolean $autoloadImages
-     *
-     * @return User
-     */
-    public function setAutoloadImages($autoloadImages)
-    {
-        $this->autoload_images = $autoloadImages;
-
-        return $this;
-    }
-
-    /**
-     * Get autoloadImages
-     *
      * @return boolean
      */
     public function getAutoloadImages()
@@ -933,33 +742,32 @@ class User extends BaseUser
     }
     
     /**
-     * @var array
-     */
-    
-    private $introductions;
-
-
-    /**
-     * Set introductions
-     *
-     * @param array $introductions
-     *
+     * @param boolean $autoloadImages
      * @return User
      */
-    public function setIntroductions($introductions)
+    public function setAutoloadImages(bool $autoloadImages)
     {
-        $this->introductions = $introductions;
+        $this->autoload_images = $autoloadImages;
 
         return $this;
     }
 
     /**
-     * Get introductions
-     *
-     * @return \json
+     * @return array
      */
     public function getIntroductions()
     {
         return $this->introductions;
+    }
+
+    /**
+     * @param array $introductions
+     * @return User
+     */
+    public function setIntroductions(array $introductions)
+    {
+        $this->introductions = $introductions;
+
+        return $this;
     }
 }

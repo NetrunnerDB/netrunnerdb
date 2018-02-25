@@ -2,9 +2,6 @@ AppBundle\Entity\Faction:
     type: entity
     table: faction
     repositoryClass: AppBundle\Repository\FactionRepository
-    gedmo:
-        translation:
-            locale: locale
     indexes:
         code_index:
             columns: [ code ]
@@ -34,8 +31,6 @@ AppBundle\Entity\Faction:
         name:
             type: string
             length: 255
-            gedmo:
-                - translatable
         color:
             type: string
             length: 6

@@ -3,32 +3,43 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Card;
+use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Description of ImportImagesCommand
  *
  * @author Alsciende <alsciende@icloud.com>
  */
-class ImportImagesCommand extends \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand
+class ImportImagesCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
-    protected function configure ()
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
+    protected function configure()
     {
         $this
-            ->setName('nrdb:import:images')
+            ->setName('app:import:images')
             ->setDescription('Import missing images from cardgamedb.com');
     }
 
-    protected function execute (\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $em = $this->getContainer()->get('doctrine')->getManager();
         $client = new Client([
             'http_errors' => false,
         ]);
 
         /** @var Card[] $cards */
-        $cards = $em->getRepository(Card::class)->findBy(['imageUrl' => null]);
+        $cards = $this->entityManager->getRepository(Card::class)->findBy(['imageUrl' => null]);
 
         foreach ($cards as $card) {
             $ffgId = $card->getPack()->getFfgId();
@@ -50,12 +61,12 @@ class ImportImagesCommand extends \Symfony\Bundle\FrameworkBundle\Command\Contai
 
             if ($response->getStatusCode() === 200) {
                 $card->setImageUrl($url);
-                $output->writeln(sprintf('Found image for %s at url %s', $card->toString(), $url));
+                $output->writeln(sprintf('Found image for %s at url %s', $card, $url));
             } else {
-                $output->writeln(sprintf('<error>Image missing for %s at url %s</error>', $card->toString(), $url));
+                $output->writeln(sprintf('<error>Image missing for %s at url %s</error>', $card, $url));
             }
         }
 
-        $em->flush();
+        $this->entityManager->flush();
     }
 }

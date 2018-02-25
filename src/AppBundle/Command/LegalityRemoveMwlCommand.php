@@ -2,7 +2,8 @@
 
 namespace AppBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
+use AppBundle\Entity\Deck;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,45 +16,50 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
  */
 class LegalityRemoveMwlCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
-    protected function configure ()
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this
-                ->setName('nrdb:legality:remove-mwl')
-                ->setDescription('Remove a MWL')
-                ->addArgument(
-                        'mwl_code', InputArgument::REQUIRED, 'Code of the MWL'
-                )
-        ;
+        parent::__construct();
+        $this->entityManager = $entityManager;
     }
 
-    protected function execute (InputInterface $input, OutputInterface $output)
+    protected function configure()
     {
-        /* @var $entityManager \Doctrine\ORM\EntityManager */
-        $entityManager = $this->getContainer()->get('doctrine')->getManager();
+        $this
+            ->setName('app:legality:remove-mwl')
+            ->setDescription('Remove a MWL')
+            ->addArgument(
+                'mwl_code',
+                InputArgument::REQUIRED,
+                'Code of the MWL'
+            );
+    }
 
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $mwl_code = $input->getArgument('mwl_code');
-        $mwl = $entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
+        $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
         if (!$mwl) {
             throw new \Exception("MWL not found");
         }
 
-        /* @var $list_deck \AppBundle\Entity\Deck[] */
-        $list_deck = $entityManager->getRepository('AppBundle:Deck')->findBy(array(
-            'mwl' => $mwl
-        ));
+        /** @var Deck[] $list_deck */
+        $list_deck = $this->entityManager->getRepository('AppBundle:Deck')->findBy([
+            'mwl' => $mwl,
+        ]);
 
         foreach ($list_deck as $deck) {
             $deck->setMwl(null);
         }
 
-        $entityManager->flush();
+        $this->entityManager->flush();
 
-        $entityManager->remove($mwl);
+        $this->entityManager->remove($mwl);
 
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         $output->writeln("Done.");
     }
-
 }

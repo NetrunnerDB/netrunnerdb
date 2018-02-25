@@ -2,7 +2,8 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Review
@@ -40,31 +41,34 @@ class Review
     private $nbvotes;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $card;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      */
     private $user;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $votes;
+
+    /**
+     * @var Collection
+     */
+    private $comments;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->votes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->votes = new ArrayCollection();
     }
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -73,12 +77,18 @@ class Review
     }
 
     /**
-     * Set dateCreation
-     *
+     * @return \DateTime
+     */
+    public function getDateCreation()
+    {
+        return $this->dateCreation;
+    }
+
+    /**
      * @param \DateTime $dateCreation
      * @return Review
      */
-    public function setDatecreation($dateCreation)
+    public function setDatecreation(\DateTime $dateCreation)
     {
         $this->dateCreation = $dateCreation;
 
@@ -86,31 +96,6 @@ class Review
     }
 
     /**
-     * Get dateCreation
-     *
-     * @return \DateTime
-     */
-    public function getDatecreation()
-    {
-        return $this->dateCreation;
-    }
-
-    /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     * @return Review
-     */
-    public function setDateupdate($dateUpdate)
-    {
-        $this->dateUpdate = $dateUpdate;
-
-        return $this;
-    }
-
-    /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateupdate()
@@ -119,21 +104,17 @@ class Review
     }
 
     /**
-     * Set rawtext
-     *
-     * @param string $rawtext
+     * @param \DateTime $dateUpdate
      * @return Review
      */
-    public function setRawtext($rawtext)
+    public function setDateupdate(\DateTime $dateUpdate)
     {
-        $this->rawtext = $rawtext;
+        $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
 
     /**
-     * Get rawtext
-     *
      * @return string
      */
     public function getRawtext()
@@ -142,21 +123,17 @@ class Review
     }
 
     /**
-     * Set text
-     *
-     * @param string $text
+     * @param string $rawtext
      * @return Review
      */
-    public function setText($text)
+    public function setRawtext(string $rawtext)
     {
-        $this->text = $text;
+        $this->rawtext = $rawtext;
 
         return $this;
     }
 
     /**
-     * Get text
-     *
      * @return string
      */
     public function getText()
@@ -165,21 +142,17 @@ class Review
     }
 
     /**
-     * Set nbvotes
-     *
-     * @param integer $nbvotes
+     * @param string $text
      * @return Review
      */
-    public function setNbvotes($nbvotes)
+    public function setText(string $text)
     {
-        $this->nbvotes = $nbvotes;
+        $this->text = $text;
 
         return $this;
     }
 
     /**
-     * Get nbvotes
-     *
      * @return integer
      */
     public function getNbvotes()
@@ -188,22 +161,18 @@ class Review
     }
 
     /**
-     * Set card
-     *
-     * @param \AppBundle\Entity\Card $card
+     * @param integer $nbvotes
      * @return Review
      */
-    public function setCard(\AppBundle\Entity\Card $card = null)
+    public function setNbvotes(int $nbvotes)
     {
-        $this->card = $card;
+        $this->nbvotes = $nbvotes;
 
         return $this;
     }
 
     /**
-     * Get card
-     *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getCard()
     {
@@ -211,22 +180,18 @@ class Review
     }
 
     /**
-     * Set user
-     *
-     * @param \AppBundle\Entity\User $user
+     * @param Card $card
      * @return Review
      */
-    public function setUser(User $user = null)
+    public function setCard(Card $card)
     {
-        $this->user = $user;
+        $this->card = $card;
 
         return $this;
     }
 
     /**
-     * Get user
-     *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
@@ -234,12 +199,21 @@ class Review
     }
 
     /**
-     * Add votes
-     *
-     * @param \AppBundle\Entity\User $votes
+     * @param User $user
      * @return Review
      */
-    public function addVote(\AppBundle\Entity\User $user)
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @param User $user
+     * @return $this
+     */
+    public function addVote(User $user)
     {
         $this->votes[] = $user;
 
@@ -248,36 +222,27 @@ class Review
 
     /**
      * Remove votes
-     *
-     * @param \AppBundle\Entity\User $votes
+     * @param User $votes
      */
-    public function removeVote(\AppBundle\Entity\User $votes)
+    public function removeVote(User $votes)
     {
         $this->votes->removeElement($votes);
     }
 
     /**
-     * Get votes
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getVotes()
     {
         return $this->votes;
     }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $comments;
-
 
     /**
      * Add comments
-     *
-     * @param \AppBundle\Entity\Reviewcomment $comments
+     * @param Reviewcomment $comments
      * @return Review
      */
-    public function addComment(\AppBundle\Entity\Reviewcomment $comments)
+    public function addComment(Reviewcomment $comments)
     {
         $this->comments[] = $comments;
 
@@ -286,18 +251,15 @@ class Review
 
     /**
      * Remove comments
-     *
-     * @param \AppBundle\Entity\Reviewcomment $comments
+     * @param Reviewcomment $comments
      */
-    public function removeComment(\AppBundle\Entity\Reviewcomment $comments)
+    public function removeComment(Reviewcomment $comments)
     {
         $this->comments->removeElement($comments);
     }
 
     /**
-     * Get comments
-     *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getComments()
     {

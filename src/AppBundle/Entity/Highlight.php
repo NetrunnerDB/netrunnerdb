@@ -13,15 +13,12 @@ class Highlight
     private $id;
 
     /**
-     * @var string
+     * @var Decklist
      */
     private $decklist;
 
-
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -29,25 +26,21 @@ class Highlight
     }
 
     /**
-     * Set decklist
-     *
-     * @param string $decklist
-     * @return Highlight
-     */
-    public function setDecklist($decklist)
-    {
-        $this->decklist = $decklist;
-
-        return $this;
-    }
-
-    /**
-     * Get decklist
-     *
-     * @return string 
+     * @return Decklist
      */
     public function getDecklist()
     {
         return $this->decklist;
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @return $this
+     */
+    public function setDecklist(Decklist $decklist)
+    {
+        $this->decklist = $decklist;
+
+        return $this;
     }
 }

@@ -1,0 +1,21 @@
+{% extends '/Search/display.html.twig' %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% for i in 0..cards|length-1 %}{% set card = cards[i] %}
+                {% if not card.rulings is empty %}
+                    <h4><a id="{{ card.code }}" href="{{ path('cards_zoom', {card_code: card.code}) }}">{{ card.title }}</a> (<span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }}, {{card.position}})</h4>
+                    <ul class="rulings-list">
+                        {% for ruling in card.rulings %}
+                            <li>{{ ruling.text|raw }}</li>
+                            {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
+

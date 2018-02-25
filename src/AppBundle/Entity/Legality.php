@@ -18,19 +18,17 @@ class Legality
     private $isLegal;
 
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @var Decklist
      */
     private $decklist;
 
     /**
-     * @var \AppBundle\Entity\Mwl
+     * @var Mwl
      */
     private $mwl;
 
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -39,22 +37,6 @@ class Legality
     }
 
     /**
-     * Set isLegal
-     *
-     * @param boolean $isLegal
-     *
-     * @return Legality
-     */
-    public function setIsLegal($isLegal)
-    {
-        $this->isLegal = $isLegal;
-
-        return $this;
-    }
-
-    /**
-     * Get isLegal
-     *
      * @return boolean
      */
     public function getIsLegal()
@@ -63,23 +45,18 @@ class Legality
     }
 
     /**
-     * Set decklist
-     *
-     * @param \AppBundle\Entity\Decklist $decklist
-     *
+     * @param boolean $isLegal
      * @return Legality
      */
-    public function setDecklist(\AppBundle\Entity\Decklist $decklist = null)
+    public function setIsLegal(bool $isLegal)
     {
-        $this->decklist = $decklist;
+        $this->isLegal = $isLegal;
 
         return $this;
     }
 
     /**
-     * Get decklist
-     *
-     * @return \AppBundle\Entity\Decklist
+     * @return Decklist
      */
     public function getDecklist()
     {
@@ -87,26 +64,32 @@ class Legality
     }
 
     /**
-     * Set mwl
-     *
-     * @param \AppBundle\Entity\Mwl $mwl
-     *
-     * @return Legality
+     * @param Decklist $decklist
+     * @return $this
      */
-    public function setMwl(\AppBundle\Entity\Mwl $mwl = null)
+    public function setDecklist(Decklist $decklist)
     {
-        $this->mwl = $mwl;
+        $this->decklist = $decklist;
 
         return $this;
     }
 
     /**
-     * Get mwl
-     *
-     * @return \AppBundle\Entity\Mwl
+     * @return Mwl
      */
     public function getMwl()
     {
         return $this->mwl;
+    }
+
+    /**
+     * @param Mwl $mwl
+     * @return $this
+     */
+    public function setMwl(Mwl $mwl)
+    {
+        $this->mwl = $mwl;
+
+        return $this;
     }
 }

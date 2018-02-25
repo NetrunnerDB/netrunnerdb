@@ -6,6 +6,7 @@ AppBundle\Entity\User:
             targetEntity: Deck
             orderBy: {'dateUpdate':'DESC'}
             mappedBy: user
+            fetch: EXTRA_LAZY
             cascade: ["remove"]
         decklists:
             targetEntity: Decklist
@@ -18,6 +19,7 @@ AppBundle\Entity\User:
             targetEntity: Review
             orderBy: {'dateCreation':'DESC'}
             mappedBy: user
+            fetch: EXTRA_LAZY
     manyToMany:
         favorites:
             targetEntity: Decklist
@@ -62,9 +64,6 @@ AppBundle\Entity\User:
             nullable: true
         resume:
             type: text
-            nullable: true
-        role:
-            type: integer
             nullable: true
         status:
             type: integer

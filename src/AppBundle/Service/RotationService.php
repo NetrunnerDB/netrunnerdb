@@ -2,9 +2,10 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Rotation;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Description of RotationService
@@ -13,15 +14,15 @@ use Doctrine\ORM\EntityManager;
  */
 class RotationService
 {
-    /** @var EntityManager */
+    /** @var EntityManagerInterface $entityManager */
     private $entityManager;
 
-    public function __construct (EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
-    public function findCompatibleRotation (Decklist $decklist)
+    public function findCompatibleRotation(Decklist $decklist)
     {
         $rotations = $this->entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
 
@@ -39,15 +40,15 @@ class RotationService
      * @param Rotation $rotation
      * @return bool
      */
-    public function isRotationCompatible (Decklist $decklist, Rotation $rotation)
+    public function isRotationCompatible(Decklist $decklist, Rotation $rotation)
     {
         $cycles = [];
         foreach ($decklist->getSlots() as $slot) {
             $cycles[$slot->getCard()->getPack()->getCycle()->getCode()] = 1;
         }
 
-        return count(array_diff(array_keys($cycles), array_map(function ($cycle) {
-                return $cycle->getCode();
-            }, $rotation->getCycles()->toArray()))) === 0;
+        return count(array_diff(array_keys($cycles), array_map(function (Cycle $cycle) {
+            return $cycle->getCode();
+        }, $rotation->getCycles()->toArray()))) === 0;
     }
 }

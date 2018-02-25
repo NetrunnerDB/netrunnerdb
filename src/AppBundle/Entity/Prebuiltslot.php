@@ -18,19 +18,17 @@ class Prebuiltslot
     private $quantity;
 
     /**
-     * @var \AppBundle\Entity\Prebuilt
+     * @var Prebuilt
      */
     private $prebuilt;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $card;
 
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -39,22 +37,6 @@ class Prebuiltslot
     }
 
     /**
-     * Set quantity
-     *
-     * @param integer $quantity
-     *
-     * @return Prebuiltslot
-     */
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    /**
-     * Get quantity
-     *
      * @return integer
      */
     public function getQuantity()
@@ -63,23 +45,18 @@ class Prebuiltslot
     }
 
     /**
-     * Set prebuilt
-     *
-     * @param \AppBundle\Entity\Prebuilt $prebuilt
-     *
+     * @param integer $quantity
      * @return Prebuiltslot
      */
-    public function setPrebuilt(\AppBundle\Entity\Prebuilt $prebuilt = null)
+    public function setQuantity(int $quantity)
     {
-        $this->prebuilt = $prebuilt;
+        $this->quantity = $quantity;
 
         return $this;
     }
 
     /**
-     * Get prebuilt
-     *
-     * @return \AppBundle\Entity\Prebuilt
+     * @return Prebuilt
      */
     public function getPrebuilt()
     {
@@ -87,26 +64,32 @@ class Prebuiltslot
     }
 
     /**
-     * Set card
-     *
-     * @param \AppBundle\Entity\Card $card
-     *
+     * @param Prebuilt $prebuilt
      * @return Prebuiltslot
      */
-    public function setCard(\AppBundle\Entity\Card $card = null)
+    public function setPrebuilt(Prebuilt $prebuilt)
     {
-        $this->card = $card;
+        $this->prebuilt = $prebuilt;
 
         return $this;
     }
 
     /**
-     * Get card
-     *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getCard()
     {
         return $this->card;
+    }
+
+    /**
+     * @param Card $card
+     * @return Prebuiltslot
+     */
+    public function setCard(Card $card)
+    {
+        $this->card = $card;
+
+        return $this;
     }
 }

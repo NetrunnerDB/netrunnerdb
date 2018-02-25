@@ -120,6 +120,7 @@ AppBundle\Entity\Decklist:
                 inverseJoinColumns:
                     user_id:
                         referencedColumnName: id
+            fetch: EXTRA_LAZY
             cascade: ["persist"]
         votes:
             targetEntity: User
@@ -132,6 +133,7 @@ AppBundle\Entity\Decklist:
                 inverseJoinColumns:
                     user_id:
                         referencedColumnName: id
+            fetch: EXTRA_LAZY
             cascade: ["persist"]
     id:
         id:

@@ -2,10 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Mwl
  */
-class Mwl implements \Serializable
+class Mwl implements NormalizableInterface, TimestampableInterface
 {
     /**
      * @var integer
@@ -38,7 +42,7 @@ class Mwl implements \Serializable
     private $cards;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $legalities;
 
@@ -60,12 +64,12 @@ class Mwl implements \Serializable
         $this->active = false;
     }
 
-    public function toString()
+    public function __toString()
     {
-        return $this->name;
+        return $this->name ?: '(unknown)';
     }
 
-    public function serialize()
+    public function normalize()
     {
         return [
             'id'            => $this->id,
@@ -79,14 +83,7 @@ class Mwl implements \Serializable
         ];
     }
 
-    public function unserialize($serialized)
-    {
-        throw new \Exception("unserialize() method unsupported");
-    }
-
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -95,8 +92,6 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get code
-     *
      * @return string
      */
     public function getCode()
@@ -105,13 +100,10 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Set code
-     *
      * @param string $code
-     *
      * @return Mwl
      */
-    public function setCode($code)
+    public function setCode(string $code)
     {
         $this->code = $code;
 
@@ -119,8 +111,6 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -129,13 +119,10 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Set name
-     *
      * @param string $name
-     *
      * @return Mwl
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
 
@@ -143,8 +130,6 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get dateStart
-     *
      * @return \DateTime
      */
     public function getDateStart()
@@ -153,13 +138,10 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Set dateStart
-     *
      * @param \DateTime $dateStart
-     *
      * @return Mwl
      */
-    public function setDateStart($dateStart)
+    public function setDateStart(\DateTime $dateStart)
     {
         $this->dateStart = $dateStart;
 
@@ -167,8 +149,6 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get active
-     *
      * @return boolean
      */
     public function getActive()
@@ -177,13 +157,10 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Set active
-     *
      * @param boolean $active
-     *
      * @return Mwl
      */
-    public function setActive($active)
+    public function setActive(bool $active)
     {
         $this->active = $active;
 
@@ -192,12 +169,10 @@ class Mwl implements \Serializable
 
     /**
      * Add legality
-     *
-     * @param \AppBundle\Entity\Legality $legality
-     *
+     * @param Legality $legality
      * @return Mwl
      */
-    public function addLegality(\AppBundle\Entity\Legality $legality)
+    public function addLegality(Legality $legality)
     {
         $this->legalities[] = $legality;
 
@@ -206,18 +181,15 @@ class Mwl implements \Serializable
 
     /**
      * Remove legality
-     *
-     * @param \AppBundle\Entity\Legality $legality
+     * @param Legality $legality
      */
-    public function removeLegality(\AppBundle\Entity\Legality $legality)
+    public function removeLegality(Legality $legality)
     {
         $this->legalities->removeElement($legality);
     }
 
     /**
-     * Get legalities
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getLegalities()
     {
@@ -225,8 +197,6 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
     public function getDateCreation()
@@ -235,13 +205,10 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Set dateCreation
-     *
      * @param \DateTime $dateCreation
-     *
      * @return Mwl
      */
-    public function setDateCreation($dateCreation)
+    public function setDateCreation(\DateTime $dateCreation)
     {
         $this->dateCreation = $dateCreation;
 
@@ -249,8 +216,6 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
@@ -259,13 +224,10 @@ class Mwl implements \Serializable
     }
 
     /**
-     * Set dateUpdate
-     *
      * @param \DateTime $dateUpdate
-     *
      * @return Mwl
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
 
@@ -282,10 +244,9 @@ class Mwl implements \Serializable
 
     /**
      * @param array $cards
-     *
-     * @return self
+     * @return Mwl
      */
-    public function setCards($cards)
+    public function setCards(array $cards): self
     {
         $this->cards = $cards;
 

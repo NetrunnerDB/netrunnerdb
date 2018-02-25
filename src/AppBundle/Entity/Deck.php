@@ -2,45 +2,20 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Deck
  */
-class Deck implements \Serializable
+class Deck implements NormalizableInterface, TimestampableInterface
 {
-	function __toString() {
-		return "[$this->id] $this->name";
-	}
-	
-	function serialize() {
-		$cards = [];
-		foreach($this->slots as $slot) {
-			$cards[$slot->getCard()->getCode()] = $slot->getQuantity();
-		}
-	
-		return  [
-				'id' => $this->id,
-				'date_creation' => $this->dateCreation->format('c'),
-				'date_update' => $this->dateUpdate->format('c'),
-				'name' => $this->name,
-				'description' => $this->description,
-				'mwl_code' => $this->mwl ? $this->mwl->getCode() : null,
-				'cards' => $cards
-		];
-	}
-	
-	function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
     /**
      * @var integer
      */
     private $id;
-
-    /**
-     * @var string
-     */
-    private $hash;
 
     /**
      * @var string
@@ -61,12 +36,12 @@ class Deck implements \Serializable
      * @var string
      */
     private $description;
-    
+
     /**
-     * @var string
+     * @var string|null
      */
     private $problem;
-    
+
     /**
      * @var integer
      */
@@ -86,48 +61,97 @@ class Deck implements \Serializable
      * @var string
      */
     private $tags;
-    
-    private $message;
-    
+
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var string
+     */
+    private $message;
+
+    /**
+     * @var Collection|Deckslot[]
      */
     private $slots;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      */
     private $user;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
 
     /**
-     * @var AppBundle\Entity\Card
+     * @var Card
      */
     private $identity;
-    
+
     /**
-     * @var AppBundle\Entity\Pack
+     * @var Pack
      */
     private $lastPack;
-    
+
+    /**
+     * @var Collection
+     */
+    private $children;
+
+    /**
+     * @var Decklist|null
+     */
+    private $parent;
+
+    /**
+     * @var Collection
+     */
+    private $changes;
+
+    /**
+     * @var Mwl|null
+     */
+    private $mwl;
+
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->slots = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->descendants = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->slots = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
-    
+
     /**
-     * Get id
-     *
-     * @return integer
+     * @return string
+     */
+    public function __toString()
+    {
+        return "[$this->id] $this->name";
+    }
+
+    /**
+     * @return array
+     */
+    public function normalize()
+    {
+        $cards = [];
+        foreach ($this->slots as $slot) {
+            $cards[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+
+        return [
+            'id'            => $this->id,
+            'date_creation' => $this->dateCreation->format('c'),
+            'date_update'   => $this->dateUpdate->format('c'),
+            'name'          => $this->name,
+            'description'   => $this->description,
+            'mwl_code'      => $this->mwl ? $this->mwl->getCode() : null,
+            'cards'         => $cards,
+        ];
+    }
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -135,21 +159,6 @@ class Deck implements \Serializable
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return Deck
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -158,91 +167,75 @@ class Deck implements \Serializable
     }
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     * @return Deck
+     * @param string $name
+     * @return $this
      */
-    public function setDatecreation($dateCreation)
+    public function setName(string $name)
     {
-        $this->dateCreation = $dateCreation;
-    
+        $this->name = $name;
+
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
      * @return \DateTime
      */
-    public function getDatecreation()
+    public function getDateCreation()
     {
         return $this->dateCreation;
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     * @return Deck
+     * @param \DateTime $dateCreation
+     * @return $this
      */
-    public function setDateupdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
-    
+        $this->dateCreation = $dateCreation;
+
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
-    public function getDateupdate()
+    public function getDateUpdate()
     {
         return $this->dateUpdate;
     }
 
     /**
-     * Set description
-     *
-     * @param string $description
-     * @return List
+     * @param \DateTime $dateUpdate
+     * @return $this
      */
-    public function setDescription($description)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
-    	$this->description = $description;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-    	return $this->description;
-    }
-    
-    /**
-     * Set problem
-     *
-     * @param string $problem
-     * @return Deck
-     */
-    public function setProblem($problem)
-    {
-        $this->problem = $problem;
-    
+        $this->dateUpdate = $dateUpdate;
+
         return $this;
     }
 
     /**
-     * Get problem
-     *
      * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     * @return $this
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
      */
     public function getProblem()
     {
@@ -250,32 +243,37 @@ class Deck implements \Serializable
     }
 
     /**
-     * Add slots
-     *
-     * @param \AppBundle\Entity\Deckslot $slots
-     * @return Deck
+     * @param string|null $problem
+     * @return $this
      */
-    public function addSlot(\AppBundle\Entity\Deckslot $slots)
+    public function setProblem(string $problem = null)
     {
-        $this->slots[] = $slots;
-    
+        $this->problem = $problem;
+
         return $this;
     }
 
     /**
-     * Remove slots
-     *
-     * @param \AppBundle\Entity\Deckslot $slots
+     * @param Deckslot $slots
+     * @return $this
      */
-    public function removeSlot(\AppBundle\Entity\Deckslot $slots)
+    public function addSlot(Deckslot $slots)
+    {
+        $this->slots[] = $slots;
+
+        return $this;
+    }
+
+    /**
+     * @param Deckslot $slots
+     */
+    public function removeSlot(Deckslot $slots)
     {
         $this->slots->removeElement($slots);
     }
 
     /**
-     * Get slots
-     *
-     * @return \AppBundle\Entity\Deckslot[]
+     * @return Deckslot[]|ArrayCollection|Collection
      */
     public function getSlots()
     {
@@ -283,22 +281,7 @@ class Deck implements \Serializable
     }
 
     /**
-     * Set user
-     *
-     * @param \AppBundle\Entity\User $user
-     * @return Deck
-     */
-    public function setUser(\AppBundle\Entity\User $user = null)
-    {
-        $this->user = $user;
-    
-        return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return \AppBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
@@ -306,22 +289,18 @@ class Deck implements \Serializable
     }
 
     /**
-     * Set side
-     *
-     * @param \AppBundle\Entity\Side $side
-     * @return Deck
+     * @param User $user
+     * @return $this
      */
-    public function setSide(\AppBundle\Entity\Side $side = null)
+    public function setUser(User $user)
     {
-        $this->side = $side;
-    
+        $this->user = $user;
+
         return $this;
     }
 
     /**
-     * Get side
-     *
-     * @return \AppBundle\Entity\Side
+     * @return Side
      */
     public function getSide()
     {
@@ -329,68 +308,56 @@ class Deck implements \Serializable
     }
 
     /**
-     * Set identity
-     *
-     * @param \AppBundle\Entity\Card $identity
-     * @return Deck
+     * @param Side $side
+     * @return $this
      */
-    public function setIdentity($identity)
+    public function setSide(Side $side)
     {
-    	$this->identity = $identity;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get identity
-     *
-     * @return \AppBundle\Entity\Card
-     */
-    public function getIdentity()
-    {
-    	return $this->identity;
-    }
+        $this->side = $side;
 
-    /**
-     * Set lastPack
-     *
-     * @param \AppBundle\Entity\Pack $lastPack
-     * @return Deck
-     */
-    public function setLastPack($lastPack)
-    {
-    	$this->lastPack = $lastPack;
-    
-    	return $this;
-    }
-    
-    /**
-     * Get lastPack
-     *
-     * @return \AppBundle\Entity\Pack
-     */
-    public function getLastPack()
-    {
-    	return $this->lastPack;
-    }
-    
-    /**
-     * Set deckSize
-     *
-     * @param integer $deckSize
-     * @return Deck
-     */
-    public function setDeckSize($deckSize)
-    {
-        $this->deckSize = $deckSize;
-    
         return $this;
     }
 
     /**
-     * Get deckSize
-     *
-     * @return integer
+     * @return Card
+     */
+    public function getIdentity()
+    {
+        return $this->identity;
+    }
+
+    /**
+     * @param Card $identity
+     * @return $this
+     */
+    public function setIdentity(Card $identity)
+    {
+        $this->identity = $identity;
+
+        return $this;
+    }
+
+    /**
+     * @return Pack
+     */
+    public function getLastPack()
+    {
+        return $this->lastPack;
+    }
+
+    /**
+     * @param Pack $lastPack
+     * @return $this
+     */
+    public function setLastPack(Pack $lastPack)
+    {
+        $this->lastPack = $lastPack;
+
+        return $this;
+    }
+
+    /**
+     * @return int
      */
     public function getDeckSize()
     {
@@ -398,22 +365,18 @@ class Deck implements \Serializable
     }
 
     /**
-     * Set influenceSpent
-     *
-     * @param integer $influenceSpent
-     * @return Deck
+     * @param int $deckSize
+     * @return $this
      */
-    public function setInfluenceSpent($influenceSpent)
+    public function setDeckSize(int $deckSize)
     {
-        $this->influenceSpent = $influenceSpent;
-    
+        $this->deckSize = $deckSize;
+
         return $this;
     }
 
     /**
-     * Get influenceSpent
-     *
-     * @return integer
+     * @return int
      */
     public function getInfluenceSpent()
     {
@@ -421,22 +384,18 @@ class Deck implements \Serializable
     }
 
     /**
-     * Set agendaPoints
-     *
-     * @param integer $agendaPoints
-     * @return Deck
+     * @param int $influenceSpent
+     * @return $this
      */
-    public function setAgendaPoints($agendaPoints)
+    public function setInfluenceSpent(int $influenceSpent)
     {
-        $this->agendaPoints = $agendaPoints;
-    
+        $this->influenceSpent = $influenceSpent;
+
         return $this;
     }
 
     /**
-     * Get agendaPoints
-     *
-     * @return integer
+     * @return int
      */
     public function getAgendaPoints()
     {
@@ -444,102 +403,103 @@ class Deck implements \Serializable
     }
 
     /**
-     * Set tags
-     *
-     * @param string $tags
-     * @return Deck
+     * @param int $agendaPoints
+     * @return $this
      */
-    public function setTags($tags)
+    public function setAgendaPoints(int $agendaPoints)
     {
-        $this->tags = $tags;
-    
+        $this->agendaPoints = $agendaPoints;
+
         return $this;
     }
-    
+
     /**
-     * Get tags
-     *
      * @return string
      */
     public function getTags()
     {
         return $this->tags;
     }
-    
-    /**
-     * Get cards
-     *
-     * @return Cards[]
-     */
-    public function getCards()
-    {
-    	$arr = array();
-    	foreach($this->slots as $slot) {
-    		$card = $slot->getCard();
-    		$arr[$card->getCode()] = array('qty' => $slot->getQuantity(), 'card' => $card);
-    	}
-    	return $arr;
-    }
-
-    public function getContent()
-    {
-    	$arr = array();
-    	foreach($this->slots as $slot) {
-    		$arr[$slot->getCard()->getCode()] = $slot->getQuantity();
-    	}
-    	ksort($arr);
-    	return $arr;
-    }
-    
-    public function getMessage()
-    {
-    	return $this->message;
-    }
-    
-    public function setMessage($message)
-    {
-    	$this->message = $message;
-    	return $this;
-    }
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $children;
 
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @param string $tags
+     * @return $this
      */
-    private $parent;
-
-
-    /**
-     * Add children
-     *
-     * @param \AppBundle\Entity\Decklist $children
-     * @return Deck
-     */
-    public function addChildren(\AppBundle\Entity\Decklist $children)
+    public function setTags(string $tags)
     {
-        $this->children[] = $children;
-    
+        $this->tags = $tags;
+
         return $this;
     }
 
     /**
-     * Remove children
-     *
-     * @param \AppBundle\Entity\Decklist $children
+     * @return array
      */
-    public function removeChildren(\AppBundle\Entity\Decklist $children)
+    public function getCards()
+    {
+        $arr = [];
+        foreach ($this->slots as $slot) {
+            $card = $slot->getCard();
+            $arr[$card->getCode()] = ['qty' => $slot->getQuantity(), 'card' => $card];
+        }
+
+        return $arr;
+    }
+
+    /**
+     * @return array
+     */
+    public function getContent()
+    {
+        $arr = [];
+        foreach ($this->slots as $slot) {
+            $arr[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+        ksort($arr);
+
+        return $arr;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string $message
+     * @return $this
+     */
+    public function setMessage(string $message)
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    /**
+     * @param Decklist $children
+     * @return $this
+     */
+    public function addChildren(Decklist $children)
+    {
+        $this->children[] = $children;
+
+        return $this;
+    }
+
+    /**
+     * @param Decklist $children
+     */
+    public function removeChildren(Decklist $children)
     {
         $this->children->removeElement($children);
     }
 
     /**
-     * Get children
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection|Collection
      */
     public function getChildren()
     {
@@ -547,40 +507,29 @@ class Deck implements \Serializable
     }
 
     /**
-     * Set parent
-     *
-     * @param \AppBundle\Entity\Decklist $parent
-     * @return Deck
-     */
-    public function setParent(\AppBundle\Entity\Decklist $parent = null)
-    {
-        $this->parent = $parent;
-    
-        return $this;
-    }
-
-    /**
-     * Get parent
-     *
-     * @return \AppBundle\Entity\Decklist
+     * @return Decklist|null
      */
     public function getParent()
     {
         return $this->parent;
     }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $changes;
-
 
     /**
-     * Add children
-     *
-     * @param \AppBundle\Entity\Decklist $children
-     * @return Deck
+     * @param Decklist|null $parent
+     * @return $this
      */
-    public function addChild(\AppBundle\Entity\Decklist $children)
+    public function setParent(Decklist $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @param Decklist $children
+     * @return $this
+     */
+    public function addChild(Decklist $children)
     {
         $this->children[] = $children;
 
@@ -588,22 +537,18 @@ class Deck implements \Serializable
     }
 
     /**
-     * Remove children
-     *
-     * @param \AppBundle\Entity\Decklist $children
+     * @param Decklist $children
      */
-    public function removeChild(\AppBundle\Entity\Decklist $children)
+    public function removeChild(Decklist $children)
     {
         $this->children->removeElement($children);
     }
 
     /**
-     * Add changes
-     *
-     * @param \AppBundle\Entity\Deckchange $changes
-     * @return Deck
+     * @param Deckchange $changes
+     * @return $this
      */
-    public function addChange(\AppBundle\Entity\Deckchange $changes)
+    public function addChange(Deckchange $changes)
     {
         $this->changes[] = $changes;
 
@@ -611,51 +556,37 @@ class Deck implements \Serializable
     }
 
     /**
-     * Remove changes
-     *
-     * @param \AppBundle\Entity\Deckchange $changes
+     * @param Deckchange $changes
      */
-    public function removeChange(\AppBundle\Entity\Deckchange $changes)
+    public function removeChange(Deckchange $changes)
     {
         $this->changes->removeElement($changes);
     }
 
     /**
-     * Get changes
-     *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getChanges()
     {
         return $this->changes;
     }
-    /**
-     * @var \AppBundle\Entity\Mwl
-     */
-    private $mwl;
-
 
     /**
-     * Set mwl
-     *
-     * @param \AppBundle\Entity\Mwl $mwl
-     *
-     * @return Deck
-     */
-    public function setMwl(\AppBundle\Entity\Mwl $mwl = null)
-    {
-        $this->mwl = $mwl;
-
-        return $this;
-    }
-
-    /**
-     * Get mwl
-     *
-     * @return \AppBundle\Entity\Mwl
+     * @return Mwl|null
      */
     public function getMwl()
     {
         return $this->mwl;
+    }
+
+    /**
+     * @param Mwl|null $mwl
+     * @return $this
+     */
+    public function setMwl(Mwl $mwl = null)
+    {
+        $this->mwl = $mwl;
+
+        return $this;
     }
 }

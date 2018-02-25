@@ -2,6 +2,10 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Decklist;
+use AppBundle\Entity\Mwl;
+use AppBundle\Service\Judge;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,52 +16,63 @@ use AppBundle\Entity\Legality;
 
 class LegalityApplyMwlCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
-    protected function configure ()
+    /** @var Judge $judge */
+    private $judge;
+
+    public function __construct(EntityManagerInterface $entityManager, Judge $judge)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+        $this->judge = $judge;
+    }
+
+    protected function configure()
     {
         $this
-                ->setName('nrdb:legality:apply-mwl')
+                ->setName('app:legality:apply-mwl')
                 ->setDescription('Compute decklist legality for a MWL')
                 ->addArgument(
-                        'mwl_code', InputArgument::REQUIRED, 'Code of the MWL'
+                        'mwl_code',
+                    InputArgument::REQUIRED,
+                    'Code of the MWL'
                 )
                 ->addOption(
-                        'decklist', 'd', InputOption::VALUE_OPTIONAL, 'Id of the decklist'
+                        'decklist',
+                    'd',
+                    InputOption::VALUE_OPTIONAL,
+                    'Id of the decklist'
                 )
 
         ;
     }
 
-    protected function execute (InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /* @var $entityManager \Doctrine\ORM\EntityManager */
-        $entityManager = $this->getContainer()->get('doctrine')->getManager();
-
-        /* @var $judge \AppBundle\Service\Judge */
-        $judge = $this->getContainer()->get('judge');
-
         $mwl_code = $input->getArgument('mwl_code');
-        $mwl = $entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
+        $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
 
-        if (!$mwl) {
+        if (!$mwl instanceof Mwl) {
             throw new \Exception("MWL not found");
         }
 
         $decklist_id = $input->getOption('decklist');
         if ($decklist_id) {
-            $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-            if (!$decklist) {
+            $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+            if (!$decklist instanceof Decklist) {
                 throw new \Exception("Decklist not found");
             }
-            $legality = $entityManager->getRepository('AppBundle:Legality')->findOneBy(['mwl' => $mwl, 'decklist' => $decklist]);
-            if (!$legality) {
+            $legality = $this->entityManager->getRepository('AppBundle:Legality')->findOneBy(['mwl' => $mwl, 'decklist' => $decklist]);
+            if (!$legality instanceof Legality) {
                 $legality = new Legality();
                 $legality->setDecklist($decklist);
                 $legality->setMwl($mwl);
-                $entityManager->persist($legality);
+                $this->entityManager->persist($legality);
             }
-            $judge->computeLegality($legality);
-            $entityManager->flush();
+            $this->judge->computeLegality($legality);
+            $this->entityManager->flush();
             if ($legality->getIsLegal()) {
                 $output->writeln("<info>Done. Decklist is legal.</info>");
             } else {
@@ -74,11 +89,11 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
 						WHERE l.decklist=d AND l.mwl=?1
     				)
     				ORDER BY d.id DESC";
-        $countQuery = $entityManager->createQuery($countDql)->setParameter(1, $mwl);
+        $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $mwl);
         $count = $countQuery->getSingleResult()[1];
         $output->writeln("<comment>Found $count decklists to analyze</comment>");
 
-        if(!$count) {
+        if (!$count) {
             return;
         }
         
@@ -87,17 +102,17 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
         $progress->start();
 
         $fetchDql = str_replace('COUNT(d)', 'd', $countDql);
-        $fetchQuery = $entityManager->createQuery($fetchDql)->setParameter(1, $mwl)->setMaxResults(1);
+        $fetchQuery = $this->entityManager->createQuery($fetchDql)->setParameter(1, $mwl)->setMaxResults(1);
         while ($count--) {
             $decklist = $fetchQuery->getSingleResult();
             $legality = new Legality();
             $legality->setDecklist($decklist);
             $legality->setMwl($mwl);
-            $judge->computeLegality($legality);
-            $entityManager->persist($legality);
-            $entityManager->flush();
-            $entityManager->detach($legality);
-            $entityManager->detach($decklist);
+            $this->judge->computeLegality($legality);
+            $this->entityManager->persist($legality);
+            $this->entityManager->flush();
+            $this->entityManager->detach($legality);
+            $this->entityManager->detach($decklist);
 
             $progress->advance();
         }
@@ -105,5 +120,4 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
         $progress->finish();
         $output->writeln("<info>Done</info>");
     }
-
 }

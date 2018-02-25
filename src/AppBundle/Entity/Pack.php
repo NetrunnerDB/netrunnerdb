@@ -2,30 +2,17 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\CodeNameInterface;
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Pack
  */
-class Pack implements \Gedmo\Translatable\Translatable, \Serializable
+class Pack implements NormalizableInterface, TimestampableInterface, CodeNameInterface
 {
-    public function toString() {
-		return $this->name;
-	}
-
-	public function serialize() {
-		return [
-				'code' => $this->code,
-				'cycle_code' => $this->cycle ? $this->cycle->getCode() : null,
-				'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null, 
-				'name' => $this->name,
-				'position' => $this->position,
-				'size' => $this->size
-		];
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
     /**
      * @var integer
      */
@@ -42,7 +29,7 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     private $name;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     private $dateRelease;
 
@@ -57,281 +44,25 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     private $position;
 
     /**
-     * @var integer
+     * @var integer|null
      */
     private $ffgId;
 
     /**
-     * @var string 
-     */
-    private $locale = 'en';
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $decklists;
 
     /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set code
-     *
-     * @param string $code
-     * @return Pack
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-    
-        return $this;
-    }
-
-    /**
-     * Get code
-     *
-     * @return string 
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return Pack
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string 
-     */
-    public function getName()
-    {
-    	return $this->name;
-    }
-
-    /**
-     * Set dateRelease
-     *
-     * @param \DateTime $dateRelease
-     * @return Pack
-     */
-    public function setDateRelease($dateRelease)
-    {
-        $this->dateRelease = $dateRelease;
-    
-        return $this;
-    }
-
-    /**
-     * Get dateRelease
-     *
-     * @return \DateTime 
-     */
-    public function getDateRelease()
-    {
-        return $this->dateRelease;
-    }
-
-    /**
-     * Set size
-     *
-     * @param integer $size
-     * @return Pack
-     */
-    public function setSize($size)
-    {
-        $this->size = $size;
-    
-        return $this;
-    }
-
-    /**
-     * Get size
-     *
-     * @return integer 
-     */
-    public function getSize()
-    {
-        return $this->size;
-    }
-
-    /**
-     * Set ffgId
-     *
-     * @param integer $ffgId
-     * @return Pack
-     */
-    public function setFfgId($ffgId)
-    {
-        $this->ffgId = $ffgId;
-
-        return $this;
-    }
-
-    /**
-     * Get ffgId
-     *
-     * @return integer
-     */
-    public function getFfgId()
-    {
-        return $this->ffgId;
-    }
-
-    /**
-     * Set position
-     *
-     * @param integer $position
-     * @return Card
-     */
-    public function setPosition($position)
-    {
-        $this->position = $position;
-    
-        return $this;
-    }
-
-    /**
-     * Get position
-     *
-     * @return integer 
-     */
-    public function getPosition()
-    {
-        return $this->position;
-    }
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $cards;
 
     /**
-     * @var \AppBundle\Entity\Cycle
+     * @var Cycle
      */
     private $cycle;
 
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->ts = new \DateTime(); 
-    	$this->cards = new \Doctrine\Common\Collections\ArrayCollection();
-    	$this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    /**
-     * Add cards
-     *
-     * @param \AppBundle\Entity\Card $cards
-     * @return Pack
-     */
-    public function addCard(\AppBundle\Entity\Card $cards)
-    {
-        $this->cards[] = $cards;
-    
-        return $this;
-    }
-
-    /**
-     * Remove cards
-     *
-     * @param \AppBundle\Entity\Card $cards
-     */
-    public function removeCard(\AppBundle\Entity\Card $cards)
-    {
-        $this->cards->removeElement($cards);
-    }
-
-    /**
-     * Get cards
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getCards()
-    {
-        return $this->cards;
-    }
-
-    /**
-     * Set cycle
-     *
-     * @param \AppBundle\Entity\Cycle $cycle
-     * @return Pack
-     */
-    public function setCycle(\AppBundle\Entity\Cycle $cycle = null)
-    {
-        $this->cycle = $cycle;
-    
-        return $this;
-    }
-
-    /**
-     * Get cycle
-     *
-     * @return \AppBundle\Entity\Cycle 
-     */
-    public function getCycle()
-    {
-        return $this->cycle;
-    }
-
-    /**
-     * Get decklists
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getDecklists()
-    {
-    	return $this->decklists;
-    }
-
-    /**
-     * Add decklists
-     *
-     * @param \AppBundle\Entity\Decklist $decklists
-     * @return Pack
-     */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklists)
-    {
-        $this->decklists[] = $decklists;
-
-        return $this;
-    }
-
-    /**
-     * Remove decklists
-     *
-     * @param \AppBundle\Entity\Decklist $decklists
-     */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklists)
-    {
-        $this->decklists->removeElement($decklists);
-    }
-
-    public function setTranslatableLocale($locale)
-    {
-    	$this->locale = $locale;
-    }
     /**
      * @var \DateTime
      */
@@ -342,24 +73,237 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
      */
     private $dateUpdate;
 
+    /**
+     * @var int
+     */
+    private $cardCount;
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->cards = new ArrayCollection();
+        $this->decklists = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name ?: '(unknown)';
+    }
+
+    public function normalize()
+    {
+        return [
+            'code'         => $this->code,
+            'cycle_code'   => $this->cycle ? $this->cycle->getCode() : null,
+            'date_release' => $this->dateRelease ? $this->dateRelease->format('Y-m-d') : null,
+            'name'         => $this->name,
+            'position'     => $this->position,
+            'size'         => $this->size,
+        ];
+    }
+
+    /**
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
      * @return Pack
      */
-    public function setDateCreation($dateCreation)
+    public function setCode(string $code)
     {
-        $this->dateCreation = $dateCreation;
+        $this->code = $code;
 
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return Pack
+     */
+    public function setName(string $name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateRelease()
+    {
+        return $this->dateRelease;
+    }
+
+    /**
+     * @param \DateTime $dateRelease
+     * @return Pack
+     */
+    public function setDateRelease(\DateTime $dateRelease)
+    {
+        $this->dateRelease = $dateRelease;
+
+        return $this;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @param integer $size
+     * @return Pack
+     */
+    public function setSize(int $size)
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    /**
+     * @return integer|null
+     */
+    public function getFfgId()
+    {
+        return $this->ffgId;
+    }
+
+    /**
+     * @param integer $ffgId
+     * @return Pack
+     */
+    public function setFfgId(int $ffgId)
+    {
+        $this->ffgId = $ffgId;
+
+        return $this;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getPosition()
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param integer $position
+     * @return $this
+     */
+    public function setPosition(int $position)
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * Add cards
+     * @param Card $cards
+     * @return Pack
+     */
+    public function addCard(Card $cards)
+    {
+        $this->cards[] = $cards;
+
+        return $this;
+    }
+
+    /**
+     * Remove cards
+     * @param Card $cards
+     */
+    public function removeCard(Card $cards)
+    {
+        $this->cards->removeElement($cards);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCards()
+    {
+        return $this->cards;
+    }
+
+    /**
+     * @return Cycle
+     */
+    public function getCycle()
+    {
+        return $this->cycle;
+    }
+
+    /**
+     * @param Cycle $cycle
+     * @return Pack
+     */
+    public function setCycle(Cycle $cycle)
+    {
+        $this->cycle = $cycle;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDecklists()
+    {
+        return $this->decklists;
+    }
+
+    /**
+     * Add decklists
+     * @param Decklist $decklists
+     * @return Pack
+     */
+    public function addDecklist(Decklist $decklists)
+    {
+        $this->decklists[] = $decklists;
+
+        return $this;
+    }
+
+    /**
+     * Remove decklists
+     * @param Decklist $decklists
+     */
+    public function removeDecklist(Decklist $decklists)
+    {
+        $this->decklists->removeElement($decklists);
+    }
+
+    /**
      * @return \DateTime
      */
     public function getDateCreation()
@@ -368,28 +312,44 @@ class Pack implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     *
+     * @param \DateTime $dateCreation
      * @return Pack
      */
-    public function setDateUpdate($dateUpdate)
+    public function setDateCreation(\DateTime $dateCreation)
     {
-        $this->dateUpdate = $dateUpdate;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
 
     /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
     {
         return $this->dateUpdate;
     }
-    
-    
+
+    /**
+     * @param \DateTime $dateUpdate
+     * @return Pack
+     */
+    public function setDateUpdate(\DateTime $dateUpdate)
+    {
+        $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    public function getCardCount(): int
+    {
+        return $this->cardCount ?? $this->cards->count();
+    }
+
+    public function setCardCount(int $cardCount): self
+    {
+        $this->cardCount = $cardCount;
+
+        return $this;
+    }
 }

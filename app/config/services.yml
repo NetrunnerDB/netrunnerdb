@@ -1,0 +1,18 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+        bind:
+            $tempDir: '%kernel.project_dir%/var'
+            $publicDir: '%kernel.project_dir%/web'
+
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
+        exclude: '../../src/AppBundle/{Behavior,DataFixtures,DQL,Entity,Repository,Resources}'
+
+    FOS\OAuthServerBundle\Entity\ClientManager:
+        alias: 'fos_oauth_server.client_manager.default'
+
+    FOS\OAuthServerBundle\Entity\AccessTokenManager:
+        alias: 'fos_oauth_server.access_token_manager.default'

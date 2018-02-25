@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use FOS\OAuthServerBundle\Entity\Client as BaseClient;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,36 +18,39 @@ class Client extends BaseClient
      */
     protected $id;
 
+    protected $name;
+    
+    /**
+     * @var Collection
+     */
+    private $claims;
+    
     public function __construct()
     {
         parent::__construct();
     }
-    
-    protected $name;
-    
+
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this->name;
     }
-    
-    public function setName($name)
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name)
     {
         $this->name = $name;
     }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $claims;
-
 
     /**
-     * Add claim
-     *
-     * @param \AppBundle\Entity\Claim $claim
-     *
-     * @return Client
+     * @param Claim $claim
+     * @return $this
      */
-    public function addClaim(\AppBundle\Entity\Claim $claim)
+    public function addClaim(Claim $claim)
     {
         $this->claims[] = $claim;
 
@@ -54,19 +58,15 @@ class Client extends BaseClient
     }
 
     /**
-     * Remove claim
-     *
-     * @param \AppBundle\Entity\Claim $claim
+     * @param Claim $claim
      */
-    public function removeClaim(\AppBundle\Entity\Claim $claim)
+    public function removeClaim(Claim $claim)
     {
         $this->claims->removeElement($claim);
     }
 
     /**
-     * Get claims
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getClaims()
     {

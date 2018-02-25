@@ -20,18 +20,16 @@ class Decklistslot implements SlotInterface
     private $quantity;
 
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @var Decklist
      */
     private $decklist;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $card;
 
     /**
-     * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -40,21 +38,6 @@ class Decklistslot implements SlotInterface
     }
 
     /**
-     * Set quantity
-     *
-     * @param integer $quantity
-     * @return Decklistslot
-     */
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    /**
-     * Get quantity
-     *
      * @return integer
      */
     public function getQuantity()
@@ -63,22 +46,18 @@ class Decklistslot implements SlotInterface
     }
 
     /**
-     * Set deck
-     *
-     * @param string $decklist
+     * @param integer $quantity
      * @return Decklistslot
      */
-    public function setDecklist($decklist)
+    public function setQuantity(int $quantity)
     {
-        $this->decklist = $decklist;
+        $this->quantity = $quantity;
 
         return $this;
     }
 
     /**
-     * Get decklist
-     *
-     * @return \AppBundle\Entity\Decklist
+     * @return Decklist
      */
     public function getDecklist()
     {
@@ -86,25 +65,32 @@ class Decklistslot implements SlotInterface
     }
 
     /**
-     * Set card
-     *
-     * @param string $card
-     * @return Decklistslot
+     * @param Decklist $decklist
+     * @return $this
      */
-    public function setCard($card)
+    public function setDecklist(Decklist $decklist)
     {
-        $this->card = $card;
+        $this->decklist = $decklist;
 
         return $this;
     }
 
     /**
-     * Get card
-     *
-     * @return \AppBundle\Entity\Card
+     * @return Card
      */
     public function getCard()
     {
         return $this->card;
+    }
+
+    /**
+     * @param Card $card
+     * @return $this
+     */
+    public function setCard(Card $card)
+    {
+        $this->card = $card;
+
+        return $this;
     }
 }

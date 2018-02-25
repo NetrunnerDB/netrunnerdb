@@ -2,37 +2,42 @@
 
 namespace AppBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
+use AppBundle\Entity\Mwl;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 class LegalityActiveMwlCommand extends ContainerAwareCommand
 {
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
 
-    protected function configure ()
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
+
+    protected function configure()
     {
         $this
-                ->setName('nrdb:legality:active-mwl')
+                ->setName('app:legality:active-mwl')
                 ->setDescription('Checks to see if a new MWL becomes active')
         ;
     }
 
-    protected function execute (InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $em = $this->getContainer()->get('doctrine')->getManager();
-
-
         $now = new \DateTime();
 
-        $qb = $em->createQueryBuilder();
+        $qb = $this->entityManager->createQueryBuilder();
         $qb->select('m')
                 ->from('AppBundle:Mwl', 'm')
                 ->orderBy('m.dateStart', 'DESC');
         $query = $qb->getQuery();
 
-        /* @var $mwl \AppBundle\Entity\Mwl */
+        /** @var Mwl[] $list */
         $list = $query->getResult();
 
         if (!count($list)) {
@@ -46,17 +51,16 @@ class LegalityActiveMwlCommand extends ContainerAwareCommand
             return;
         }
 
-        $mwl->setActive(TRUE);
+        $mwl->setActive(true);
         $output->writeln($mwl->getName() . " set as ACTIVE");
 
         while ($mwl = array_shift($list)) {
             if ($mwl->getActive()) {
-                $mwl->setActive(FALSE);
+                $mwl->setActive(false);
                 $output->writeln($mwl->getName() . " set as INACTIVE");
             }
         }
 
-        $em->flush();
+        $this->entityManager->flush();
     }
-
 }

@@ -53,6 +53,7 @@ AppBundle\Entity\Deck:
             orderBy: { 'dateCreation': 'DESC' }
             targetEntity: Decklist
             mappedBy: parent
+            fetch: EXTRA_LAZY
         changes:
             targetEntity: Deckchange
             orderBy: {'dateCreation':'DESC'}

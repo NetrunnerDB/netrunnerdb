@@ -2,6 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Tournament
  */
@@ -17,41 +20,8 @@ class Tournament
      */
     private $description;
 
-
     /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set description
-     *
-     * @param string $description
-     * @return Tournament
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * Get description
-     *
-     * @return string 
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $decklists;
 
@@ -60,16 +30,42 @@ class Tournament
      */
     public function __construct()
     {
-        $this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->decklists = new ArrayCollection();
+    }
+
+    /**
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     * @return Tournament
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
+
+        return $this;
     }
 
     /**
      * Add decklists
-     *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      * @return Tournament
      */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function addDecklist(Decklist $decklists)
     {
         $this->decklists[] = $decklists;
 
@@ -78,18 +74,15 @@ class Tournament
 
     /**
      * Remove decklists
-     *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function removeDecklist(Decklist $decklists)
     {
         $this->decklists->removeElement($decklists);
     }
 
     /**
-     * Get decklists
-     *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return Collection
      */
     public function getDecklists()
     {

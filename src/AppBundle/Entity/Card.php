@@ -2,118 +2,16 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Behavior\Entity\TimestampableInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 /**
  * Card
  */
-class Card implements \Gedmo\Translatable\Translatable, \Serializable
+class Card implements NormalizableInterface, TimestampableInterface
 {
-	public function toString() {
-		return $this->code . ' ' . $this->title;
-	}
-
-	private function snakeToCamel($snake) {
-		$parts = explode('_', $snake);
-		return implode('', array_map('ucfirst', $parts));
-	}
-	
-	public function serialize() {
-		$serialized = [];
-		if(empty($this->code)) return $serialized;
-		
-		$mandatoryFields = [
-				'code',
-				'title',
-				'position',
-				'uniqueness',
-				'deck_limit',
-				'quantity',
-		];
-		if(substr($this->faction->getCode(), 0, 7) === 'neutral' && $this->type->getCode() !== 'identity') {
-			$mandatoryFields[] = 'faction_cost';
-		}
-
-		$optionalFields = [
-				'illustrator',
-				'flavor',
-				'keywords',
-				'text',
-				'cost',
-				'faction_cost',
-				'trash_cost',
-				'image_url'
-		];
-
-		$externalFields = [
-				'faction',
-				'pack',
-				'side',
-				'type'
-		];
-		
-		switch($this->type->getCode()) {
-			case 'identity':
-				$mandatoryFields[] = 'influence_limit';
-				$mandatoryFields[] = 'minimum_deck_size';
-				if($this->side->getCode() === 'runner') {
-					$mandatoryFields[] = 'base_link';
-				}
-				break;
-			case 'agenda':
-				$mandatoryFields[] = 'advancement_cost';
-				$mandatoryFields[] = 'agenda_points';
-				break;
-			case 'asset':
-			case 'upgrade':
-				$mandatoryFields[] = 'cost';
-				$mandatoryFields[] = 'faction_cost';
-				$mandatoryFields[] = 'trash_cost';
-				break;
-			case 'ice':
-				$mandatoryFields[] = 'cost';
-				$mandatoryFields[] = 'faction_cost';
-				$mandatoryFields[] = 'strength';
-				break;
-			case 'operation':
-			case 'event':
-			case 'hardware':
-			case 'resource':
-				$mandatoryFields[] = 'cost';
-				$mandatoryFields[] = 'faction_cost';
-				break;
-			case 'program':
-				$mandatoryFields[] = 'cost';
-				$mandatoryFields[] = 'faction_cost';
-				$mandatoryFields[] = 'memory_cost';
-				if(strstr($this->keywords, 'Icebreaker') !== FALSE) {
-					$mandatoryFields[] = 'strength';
-				}
-				break;
-		}
-
-		foreach($optionalFields as $optionalField) {
-			$getter = 'get' . $this->snakeToCamel($optionalField);
-			$serialized[$optionalField] = $this->$getter();
-			if(!isset($serialized[$optionalField]) || $serialized[$optionalField] === '') unset($serialized[$optionalField]);
-		}
-		
-		foreach($mandatoryFields as $mandatoryField) {
-			$getter = 'get' . $this->snakeToCamel($mandatoryField);
-			$serialized[$mandatoryField] = $this->$getter();
-		}
-
-		foreach($externalFields as $externalField) {
-			$getter = 'get' . $this->snakeToCamel($externalField);
-			$serialized[$externalField.'_code'] = $this->$getter()->getCode();
-		}
-		
-		ksort($serialized);
-		return $serialized;
-	}
-	
-	public function unserialize($serialized) {
-		throw new \Exception("unserialize() method unsupported");
-	}
-	
     /**
      * @var integer
      */
@@ -123,7 +21,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
      * @var \DateTime
      */
     private $dateUpdate;
-
+    
     /**
      * @var string
      */
@@ -135,7 +33,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     private $title;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $keywords;
 
@@ -160,17 +58,17 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     private $baseLink;
 
     /**
-     * @var integer
+     * @var integer|null
      */
     private $cost;
 
     /**
-     * @var integer
+     * @var integer|null
      */
     private $factionCost;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $flavor;
 
@@ -180,7 +78,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     private $illustrator;
 
     /**
-     * @var integer
+     * @var integer|null
      */
     private $influenceLimit;
 
@@ -210,7 +108,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     private $strength;
 
     /**
-     * @var integer
+     * @var integer|null
      */
     private $trashCost;
 
@@ -224,30 +122,28 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
      */
     private $deckLimit;
 
-    private $locale = 'en';
-    
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
     private $decklists;
 
     /**
-     * @var \AppBundle\Entity\Pack
+     * @var Pack
      */
     private $pack;
 
     /**
-     * @var \AppBundle\Entity\Type
+     * @var Type
      */
     private $type;
 
     /**
-     * @var \AppBundle\Entity\Faction
+     * @var Faction
      */
     private $faction;
 
     /**
-     * @var \AppBundle\Entity\Side
+     * @var Side
      */
     private $side;
 
@@ -257,18 +153,168 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     private $imageUrl;
 
     /**
+     * @var Collection
+     */
+    private $reviews;
+
+    /**
+     * @var Collection
+     */
+    private $rulings;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateCreation;
+
+    /**
+     * @var int|null
+     */
+    private $globalPenalty;
+
+    /**
+     * @var int|null
+     */
+    private $universalFactionCost;
+
+    /**
+     * @var bool
+     */
+    private $isRestricted;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
-        $this->decklists = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->decklists = new ArrayCollection();
         $this->dateUpdate = new \DateTime();
     }
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->code . ' ' . $this->title;
+    }
+
+    /**
+     * @return array
+     */
+    public function normalize()
+    {
+        if (empty($this->code)) {
+            return [];
+        }
+
+        $normalized = [];
+
+        $mandatoryFields = [
+                'code',
+                'title',
+                'position',
+                'uniqueness',
+                'deck_limit',
+                'quantity',
+        ];
+        if (substr($this->faction->getCode(), 0, 7) === 'neutral' && $this->type->getCode() !== 'identity') {
+            $mandatoryFields[] = 'faction_cost';
+        }
+
+        $optionalFields = [
+                'illustrator',
+                'flavor',
+                'keywords',
+                'text',
+                'cost',
+                'faction_cost',
+                'trash_cost',
+                'image_url'
+        ];
+
+        $externalFields = [
+                'faction',
+                'pack',
+                'side',
+                'type'
+        ];
+
+        switch ($this->type->getCode()) {
+            case 'identity':
+                $mandatoryFields[] = 'influence_limit';
+                $mandatoryFields[] = 'minimum_deck_size';
+                if ($this->side->getCode() === 'runner') {
+                    $mandatoryFields[] = 'base_link';
+                }
+                break;
+            case 'agenda':
+                $mandatoryFields[] = 'advancement_cost';
+                $mandatoryFields[] = 'agenda_points';
+                break;
+            case 'asset':
+            case 'upgrade':
+                $mandatoryFields[] = 'cost';
+                $mandatoryFields[] = 'faction_cost';
+                $mandatoryFields[] = 'trash_cost';
+                break;
+            case 'ice':
+                $mandatoryFields[] = 'cost';
+                $mandatoryFields[] = 'faction_cost';
+                $mandatoryFields[] = 'strength';
+                break;
+            case 'operation':
+            case 'event':
+            case 'hardware':
+            case 'resource':
+                $mandatoryFields[] = 'cost';
+                $mandatoryFields[] = 'faction_cost';
+                break;
+            case 'program':
+                $mandatoryFields[] = 'cost';
+                $mandatoryFields[] = 'faction_cost';
+                $mandatoryFields[] = 'memory_cost';
+                if (strstr($this->keywords, 'Icebreaker') !== false) {
+                    $mandatoryFields[] = 'strength';
+                }
+                break;
+        }
+
+        foreach ($optionalFields as $optionalField) {
+            $getter = $this->snakeToCamel('get_' . $optionalField);
+            $normalized[$optionalField] = $this->$getter();
+
+            if (!isset($normalized[$optionalField]) || $normalized[$optionalField] === '') {
+                unset($normalized[$optionalField]);
+            }
+        }
+
+        foreach ($mandatoryFields as $mandatoryField) {
+            $getter = $this->snakeToCamel('get_' . $mandatoryField);
+            $normalized[$mandatoryField] = $this->$getter();
+        }
+
+        foreach ($externalFields as $externalField) {
+            $getter = $this->snakeToCamel('get_' . $externalField);
+            $normalized[$externalField.'_code'] = $this->$getter()->getCode();
+        }
+
+        ksort($normalized);
+        return $normalized;
+    }
+
+    /**
+     * @param string $snake
+     * @return string
+     */
+    private function snakeToCamel(string $snake)
+    {
+        $parts = explode('_', $snake);
+        return implode('', array_map('ucfirst', $parts));
+    }
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -276,21 +322,6 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set dateUpdate
-     *
-     * @param \DateTime $dateUpdate
-     * @return Card
-     */
-    public function setDateUpdate($dateUpdate)
-    {
-        $this->dateUpdate = $dateUpdate;
-
-        return $this;
-    }
-
-    /**
-     * Get dateUpdate
-     *
      * @return \DateTime
      */
     public function getDateUpdate()
@@ -299,21 +330,17 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set code
-     *
-     * @param string $code
-     * @return Card
+     * @param \DateTime $dateUpdate
+     * @return $this
      */
-    public function setCode($code)
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
-        $this->code = $code;
+        $this->dateUpdate = $dateUpdate;
 
         return $this;
     }
 
     /**
-     * Get code
-     *
      * @return string
      */
     public function getCode()
@@ -322,21 +349,17 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set title
-     *
-     * @param string $title
-     * @return Card
+     * @param string $code
+     * @return $this
      */
-    public function setTitle($title)
+    public function setCode(string $code)
     {
-        $this->title = $title;
-        
+        $this->code = $code;
+
         return $this;
     }
 
     /**
-     * Get title
-     *
      * @return string
      */
     public function getTitle()
@@ -345,22 +368,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set keywords
-     *
-     * @param string $keywords
-     * @return Card
+     * @param string $title
+     * @return $this
      */
-    public function setKeywords($keywords)
+    public function setTitle(string $title)
     {
-        $this->keywords = $keywords;
-        
+        $this->title = $title;
+
         return $this;
     }
 
     /**
-     * Get keywords
-     *
-     * @return string
+     * @return string|null
      */
     public function getKeywords()
     {
@@ -368,21 +387,17 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set text
-     *
-     * @param string $text
-     * @return Card
+     * @param string|null $keywords
+     * @return $this
      */
-    public function setText($text)
+    public function setKeywords(string $keywords = null)
     {
-        $this->text = $text;
-        
+        $this->keywords = $keywords;
+
         return $this;
     }
 
     /**
-     * Get text
-     *
      * @return string
      */
     public function getText()
@@ -391,22 +406,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set advancementCost
-     *
-     * @param integer $advancementCost
-     * @return Card
+     * @param string $text
+     * @return $this
      */
-    public function setAdvancementCost($advancementCost)
+    public function setText(string $text)
     {
-        $this->advancementCost = $advancementCost;
+        $this->text = $text;
 
         return $this;
     }
 
     /**
-     * Get advancementCost
-     *
-     * @return integer
+     * @return int
      */
     public function getAdvancementCost()
     {
@@ -414,22 +425,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set agendaPoints
-     *
-     * @param integer $agendaPoints
-     * @return Card
+     * @param int $advancementCost
+     * @return $this
      */
-    public function setAgendaPoints($agendaPoints)
+    public function setAdvancementCost(int $advancementCost)
     {
-        $this->agendaPoints = $agendaPoints;
+        $this->advancementCost = $advancementCost;
 
         return $this;
     }
 
     /**
-     * Get agendaPoints
-     *
-     * @return integer
+     * @return int
      */
     public function getAgendaPoints()
     {
@@ -437,22 +444,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set baseLink
-     *
-     * @param integer $baseLink
-     * @return Card
+     * @param int $agendaPoints
+     * @return $this
      */
-    public function setBaseLink($baseLink)
+    public function setAgendaPoints(int $agendaPoints)
     {
-        $this->baseLink = $baseLink;
+        $this->agendaPoints = $agendaPoints;
 
         return $this;
     }
 
     /**
-     * Get baseLink
-     *
-     * @return integer
+     * @return int
      */
     public function getBaseLink()
     {
@@ -460,22 +463,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set cost
-     *
-     * @param integer $cost
-     * @return Card
+     * @param int $baseLink
+     * @return $this
      */
-    public function setCost($cost)
+    public function setBaseLink(int $baseLink)
     {
-        $this->cost = $cost;
+        $this->baseLink = $baseLink;
 
         return $this;
     }
 
     /**
-     * Get cost
-     *
-     * @return integer
+     * @return int|null
      */
     public function getCost()
     {
@@ -483,22 +482,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set factionCost
-     *
-     * @param integer $factionCost
-     * @return Card
+     * @param int|null $cost
+     * @return $this
      */
-    public function setFactionCost($factionCost)
+    public function setCost(int $cost = null)
     {
-        $this->factionCost = $factionCost;
+        $this->cost = $cost;
 
         return $this;
     }
 
     /**
-     * Get factionCost
-     *
-     * @return integer
+     * @return int|null
      */
     public function getFactionCost()
     {
@@ -506,22 +501,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set flavor
-     *
-     * @param string $flavor
-     * @return Card
+     * @param int|null $factionCost
+     * @return $this
      */
-    public function setFlavor($flavor)
+    public function setFactionCost(int $factionCost = null)
     {
-        $this->flavor = $flavor;
-        
+        $this->factionCost = $factionCost;
+
         return $this;
     }
 
     /**
-     * Get flavor
-     *
-     * @return string
+     * @return string|null
      */
     public function getFlavor()
     {
@@ -529,21 +520,17 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set illustrator
-     *
-     * @param string $illustrator
-     * @return Card
+     * @param string|null $flavor
+     * @return $this
      */
-    public function setIllustrator($illustrator)
+    public function setFlavor(string $flavor = null)
     {
-        $this->illustrator = $illustrator;
+        $this->flavor = $flavor;
 
         return $this;
     }
 
     /**
-     * Get illustrator
-     *
      * @return string
      */
     public function getIllustrator()
@@ -552,22 +539,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set influenceLimit
-     *
-     * @param integer $influenceLimit
-     * @return Card
+     * @param string $illustrator
+     * @return $this
      */
-    public function setInfluenceLimit($influenceLimit)
+    public function setIllustrator(string $illustrator)
     {
-        $this->influenceLimit = $influenceLimit;
+        $this->illustrator = $illustrator;
 
         return $this;
     }
 
     /**
-     * Get influenceLimit
-     *
-     * @return integer
+     * @return int|null
      */
     public function getInfluenceLimit()
     {
@@ -575,22 +558,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set memoryCost
-     *
-     * @param integer $memoryCost
-     * @return Card
+     * @param int|null $influenceLimit
+     * @return $this
      */
-    public function setMemoryCost($memoryCost)
+    public function setInfluenceLimit(int $influenceLimit = null)
     {
-        $this->memoryCost = $memoryCost;
+        $this->influenceLimit = $influenceLimit;
 
         return $this;
     }
 
     /**
-     * Get memoryCost
-     *
-     * @return integer
+     * @return int
      */
     public function getMemoryCost()
     {
@@ -598,22 +577,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set minimumDeckSize
-     *
-     * @param integer $minimumDeckSize
-     * @return Card
+     * @param int $memoryCost
+     * @return $this
      */
-    public function setMinimumDeckSize($minimumDeckSize)
+    public function setMemoryCost(int $memoryCost)
     {
-        $this->minimumDeckSize = $minimumDeckSize;
+        $this->memoryCost = $memoryCost;
 
         return $this;
     }
 
     /**
-     * Get minimumDeckSize
-     *
-     * @return integer
+     * @return int
      */
     public function getMinimumDeckSize()
     {
@@ -621,22 +596,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set position
-     *
-     * @param integer $position
-     * @return Card
+     * @param int $minimumDeckSize
+     * @return $this
      */
-    public function setPosition($position)
+    public function setMinimumDeckSize(int $minimumDeckSize)
     {
-        $this->position = $position;
+        $this->minimumDeckSize = $minimumDeckSize;
 
         return $this;
     }
 
     /**
-     * Get position
-     *
-     * @return integer
+     * @return int
      */
     public function getPosition()
     {
@@ -644,22 +615,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set quantity
-     *
-     * @param integer $quantity
-     * @return Card
+     * @param int $position
+     * @return $this
      */
-    public function setQuantity($quantity)
+    public function setPosition(int $position)
     {
-        $this->quantity = $quantity;
+        $this->position = $position;
 
         return $this;
     }
 
     /**
-     * Get quantity
-     *
-     * @return integer
+     * @return int
      */
     public function getQuantity()
     {
@@ -667,22 +634,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set strength
-     *
-     * @param integer $strength
-     * @return Card
+     * @param int $quantity
+     * @return $this
      */
-    public function setStrength($strength)
+    public function setQuantity(int $quantity)
     {
-        $this->strength = $strength;
+        $this->quantity = $quantity;
 
         return $this;
     }
 
     /**
-     * Get strength
-     *
-     * @return integer
+     * @return int
      */
     public function getStrength()
     {
@@ -690,22 +653,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set trashCost
-     *
-     * @param integer $trashCost
-     * @return Card
+     * @param int $strength
+     * @return $this
      */
-    public function setTrashCost($trashCost)
+    public function setStrength(int $strength)
     {
-        $this->trashCost = $trashCost;
+        $this->strength = $strength;
 
         return $this;
     }
 
     /**
-     * Get trashCost
-     *
-     * @return integer
+     * @return int|null
      */
     public function getTrashCost()
     {
@@ -713,22 +672,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set uniqueness
-     *
-     * @param boolean $uniqueness
-     * @return Card
+     * @param int|null $trashCost
+     * @return $this
      */
-    public function setUniqueness($uniqueness)
+    public function setTrashCost(int $trashCost = null)
     {
-        $this->uniqueness = $uniqueness;
+        $this->trashCost = $trashCost;
 
         return $this;
     }
 
     /**
-     * Get uniqueness
-     *
-     * @return boolean
+     * @return bool
      */
     public function getUniqueness()
     {
@@ -736,22 +691,18 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set deckLimit
-     *
-     * @param integer $deckLimit
-     * @return Card
+     * @param bool $uniqueness
+     * @return $this
      */
-    public function setDeckLimit($deckLimit)
+    public function setUniqueness(bool $uniqueness)
     {
-        $this->deckLimit = $deckLimit;
+        $this->uniqueness = $uniqueness;
 
         return $this;
     }
 
     /**
-     * Get deckLimit
-     *
-     * @return integer
+     * @return int
      */
     public function getDeckLimit()
     {
@@ -759,12 +710,21 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Add decklists
-     *
-     * @param \AppBundle\Entity\Decklist $decklists
-     * @return Card
+     * @param int $deckLimit
+     * @return $this
      */
-    public function addDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function setDeckLimit(int $deckLimit)
+    {
+        $this->deckLimit = $deckLimit;
+
+        return $this;
+    }
+
+    /**
+     * @param Decklist $decklists
+     * @return $this
+     */
+    public function addDecklist(Decklist $decklists)
     {
         $this->decklists[] = $decklists;
 
@@ -772,19 +732,15 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Remove decklists
-     *
-     * @param \AppBundle\Entity\Decklist $decklists
+     * @param Decklist $decklists
      */
-    public function removeDecklist(\AppBundle\Entity\Decklist $decklists)
+    public function removeDecklist(Decklist $decklists)
     {
         $this->decklists->removeElement($decklists);
     }
 
     /**
-     * Get decklists
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection|Collection
      */
     public function getDecklists()
     {
@@ -792,22 +748,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set pack
-     *
-     * @param \AppBundle\Entity\Pack $pack
-     * @return Card
-     */
-    public function setPack(\AppBundle\Entity\Pack $pack = null)
-    {
-        $this->pack = $pack;
-
-        return $this;
-    }
-
-    /**
-     * Get pack
-     *
-     * @return \AppBundle\Entity\Pack
+     * @return Pack
      */
     public function getPack()
     {
@@ -815,86 +756,21 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Set type
-     *
-     * @param \AppBundle\Entity\Type $type
-     * @return Card
+     * @param Pack $pack
+     * @return $this
      */
-    public function setType(\AppBundle\Entity\Type $type = null)
+    public function setPack(Pack $pack)
     {
-        $this->type = $type;
+        $this->pack = $pack;
 
         return $this;
     }
 
     /**
-     * Get type
-     *
-     * @return \AppBundle\Entity\Type
+     * @param Review $reviews
+     * @return $this
      */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Set faction
-     *
-     * @param \AppBundle\Entity\Faction $faction
-     * @return Card
-     */
-    public function setFaction(\AppBundle\Entity\Faction $faction = null)
-    {
-        $this->faction = $faction;
-
-        return $this;
-    }
-
-    /**
-     * Get faction
-     *
-     * @return \AppBundle\Entity\Faction
-     */
-    public function getFaction()
-    {
-        return $this->faction;
-    }
-
-    /**
-     * Set side
-     *
-     * @param \AppBundle\Entity\Side $side
-     * @return Card
-     */
-    public function setSide(\AppBundle\Entity\Side $side = null)
-    {
-        $this->side = $side;
-
-        return $this;
-    }
-
-    /**
-     * Get side
-     *
-     * @return \AppBundle\Entity\Side
-     */
-    public function getSide()
-    {
-        return $this->side;
-    }
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $reviews;
-
-    /**
-     * Add reviews
-     *
-     * @param \AppBundle\Entity\Review $reviews
-     * @return Card
-     */
-    public function addReview(\AppBundle\Entity\Review $reviews)
+    public function addReview(Review $reviews)
     {
         $this->reviews[] = $reviews;
 
@@ -902,37 +778,26 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Remove reviews
-     *
-     * @param \AppBundle\Entity\Review $reviews
+     * @param Review $reviews
      */
-    public function removeReview(\AppBundle\Entity\Review $reviews)
+    public function removeReview(Review $reviews)
     {
         $this->reviews->removeElement($reviews);
     }
 
     /**
-     * Get reviews
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getReviews()
     {
         return $this->reviews;
     }
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $rulings;
 
     /**
-     * Add rulings
-     *
-     * @param \AppBundle\Entity\Ruling $rulings
-     * @return Card
+     * @param Ruling $rulings
+     * @return $this
      */
-    public function addRuling(\AppBundle\Entity\Ruling $rulings)
+    public function addRuling(Ruling $rulings)
     {
         $this->rulings[] = $rulings;
 
@@ -940,33 +805,32 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * Remove rulings
-     *
-     * @param \AppBundle\Entity\Ruling $rulings
+     * @param Ruling $rulings
      */
-    public function removeRuling(\AppBundle\Entity\Ruling $rulings)
+    public function removeRuling(Ruling $rulings)
     {
         $this->rulings->removeElement($rulings);
     }
 
     /**
-     * Get rulings
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getRulings()
     {
         return $this->rulings;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getAncurLink()
     {
         $title = $this->title;
-        if($this->getType()->getName() == "Identity") {
-            if($this->getSide()->getName() == "Runner") {
+        if ($this->getType()->getName() == "Identity") {
+            if ($this->getSide()->getName() == "Runner") {
                 $title = preg_replace('/: .*/', '', $title);
             } else {
-                if(strstr($title, $this->getFaction()->getName()) === 0) {
+                if (strstr($title, $this->getFaction()->getName()) === 0) {
                     $title = preg_replace('/.*: /', '', $title);
                 } else {
                     $title = preg_replace('/: .*/', '', $title);
@@ -976,43 +840,77 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
         $title_url = preg_replace('/ /', '_', $title);
         return "http://ancur.wikia.com/wiki/".urlencode($title_url);
     }
-    
-    public function getIdentityShortTitle()
-    {
-        $parts = explode(': ', $this->title);
-        if(count($parts) > 1 && $parts[0] === $this->faction->getName()) {
-            return $parts[1];
-        }
-        return $parts[0];
-    }
-    
-    public function setTranslatableLocale($locale)
-    {
-        $this->locale = $locale;
-    }
-    /**
-     * @var \DateTime
-     */
-    private $dateCreation;
-
 
     /**
-     * Set dateCreation
-     *
-     * @param \DateTime $dateCreation
-     *
-     * @return Card
+     * @return Type
      */
-    public function setDateCreation($dateCreation)
+    public function getType()
     {
-        $this->dateCreation = $dateCreation;
+        return $this->type;
+    }
+
+    /**
+     * @param Type $type
+     * @return $this
+     */
+    public function setType(Type $type)
+    {
+        $this->type = $type;
 
         return $this;
     }
 
     /**
-     * Get dateCreation
-     *
+     * @return Side
+     */
+    public function getSide()
+    {
+        return $this->side;
+    }
+
+    /**
+     * @param Side $side
+     * @return $this
+     */
+    public function setSide(Side $side)
+    {
+        $this->side = $side;
+
+        return $this;
+    }
+
+    /**
+     * @return Faction
+     */
+    public function getFaction()
+    {
+        return $this->faction;
+    }
+
+    /**
+     * @param Faction $faction
+     * @return $this
+     */
+    public function setFaction(Faction $faction)
+    {
+        $this->faction = $faction;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentityShortTitle()
+    {
+        $parts = explode(': ', $this->title);
+        if (count($parts) > 1 && $parts[0] === $this->faction->getName()) {
+            return $parts[1];
+        }
+        return $parts[0];
+    }
+
+    /**
      * @return \DateTime
      */
     public function getDateCreation()
@@ -1020,17 +918,19 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
         return $this->dateCreation;
     }
 
-    /** @var integer */
-    private $globalPenalty;
+    /**
+     * @param \DateTime $dateCreation
+     * @return $this
+     */
+    public function setDateCreation(\DateTime $dateCreation)
+    {
+        $this->dateCreation = $dateCreation;
 
-    /** @var integer */
-    private $universalFactionCost;
-
-    /** @var boolean */
-    private $isRestricted;
+        return $this;
+    }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getGlobalPenalty()
     {
@@ -1038,11 +938,10 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * @param int $globalPenalty
-     *
-     * @return self
+     * @param int|null $globalPenalty
+     * @return $this
      */
-    public function setGlobalPenalty($globalPenalty)
+    public function setGlobalPenalty(int $globalPenalty = null)
     {
         $this->globalPenalty = $globalPenalty;
 
@@ -1050,7 +949,7 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUniversalFactionCost()
     {
@@ -1058,11 +957,10 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
     }
 
     /**
-     * @param int $universalFactionCost
-     *
-     * @return self
+     * @param int|null $universalFactionCost
+     * @return $this
      */
-    public function setUniversalFactionCost($universalFactionCost)
+    public function setUniversalFactionCost(int $universalFactionCost = null)
     {
         $this->universalFactionCost = $universalFactionCost;
 
@@ -1079,22 +977,28 @@ class Card implements \Gedmo\Translatable\Translatable, \Serializable
 
     /**
      * @param bool $isRestricted
-     *
-     * @return self
+     * @return $this
      */
-    public function setIsRestricted($isRestricted)
+    public function setIsRestricted(bool $isRestricted)
     {
         $this->isRestricted = $isRestricted;
 
         return $this;
     }
 
-    public function getImageUrl ()
+    /**
+     * @return null|string
+     */
+    public function getImageUrl()
     {
         return $this->imageUrl;
     }
 
-    public function setImageUrl ($imageUrl = null)
+    /**
+     * @param string|null $imageUrl
+     * @return $this
+     */
+    public function setImageUrl(string $imageUrl = null)
     {
         $this->imageUrl = $imageUrl;
 

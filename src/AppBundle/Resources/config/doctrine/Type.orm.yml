@@ -2,9 +2,6 @@ AppBundle\Entity\Type:
     type: entity
     table: type
     repositoryClass: AppBundle\Repository\TypeRepository
-    gedmo:
-        translation:
-            locale: locale
     indexes:
         name_index:
             columns: [ name ]
@@ -31,8 +28,6 @@ AppBundle\Entity\Type:
         name:
             type: string
             length: 255
-            gedmo:
-                - translatable
         position:
             type: integer
             nullable: false

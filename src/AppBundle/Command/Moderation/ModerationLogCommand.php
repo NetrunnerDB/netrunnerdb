@@ -3,8 +3,8 @@
 namespace AppBundle\Command\Moderation;
 
 use AppBundle\Entity\Moderation;
-use AppBundle\Helper\ModerationHelper;
-use Doctrine\ORM\EntityManager;
+use AppBundle\Service\ModerationHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,14 +18,23 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ModerationLogCommand extends ContainerAwareCommand
 {
-    /** @var EntityManager */
-    private $em;
-    /** @var ModerationHelper */
-    private $helper;
+    /** @var EntityManagerInterface $entityManager */
+    private $entityManager;
+
+    /** @var ModerationHelper $moderationHelper */
+    private $moderationHelper;
+
+    public function __construct(EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+        $this->moderationHelper = $moderationHelper;
+    }
+
     protected function configure()
     {
         $this
-            ->setName('nrdb:moderation:log')
+            ->setName('app:moderation:log')
             ->setDescription('View the moderation log')
             ->addArgument('limit', InputArgument::OPTIONAL, "Number of lines to display", 10)
         ;
@@ -33,26 +42,19 @@ class ModerationLogCommand extends ContainerAwareCommand
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
-     
-        $this->em = $this->getContainer()->get('doctrine')->getManager();
-
-        $this->helper = $this->getContainer()->get('moderation_helper');
-        
         $limit = $input->getArgument('limit');
                 
-        $moderationList = $this->em->getRepository('AppBundle:Moderation')->findBy([], ['dateCreation' => 'DESC'], $limit);
+        $moderationList = $this->entityManager->getRepository('AppBundle:Moderation')->findBy([], ['dateCreation' => 'DESC'], $limit);
         
         $table = new Table($output);
         $table->setHeaders(['Date','Mod','Before','After','Id','Deck']);
-        /* @var $moderation Moderation */
-        foreach($moderationList as $moderation) {
+        /** @var Moderation $moderation */
+        foreach ($moderationList as $moderation) {
             $table->addRow([
                 $moderation->getDateCreation()->format('Y-m-d'),
                 $moderation->getModerator()->getUsername(),
-                $this->helper->getLabel($moderation->getStatusBefore()),
-                $this->helper->getLabel($moderation->getStatusAfter()),
+                $this->moderationHelper->getLabel($moderation->getStatusBefore()),
+                $this->moderationHelper->getLabel($moderation->getStatusAfter()),
                 $moderation->getDecklist()->getId(),
                 $moderation->getDecklist()->getName()
             ]);

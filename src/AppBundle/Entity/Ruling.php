@@ -2,10 +2,12 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Behavior\Entity\TimestampableInterface;
+
 /**
  * @author Alsciende <alsciende@icloud.com>
  */
-class Ruling
+class Ruling implements TimestampableInterface
 {
     /**
      * @var integer
@@ -33,84 +35,77 @@ class Ruling
     private $text;
 
     /**
-     * @var \AppBundle\Entity\Card
+     * @var Card
      */
     private $card;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      */
     private $user;
 
-    function getId ()
+    public function getId()
     {
         return $this->id;
     }
 
-    function getDateCreation ()
+    public function getDateCreation()
     {
         return $this->dateCreation;
     }
 
-    function getDateUpdate ()
-    {
-        return $this->dateUpdate;
-    }
-
-    function getRawtext ()
-    {
-        return $this->rawtext;
-    }
-
-    function getText ()
-    {
-        return $this->text;
-    }
-
-    function getCard ()
-    {
-        return $this->card;
-    }
-
-    function getUser ()
-    {
-        return $this->user;
-    }
-
-    function setId ($id)
-    {
-        $this->id = $id;
-    }
-
-    function setDateCreation (\DateTime $dateCreation)
+    public function setDateCreation(\DateTime $dateCreation)
     {
         $this->dateCreation = $dateCreation;
     }
 
-    function setDateUpdate (\DateTime $dateUpdate)
+    public function getDateUpdate()
+    {
+        return $this->dateUpdate;
+    }
+
+    public function setDateUpdate(\DateTime $dateUpdate)
     {
         $this->dateUpdate = $dateUpdate;
     }
 
-    function setRawtext ($rawtext)
+    public function getRawtext()
+    {
+        return $this->rawtext;
+    }
+
+    public function setRawtext(string $rawtext)
     {
         $this->rawtext = $rawtext;
     }
 
-    function setText ($text)
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    public function setText(string $text)
     {
         $this->text = $text;
     }
 
-    function setCard (\AppBundle\Entity\Card $card)
+    public function getCard()
+    {
+        return $this->card;
+    }
+
+    public function setCard(Card $card)
     {
         $this->card = $card;
     }
 
-    function setUser (\AppBundle\Entity\User $user)
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user)
     {
         $this->user = $user;
     }
-
-
 }

@@ -9,7 +9,6 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class Claim
 {
-
     /**
      * @var integer
      * @Serializer\Expose
@@ -41,41 +40,44 @@ class Claim
     private $participants;
 
     /**
-     * @var \AppBundle\Entity\Decklist
+     * @var Decklist
      * @Serializer\Exclude
      */
     private $decklist;
 
     /**
-     * @var \AppBundle\Entity\Client
+     * @var Client
      * @Serializer\Exclude
      */
     private $client;
 
     /**
-     * @var \AppBundle\Entity\User
+     * @var User
      * @Serializer\Exclude
      */
     private $user;
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @return int
      */
-    public function getId ()
+    public function getId()
     {
         return $this->id;
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return Claim
+     * @return string
      */
-    public function setName ($name)
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName(string $name)
     {
         $this->name = $name;
 
@@ -83,23 +85,18 @@ class Claim
     }
 
     /**
-     * Get name
-     *
      * @return string
      */
-    public function getName ()
+    public function getUrl()
     {
-        return $this->name;
+        return $this->url;
     }
 
     /**
-     * Set url
-     *
      * @param string $url
-     *
-     * @return Claim
+     * @return $this
      */
-    public function setUrl ($url)
+    public function setUrl(string $url)
     {
         $this->url = $url;
 
@@ -107,23 +104,18 @@ class Claim
     }
 
     /**
-     * Get url
-     *
-     * @return string
+     * @return int
      */
-    public function getUrl ()
+    public function getRank()
     {
-        return $this->url;
+        return $this->rank;
     }
 
     /**
-     * Set rank
-     *
-     * @param integer $rank
-     *
-     * @return Claim
+     * @param int $rank
+     * @return $this
      */
-    public function setRank ($rank)
+    public function setRank(int $rank)
     {
         $this->rank = $rank;
 
@@ -131,33 +123,18 @@ class Claim
     }
 
     /**
-     * Get rank
-     *
-     * @return integer
+     * @return int
      */
-    public function getRank ()
-    {
-        return $this->rank;
-    }
-
-    /**
-     * Get participants
-     * 
-     * @return integer
-     */
-    function getParticipants ()
+    public function getParticipants()
     {
         return $this->participants;
     }
 
     /**
-     * Set participants
-     * 
-     * @param integer $participants
-     * 
-     * @return Claim
+     * @param int $participants
+     * @return $this
      */
-    function setParticipants ($participants)
+    public function setParticipants(int $participants)
     {
         $this->participants = $participants;
 
@@ -165,13 +142,18 @@ class Claim
     }
 
     /**
-     * Set decklist
-     *
-     * @param \AppBundle\Entity\Decklist $decklist
-     *
-     * @return Claim
+     * @return Decklist
      */
-    public function setDecklist (\AppBundle\Entity\Decklist $decklist = null)
+    public function getDecklist()
+    {
+        return $this->decklist;
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @return $this
+     */
+    public function setDecklist(Decklist $decklist)
     {
         $this->decklist = $decklist;
 
@@ -179,23 +161,18 @@ class Claim
     }
 
     /**
-     * Get decklist
-     *
-     * @return \AppBundle\Entity\Decklist
+     * @return Client
      */
-    public function getDecklist ()
+    public function getClient()
     {
-        return $this->decklist;
+        return $this->client;
     }
 
     /**
-     * Set client
-     *
-     * @param \AppBundle\Entity\Client $client
-     *
-     * @return Claim
+     * @param Client $client
+     * @return $this
      */
-    public function setClient (\AppBundle\Entity\Client $client = null)
+    public function setClient(Client $client)
     {
         $this->client = $client;
 
@@ -203,37 +180,21 @@ class Claim
     }
 
     /**
-     * Get client
-     *
-     * @return \AppBundle\Entity\Client
+     * @return User
      */
-    public function getClient ()
-    {
-        return $this->client;
-    }
-
-    /**
-     * Get user
-     * 
-     * @return \AppBundle\Entity\User
-     */
-    function getUser ()
+    public function getUser()
     {
         return $this->user;
     }
 
     /**
-     * Set user
-     * 
-     * @param \AppBundle\Entity\User $user
-     * 
-     * @return Claim
+     * @param User $user
+     * @return $this
      */
-    function setUser (\AppBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
 
         return $this;
     }
-
 }

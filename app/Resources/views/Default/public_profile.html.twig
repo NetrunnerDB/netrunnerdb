@@ -1,0 +1,51 @@
+{% extends '/layout.html.twig' %}
+
+{% block head %}
+<script src="{{ asset('/js/profile.js') }}"></script>
+<script type="text/javascript">
+var UserId = {{ user.id }};
+</script>
+{% endblock %}
+{% block body %}
+
+<div class="container">
+
+<div class="jumbotron background-{{ user.faction }}-10">
+  <h1><span class="{{ user.faction }}">{{ user.username }}</span>
+  {% if user.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
+    <small>{{ user.reputation }}</small></h1>
+	<p>
+        Member since {{ user.creation|date('j M Y') }}
+        <div>
+        {% if nbdecklists > 1 %}
+            <a href="{{ path('decklists_list',{type:'find',page:1,author:user.username}) }}">{{ nbdecklists }} published decklists</a>
+        {% else %}
+            {% if nbdecklists == 1 %}
+                <a href="{{ path('decklists_list',{type:'find',page:1,author:user.username}) }}">One published decklist</a>
+            {% else %}
+                No published decklist
+            {% endif %}
+        {% endif %}
+        </div>
+        <div>
+        {% if nbreviews > 1 %}
+            <a href="{{ path('card_reviews_list_byauthor',{page:1,user_id:user.id}) }}">{{ nbreviews }} published reviews</a>
+        {% else %}
+            {% if nbreviews == 1 %}
+                <a href="{{ path('card_reviews_list_byauthor',{page:1,user_id:user.id}) }}">One published reviews</a>
+            {% else %}
+                No published reviews
+            {% endif %}
+        {% endif %}
+        </div>
+	</p>
+    <a href="{{ path('user_follow',{user_id:user.id}) }}" class="btn btn-success" style="display:none" id="follow"><span class="glyphicon glyphicon glyphicon-plus"></span> Follow</a>
+    <a href="{{ path('user_unfollow',{user_id:user.id}) }}" class="btn btn-info" style="display:none" id="unfollow"><span class="glyphicon glyphicon glyphicon-eye-open"></span> Following</a>
+    {% if user.resume %}
+        <p><em>{{ user.resume }}</em></p>
+    {% endif %}
+</div>
+
+</div> <!-- .container -->
+
+{% endblock %}
