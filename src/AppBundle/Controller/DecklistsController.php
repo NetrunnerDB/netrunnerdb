@@ -200,7 +200,7 @@ class DecklistsController extends Controller
         $off = 0;
         $categories[] = ["label" => "Core / Deluxe", "packs" => []];
         /** @var Cycle[] $list_cycles */
-        $list_cycles = $$entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
+        $list_cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
         foreach ($list_cycles as $cycle) {
             $size = $cycle->getPacks()->count();
             if ($cycle->getPosition() == 0 || $size == 0) {
