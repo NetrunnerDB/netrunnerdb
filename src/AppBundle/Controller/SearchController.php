@@ -255,7 +255,7 @@ class SearchController extends Controller
      */
     public function findAction(Request $request, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
-        $q = $request->query->get('q');
+        $q = $request->query->get('q', '');
         $page = $request->query->get('page') ?: 1;
         $view = $request->query->get('view') ?: 'list';
         $sort = $request->query->get('sort') ?: 'name';
