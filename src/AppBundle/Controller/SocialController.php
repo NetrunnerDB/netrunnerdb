@@ -391,7 +391,7 @@ class SocialController extends Controller
             . "c.participants, "
             . "u.id user_id, "
             . "u.username "
-            . "FROM Claim c "
+            . "FROM claim c "
             . "JOIN decklist d ON d.id=c.decklist_id "
             . "JOIN user u ON u.id=c.user_id "
             . "WHERE d.id=?", [$decklist_id])->fetchAll();
