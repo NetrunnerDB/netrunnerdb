@@ -11,11 +11,6 @@ services:
         resource: '../../src/AppBundle/*'
         exclude: '../../src/AppBundle/{Behavior,DataFixtures,DQL,Entity,Repository,Resources}'
 
-    AppBundle\Repository\PackRepository:
-        class: Doctrine\ORM\EntityRepository
-        factory: ['@doctrine.orm.entity_manager', getRepository]
-        arguments: ['AppBundle\Entity\Pack']
-
     FOS\OAuthServerBundle\Entity\ClientManager:
         alias: 'fos_oauth_server.client_manager.default'
 

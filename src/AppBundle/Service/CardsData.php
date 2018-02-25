@@ -4,8 +4,10 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Cycle;
+use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Review;
+use AppBundle\Entity\Ruling;
 use AppBundle\Repository\PackRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Asset\Packages;
@@ -43,12 +45,12 @@ class CardsData
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        PackRepository $packRepository,
+        RepositoryFactory $repositoryFactory,
         RouterInterface $router,
         Packages $packages
     ) {
         $this->entityManager = $entityManager;
-        $this->packRepository = $packRepository;
+        $this->packRepository = $repositoryFactory->getPackRepository();
         $this->router = $router;
         $this->packages = $packages;
     }
@@ -82,7 +84,7 @@ class CardsData
 
     public function allsetsnocycledata()
     {
-        $list_packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy([], ["dateRelease" => "ASC", "position" => "ASC"]);
+        $list_packs = $this->packRepository->findBy([], ["dateRelease" => "ASC", "position" => "ASC"]);
         $packs = [];
         foreach ($list_packs as $pack) {
             $real = $pack->getCards()->count();
@@ -104,7 +106,7 @@ class CardsData
     public function allsetsdata()
     {
         /** @var Cycle[] $list_cycles */
-        $list_cycles = $this->entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
+        $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "ASC"]);
         $cycles = [];
         foreach ($list_cycles as $cycle) {
             $packs = [];
@@ -811,7 +813,7 @@ class CardsData
     {
         $response = [];
         $card_code = $card->getCode();
-        $mwls = $this->entityManager->getRepository('AppBundle:Mwl')->findBy([], ["dateStart" => "DESC"]);
+        $mwls = $this->entityManager->getRepository(Mwl::class)->findBy([], ["dateStart" => "DESC"]);
         foreach ($mwls as $mwl) {
             $mwl_cards = $mwl->getCards();
             if (isset($mwl_cards[$card_code])) {
@@ -835,10 +837,10 @@ class CardsData
 
     public function get_reviews(Card $card)
     {
-        $reviews = $this->entityManager->getRepository('AppBundle:Review')->findBy(['card' => $card], ['nbvotes' => 'DESC']);
+        $reviews = $this->entityManager->getRepository(Review::class)->findBy(['card' => $card], ['nbvotes' => 'DESC']);
 
         $response = [];
-        $packs = $this->entityManager->getRepository('AppBundle:Pack')->findBy([], ["dateRelease" => "ASC"]);
+        $packs = $this->packRepository->findBy([], ["dateRelease" => "ASC"]);
         foreach ($reviews as $review) {
             /** @var Review $review */
             $user = $review->getUser();
@@ -876,7 +878,7 @@ class CardsData
 
     public function get_rulings(Card $card)
     {
-        $rulings = $this->entityManager->getRepository('AppBundle:Ruling')->findBy(['card' => $card], ['dateCreation' => 'ASC']);
+        $rulings = $this->entityManager->getRepository(Ruling::class)->findBy(['card' => $card], ['dateCreation' => 'ASC']);
 
         $response = [];
         foreach ($rulings as $ruling) {
