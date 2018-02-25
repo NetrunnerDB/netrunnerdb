@@ -1,6 +1,6 @@
 AppBundle\Entity\Claim:
     type: entity
-    table: null
+    table: claim
     id:
         id:
             type: integer
