@@ -12,11 +12,6 @@ fos_user_profile:
     resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
     prefix: /profile
 
-fos_user_registration_confirm_override:
-    path: /register/confirm/{token}
-    defaults:
-        _controller: AppBundle:Registration:confirm
-
 fos_user_register:
     resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
     prefix: /register
