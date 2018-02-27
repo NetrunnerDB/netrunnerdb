@@ -417,7 +417,7 @@ function update_deck(options) {
         }
 
         var mwlCard = get_mwl_modified_card(card);
-        var unicorn = mwlCard.is_restricted ? '<span style="display:inline-block;width:1.5em;">🦄</span> ' : '';
+        var unicorn = mwlCard.is_restricted ? '<span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ' : '';
         var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a> ' + unicorn + additional_info + '</div>');
         item.appendTo($('#deck-content .deck-' + criteria));
 
