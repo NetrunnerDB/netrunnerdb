@@ -101,6 +101,7 @@ class Pack implements NormalizableInterface, TimestampableInterface, CodeNameInt
             'name'         => $this->name,
             'position'     => $this->position,
             'size'         => $this->size,
+            'ffg_id'       => $this->ffgId,
         ];
     }
 
