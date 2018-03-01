@@ -23,6 +23,9 @@
     			options.push(card);
     		});
     		options = options.sort(function (a, b) {
+                if (a.title == b.title) {
+                    return a.code < b.code
+                }
     			return a.title.length - b.title.length;
     		});
     	} else if(typeof String.prototype.score === "function") {
@@ -33,7 +36,12 @@
                 	card: card
                 });
     		});
-    		matches.sort(function (a,b) { return a.score > b.score ? -1 : a.score < b.score ? 1 : 0; });
+    		matches.sort(function (a,b) {
+                if (a.score == b.score && a.card.title == b.card.title) {
+                    return a.card.code < b.card.code
+                }
+                return a.score > b.score ? -1 : a.score < b.score ? 1 : 0; 
+            });
     		var bestScore = matches[0].score;
     		for(var i=0; i<max_results && matches[i].score > 0.4 && matches[i].score > bestScore * 0.9; i++) {
     			options.push(matches[i].card);
