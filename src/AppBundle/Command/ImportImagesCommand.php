@@ -53,7 +53,7 @@ class ImportImagesCommand extends ContainerAwareCommand
             }
 
             $url = sprintf(
-                'http://www.cardgamedb.com/forums/uploads/an/med_ADN%d_%s.png',
+                'https://www.cardgamedb.com/forums/uploads/an/med_ADN%d_%s.png',
                 $ffgId,
                 $position
             );
