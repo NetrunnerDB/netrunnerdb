@@ -6,26 +6,25 @@ use AppBundle\Entity\Card;
 use AppBundle\Entity\Decklist;
 use AppBundle\Service\PersonalizationHelper;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class InfoController extends Controller
 {
     /**
-     * @param Request                $request
-     * @param EntityManagerInterface $entityManager
-     * @param PersonalizationHelper  $helper
-     * @param AuthorizationChecker   $authorizationChecker
+     * @param Request                       $request
+     * @param EntityManagerInterface        $entityManager
+     * @param PersonalizationHelper         $helper
+     * @param AuthorizationCheckerInterface $authorizationChecker
      * @return JsonResponse
      */
     public function getAction(
         Request $request,
         EntityManagerInterface $entityManager,
         PersonalizationHelper $helper,
-        AuthorizationChecker $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         if (!$authorizationChecker->isGranted('ROLE_USER')) {
             return new JsonResponse(['is_authenticated' => false]);
