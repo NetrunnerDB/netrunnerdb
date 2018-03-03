@@ -10,18 +10,27 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 
 class InfoController extends Controller
 {
     /**
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
+     * @param PersonalizationHelper  $helper
+     * @param AuthorizationChecker   $authorizationChecker
      * @return JsonResponse
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function getAction(Request $request, EntityManagerInterface $entityManager, PersonalizationHelper $helper)
-    {
+    public function getAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        PersonalizationHelper $helper,
+        AuthorizationChecker $authorizationChecker
+    ) {
+        if (!$authorizationChecker->isGranted('ROLE_USER')) {
+            return new JsonResponse(['is_authenticated' => false]);
+        }
+
         $user = $this->getUser();
 
         $content = $helper->defaultBlock($user);
