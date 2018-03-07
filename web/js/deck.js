@@ -140,6 +140,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 			DisplaySort = value;
 		case 'show-onesies':
 		case 'show-cacherefresh':
+        case 'check-rotation':
 			update_deck();
 			break;
 		}

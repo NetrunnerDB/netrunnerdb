@@ -440,6 +440,11 @@ function update_deck(options) {
     check_influence(influenceSpent);
     check_restricted();
     check_deck_limit();
+    if (NRDB.settings && NRDB.settings.getItem('check-rotation')) {
+        check_rotation();
+    } else {
+        $('#rotated').hide();
+    }
     if ($('#costChart .highcharts-container').length)
         setTimeout(make_cost_graph, 100);
     if ($('#strengthChart .highcharts-container').length)
@@ -707,6 +712,22 @@ function check_deck_limit() {
     } else {
         $('#limited').text('').hide();
     }
+}
+
+function check_rotation() {
+    var rotated_cycles = _.map(NRDB.data.cycles.find( { "rotated": true } ), 'code');
+    var used_cycles = _.map(NRDB.data.cards.find({ indeck: { '$gt': 0 } }), 'pack.cycle_code');
+
+    var intersect = rotated_cycles.filter(function(n) {
+        return used_cycles.indexOf(n) !== -1;
+    });
+    
+    if (intersect.length > 0) {
+        $('#rotated').text('Deck contains rotated cards').show();
+    } else {
+        $('#rotated').text('').hide();
+    }
+    // console.log(intersect);
 }
 
 $(function () {
