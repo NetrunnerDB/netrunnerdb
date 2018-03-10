@@ -14,7 +14,7 @@ AppBundle\Entity\Cycle:
     manyToMany:
         rotations:
             targetEntity: Rotation
-            mappedBy: cycles
+            mappedBy: rotated
             cascade: ["remove"]
     fields:
         id:
