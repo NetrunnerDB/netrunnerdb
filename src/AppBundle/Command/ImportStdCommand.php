@@ -175,8 +175,9 @@ class ImportStdCommand extends ContainerAwareCommand
         // rotation
 
         $output->writeln("Importing Rotation...");
-        $mwlFileInfo = $this->getFileInfo($path, 'rotations.json');
-        $imported = $this->importRotationJsonFile($mwlFileInfo);
+        $rotationFileInfo = $this->getFileInfo($path, 'rotations.json');
+        $imported = $this->importRotationJsonFile($rotationFileInfo);
+        $output->writeln("Imported: " . count($imported));
         if (!$force && count($imported)) {
             $question = new ConfirmationQuestion("Do you confirm? (Y/n) ", true);
             if (!$helper->ask($input, $output, $question)) {
@@ -459,7 +460,7 @@ class ImportStdCommand extends ContainerAwareCommand
             ], [], []);
             if ($rotation) {
                 $result[] = $rotation;
-                foreach ($rotationData['cycles'] as $cycle_code) {
+                foreach ($rotationData['rotated'] as $cycle_code) {
                     $cycle = $this->entityManager->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
                     if (!$cycle instanceof Cycle) {
                         continue;
