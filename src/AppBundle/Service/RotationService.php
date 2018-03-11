@@ -46,9 +46,11 @@ class RotationService
         foreach ($decklist->getSlots() as $slot) {
             $cycles[$slot->getCard()->getPack()->getCycle()->getCode()] = 1;
         }
-
-        return count(array_diff(array_keys($cycles), array_map(function (Cycle $cycle) {
-            return $cycle->getCode();
-        }, $rotation->getCycles()->toArray()))) === 0;
+        
+        $allCycles = array_map(function(Cycle $cycle) { return $cycle->getCode(); }, $this->entityManager->getRepository(Cycle::class)->findBy([]));
+        $rotatedCycles = array_map(function (Cycle $cycle) { return $cycle->getCode(); }, $rotation->getRotated()->toArray());
+        $remainingCycles = array_diff($allCycles, $rotatedCycles);
+        
+        return count(array_diff(array_keys($cycles), $remainingCycles)) === 0;
     }
 }
