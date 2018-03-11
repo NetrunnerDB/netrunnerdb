@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use AppBundle\Service\RotationService;
 
 /**
  *
@@ -15,11 +16,15 @@ class LegalityDecklistsRotationCommand extends ContainerAwareCommand
 {
     /** @var EntityManagerInterface $entityManager */
     private $entityManager;
+    
+    /** @var RotationService $rotationService */
+    private $rotationService;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, RotationService $rotationService)
     {
         parent::__construct();
         $this->entityManager = $entityManager;
+        $this->rotationService = $rotationService;
     }
 
     protected function configure()
@@ -42,6 +47,29 @@ class LegalityDecklistsRotationCommand extends ContainerAwareCommand
                 . " AND d.id=s.decklist_id)";
         
         $this->entityManager->getConnection()->executeQuery($sql);
+        
+        $rotations = $this->entityManager->getRepository('AppBundle:Rotation')->findBy([], ["dateStart" => "DESC"]);
+        $decklists = $this->entityManager->getRepository('AppBundle:Decklist')->findBy([]);
+        
+        foreach ($rotations as $rotation) {
+            $output->writeln("checking " . $rotation->getName());
+            
+            foreach ($decklists as $decklist) {
+                $confirm = $this->rotationService->isRotationCompatible($decklist, $rotation);
+                
+                $oldId = null;
+                if ($decklist->getRotation()) {
+                    $oldId = $decklist->getRotation()->getId();
+                }
+                
+                if ($confirm && $oldId !== $rotation->getId()) {
+                    $output->writeln("  updating decklist " . $decklist->getId());
+                    $decklist->setRotation($rotation);
+                    $this->entityManager->persist($decklist);
+                }
+            }
+        }
+        $this->entityManager->flush();
 
         $output->writeln("<info>Done</info>");
     }
