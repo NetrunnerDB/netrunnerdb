@@ -1,3 +1,9 @@
+-- use this script to convert your nrdb database to utf8mb4
+-- there are two things you must do before running this:
+-- 1) make a backup of your database. mysqldump is your friend.
+-- 2) change the "alter database" statement to use your database name (check "database_name" in app/config/parameters.yml)
+-- then run it, e.g. using mysqladmin -uUSER -pPASS DBNAME <convert2utf8mb4.sql
+
 alter database nrdb character set = utf8mb4 collate = utf8mb4_unicode_ci;
 
 alter table client convert to character set utf8mb4 collate utf8mb4_unicode_ci;
