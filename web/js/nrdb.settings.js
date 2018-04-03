@@ -10,7 +10,8 @@
 			'core-sets': 3,
 			'show-suggestions': 3,
 			'buttons-behavior': 'cumulative',
-			'sort-order': 'type'
+			'sort-order': 'type',
+            'check-rotation': true
 	};
 	
 	settings.load = function load() {

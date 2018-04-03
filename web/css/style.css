@@ -505,7 +505,7 @@ ul.rulings-list blockquote {
     padding: 5px 10px;
 }
 
-#restricted {
+#restricted, #rotated {
 	color: red;
 }
 
