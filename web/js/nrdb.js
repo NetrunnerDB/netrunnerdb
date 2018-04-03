@@ -764,9 +764,9 @@ function convert_to_rcs() {
             Deck_changed_since_last_autosave = true;
         }
     });
-    
-    alert("Replaced " + replaced + " card(s) with their post-rotation counterparts.");
+
     update_deck();
+    $('#rotated').html("Replaced " + replaced + " card(s) with their post-rotation counterparts.").show();
 }
 
 $(function () {
