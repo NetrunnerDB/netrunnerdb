@@ -102,6 +102,15 @@
 .icon-terminal-directive:before {
   content: "\e923";
 }
+.icon-core2:before {
+  content: "\e924";
+}
+.icon-kitara:before {
+  content: "\e925";
+}
+.icon-reign-and-reverie:before {
+  content: "\e926";
+}
 .icon-anarch:before {
   content: "\e91a";
 }

@@ -576,7 +576,9 @@ class CardsData
         }
 
         foreach ($clauses as $clause) {
-            $qb->andWhere($clause);
+            if(!empty($clause)) {
+                $qb->andWhere($clause);
+            }
         }
         foreach ($parameters as $index => $parameter) {
             $qb->setParameter($index, $parameter);
