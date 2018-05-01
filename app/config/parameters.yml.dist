@@ -40,3 +40,5 @@ parameters:
     oauth_test_redirect_uri: ~
     images_path: ~
     card_image_url: 'https://netrunnerdb.com/card_image'
+    slack_webhook_url: ~
+    slack_webhook_channel: ~

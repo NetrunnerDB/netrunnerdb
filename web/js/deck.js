@@ -140,6 +140,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 			DisplaySort = value;
 		case 'show-onesies':
 		case 'show-cacherefresh':
+        case 'check-rotation':
 			update_deck();
 			break;
 		}
@@ -170,7 +171,8 @@ function create_collection_tab(initialPackSelection) {
 	
 	$('#pack_code').empty();
 	var f = function(pack, $container) {
-		var is_checked = (pack.date_release || sets_in_deck[pack.code]) && initialPackSelection[pack.code] !== false;
+		var released = !(pack.date_relase == null) && !pack.cycle.rotated;
+		var is_checked = released || sets_in_deck[pack.code] || initialPackSelection[pack.code] !== false;
 		return $container.addClass("checkbox").append('<label><input type="checkbox" name="' + pack.code + '"' + (is_checked ? ' checked="checked"' : '')+ '>' + pack.name + '</label>');
 	};
 	_.sortBy(NRDB.data.cycles.find(), 'position').forEach(function (cycle) {

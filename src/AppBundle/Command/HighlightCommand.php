@@ -19,11 +19,11 @@ class HighlightCommand extends ContainerAwareCommand
         $this->entityManager = $entityManager;
     }
 
-    protected function saveHighlight(int $decklist_id)
+    protected function saveHighlight(int $decklist_id = null)
     {
         $dbh = $this->entityManager->getConnection();
 
-        if ($decklist_id) {
+        if (null !== $decklist_id) {
             $rows = $dbh
                 ->executeQuery(
                     "SELECT
