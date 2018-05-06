@@ -47,10 +47,8 @@ class RotationService
             $cycles[$slot->getCard()->getPack()->getCycle()->getCode()] = 1;
         }
         
-        $allCycles = array_map(function(Cycle $cycle) { return $cycle->getCode(); }, $this->entityManager->getRepository(Cycle::class)->findBy([]));
+        $usedCycles = array_keys($cycles);
         $rotatedCycles = array_map(function (Cycle $cycle) { return $cycle->getCode(); }, $rotation->getRotated()->toArray());
-        $remainingCycles = array_diff($allCycles, $rotatedCycles);
-        
-        return count(array_diff(array_keys($cycles), $remainingCycles)) === 0;
+        return count(array_intersect($usedCycles, $rotatedCycles)) === 0;
     }
 }
