@@ -74,7 +74,6 @@ class LegalityDecklistsRotationCommand extends ContainerAwareCommand
                 if ($confirm && $oldId !== $rotation->getId()) {
                     $output->writeln("  updating decklist " . $decklist->getId());
                     $decklist->setRotation($rotation);
-                    $this->entityManager->persist($decklist);
                 }
             }
         }
