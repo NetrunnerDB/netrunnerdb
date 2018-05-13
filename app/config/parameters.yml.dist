@@ -4,7 +4,7 @@
 parameters:
     database_host: 127.0.0.1
     database_port: ~
-    database_name: symfony
+    database_name: netrunnerdb
     database_user: root
     database_password: ~
     # You should uncomment this if you want to use pdo_sqlite
@@ -16,8 +16,8 @@ parameters:
     mailer_password: ~
 
     # Email Sender
-    email_sender_address: mail@example.com
-    email_sender_name: NetrunnerDB
+    email_sender_address: ~
+    email_sender_name: ~
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
