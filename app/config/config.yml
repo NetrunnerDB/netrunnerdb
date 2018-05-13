@@ -83,8 +83,8 @@ fos_user:
     firewall_name: main
     user_class: AppBundle\Entity\User
     from_email:
-        address:        '%from_email_address%'
-        sender_name:    '%from_email_name%'
+        address:        '%email_sender_address%'
+        sender_name:    '%email_sender_name%'
     registration:
         confirmation:
             enabled:    false # change to true for required email confirmation
