@@ -11,7 +11,6 @@ parameters:
     #database_path: '%kernel.project_dir%/var/data/data.sqlite'
 
     mailer_transport: smtp
-    mailer_command: ~
     mailer_host: 127.0.0.1
     mailer_user: ~
     mailer_password: ~
