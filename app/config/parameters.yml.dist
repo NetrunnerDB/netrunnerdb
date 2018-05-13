@@ -16,8 +16,8 @@ parameters:
     mailer_password: ~
 
     # Email Sender
-    email_sender_address: alsciende@thronesdb.com
-    email_sender_name: ThronesDB
+    email_sender_address: mail@example.com
+    email_sender_name: NetrunnerDB
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
