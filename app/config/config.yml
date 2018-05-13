@@ -73,6 +73,7 @@ doctrine:
 # Swiftmailer Configuration
 swiftmailer:
     transport: '%mailer_transport%'
+    command: '%mailer_command%'
     host: '%mailer_host%'
     username: '%mailer_user%'
     password: '%mailer_password%'
@@ -83,8 +84,8 @@ fos_user:
     firewall_name: main
     user_class: AppBundle\Entity\User
     from_email:
-        address:        alsciende@gmail.com
-        sender_name:    Netrunnerdb
+        address:        '%from_email_address%'
+        sender_name:    '%from_email_name%'
     registration:
         confirmation:
             enabled:    false # change to true for required email confirmation

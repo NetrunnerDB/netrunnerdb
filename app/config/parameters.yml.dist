@@ -11,9 +11,12 @@ parameters:
     #database_path: '%kernel.project_dir%/var/data/data.sqlite'
 
     mailer_transport: smtp
+    mailer_command: ~
     mailer_host: 127.0.0.1
     mailer_user: ~
     mailer_password: ~
+    from_email_address: mail@example.com
+    from_email_name: NetrunnerDB
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
