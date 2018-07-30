@@ -498,6 +498,7 @@ function test_cacherefresh() {
         'honor-and-profit',
         'order-and-chaos',
         'data-and-destiny',
+        'reign-and-reverie'
     ];
     var deluxe = _.find(packs, function (element) {
         return _.includes(all_deluxes, element.pack.cycle.code);
