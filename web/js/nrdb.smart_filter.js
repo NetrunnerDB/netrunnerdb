@@ -1,10 +1,14 @@
 (function(smart_filter, $) {
 	var SmartFilterQuery = [];
-	
+
 	smart_filter.get_query = function(FilterQuery) {
-		return _.extend(FilterQuery, SmartFilterQuery);
+        var query = _.extend(FilterQuery, SmartFilterQuery);
+        if (!SmartFilterQuery.text) {
+            delete query.text;
+        }
+        return query;
 	};
-	
+
 	smart_filter.handler = function (value, callback) {
 		var conditions = filterSyntax(value);
 		SmartFilterQuery = {};
@@ -69,7 +73,7 @@
 
 		callback();
 	};
-	
+
 	function add_integer_sf(key, operator, values) {
 		for (var j = 0; j < values.length; j++) {
 			values[j] = parseInt(values[j], 10);
@@ -198,5 +202,5 @@
 		return list;
 	}
 
-	
+
 })(NRDB.smart_filter = {}, jQuery);
