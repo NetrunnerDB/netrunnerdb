@@ -3,7 +3,7 @@
 (function (ui, $) {
 
     ui.showBanner = function showBanner(message, type) {
-        $('<div class="alert alert-' + (type || 'info') + '">').html(message).prependTo($('#wrapper>.container'));
+        $('<div class="alert alert-' + (type || 'info') + '">').html(message).prependTo($('#wrapper>.container:first-child'));
     };
 
     ui.loadImage = function loadImage(image) {

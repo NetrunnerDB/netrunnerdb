@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends Controller
@@ -20,5 +21,17 @@ class SecurityController extends Controller
                 'error'         => $authenticationUtils->getLastAuthenticationError(),
             ]
         );
+    }
+
+    public function registerAction()
+    {
+        $session = $this->get('session');
+
+        $session->getFlashBag()->add(
+            'warning',
+            'Registration is currently disabled.'
+        );
+
+        return $this->redirectToRoute('netrunnerdb_index');
     }
 }
