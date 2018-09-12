@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Legality;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SocialController extends Controller
 {
@@ -585,11 +586,11 @@ class SocialController extends Controller
      *
      * @ParamConverter("comment", class="AppBundle:Comment", options={"id" = "comment_id"})
      */
-    public function hidecommentAction(Comment $comment, int $hidden, EntityManagerInterface $entityManager)
+    public function hidecommentAction(Comment $comment, int $hidden, EntityManagerInterface $entityManager, AuthorizationCheckerInterface $authorizationChecker)
     {
         $user = $this->getUser();
 
-        if ($comment->getDecklist()->getUser()->getId() !== $user->getId()) {
+        if ($comment->getDecklist()->getUser()->getId() !== $user->getId() && !$authorizationChecker->isGranted('ROLE_MODERATOR')) {
             throw $this->createAccessDeniedException();
         }
 
