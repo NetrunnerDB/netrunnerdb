@@ -586,11 +586,11 @@ class SocialController extends Controller
      *
      * @ParamConverter("comment", class="AppBundle:Comment", options={"id" = "comment_id"})
      */
-    public function hidecommentAction(Comment $comment, int $hidden, EntityManagerInterface $entityManager, AuthorizationCheckerInterface $authorizationChecker)
+    public function hidecommentAction(Comment $comment, int $hidden, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
-        if ($comment->getDecklist()->getUser()->getId() !== $user->getId() && !$authorizationChecker->isGranted('ROLE_MODERATOR')) {
+        if ($comment->getDecklist()->getUser()->getId() !== $user->getId() && !$this->isGranted('ROLE_MODERATOR')) {
             throw $this->createAccessDeniedException();
         }
 
