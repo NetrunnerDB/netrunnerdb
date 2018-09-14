@@ -530,28 +530,10 @@ function test_cacherefresh() {
 }
 
 function test_onesies() {
-    var all_cards = _.map(NRDB.data.cards.find({ type_code: { '$ne': 'identity' }, indeck: { '$gt': 0 } }), 'code'),
-        accepted_cards = [];
+    var all_cards = NRDB.data.cards.find({ type_code: { '$ne': 'identity' }, indeck: { '$gt': 0 } });
 
-    // core set check
-    NRDB.data.cards.find({
-        type_code: { '$ne': 'identity' },
-        indeck: { '$gt': 0 },
-        pack_code: 'core',
-    }).forEach(function (card) {
-        if (card.indeck <= card.quantity) {
-            accepted_cards.push(card.code);
-        }
-    });
-
-    // deluxe and datapack check
-    var remaining_cards = NRDB.data.cards.find({
-        type_code: { '$ne': 'identity' },
-        indeck: { '$gt': 0 },
-        pack_code: { '$ne': 'core' },
-        code: { '$nin': accepted_cards },
-    });
-    var packs = _.values(_.reduce(remaining_cards, function (acc, card) {
+    // core, deluxe and datapack check
+    var packs = _.values(_.reduce(all_cards, function (acc, card) {
         if (!acc[card.pack.code])
             acc[card.pack.code] = { pack: card.pack, count: 0 };
         acc[card.pack.code].count++;
@@ -559,17 +541,19 @@ function test_onesies() {
     }, {})).sort(function (a, b) {
         return b.count - a.count;
     });
+    var core = _.find(packs, function (element) {
+        return element.pack.code === 'core' || element.pack.code === 'core2';
+    });
     var deluxe = _.find(packs, function (element) {
-        return element.pack.cycle.size === 1;
+        return element.pack.cycle.size === 1 && element.pack.code !== 'core' && element.pack.code !== 'core2';
     });
     var datapack = _.find(packs, function (element) {
         return element.pack.cycle.size > 1;
     });
-    remaining_cards.forEach(function (card) {
-        if (deluxe && card.pack.code === deluxe.pack.code)
-            accepted_cards.push(card.code);
-        if (datapack && card.pack.code === datapack.pack.code)
-            accepted_cards.push(card.code);
+    var accepted_cards = _.filter(all_cards, function (card) {
+        return (core && card.pack.code === core.pack.code) ||
+               (deluxe && card.pack.code === deluxe.pack.code) ||
+               (datapack && card.pack.code === datapack.pack.code);
     });
 
     // conclusion with an accepted difference of 1
