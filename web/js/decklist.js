@@ -197,7 +197,7 @@ function setup_title() {
 }
 
 function setup_comment_hide() {
-    if(NRDB.user.data.is_author) {
+    if(NRDB.user.data.is_author || NRDB.user.data.is_moderator) {
         $('.comment-hide-button').remove();
         $('<a href="#" class="comment-hide-button"><span class="text-danger glyphicon glyphicon-remove" style="margin-left:.5em"></span></a>').appendTo('.collapse.in > .comment-date').on('click', function (event) {
             if(confirm('Do you really want to hide this comment for everybody?')) {
