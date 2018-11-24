@@ -51,7 +51,7 @@ where `decklist_id` is the numeric id of the deck you want to highlight.
 ## Setup an admin account
 
 - register
-- make sure your account is enabled (or run `php app/console fos:user:activate <username>`)
+- make sure your account is enabled (or run `php bin/console fos:user:activate <username>`)
 - run `php bin/console fos:user:promote --super <username>`
 
 ## Add or edit cards
