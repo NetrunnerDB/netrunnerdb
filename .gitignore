@@ -17,4 +17,6 @@
 /vendor/
 /web/bundles/
 .php_cs.cache
-web/card_image/*
+/web/card_image/
+composer.json
+composer.lock
