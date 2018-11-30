@@ -10,7 +10,7 @@ function update_max_qty() {
     NRDB.data.cards.find().forEach(function(card) {
         var modifiedCard = get_mwl_modified_card(card);
         var max_qty = modifiedCard.deck_limit;
-        if(card.pack_code == 'core' || card.pack_code == 'core2') {
+        if(card.pack_code == 'core' || card.pack_code == 'core2' || card.pack_code == 'sc19') {
             max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
         }
         if(Identity.pack_code == "draft") {
@@ -597,7 +597,7 @@ function handle_quantity_change(event) {
 function update_core_sets() {
 	CardDivs = [ null, {}, {}, {} ];
 	NRDB.data.cards.find({
-		pack_code : ['core', 'core2']
+		pack_code : ['core', 'core2','sc19']
 	}).forEach(function(card) {
         var modifiedCard = get_mwl_modified_card(card);
 		var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), modifiedCard.deck_limit);
