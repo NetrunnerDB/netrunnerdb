@@ -339,9 +339,11 @@ class DecklistsController extends Controller
                 "SELECT
     				c.title,
     				c.code,
-                                f.code faction_code
+                                f.code faction_code,
+                                p.name pack_name
     				FROM card c
                                 JOIN faction f ON f.id=c.faction_id
+                                JOIN pack p ON p.id=c.pack_id
                                 WHERE c.code IN (?)
     				ORDER BY c.code DESC",
                 [$cards_code],
