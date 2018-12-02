@@ -312,7 +312,9 @@ function update_deck(options) {
     InfluenceLimit = 0;
     var cabinet = {};
     var parts = Identity.title.split(/: /);
-    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>');
+    var mwlId = get_mwl_modified_card(Identity);
+    var idUnicorn = mwlId.is_restricted ? '<span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ' : '';
+    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a> ' + idUnicorn);
     $('#img_identity').prop('src', Identity.imageUrl);
     InfluenceLimit = Identity.influence_limit;
     if (typeof InfluenceLimit === "undefined")
