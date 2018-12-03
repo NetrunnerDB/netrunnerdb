@@ -50,7 +50,7 @@
                                 + card.title + '</h4>' + type
                                 + '<div class="card-text border-' + card.faction_code + '">' + NRDB.format.text(card) + '</div>'
                                 + '<p class="card-faction" style="text-align:right;clear:right"><span class="influence influence-' + card.faction_code + '">' + influence
-                                + '</span> ' + card.faction.name + ' &ndash; ' + card.pack.name + '</p>'
+                                + '</span> ' + card.faction.name + ' &ndash; ' + card.pack.name + (card.pack.cycle.size !== 1 ? ' (' + card.pack.cycle.name + ')' : '') + '</p>'
                     },
                     style: {
                         classes: 'qtip-bootstrap qtip-nrdb'
