@@ -17,36 +17,35 @@ function getDisplayDescriptions(sort) {
     var dd = {
         'type': [
             [// first column
-
                 {
                     id: 'event',
                     label: 'Event',
                     image: '/images/types/event.png',
                 }, {
-                id: 'hardware',
-                label: 'Hardware',
-                image: '/images/types/hardware.png',
-            }, {
-                id: 'resource',
-                label: 'Resource',
-                image: '/images/types/resource.png',
-            }, {
-                id: 'agenda',
-                label: 'Agenda',
-                image: '/images/types/agenda.png',
-            }, {
-                id: 'asset',
-                label: 'Asset',
-                image: '/images/types/asset.png',
-            }, {
-                id: 'upgrade',
-                label: 'Upgrade',
-                image: '/images/types/upgrade.png',
-            }, {
-                id: 'operation',
-                label: 'Operation',
-                image: '/images/types/operation.png',
-            },
+                    id: 'hardware',
+                    label: 'Hardware',
+                    image: '/images/types/hardware.png',
+                }, {
+                    id: 'resource',
+                    label: 'Resource',
+                    image: '/images/types/resource.png',
+                }, {
+                    id: 'agenda',
+                    label: 'Agenda',
+                    image: '/images/types/agenda.png',
+                }, {
+                    id: 'asset',
+                    label: 'Asset',
+                    image: '/images/types/asset.png',
+                }, {
+                    id: 'upgrade',
+                    label: 'Upgrade',
+                    image: '/images/types/upgrade.png',
+                }, {
+                    id: 'operation',
+                    label: 'Operation',
+                    image: '/images/types/operation.png',
+                },
             ],
             [// second column
                 {
@@ -54,30 +53,30 @@ function getDisplayDescriptions(sort) {
                     label: 'Icebreaker',
                     image: '/images/types/program.png',
                 }, {
-                id: 'program',
-                label: 'Program',
-                image: '/images/types/program.png',
-            }, {
-                id: 'barrier',
-                label: 'Barrier',
-                image: '/images/types/ice.png',
-            }, {
-                id: 'code-gate',
-                label: 'Code Gate',
-                image: '/images/types/ice.png',
-            }, {
-                id: 'sentry',
-                label: 'Sentry',
-                image: '/images/types/ice.png',
-            }, {
-                id: 'multi',
-                label: 'Multi',
-                image: '/images/types/ice.png',
-            }, {
-                id: 'none',
-                label: 'Other',
-                image: '/images/types/ice.png',
-            },
+                    id: 'program',
+                    label: 'Program',
+                    image: '/images/types/program.png',
+                }, {
+                    id: 'barrier',
+                    label: 'Barrier',
+                    image: '/images/types/ice.png',
+                }, {
+                    id: 'code-gate',
+                    label: 'Code Gate',
+                    image: '/images/types/ice.png',
+                }, {
+                    id: 'sentry',
+                    label: 'Sentry',
+                    image: '/images/types/ice.png',
+                }, {
+                    id: 'multi',
+                    label: 'Multi',
+                    image: '/images/types/ice.png',
+                }, {
+                    id: 'none',
+                    label: 'Other',
+                    image: '/images/types/ice.png',
+                },
             ],
         ],
         'faction': [
@@ -252,6 +251,12 @@ function find_identity() {
     Identity = NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'identity' }).pop();
 }
 
+function unicorn(card) {
+    var mwlCard = get_mwl_modified_card(card);
+    var unicorn_emoji = ' <span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ';
+    return mwlCard.is_restricted ? unicorn_emoji : '';
+}
+
 function update_deck(options) {
     var restrainOneColumn = false;
     if (options) {
@@ -312,7 +317,8 @@ function update_deck(options) {
     InfluenceLimit = 0;
     var cabinet = {};
     var parts = Identity.title.split(/: /);
-    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>');
+
+    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + unicorn(Identity));
     $('#img_identity').prop('src', Identity.imageUrl);
     InfluenceLimit = Identity.influence_limit;
     if (typeof InfluenceLimit === "undefined")
@@ -416,9 +422,7 @@ function update_deck(options) {
             additional_info = '(<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ') ' + alert_number_of_sets + influence;
         }
 
-        var mwlCard = get_mwl_modified_card(card);
-        var unicorn = mwlCard.is_restricted ? '<span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ' : '';
-        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a> ' + unicorn + additional_info + '</div>');
+        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a>' + unicorn(card) + additional_info + '</div>');
         item.appendTo($('#deck-content .deck-' + criteria));
 
         cabinet[criteria] |= 0;
@@ -466,7 +470,7 @@ function test_cacherefresh() {
         accepted_cards = [];
 
     // core set check
-    NRDB.data.cards.find({ indeck: { '$gt': 0 }, pack_code: 'core2' }).forEach(function (card) {
+    NRDB.data.cards.find({ indeck: { '$gt': 0 }, pack_code: 'sc19' }).forEach(function (card) {
         if (card.indeck <= card.quantity) {
             accepted_cards.push(card.code);
         }
@@ -482,7 +486,7 @@ function test_cacherefresh() {
     // deluxe and last-two-cycles check
     var remaining_cards = NRDB.data.cards.find({
         indeck: { '$gt': 0 },
-        pack_code: { '$ne': 'core2' },
+        pack_code: { '$ne': 'sc19' },
         code: { '$nin': accepted_cards },
     });
     var packs = _.values(_.reduce(remaining_cards, function (acc, card) {
@@ -542,10 +546,15 @@ function test_onesies() {
         return b.count - a.count;
     });
     var core = _.find(packs, function (element) {
-        return element.pack.code === 'core' || element.pack.code === 'core2';
+        return element.pack.code === 'core' ||
+               element.pack.code === 'core2' ||
+               element.pack.code === 'sc19';
     });
     var deluxe = _.find(packs, function (element) {
-        return element.pack.cycle.size === 1 && element.pack.code !== 'core' && element.pack.code !== 'core2';
+        return element.pack.cycle.size === 1 &&
+               element.pack.code !== 'core' &&
+               element.pack.code !== 'core2' &&
+               element.pack.code !== 'sc19';
     });
     var datapack = _.find(packs, function (element) {
         return element.pack.cycle.size > 1;
@@ -706,7 +715,7 @@ function check_rotation() {
     var intersect = rotated_cycles.filter(function(n) {
         return used_cycles.indexOf(n) !== -1;
     });
-    
+
     if (intersect.length > 0) {
         $('#rotated').html('Deck contains rotated cards - <a href="javascript:convert_to_rcs()" title="Attempt to replace rotated cards with their post-rotation counterparts.">click to update</a>').show();
     } else {
@@ -730,21 +739,20 @@ function convert_to_rcs() {
         "02102": "20008", "01022": "20024", "01021": "20023", "02067": "20053", "04101": "20004", "01015": "20015", "02062": "20010", "04012": "20105", "01003": "20002", "02085": "20026",
         "01042": "20048", "01048": "20054", "02002": "20007", "04013": "20099", "04051": "20067", "01061": "20066", "02022": "20016", "02112": "20097", "04082": "20012", "02095": "20108",
         "01059": "20072", "02046": "20037",
-        
-    }
+
     var cards_used = Object.keys(Deck);
-    var replaced = 0;    
+    var replaced = 0;
     cards_used.forEach(function(oldCode) {
         var newCode = old2new[oldCode];
 
         if (newCode) {
             var quantity = Deck[oldCode];
-        	NRDB.data.cards.updateById(newCode, {
-        		indeck : quantity
-        	});
-        	NRDB.data.cards.updateById(oldCode, {
-        		indeck : 0
-        	});
+            NRDB.data.cards.updateById(newCode, {
+                indeck : quantity
+            });
+            NRDB.data.cards.updateById(oldCode, {
+                indeck : 0
+            });
             ++replaced;
             Deck_changed_since_last_autosave = true;
         }
