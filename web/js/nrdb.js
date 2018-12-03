@@ -253,7 +253,7 @@ function find_identity() {
 
 function unicorn(card) {
     var mwlCard = get_mwl_modified_card(card);
-    var unicorn_emoji = '<span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ';
+    var unicorn_emoji = ' <span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ';
     return mwlCard.is_restricted ? unicorn_emoji : '';
 }
 
