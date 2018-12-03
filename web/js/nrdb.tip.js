@@ -22,8 +22,16 @@
                         /.*\/card\/(\d\d\d\d\d).*/,
                         "$1"));
         var card = NRDB.data.cards.findById(code);
+        
         if(!card)
             return;
+        var cycle = NRDB.data.cycles.findById(card.pack.cycle_code);
+        var cycle_name = '';
+        if(cycle.size === 1) {
+            cycle_name = ''
+        } else {
+            cycle_name = ' (' + card.pack.cycle.name + ')'
+        }
         var type = '<p class="card-info">' + NRDB.format.type(card) + '</p>';
         var influence = '';
         for(var i = 0; i < card.faction_cost; i++)
@@ -50,7 +58,7 @@
                                 + card.title + '</h4>' + type
                                 + '<div class="card-text border-' + card.faction_code + '">' + NRDB.format.text(card) + '</div>'
                                 + '<p class="card-faction" style="text-align:right;clear:right"><span class="influence influence-' + card.faction_code + '">' + influence
-                                + '</span> ' + card.faction.name + ' &ndash; ' + card.pack.name + '</p>'
+                                + '</span> ' + card.faction.name + ' &ndash; ' + card.pack.name + cycle_name + '</p>'
                     },
                     style: {
                         classes: 'qtip-bootstrap qtip-nrdb'
