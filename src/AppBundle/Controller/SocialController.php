@@ -48,15 +48,6 @@ class SocialController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        $lastPack = $deck->getLastPack();
-        if (!$lastPack->getDateRelease() || $lastPack->getDateRelease() > new \DateTime()) {
-            $response->setData([
-                'allowed' => false,
-                'message' => "You cannot publish this deck yet, because it has unreleased cards.",
-            ]);
-
-            return $response;
-        }
         $analyse = $judge->analyse($deck->getSlots()->toArray());
 
         if (is_string($analyse)) {
@@ -115,11 +106,6 @@ class SocialController extends Controller
         /** @var Deck $deck */
         $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $lastPack = $deck->getLastPack();
-        if (!$lastPack->getDateRelease() || $lastPack->getDateRelease() > new \DateTime()) {
             throw $this->createAccessDeniedException();
         }
 
