@@ -103,7 +103,15 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
 		var regexp = new RegExp(q, 'i');
-		cb(NRDB.data.cards.find({title: regexp, pack_code: Filters.pack_code || []}));
+		var matchingCards = NRDB.data.cards.find({title: regexp, pack_code: Filters.pack_code || []});
+		var cardsByName = _.groupBy(matchingCards, card => card.title);
+		var latestCards = Object.keys(cardsByName).map(function (key, index) {
+		    if (cardsByName[key].length === 1) {
+		        return cardsByName[key][0];
+		    }
+		    return _.last(_.sortBy(cardsByName[key], card => card.title));
+		});
+		cb(latestCards);
 	}
 
 	$('#filter-text').typeahead({
