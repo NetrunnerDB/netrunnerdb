@@ -911,4 +911,20 @@ class CardsData
 
         return $card;
     }
+
+    /**
+     *  Searches for other versions/releases of all cards
+     *  @return array
+     */
+    public function get_versions()
+    {
+       $cards = $this->entityManager->getRepository(Card::class)->findAll();
+
+        $versions = [];
+        foreach ($cards as $card) {
+            $versions[$card->getTitle()][] = $card;
+        }
+
+        return $versions;
+    }
 }

@@ -400,6 +400,13 @@ class SearchController extends Controller
             $last = $first + $nb_per_page;
 
             $card = null;
+            $versions = null;
+
+            if ($view == "zoom") {
+                // Other versions of a given card
+                $versions = $cardsData->get_versions();
+            }
+
             // data à passer à la view
             for ($rowindex = $first; $rowindex < $last && $rowindex < count($rows); $rowindex++) {
                 /** @var Card $card */
@@ -417,6 +424,10 @@ class SearchController extends Controller
                     $cardinfo['reviews'] = $cardsData->get_reviews($card);
                     $cardinfo['rulings'] = $cardsData->get_rulings($card);
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($card);
+                    $cardinfo['versions'] = [];
+                    foreach ($versions[$card->getTitle()] as $version) {
+                        $cardinfo['versions'][] = $cardsData->getCardInfo($version, $locale);
+                    }
                 }
                 if ($view == "rulings") {
                     $cardinfo['rulings'] = $cardsData->get_rulings($card);

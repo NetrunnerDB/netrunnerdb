@@ -45,7 +45,19 @@
                                         <div class="card-illustrator">
                                             <small>
                                                 {{ card.faction_name }} &bull;
-                                                {% if card.illustrator %}{{ card.illustrator }} &bull; {% endif %}<span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }} {{ card.position }}
+                                                {% if card.illustrator %}{{ card.illustrator }} &bull; {% endif %}
+                                                <span class="icon icon-{{ card.cycle_code }}"></span>
+                                                {{ card.pack_name }} {{ card.position }}
+                                            </small>
+                                        </div>
+                                        <div class="card-illustrator">
+                                            <small>
+                                                Versions:
+                                                {% for version in card.versions %}
+                                                    <a href="{{ path('cards_zoom',{_locale:app.request.locale,'card_code':version.code}) }}">
+                                                        <span class="icon icon-{{ version.cycle_code }}"> </span>
+                                                    </a>
+                                                {% endfor %}
                                             </small>
                                         </div>
                                     </div>
