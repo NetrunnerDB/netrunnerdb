@@ -149,14 +149,27 @@ class CardsData
     {
         $i = 0;
 
-        // construction de la requete sql
-        $qb = $this->entityManager->createQueryBuilder()->from(Card::class, 'c');
-        $qb->select('c', 'p', 'y', 't', 'f', 's');
-        $qb->leftJoin('c.pack', 'p')
+        // Construction of the sql request
+        $init = $this->entityManager->createQueryBuilder();
+        $qb = $init->select('c', 'p', 'y', 't', 'f', 's')
+           ->from(Card::class, 'c')
+           ->leftJoin('c.pack', 'p')
            ->leftJoin('p.cycle', 'y')
            ->leftJoin('c.type', 't')
            ->leftJoin('c.faction', 'f')
-           ->leftJoin('c.side', 's');
+           ->leftJoin('c.side', 's')
+           // Select only the most recent copy of a card
+           ->where(
+               $init->expr()->in(
+                   'c.code',
+                   $this->entityManager->createQueryBuilder()
+                        ->select('MAX(g.code) AS max_code')
+                        ->from(Card::class, 'g')
+                        ->where('g.title = c.title')
+                        ->andWhere('g.max_code = c.code')
+                        ->groupBy('g.title')
+                        ->getDQL()));
+
         $qb2 = null;
         $qb3 = null;
 
