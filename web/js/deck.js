@@ -98,27 +98,27 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	if (Identity.code == "03002") {
 		$('input[name=Jinteki]').prop("checked", false);
 	}
-		
 
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
 		var regexp = new RegExp(q, 'i');
+		var latestCardsByTitle = {};
 		var matchingCards = NRDB.data.cards.find({title: regexp, pack_code: Filters.pack_code || []});
-		var cardsByName = _.groupBy(matchingCards, card => card.title);
-		var latestCards = Object.keys(cardsByName).map(function (key, index) {
-		    if (cardsByName[key].length === 1) {
-		        return cardsByName[key][0];
-		    }
-		    return _.last(_.sortBy(cardsByName[key], card => card.title));
-		});
+		for (var card of matchingCards) {
+			var latestCard = latestCardsByTitle[card.title];
+			if (!latestCard || card.code > latestCard.code) {
+				latestCardsByTitle[card.title] = card;
+			}
+		}
+		var latestCards = _.sortBy(latestCardsByTitle, 'title');
 		cb(latestCards);
 	}
 
 	$('#filter-text').typeahead({
-		  hint: true,
-		  highlight: true,
-		  minLength: 2
-		},{
+		hint: true,
+		highlight: true,
+		minLength: 2
+	}, {
 		displayKey: 'title',
 		source: findMatches
 	});
