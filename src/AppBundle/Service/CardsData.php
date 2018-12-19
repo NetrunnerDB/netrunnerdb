@@ -164,7 +164,6 @@ class CardsData
 
         $clauses = [];
         $parameters = [];
-        $max_code_or = [];
 
         foreach ($conditions as $condition) {
             $type = array_shift($condition);
@@ -178,7 +177,6 @@ class CardsData
                         if ($code) {
                             $or[] = "(c.code = ?$i)";
                             $parameters[$i++] = $arg;
-                            $max_code_or[] = $arg;
                         } elseif ($acronym) {
                             $or[] = "(BINARY(c.title) like ?$i)";
                             $parameters[$i++] = "%$arg%";
@@ -587,27 +585,6 @@ class CardsData
         foreach ($parameters as $index => $parameter) {
             $qb->setParameter($index, $parameter);
         }
-
-        // Select only the most recent copy of a card
-        $mcode = $this->entityManager->createQueryBuilder()
-                      ->select('MAX(g.code) AS max_code')
-                      ->from(Card::class, 'g')
-                      ->where('c.title = g.title')
-                      ->groupBy('g.title');
-        if (!empty($max_code_or)) {
-            $max_code_clauses = [];
-            foreach ($max_code_or as $index => $max_code) {
-                $max_code_clauses[] = "(g.code = ?$index)";
-            }
-            $mcode->andWhere(implode(' or ', $max_code_clauses));
-            foreach ($max_code_or as $index => $max_code) {
-                $mcode->setParameter($index, $max_code);
-            }
-        }
-        $qb->andWhere(
-            $init->expr()->in(
-                'c.code',
-                $mcode->getDQL()));
 
         switch ($sortorder) {
             case 'set':
