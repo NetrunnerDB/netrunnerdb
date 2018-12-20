@@ -98,19 +98,20 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	if (Identity.code == "03002") {
 		$('input[name=Jinteki]').prop("checked", false);
 	}
-		
 
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
 		var regexp = new RegExp(q, 'i');
-		cb(NRDB.data.cards.find({title: regexp, pack_code: Filters.pack_code || []}));
+		var matchingCards = NRDB.data.cards.find({title: regexp, pack_code: Filters.pack_code || []});
+		var latestCards = select_only_latest_cards(matchingCards);
+		cb(latestCards);
 	}
 
 	$('#filter-text').typeahead({
-		  hint: true,
-		  highlight: true,
-		  minLength: 2
-		},{
+		hint: true,
+		highlight: true,
+		minLength: 2
+	}, {
 		displayKey: 'title',
 		source: findMatches
 	});
@@ -160,6 +161,17 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	});
 	
 });
+
+function select_only_latest_cards(matchingCards) {
+	var latestCardsByTitle = {};
+	for (var card of matchingCards) {
+		var latestCard = latestCardsByTitle[card.title];
+		if (!latestCard || card.code > latestCard.code) {
+			latestCardsByTitle[card.title] = card;
+		}
+	}
+	return _.sortBy(latestCardsByTitle, 'title');
+}
 
 function create_collection_tab(initialPackSelection) {
 	
@@ -722,7 +734,10 @@ function update_filtered() {
 	orderBy[Sort] = Order;
 	if(Sort != 'title') orderBy['title'] = 1;
 	
-	NRDB.data.cards.find(SmartFilterQuery, {'$orderBy':orderBy}).forEach(function(card) {
+	var matchingCards = NRDB.data.cards.find(SmartFilterQuery, {'$orderBy':orderBy});
+	var sortedCards = select_only_latest_cards(matchingCards);
+
+	sortedCards.forEach(function(card) {
 		if (ShowOnlyDeck && !card.indeck)
 			return;
 
