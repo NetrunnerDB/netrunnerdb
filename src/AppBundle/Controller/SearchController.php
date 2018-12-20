@@ -370,7 +370,7 @@ class SearchController extends Controller
         // reconstruction de la bonne chaine de recherche pour affichage
         $q = $cardsData->buildQueryFromConditions($conditions);
         $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
-        $rows = select_only_latest_cards($rows);
+        $rows = $this->select_only_latest_cards($rows);
         if ($q && $rows) {
             if (count($rows) == 1) {
                 $view = 'zoom';
