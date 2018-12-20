@@ -369,7 +369,9 @@ class SearchController extends Controller
 
         // reconstruction de la bonne chaine de recherche pour affichage
         $q = $cardsData->buildQueryFromConditions($conditions);
-        if ($q && $rows = $cardsData->get_search_rows($conditions, $sort, $locale)) {
+        $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
+        $rows = select_only_latest_cards($rows);
+        if ($q && $rows) {
             if (count($rows) == 1) {
                 $view = 'zoom';
             }
@@ -484,6 +486,21 @@ class SearchController extends Controller
             "metadescription" => $meta,
             "locales"         => $locales,
         ], $response);
+    }
+
+    public function select_only_latest_cards(array $matchingCards)
+    {
+        $latestCardsByTitle = [];
+        foreach ($matchingCards as $card) {
+            $latestCard = null;
+            if (isset($latestCardsByTitle[$card->getTitle()])) {
+                $latestCard = $latestCardsByTitle[$card->getTitle()];
+            }
+            if (!$latestCard || $card->getCode() > $latestCard->getCode()) {
+                $latestCardsByTitle[$card->getTitle()] = $card;
+            }
+        }
+        return array_values($latestCardsByTitle);
     }
 
     /**

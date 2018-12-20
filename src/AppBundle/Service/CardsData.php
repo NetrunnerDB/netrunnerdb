@@ -149,14 +149,16 @@ class CardsData
     {
         $i = 0;
 
-        // construction de la requete sql
-        $qb = $this->entityManager->createQueryBuilder()->from(Card::class, 'c');
-        $qb->select('c', 'p', 'y', 't', 'f', 's');
-        $qb->leftJoin('c.pack', 'p')
+        // Construction of the sql request
+        $init = $this->entityManager->createQueryBuilder();
+        $qb = $init->select('c', 'p', 'y', 't', 'f', 's')
+           ->from(Card::class, 'c')
+           ->leftJoin('c.pack', 'p')
            ->leftJoin('p.cycle', 'y')
            ->leftJoin('c.type', 't')
            ->leftJoin('c.faction', 'f')
            ->leftJoin('c.side', 's');
+
         $qb2 = null;
         $qb3 = null;
 
