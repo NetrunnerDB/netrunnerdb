@@ -421,13 +421,16 @@ class SearchController extends Controller
                 }
                 $cardinfo['available'] = $availability[$pack->getCode()];
                 if ($view == "zoom") {
-                    $cardinfo['reviews'] = $cardsData->get_reviews($card);
-                    $cardinfo['rulings'] = $cardsData->get_rulings($card);
-                    $cardinfo['mwl_info'] = $cardsData->get_mwl_info($card);
+                    $cardVersions = $versions[$card->getTitle()];
+
                     $cardinfo['versions'] = [];
-                    foreach ($versions[$card->getTitle()] as $version) {
+                    foreach ($cardVersions as $version) {
                         $cardinfo['versions'][] = $cardsData->getCardInfo($version, $locale);
                     }
+
+                    $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
+                    $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
+                    $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
                 }
                 if ($view == "rulings") {
                     $cardinfo['rulings'] = $cardsData->get_rulings($card);

@@ -811,35 +811,38 @@ class CardsData
         ));
     }
 
-    public function get_mwl_info(Card $card)
+    public function get_mwl_info(array $cards)
     {
         $response = [];
-        $card_code = $card->getCode();
         $mwls = $this->entityManager->getRepository(Mwl::class)->findBy([], ["dateStart" => "DESC"]);
-        foreach ($mwls as $mwl) {
-            $mwl_cards = $mwl->getCards();
-            if (isset($mwl_cards[$card_code])) {
-                $card_mwl = $mwl_cards[$card_code];
-                $is_restricted = $card_mwl['is_restricted'] ?? 0;
-                $deck_limit = $card_mwl['deck_limit'] ?? null;
-                // Ceux-ci signifient la même chose
-                $universal_faction_cost = $card_mwl['universal_faction_cost'] ?? $card_mwl['global_penalty'] ?? 0;
-                $response[] = [
-                    'mwl_name'               => $mwl->getName(),
-                    'active'                 => $mwl->getActive(),
-                    'is_restricted'          => $is_restricted,
-                    'deck_limit'             => $deck_limit,
-                    'universal_faction_cost' => $universal_faction_cost,
-                ];
+
+        foreach ($cards as $card) {
+            $card_code = $card->getCode();
+            foreach ($mwls as $mwl) {
+                $mwl_cards = $mwl->getCards();
+                if (isset($mwl_cards[$card_code])) {
+                    $card_mwl = $mwl_cards[$card_code];
+                    $is_restricted = $card_mwl['is_restricted'] ?? 0;
+                    $deck_limit = $card_mwl['deck_limit'] ?? null;
+                    // Ceux-ci signifient la même chose
+                    $universal_faction_cost = $card_mwl['universal_faction_cost'] ?? $card_mwl['global_penalty'] ?? 0;
+                    $response[] = [
+                        'mwl_name'               => $mwl->getName(),
+                        'active'                 => $mwl->getActive(),
+                        'is_restricted'          => $is_restricted,
+                        'deck_limit'             => $deck_limit,
+                        'universal_faction_cost' => $universal_faction_cost,
+                    ];
+                }
             }
         }
 
         return $response;
     }
 
-    public function get_reviews(Card $card)
+    public function get_reviews(array $cards)
     {
-        $reviews = $this->entityManager->getRepository(Review::class)->findBy(['card' => $card], ['nbvotes' => 'DESC']);
+        $reviews = $this->entityManager->getRepository(Review::class)->findBy(['card' => $cards], ['nbvotes' => 'DESC']);
 
         $response = [];
         $packs = $this->packRepository->findBy([], ["dateRelease" => "ASC"]);
@@ -878,9 +881,9 @@ class CardsData
         return 'Unknown';
     }
 
-    public function get_rulings(Card $card)
+    public function get_rulings(array $cards)
     {
-        $rulings = $this->entityManager->getRepository(Ruling::class)->findBy(['card' => $card], ['dateCreation' => 'ASC']);
+        $rulings = $this->entityManager->getRepository(Ruling::class)->findBy(['card' => $cards], ['dateCreation' => 'ASC']);
 
         $response = [];
         foreach ($rulings as $ruling) {
