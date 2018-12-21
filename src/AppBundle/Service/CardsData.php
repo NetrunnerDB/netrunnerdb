@@ -932,4 +932,21 @@ class CardsData
 
         return $versions;
     }
+
+    public function select_only_latest_cards(array $matchingCards)
+    {
+        $latestCardsByTitle = [];
+        foreach ($matchingCards as $card) {
+            $latestCard = null;
+            $title = $card->getTitle();
+
+            if (isset($latestCardsByTitle[$title])) {
+                $latestCard = $latestCardsByTitle[$title];
+            }
+            if (!$latestCard || $card->getCode() > $latestCard->getCode()) {
+                $latestCardsByTitle[$title] = $card;
+            }
+        }
+        return array_values($latestCardsByTitle);
+    }
 }
