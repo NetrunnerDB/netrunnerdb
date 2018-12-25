@@ -687,24 +687,35 @@ class DecklistManager
         $params = [];
         $types = [];
 
-        $cards = $cardRepository->findBy(['code' => $cards_code]);
-
-        foreach ($cards as $card) {
-            $joins[] = '?';
-            $params[] = $card->getId();
-            $types[] = \PDO::PARAM_STR;
-
-            $packs[] = $card->getPack()->getId();
-        }
-
         $join = '';
         $group_by = '';
         $group_by_count = 0;
+        $ors = [];
+        if (count($cards_code)) {
+            $card_versions = $cardsData->get_versions_by_code($cards_code);
+            $versions = [];
+            foreach ($card_versions as $card) {
+                $versions[$card->getTitle()][] = $card;
+            }
+            foreach (array_values($versions) as $cards) {
+                $ins = [];
+                foreach ($cards as $card) {
+                    $ins[] = '?';
+                    $params[] = $card->getId();
+                    $types[] = \PDO::PARAM_STR;
+                    $packs[] = $card->getPack()->getId();
+                }
+                if (count($ins)) {
+                    $in =  '(' . implode(',', $ins) . ')';
+                    $joins[] = 'dls.card_id IN ' . $in;
+                }
+            }
+        }
+
         if (count($joins)) {
             $join = ' JOIN decklistslot dls'
                 . ' ON dls.decklist_id=d.id'
-                . ' AND dls.card_id IN'
-                . ' (' . implode(',', $joins) . ')';
+                . ' AND (' . implode(' OR ', $joins) . ')';
             $group_by_count = count($joins);
             $group_by = ' GROUP BY dls.decklist_id'
                 . " HAVING COUNT(DISTINCT dls.card_id) = $group_by_count";
