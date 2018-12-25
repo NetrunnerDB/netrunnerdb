@@ -649,7 +649,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function find(int $start = 0, int $limit = 30, Request $request)
+    public function find(int $start = 0, int $limit = 30, Request $request, $cardsData)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -685,6 +685,7 @@ class DecklistManager
         $wheres = [];
         $params = [];
         $types = [];
+
         if (!empty($side_code)) {
             $wheres[] = 's.code=?';
             $params[] = $side_code;
@@ -705,21 +706,28 @@ class DecklistManager
             $params[] = '%' . $decklist_title . '%';
             $types[] = \PDO::PARAM_STR;
         }
+
         if (count($cards_code)) {
-            foreach ($cards_code as $card_code) {
-                /** @var Card $card */
-                $card = $cardRepository->findOneBy(['code' => $card_code]);
-                if (!$card) {
-                    continue;
+            $card_versions = $cardsData->get_versions_by_code($cards_code);
+            $versions = [];
+            foreach ($card_versions as $card) {
+                $versions[$card->getTitle()][] = $card;
+            }
+            foreach (array_values($versions) as $cards) {
+                $ins = [];
+                foreach ($cards as $card) {
+                    $ins[] = '?';
+                    $params[] = $card->getId();
+                    $types[] = \PDO::PARAM_STR;
+                    $packs[] = $card->getPack()->getId();
                 }
-
-                $wheres[] = 'exists(select * from decklistslot where decklistslot.decklist_id=d.id and decklistslot.card_id=?)';
-                $params[] = $card->getId();
-                $types[] = \PDO::PARAM_STR;
-
-                $packs[] = $card->getPack()->getId();
+                if (count($ins)) {
+                    $in =  'decklistslot.card_id IN ' . '(' . implode(',', $ins) . ')';
+                    $wheres[] = 'exists(select * from decklistslot where decklistslot.decklist_id=d.id AND ' . $in . ')';
+                }
             }
         }
+
         if (count($packs)) {
             $wheres[] = 'not exists(select * from decklistslot join card on decklistslot.card_id=card.id where decklistslot.decklist_id=d.id and card.pack_id not in (?))';
             $params[] = array_unique($packs);

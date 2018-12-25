@@ -923,7 +923,7 @@ class CardsData
      */
     public function get_versions()
     {
-       $cards = $this->entityManager->getRepository(Card::class)->findAll();
+        $cards = $this->entityManager->getRepository(Card::class)->findAll();
 
         $versions = [];
         foreach ($cards as $card) {
@@ -948,5 +948,24 @@ class CardsData
             }
         }
         return array_values($latestCardsByTitle);
+    }
+
+    public function get_versions_by_code(array $cards_code)
+    {
+        $cards = $this->entityManager->getRepository(Card::class)->findBy(['code' => $cards_code]);
+        $titles = [];
+        foreach ($cards as $card) {
+            $titles[] = $card->getTitle();
+        }
+
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $qb->select('c')
+                 ->from(Card::class, 'c')
+                 ->where('c.title in (:titles)')
+                 ->setParameter('titles', $titles);
+        $query = $qb->getQuery();
+        $rows = $query->getResult();
+
+        return $rows;
     }
 }
