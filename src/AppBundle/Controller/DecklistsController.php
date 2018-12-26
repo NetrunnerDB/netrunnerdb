@@ -204,7 +204,7 @@ class DecklistsController extends Controller
             }
             $first_pack = $cycle->getPacks()[0];
             if ($size === 1 && $first_pack->getName() == $cycle->getName()) {
-                if ($cycle->getPosition == 0) {
+                if ($cycle->getPosition() == 0) {
                     $checked = false;
                 } else {
                     $checked = $first_pack->getDateRelease() !== null;
@@ -292,7 +292,7 @@ class DecklistsController extends Controller
             }
             $first_pack = $cycle->getPacks()[0];
             if ($size === 1 && $first_pack->getName() == $cycle->getName()) {
-                if ($cycle->getPosition == 0) {
+                if ($cycle->getPosition() == 0) {
                     $checked = false;
                 } else {
                     $checked = count($packs) ? in_array($first_pack->getId(), $packs) : true;
