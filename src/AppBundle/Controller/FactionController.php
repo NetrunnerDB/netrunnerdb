@@ -14,7 +14,7 @@ class FactionController extends Controller
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function factionAction(string $faction_code, EntityManagerInterface $entityManager)
+    public function factionAction(string $faction_code, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
