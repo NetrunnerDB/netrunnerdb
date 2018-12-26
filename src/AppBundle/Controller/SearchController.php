@@ -435,7 +435,7 @@ class SearchController extends Controller
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
                 }
                 if ($view == "rulings") {
-                    $cardinfo['rulings'] = $cardsData->get_rulings($card);
+                    $cardinfo['rulings'] = $cardsData->get_rulings(array($card));
                 }
                 $cards[] = $cardinfo;
             }
