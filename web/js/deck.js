@@ -6,20 +6,19 @@ var Autosave_running = false;
 var Autosave_period = 60;
 
 function update_max_qty() {
-
-    NRDB.data.cards.find().forEach(function(card) {
-        var modifiedCard = get_mwl_modified_card(card);
-        var max_qty = modifiedCard.deck_limit;
-        if(card.pack_code == 'core' || card.pack_code == 'core2' || card.pack_code == 'sc19') {
-            max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
-        }
-        if(Identity.pack_code == "draft") {
-            max_qty = 9;
-        }
-        NRDB.data.cards.updateById(card.code, {
-            maxqty : max_qty
-        });
-    });
+	NRDB.data.cards.find().forEach(function(card) {
+		var modifiedCard = get_mwl_modified_card(card);
+		var max_qty = modifiedCard.deck_limit;
+		if(card.pack_code == 'core' || card.pack_code == 'core2' || card.pack_code == 'sc19') {
+			max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
+		}
+		if(Identity.pack_code == "draft") {
+			max_qty = 9;
+		}
+		NRDB.data.cards.updateById(card.code, {
+			maxqty : max_qty
+		});
+	});
 
 }
 
@@ -112,7 +111,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 		highlight: true,
 		minLength: 2
 	}, {
-		displayKey: 'title',
+		display: function(card) { return card.title + ' (' + card.pack.name + ')'; },
 		source: findMatches
 	});
 
@@ -262,8 +261,7 @@ $(function() {
 	
 	$('html,body').css('height', '100%');
 
-	$('#filter-text').on('typeahead:selected typeahead:autocompleted',
-			NRDB.card_modal.typeahead);
+	$('#filter-text').on('typeahead:selected typeahead:autocompleted', NRDB.card_modal.typeahead);
 
 	$(document).on('hidden.bs.modal', function (event) {
 		if(InputByTitle) {

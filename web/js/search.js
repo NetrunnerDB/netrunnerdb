@@ -1,22 +1,33 @@
 $(document).on('data.app', function() {
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
-		var matches = NRDB.data.cards.find({title: new RegExp(q, 'i')}).map(function (card) {
-			return card;
-		});
-		cb(matches);
+		var regexp = new RegExp(q, 'i');
+		var matchingCards = NRDB.data.cards.find({title: regexp});
+		var latestCards = select_only_latest_cards(matchingCards);
+		cb(latestCards);
 	}
 
-	$('#card').typeahead({
-		  hint: true,
-		  highlight: true,
-		  minLength: 3
-		},{
-		name : 'cardnames',
-		display: function (card) { return card.title + ' (' + card.pack.name + ')' },
+	$('#filter-text').typeahead({
+		hint: true,
+		highlight: true,
+		minLength: 2
+	}, {
+		name: 'cardnames',
+		display: function(card) { return card.title + ' (' + card.pack.name + ')'; },
 		source: findMatches
 	});
 });
+
+function select_only_latest_cards(matchingCards) {
+	var latestCardsByTitle = {};
+	for (var card of matchingCards) {
+		var latestCard = latestCardsByTitle[card.title];
+		if (!latestCard || card.code > latestCard.code) {
+			latestCardsByTitle[card.title] = card;
+		}
+	}
+	return _.sortBy(latestCardsByTitle, 'title');
+}
 
 function handle_checkbox_change() {
 	$('#packs-on').text($('#allowed_packs').find('input[type="checkbox"]:checked').length);
@@ -24,14 +35,18 @@ function handle_checkbox_change() {
 }
 
 $(function() {
-	$('#card').on('typeahead:selected typeahead:autocompleted', function(event, card) {
-		console.log(card);
-		var line = $('<p class="background-'+card.faction_code+'-20" style="padding: 3px 5px;border-radius: 3px;border: 1px solid silver"><button type="button" class="close" aria-hidden="true">&times;</button><input type="hidden" name="cards[]" value="'+card.code+'">'+
-				  card.title + ' (' + card.pack.name + ')</p>');
+	$('#filter-text').on('typeahead:selected typeahead:autocompleted', function(event, card) {
+		var line = $(
+			'<p class="background-' + card.faction_code +
+			'-20" style="padding: 3px 5px;border-radius: 3px;border: 1px solid silver">' +
+			'<button type="button" class="close" aria-hidden="true">&times;</button>' +
+			'<input type="hidden" name="cards[]" value="' + card.code + '">' +
+			card.title + ' (' + card.pack.name + ')</p>'
+		);
 		line.on({
 			click: function(event) { line.remove(); }
 		});
-		line.insertBefore($('#card'));
+		line.insertBefore($('#filter-text'));
 		$(event.target).typeahead('val', '');
 	});
 
