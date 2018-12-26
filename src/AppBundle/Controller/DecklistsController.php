@@ -110,23 +110,21 @@ class DecklistsController extends Controller
         $dbh = $entityManager->getConnection();
         $factions = $dbh->executeQuery(
             "SELECT
-				f.name,
-				f.code
-				FROM faction f
-				ORDER BY f.side_id ASC, f.name ASC"
-        )
-                        ->fetchAll();
+                f.name,
+                f.code
+                FROM faction f
+                ORDER BY f.side_id ASC, f.name ASC"
+        )->fetchAll();
 
         $packs = $dbh->executeQuery(
             "SELECT
-				p.name,
-				p.code
-				FROM pack p
-				WHERE p.date_release IS NOT NULL
-				ORDER BY p.date_release DESC
-				LIMIT 0,5"
-        )
-                     ->fetchAll();
+                p.name,
+                p.code
+                FROM pack p
+                WHERE p.date_release IS NOT NULL
+                ORDER BY p.date_release DESC
+                LIMIT 0,5"
+        )->fetchAll();
 
         // pagination : calcul de nbpages // currpage // prevpage // nextpage
         // à partir de $start, $limit, $count, $maxcount, $page
@@ -188,27 +186,29 @@ class DecklistsController extends Controller
         $dbh = $entityManager->getConnection();
         $factions = $dbh->executeQuery(
             "SELECT
-				f.name,
-				f.code
-				FROM faction f
-				ORDER BY f.side_id ASC, f.name ASC"
-        )
-                        ->fetchAll();
+                f.name,
+                f.code
+                FROM faction f
+                ORDER BY f.side_id ASC, f.name ASC"
+        )->fetchAll();
 
         $categories = [];
         $on = 0;
         $off = 0;
         $categories[] = ["label" => "Core / Deluxe", "packs" => []];
-        /** @var Cycle[] $list_cycles */
         $list_cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
         foreach ($list_cycles as $cycle) {
             $size = $cycle->getPacks()->count();
-            if ($cycle->getPosition() == 0 || $size == 0) {
+            if ($size == 0) {
                 continue;
             }
             $first_pack = $cycle->getPacks()[0];
             if ($size === 1 && $first_pack->getName() == $cycle->getName()) {
-                $checked = $first_pack->getDateRelease() !== null;
+                if ($cycle->getPosition == 0) {
+                    $checked = false;
+                } else {
+                    $checked = $first_pack->getDateRelease() !== null;
+                }
                 if ($checked) {
                     $on++;
                 } else {
@@ -287,12 +287,16 @@ class DecklistsController extends Controller
         $list_cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
         foreach ($list_cycles as $cycle) {
             $size = $cycle->getPacks()->count();
-            if ($cycle->getPosition() == 0 || $size == 0) {
+            if ($size == 0) {
                 continue;
             }
             $first_pack = $cycle->getPacks()[0];
             if ($size === 1 && $first_pack->getName() == $cycle->getName()) {
-                $checked = count($packs) ? in_array($first_pack->getId(), $packs) : true;
+                if ($cycle->getPosition == 0) {
+                    $checked = false;
+                } else {
+                    $checked = count($packs) ? in_array($first_pack->getId(), $packs) : true;
+                }
                 if ($checked) {
                     $on++;
                 } else {
@@ -337,19 +341,18 @@ class DecklistsController extends Controller
         if (!empty($cards_code) && is_array($cards_code)) {
             $cards = $dbh->executeQuery(
                 "SELECT
-    				c.title,
-    				c.code,
-                                f.code faction_code,
-                                p.name pack_name
-    				FROM card c
-                                JOIN faction f ON f.id=c.faction_id
-                                JOIN pack p ON p.id=c.pack_id
-                                WHERE c.code IN (?)
-    				ORDER BY c.code DESC",
+                    c.title,
+                    c.code,
+                    f.code faction_code,
+                    p.name pack_name
+                    FROM card c
+                    JOIN faction f ON f.id=c.faction_id
+                    JOIN pack p ON p.id=c.pack_id
+                    WHERE c.code IN (?)
+                    ORDER BY c.code DESC",
                 [$cards_code],
                 [Connection::PARAM_INT_ARRAY]
-            )
-                         ->fetchAll();
+            )->fetchAll();
 
             $params['cards'] = '';
             foreach ($cards as $card) {
