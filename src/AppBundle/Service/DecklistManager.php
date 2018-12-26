@@ -649,7 +649,7 @@ class DecklistManager
      * @param integer $limit
      * @return array
      */
-    public function find(int $start = 0, int $limit = 30, Request $request)
+    public function find(int $start = 0, int $limit = 30, Request $request, $cardsData)
     {
         $dbh = $this->entityManager->getConnection();
 
@@ -682,9 +682,45 @@ class DecklistManager
             unset($faction_code);
         }
 
+        $joins = [];
         $wheres = [];
         $params = [];
         $types = [];
+
+        $join = '';
+        $group_by = '';
+        $group_by_count = 0;
+        $ors = [];
+        if (count($cards_code)) {
+            $card_versions = $cardsData->get_versions_by_code($cards_code);
+            $versions = [];
+            foreach ($card_versions as $card) {
+                $versions[$card->getTitle()][] = $card;
+            }
+            foreach (array_values($versions) as $cards) {
+                $ins = [];
+                foreach ($cards as $card) {
+                    $ins[] = '?';
+                    $params[] = $card->getId();
+                    $types[] = \PDO::PARAM_STR;
+                    $packs[] = $card->getPack()->getId();
+                }
+                if (count($ins)) {
+                    $in =  '(' . implode(',', $ins) . ')';
+                    $joins[] = 'dls.card_id IN ' . $in;
+                }
+            }
+        }
+
+        if (count($joins)) {
+            $join = ' JOIN decklistslot dls'
+                . ' ON dls.decklist_id=d.id'
+                . ' AND (' . implode(' OR ', $joins) . ')';
+            $group_by_count = count($joins);
+            $group_by = ' GROUP BY dls.decklist_id'
+                . " HAVING COUNT(DISTINCT dls.card_id) = $group_by_count";
+        }
+
         if (!empty($side_code)) {
             $wheres[] = 's.code=?';
             $params[] = $side_code;
@@ -705,21 +741,7 @@ class DecklistManager
             $params[] = '%' . $decklist_title . '%';
             $types[] = \PDO::PARAM_STR;
         }
-        if (count($cards_code)) {
-            foreach ($cards_code as $card_code) {
-                /** @var Card $card */
-                $card = $cardRepository->findOneBy(['code' => $card_code]);
-                if (!$card) {
-                    continue;
-                }
 
-                $wheres[] = 'exists(select * from decklistslot where decklistslot.decklist_id=d.id and decklistslot.card_id=?)';
-                $params[] = $card->getId();
-                $types[] = \PDO::PARAM_STR;
-
-                $packs[] = $card->getPack()->getId();
-            }
-        }
         if (count($packs)) {
             $wheres[] = 'not exists(select * from decklistslot join card on decklistslot.card_id=card.id where decklistslot.decklist_id=d.id and card.pack_id not in (?))';
             $params[] = array_unique($packs);
@@ -796,10 +818,12 @@ class DecklistManager
                 join card c on d.identity_id=c.id
                 join pack p on d.last_pack_id=p.id
                 join faction f on d.faction_id=f.id
+                $join
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where $where
                 and d.moderation_status in (0,1)
+                $group_by
                 order by $order desc
                 limit $start, $limit",
             $params,

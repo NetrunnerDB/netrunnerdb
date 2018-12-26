@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Service\CardsData;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,7 @@ class FactionController extends Controller
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function factionAction(string $faction_code, EntityManagerInterface $entityManager)
+    public function factionAction(string $faction_code, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -49,18 +50,27 @@ class FactionController extends Controller
 
             $identities = $qb->getQuery()->getResult();
 
+            $uniqueIdentities = [];
+            foreach ($identities as $card) {
+                $title = $card->getTitle();
+                if (!isset($uniqueIdentities[$title])) {
+                    $uniqueIdentities[$title] = [];
+                }
+                $uniqueIdentities[$title][] = $card;
+            }
+
             $nb_decklists_per_id = 3;
 
             // build the list of the top $nb_decklists_per_id decklists per id
             // also, compute the total points of those decks per id
 
             $decklists = [];
-            foreach ($identities as $identity) {
+            foreach (array_values($uniqueIdentities) as $identities) {
                 $qb = $entityManager->createQueryBuilder();
                 $qb->select('d, (d.nbvotes/(1+DATE_DIFF(CURRENT_TIMESTAMP(),d.dateCreation)/10)) as points')
                    ->from('AppBundle:Decklist', 'd')
-                   ->where('d.identity=:identity')
-                   ->setParameter('identity', $identity)
+                   ->where('d.identity in (:identities)')
+                   ->setParameter('identities', $identities)
                    ->orderBy('points', 'DESC')
                    ->setMaxResults($nb_decklists_per_id);
                 $results = $qb->getQuery()->getResult();
@@ -72,8 +82,10 @@ class FactionController extends Controller
                     $points += intval($row['points']);
                 }
 
+                $identity = $cardsData->select_only_latest_cards($identities);
+
                 $decklists[] = [
-                    'identity'  => $identity,
+                    'identity'  => $identity[0],
                     'points'    => $points,
                     'decklists' => $list,
                 ];

@@ -27,7 +27,7 @@ class DecklistsController extends Controller
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function listAction(string $type, int $page = 1, Request $request, EntityManagerInterface $entityManager, DecklistManager $decklistManager)
+    public function listAction(string $type, int $page = 1, Request $request, EntityManagerInterface $entityManager, DecklistManager $decklistManager, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -43,7 +43,7 @@ class DecklistsController extends Controller
 
         switch ($type) {
             case 'find':
-                $result = $decklistManager->find($start, $limit, $request);
+                $result = $decklistManager->find($start, $limit, $request, $cardsData);
                 $pagetitle = "Decklist search results";
                 $header = $this->searchForm($request, $entityManager);
                 break;
