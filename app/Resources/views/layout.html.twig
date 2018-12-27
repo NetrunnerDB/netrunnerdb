@@ -141,7 +141,7 @@ ga('send', 'pageview');
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-search"></span></a>
                 <div class="dropdown-menu">
                   <form method="get" action="{{ path('cards_find') }}">
-                    <input type="text" placeholder="Card Search" class="form-control" name="q">
+                    <input type="text" placeholder="Card Search" class="form-control" name="q" title="{% include '/Search/searchtooltip.html.twig' %}">
                   </form>
               </div>
             </li>
@@ -151,7 +151,7 @@ ga('send', 'pageview');
           </ul>
           <form class="navbar-form navbar-right visible-lg-block visible-xs-block" action="{{ path('cards_find') }}">
             <div class="form-group">
-              <input type="text" placeholder="Card Search" class="form-control" name="q">
+              <input type="text" placeholder="Card Search" class="form-control" name="q" title="{% include '/Search/searchtooltip.html.twig' %}">
             </div>
           </form>
         </div><!--/.navbar-collapse -->
