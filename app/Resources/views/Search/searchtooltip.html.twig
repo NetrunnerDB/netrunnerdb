@@ -21,8 +21,9 @@ Filter operators:
    ! - does not include or is not equal the condition
    &gt; - if numeric, is greater than condition
    &lt; - if numeric, is less than condition
+   | (pipe) - 'OR' multiple conditions together
 
 Examples:
-   [ t:asset f:j o&gt;2 ] - Jinteki assets with rez cost greater than 2
+   [ t:asset f:j|hb o&gt;2 ] - Jinteki or Haas-Bioroid assets with rez cost greater than 2
    [ t:program s!icebreaker n&lt;2 ] - non-icebreaker programs with 0 or 1 influence
    [ x:&#34;the Corp loses 1[credit]&#34; ] - Amina, Corporate &#34;Grant&#34;, and Lamprey
