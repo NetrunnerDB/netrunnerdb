@@ -32,21 +32,21 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-                ->setName('app:legality:apply-mwl')
-                ->setDescription('Compute decklist legality for a MWL')
-                ->addArgument(
-                        'mwl_code',
-                    InputArgument::REQUIRED,
-                    'Code of the MWL'
-                )
-                ->addOption(
-                        'decklist',
-                    'd',
-                    InputOption::VALUE_OPTIONAL,
-                    'Id of the decklist'
-                )
+            ->setName('app:legality:apply-mwl')
+            ->setDescription('Compute decklist legality for a MWL')
+            ->addArgument(
+                'mwl_code',
+                InputArgument::REQUIRED,
+                'Code of the MWL'
+            )
+            ->addOption(
+                'decklist',
+                'd',
+                InputOption::VALUE_OPTIONAL,
+                'Id of the decklist'
+            )
 
-        ;
+            ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -81,14 +81,14 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
             return;
         }
 
-        $countDql = "SELECT COUNT(d) 
-					FROM AppBundle:Decklist d 
-					WHERE NOT EXISTS (
-						SELECT l 
-						FROM AppBundle:Legality l
-						WHERE l.decklist=d AND l.mwl=?1
-    				)
-    				ORDER BY d.id DESC";
+        $countDql = "SELECT COUNT(d)
+            FROM AppBundle:Decklist d
+            WHERE NOT EXISTS (
+                SELECT l
+                FROM AppBundle:Legality l
+                WHERE l.decklist=d AND l.mwl=?1
+            )
+            ORDER BY d.id DESC";
         $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $mwl);
         $count = $countQuery->getSingleResult()[1];
         $output->writeln("<comment>Found $count decklists to analyze</comment>");
@@ -96,28 +96,39 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
         if (!$count) {
             return;
         }
-        
+
         $progress = new ProgressBar($output, $count);
         $progress->setRedrawFrequency(10);
         $progress->start();
 
+        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        $batchSize = 1000;
+        $i = 0;
+
         $fetchDql = str_replace('COUNT(d)', 'd', $countDql);
-        $fetchQuery = $this->entityManager->createQuery($fetchDql)->setParameter(1, $mwl)->setMaxResults(1);
-        while ($count--) {
-            $decklist = $fetchQuery->getSingleResult();
+        $fetchQuery = $this->entityManager->createQuery($fetchDql)->setParameter(1, $mwl);
+        $iterableResult = $fetchQuery->iterate();
+        foreach ($iterableResult as $row) {
             $legality = new Legality();
-            $legality->setDecklist($decklist);
+            $legality->setDecklist($row[0]);
             $legality->setMwl($mwl);
             $this->judge->computeLegality($legality);
             $this->entityManager->persist($legality);
-            $this->entityManager->flush();
+
             $this->entityManager->detach($legality);
-            $this->entityManager->detach($decklist);
+            $this->entityManager->detach($row[0]);
+
+            if (($i % $batchSize) === 0) {
+                $this->entityManager->flush();
+                $this->entityManager->clear();
+            }
 
             $progress->advance();
+            ++$i;
         }
 
         $progress->finish();
-        $output->writeln("<info>Done</info>");
+        $output->writeln("\n<info>Done</info>");
+        $this->entityManager->flush();
     }
 }
