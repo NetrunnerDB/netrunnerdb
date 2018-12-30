@@ -102,21 +102,22 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
         $progress->start();
 
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
-        $batchSize = 1000;
+        $batchSize = 100;
         $i = 0;
 
         $fetchDql = str_replace('COUNT(d)', 'd', $countDql);
         $fetchQuery = $this->entityManager->createQuery($fetchDql)->setParameter(1, $mwl);
         $iterableResult = $fetchQuery->iterate();
         foreach ($iterableResult as $row) {
-            $legality = new Legality();
-            $legality->setDecklist($row[0]);
-            $legality->setMwl($mwl);
-            $this->judge->computeLegality($legality);
-            $this->entityManager->persist($legality);
+            $mwls = $this->entityManager->getRepository('AppBundle:Mwl')->findAll();
 
-            $this->entityManager->detach($legality);
-            $this->entityManager->detach($row[0]);
+            foreach ($mwls as $m) {
+                $legality = new Legality();
+                $legality->setDecklist($row[0]);
+                $legality->setMwl($m);
+                $this->judge->computeLegality($legality);
+                $this->entityManager->persist($legality);
+            }
 
             if (($i % $batchSize) === 0) {
                 $this->entityManager->flush();
