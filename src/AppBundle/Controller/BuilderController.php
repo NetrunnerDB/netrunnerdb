@@ -19,6 +19,7 @@ use AppBundle\Entity\Card;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Deckchange;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use AppBundle\Service\CardsData;
 
 class BuilderController extends Controller
 {
@@ -29,7 +30,7 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function buildformAction(string $side_text, EntityManagerInterface $entityManager)
+    public function buildformAction(string $side_text, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -49,6 +50,8 @@ class BuilderController extends Controller
             "faction" => "ASC",
             "title"   => "ASC",
         ]);
+
+        $identities = $cardsData->select_only_latest_cards($identities);
 
         return $this->render(
 
