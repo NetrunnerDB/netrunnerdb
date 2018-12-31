@@ -5,11 +5,11 @@
     <link rel="icon" sizes="16x16" href="/favicon.png" />
     <link rel="icon" sizes="196x196" href="/icon.png" />
     <link rel="apple-touch-icon" sizes="129x129" href="/apple-touch-icon.png" />
-{% if app.request.locale != "en" and app.request.attributes.get('_route') != "" %}
-{% set _route_params = app.request.attributes.get('_route_params')|default({}) %}
-{% set _get_params = app.request.query.all()|default({}) %}
+    {% if app.request.locale != "en" and app.request.attributes.get('_route') != "" %}
+    {% set _route_params = app.request.attributes.get('_route_params')|default({}) %}
+    {% set _get_params = app.request.query.all()|default({}) %}
     <link rel="canonical" href="{{ url(app.request.attributes.get('_route'), _route_params|merge(_get_params)|merge({'_locale': 'en'})) }}"/>
-{% endif %}
+    {% endif %}
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,44 +45,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.3.0/intro.js"></script>
     <script src="{{ asset('/lib/bootstrap-toggle-checklist.js') }}"></script>
     <script src="{{ asset('/lib/jquery-persistence.js') }}"></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
-      <script>
-        window.addEventListener("load", function(){
-          window.cookieconsent.initialise({
-            "palette": {
-              "popup": {
-                "background": "#000"
-              },
-              "button": {
-                "background": "#f1d600"
-              }
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+    <script>
+      window.addEventListener("load", function(){
+        window.cookieconsent.initialise({
+          "palette": {
+            "popup": {
+              "background": "#000"
+            },
+            "button": {
+              "background": "#f1d600"
             }
-          })});
-      </script>
-      <script type="text/javascript">
-	var NRDB = {
-		data_loaded: $.Callbacks(),
-		api_url: {
-			cycles: '{{ path('api_public_cycles')|raw }}',
-			packs: '{{ path('api_public_packs')|raw }}',
-			cards: '{{ path('api_public_cards')|raw }}',
-			factions: '{{ path('api_public_factions')|raw }}',
-			types: '{{ path('api_public_types')|raw }}',
-			sides: '{{ path('api_public_sides')|raw }}',
-            mwl: '{{ path('api_public_mwl')|raw }}'
-		},
-		locale: '{{ app.request.locale }}'
-	};
-	moment.locale(window.navigator.language);
-{% if app.environment == 'prod' %}
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+          }
+        })});
+    </script>
+    <script type="text/javascript">
+      var NRDB = {
+        data_loaded: $.Callbacks(),
+        api_url: {
+          cycles: '{{ path('api_public_cycles')|raw }}',
+          packs: '{{ path('api_public_packs')|raw }}',
+          cards: '{{ path('api_public_cards')|raw }}',
+          factions: '{{ path('api_public_factions')|raw }}',
+          types: '{{ path('api_public_types')|raw }}',
+          sides: '{{ path('api_public_sides')|raw }}',
+          mwl: '{{ path('api_public_mwl')|raw }}'
+        },
+        locale: '{{ app.request.locale }}'
+      };
+      moment.locale(window.navigator.language);
+      {% if app.environment == 'prod' %}
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-ga('create', 'UA-44413511-1', 'auto');
-ga('send', 'pageview');
-  {% endif %}
+      ga('create', 'UA-44413511-1', 'auto');
+      ga('send', 'pageview');
+      {% endif %}
     </script>
     <script src="{{ asset('/js/nrdb.js') }}"></script>
     <script src="{{ asset('/js/nrdb.user.js') }}"></script>
@@ -91,150 +91,150 @@ ga('send', 'pageview');
     <script src="{{ asset('/js/nrdb.tip.js') }}"></script>
     <script src="{{ asset('/js/nrdb.ui.js') }}"></script>
 
-      {% block head %}{% endblock %}
+    {% block head %}{% endblock %}
 
   </head>
   <body>
-  <div id="wrapper">
-    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
-      <div class="container">
+    <div id="wrapper">
+      <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container">
           {% block navbar %}
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="{{ path('netrunnerdb_index') }}">
-            <span class="icon icon-link-half-top"></span>
-            <span class="icon icon-link-half-bottom"></span>
-            NetrunnerDB
-          </a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="{{ path('decks_list') }}">My Decks</a></li>
-            <li><a href="{{ path('decklists_list', {type:'popular'}) }}">Decklists</a></li>
-            <li><a href="{{ path('cards_search') }}">Cards</a></li>
-            <li class="hidden-sm dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Factions <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li role="presentation" class="dropdown-header">Runner</li>
-                <li><a href="{{ path('faction_page',{faction_code:'anarch'}) }}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>
-                <li><a href="{{ path('faction_page',{faction_code:'criminal'}) }}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>
-                <li><a href="{{ path('faction_page',{faction_code:'shaper'}) }}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>
-                <li><a href="{{ path('faction_page',{faction_code:'mini-factions'}) }}"><span style="padding-left:16px">Mini-factions</span></a></li>
-                <li class="divider"></li>
-                <li role="presentation" class="dropdown-header">Corp</li>
-                <li><a href="{{ path('faction_page',{faction_code:'haas-bioroid'}) }}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>
-                <li><a href="{{ path('faction_page',{faction_code:'jinteki'}) }}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>
-                <li><a href="{{ path('faction_page',{faction_code:'nbn'}) }}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>
-                <li><a href="{{ path('faction_page',{faction_code:'weyland-consortium'}) }}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>
-              </ul>
-            </li>
-            <li class="hidden-sm"><a href="{{ path('card_reviews_list') }}">Reviews</a></li>
-            <li><a href="{{ path('cards_rulings') }}">Rules</a></li>
-            <li><a href="{{ path('card_rulings_list') }}">Rulings</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown hidden-xs hidden-lg">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-search"></span></a>
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ path('netrunnerdb_index') }}">
+              <span class="icon icon-link-half-top"></span>
+              <span class="icon icon-link-half-bottom"></span>
+              NetrunnerDB
+            </a>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="{{ path('decks_list') }}">My Decks</a></li>
+              <li><a href="{{ path('decklists_list', {type:'popular'}) }}">Decklists</a></li>
+              <li><a href="{{ path('cards_search') }}">Cards</a></li>
+              <li class="hidden-sm dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Factions <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li role="presentation" class="dropdown-header">Runner</li>
+                  <li><a href="{{ path('faction_page',{faction_code:'anarch'}) }}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>
+                  <li><a href="{{ path('faction_page',{faction_code:'criminal'}) }}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>
+                  <li><a href="{{ path('faction_page',{faction_code:'shaper'}) }}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>
+                  <li><a href="{{ path('faction_page',{faction_code:'mini-factions'}) }}"><span style="padding-left:16px">Mini-factions</span></a></li>
+                  <li class="divider"></li>
+                  <li role="presentation" class="dropdown-header">Corp</li>
+                  <li><a href="{{ path('faction_page',{faction_code:'haas-bioroid'}) }}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>
+                  <li><a href="{{ path('faction_page',{faction_code:'jinteki'}) }}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>
+                  <li><a href="{{ path('faction_page',{faction_code:'nbn'}) }}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>
+                  <li><a href="{{ path('faction_page',{faction_code:'weyland-consortium'}) }}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>
+                </ul>
+              </li>
+              <li class="hidden-sm"><a href="{{ path('card_reviews_list') }}">Reviews</a></li>
+              <li><a href="{{ path('cards_rulings') }}">Rules</a></li>
+              <li><a href="{{ path('card_rulings_list') }}">Rulings</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown hidden-xs hidden-lg">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-search"></span></a>
                 <div class="dropdown-menu">
                   <form method="get" action="{{ path('cards_find') }}">
                     <input type="text" placeholder="Card Search" class="form-control" name="q" title="{% include '/Search/searchtooltip.html.twig' %}">
                   </form>
-              </div>
-            </li>
-            <li id="login">
+                </div>
+              </li>
+              <li id="login">
                 <a href="#" class="dropdown-toggle loginname" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span><b class="caret"></b></a>
-            </li>
-          </ul>
-          <form class="navbar-form navbar-right visible-lg-block visible-xs-block" action="{{ path('cards_find') }}">
-            <div class="form-group">
-              <input type="text" placeholder="Card Search" class="form-control" name="q" title="{% include '/Search/searchtooltip.html.twig' %}">
-            </div>
-          </form>
-        </div><!--/.navbar-collapse -->
-        {% endblock %}
-      </div>
-    </nav>
+              </li>
+            </ul>
+            <form class="navbar-form navbar-right visible-lg-block visible-xs-block" action="{{ path('cards_find') }}">
+              <div class="form-group">
+                <input type="text" placeholder="Card Search" class="form-control" name="q" title="{% include '/Search/searchtooltip.html.twig' %}">
+              </div>
+            </form>
+          </div><!--/.navbar-collapse -->
+          {% endblock %}
+        </div>
+      </nav>
 
-    <div class="container">
+      <div class="container">
         {% for flashMessage in app.session.flashbag.get('error') %}
-            <div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>{{ flashMessage }}</div>
+        <div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>{{ flashMessage }}</div>
         {% endfor %}
         {% for flashMessage in app.session.flashbag.get('warning') %}
-            <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>{{ flashMessage }}</div>
+        <div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>{{ flashMessage }}</div>
         {% endfor %}
         {% for flashMessage in app.session.flashbag.get('notice') %}
-            <div class="alert alert-success"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>{{ flashMessage }}</div>
+        <div class="alert alert-success"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>{{ flashMessage }}</div>
         {% endfor %}
+      </div>
+
+      {% block body %}{% endblock %}
+      <div id="push"></div>
     </div>
+    <footer class="hidden-print">
+      <div class="container">
 
-{% block body %}{% endblock %}
-    <div id="push"></div>
-  </div>
-  <footer class="hidden-print">
-    <div class="container">
+        {% block footer %}
+        <div class="row">
+          <div class="col-xs-12">
 
-{% block footer %}
-<div class="row">
-    <div class="col-xs-12">
+            <ul class="list-inline pull-right">
+              {% set _route = app.request.attributes.get('_route') %}
+              {% set _route_params = app.request.attributes.get('_route_params')|merge(app.request.query.all()) %}
+              {% for supported_locale in supported_locales %}
+              <li>
+                <a href="{{ path(_route, _route_params|merge({'_locale': supported_locale})) }}">
+                  <img src="{{ asset('/images/flags/32px/flag_' ~ supported_locale ~ '.png') }}" style="height:19px">
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
 
-	<ul class="list-inline pull-right">
-	{% set _route = app.request.attributes.get('_route') %}
-	{% set _route_params = app.request.attributes.get('_route_params')|merge(app.request.query.all()) %}
-    {% for supported_locale in supported_locales %}
-    <li>
-    	<a href="{{ path(_route, _route_params|merge({'_locale': supported_locale})) }}">
-    		<img src="{{ asset('/images/flags/32px/flag_' ~ supported_locale ~ '.png') }}" style="height:19px">
-    	</a>
-    </li>
-    {% endfor %}
-    </ul>
+            <ul class="list-inline">
+              <li><a href="{{ path('cards_about') }}">About</a></li>
+              <li><a href="{{ path('api_doc') }}">API</a></li>
+              <li><a href="{{ path('tools_demo') }}">Integration</a></li>
+              <li><a href="{{ path('donators') }}">Donators</a> <span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span></li>
+              <li><a href="javascript:localStorage.clear()">Clear data</a></li>
+            </ul>
 
-    <ul class="list-inline">
-    <li><a href="{{ path('cards_about') }}">About</a></li>
-    <li><a href="{{ path('api_doc') }}">API</a></li>
-    <li><a href="{{ path('tools_demo') }}">Integration</a></li>
-    <li><a href="{{ path('donators') }}">Donators</a> <span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span></li>
-    <li><a href="javascript:localStorage.clear()">Clear data</a></li>
-    </ul>
+            <p>
+              Designed and built by <a href="//twitter.com/alsciende">@alsciende</a>. Maintained by <a href="http://nisei.net/">NISEI</a>.
+            </p>
 
-    <p>
-    Designed and built by <a href="//twitter.com/alsciende">@alsciende</a>
-    </p>
+            <p>
+              Please post bug reports and feature requests on <a href="https://github.com/Alsciende/netrunnerdb">Github</a>
+            </p>
 
-    <p>
-    Please post bug reports and feature requests on <a href="https://github.com/Alsciende/netrunnerdb">Github</a>
-    </p>
+            <p>
+              You can contribute by joining our <a href="https://www.patreon.com/NISEI">Patreon</a>.
+            </p>
 
-    <p>
-    You may contribute by giving money on <a href="https://paypal.me/alsciende">Paypal</a>. Please add a note with your username so that I can add you to the <a href="{{ path('donators') }}">Donators</a> list :)
-    </p>
+            <p style="color:#333">
+              The information presented on this site about Android:Netrunner, both literal and graphical, is copyrighted by Fantasy Flight Games and/or Wizards of the Coast.
+            </p>
+            <p style="color:#333">
+              This website is not produced, endorsed, supported, or affiliated with Fantasy Flight Games and/or Wizards of the Coast.
+            </p>
 
-    <p style="color:#333">
-    The information presented on this site about Android:Netrunner, both literal and graphical, is copyrighted by Fantasy Flight Games and/or Wizards of the Coast.
-    </p>
-    <p style="color:#333">
-    This website is not produced, endorsed, supported, or affiliated with Fantasy Flight Games and/or Wizards of the Coast.
-    </p>
+            <svg width="0" height="0" viewBox="0 0 677 601" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nrdb_svg_hex">
+              <defs>
+              <symbol id="hex"><polygon points="623,302.91412353515625 480,550.5973510742188 194,550.5973510742188 51,302.91412353515625 194,55.23085021972656 480,55.23085021972656 623,302.91412353515625 "/></symbol>
+              <symbol id="rect"><rect x="0" y="0" width="677" height="601" fill="white" /></symbol>
+              </defs>
+            </svg>
 
-    <svg width="0" height="0" viewBox="0 0 677 601" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="nrdb_svg_hex">
- 		<defs>
-			<symbol id="hex"><polygon points="623,302.91412353515625 480,550.5973510742188 194,550.5973510742188 51,302.91412353515625 194,55.23085021972656 480,55.23085021972656 623,302.91412353515625 "/></symbol>
-			<symbol id="rect"><rect x="0" y="0" width="677" height="601" fill="white" /></symbol>
-		</defs>
-    </svg>
+          </div>
+        </div>
+        {% endblock %}
 
-    </div>
-</div>
-{% endblock %}
-
-    </div>
+      </div>
     </footer>
-{% if app.environment == 'prod' %}
+    {% if app.environment == 'prod' %}
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-{% endif %}
-    </body>
+    {% endif %}
+  </body>
 </html>
