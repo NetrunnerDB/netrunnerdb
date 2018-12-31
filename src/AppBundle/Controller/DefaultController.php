@@ -38,7 +38,7 @@ class DefaultController extends Controller
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
     public function saveProfileAction(Request $request, EntityManagerInterface $entityManager)
     {

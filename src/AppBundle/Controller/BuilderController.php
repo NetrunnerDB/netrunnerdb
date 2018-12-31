@@ -595,7 +595,7 @@ class BuilderController extends Controller
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
     public function deleteAction(Request $request, EntityManagerInterface $entityManager)
     {
@@ -624,7 +624,7 @@ class BuilderController extends Controller
      * @param EntityManagerInterface $entityManager
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
     public function deleteListAction(Request $request, EntityManagerInterface $entityManager)
     {

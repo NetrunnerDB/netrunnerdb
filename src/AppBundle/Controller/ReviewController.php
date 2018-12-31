@@ -25,7 +25,7 @@ class ReviewController extends Controller
      * @param TextProcessor          $textProcessor
      * @return Response
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
     public function postAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
@@ -88,7 +88,7 @@ class ReviewController extends Controller
      * @param TextProcessor          $textProcessor
      * @return Response
      *
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
     public function editAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
