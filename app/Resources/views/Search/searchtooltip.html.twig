@@ -1,0 +1,29 @@
+Search filters:
+   default, no prefix - title (word or &#34;phrase with spaces&#34;)
+   x - text (word or &#34;phrase with spaces and [symbols]&#34;)
+   t - type (word)
+   s - subtype (word or &#34;multiple - subtypes&#34;)
+   f - faction (letter or '-' for neutral)
+   p - strength (number)
+   m - memory (number)
+   o - cost (number)
+   n - influence (number)
+   d - side (letter)
+   c - cycle (number)
+   e - set (acronym or shortcode, aka 'sc19')
+   a - flavor (word or &#34;phrase with spaces&#34;)
+   i - illustrator (word or &#34;phrase with spaces&#34;)
+   u - unique (0 for non-unique, 1 for unique)
+   y - quantity in pack (number)
+
+Filter operators:
+   : - include or is equal to the condition
+   ! - does not include or is not equal the condition
+   &gt; - if numeric, is greater than condition
+   &lt; - if numeric, is less than condition
+   | (pipe) - 'OR' multiple conditions together
+
+Examples:
+   [ t:asset f:j|hb o&gt;2 ] - Jinteki or Haas-Bioroid assets with rez cost greater than 2
+   [ t:program s!icebreaker n&lt;2 ] - non-icebreaker programs with 0 or 1 influence
+   [ x:&#34;the Corp loses 1[credit]&#34; ] - Amina, Corporate &#34;Grant&#34;, and Lamprey
