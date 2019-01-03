@@ -438,7 +438,7 @@ card_ruling_delete:
     defaults:
         _controller: AppBundle:Ruling:delete
 
-card_rulings_list:
+card_rulings:
     path: /{_locale}/rulings
     methods: [GET]
     defaults:
@@ -715,7 +715,7 @@ cards_cycle:
     requirements:
         _locale: \w\w
 
-cards_search:
+advanced_search:
     path:  /{_locale}/search
     defaults:
         _controller: AppBundle:Search:form
@@ -741,7 +741,7 @@ cards_about:
     requirements:
         _locale: \w\w
 
-cards_syntax:
+search_syntax:
     path: /{_locale}/syntax
     defaults:
         _controller: AppBundle:Default:syntax

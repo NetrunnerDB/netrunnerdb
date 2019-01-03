@@ -76,7 +76,7 @@ class SearchController extends Controller
             return $elt ["illustrator"];
         }, $list_illustrators);
 
-        return $this->render('/Search/searchform.html.twig', [
+        return $this->render('/Search/advanced-search.html.twig', [
             "pagetitle"       => "Card Search",
             "pagedescription" => "Find all the cards of the game, easily searchable.",
             "packs"           => $packs,
