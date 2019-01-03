@@ -13,7 +13,7 @@
                <th>Date</th>
             </tr>
          </thead>
-         {% for cycle in data|length-1 %}
+         {% for cycle in data %}
             <tr class="odd">
                <td data-th="Name">
                   <a href="{{ cycle.url }}" class="card" data-index="{{ cycle.code }}">
