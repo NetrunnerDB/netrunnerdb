@@ -13,9 +13,8 @@
                <th>Date</th>
             </tr>
          </thead>
-         {% for i in 0..data|length-1 %}
-            <tr class="{% if i%2==0 %}even{% else %}odd{% endif %}">
-               {% set cycle = data[i] %}
+         {% for cycle in data|length-1 %}
+            <tr class="odd">
                <td data-th="Name">
                   <a href="{{ cycle.url }}" class="card" data-index="{{ cycle.code }}">
                      <span class="icon icon-{{ cycle.pack_name }}"></span>
@@ -27,7 +26,9 @@
                </td>
                <td data-th="Date">
                </td>
-               {% if cycle.packs is defined %}
+            </tr>
+            {% if cycle.packs is defined %}
+               <tr class="even">
                   {% for pack in cycle.packs %}
                      <td data-th="Name">
                         <a href="{{ pack.url }}" class="card" data-index="{{ pack.code }}">
@@ -42,8 +43,8 @@
                         {{ pack.available }}
                      </td>
                   {% endfor %}
-               {% endif %}
-            </tr>
+               </tr>
+            {% endif %}
          {% endfor %}
       </table>
    </div>

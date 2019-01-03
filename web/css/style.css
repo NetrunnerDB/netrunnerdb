@@ -509,7 +509,7 @@ ul.rulings-list blockquote {
 	color: red;
 }
 
-#search-example {
+.search-example {
   border: 1px solid #888;
   font-family: monospace;
   padding: 0 2px;
