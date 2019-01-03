@@ -741,7 +741,7 @@ cards_about:
     requirements:
         _locale: \w\w
 
-cards_syntax:
+syntax:
     path: /{_locale}/syntax
     defaults:
         _controller: AppBundle:Default:syntax
