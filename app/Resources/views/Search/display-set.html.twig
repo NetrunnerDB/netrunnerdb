@@ -1,0 +1,62 @@
+{% extends '/layout.html.twig' %}
+
+{% block title %}All Sets{% endblock %}
+
+{% block body %}
+<div class="container">
+   <div id="list">
+      <table class="rwd-table table table-striped table-condensed">
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Cards</th>
+               <th>Date</th>
+            </tr>
+         </thead>
+         {% for cycle in data %}
+            <tr class="odd">
+               <td data-th="Name">
+                  <a href="{{ cycle.url }}" class="card" data-index="{{ cycle.code }}">
+                     <span class="icon icon-{{ cycle.icon }}"></span>
+                     {{ cycle.name }}
+                  </a>
+               </td>
+               <td data-th="Count">
+                  {% if cycle.total > 0 %}
+                     {{ cycle.total }}
+                  {% else %}
+                     {{ cycle.known }}
+                  {% endif %}
+               </td>
+               <td data-th="Date">
+                  {{ cycle.available }}
+               </td>
+            </tr>
+            {% if cycle.packs is defined %}
+               {% for pack in cycle.packs %}
+                  <tr class="even">
+                     <td data-th="Name">
+                        <a href="{{ pack.url }}" class="card" data-index="{{ pack.code }}">
+                           <span class="icon icon-subroutine"></span>
+                           {{ pack.name }}
+                        </a>
+                     </td>
+                     <td data-th="Count">
+                        {% if pack.total > 0 %}
+                           {{ pack.total }}
+                        {% else %}
+                           {{ pack.known }}
+                        {% endif %}
+                     </td>
+                     <td data-th="Date">
+                        {{ pack.available }}
+                     </td>
+                  </tr>
+               {% endfor %}
+            {% endif %}
+         {% endfor %}
+      </table>
+   </div>
+</div>
+
+{% endblock %}

@@ -115,7 +115,7 @@
             <ul class="nav navbar-nav">
               <li><a href="{{ path('decks_list') }}">My Decks</a></li>
               <li><a href="{{ path('decklists_list', {type:'popular'}) }}">Decklists</a></li>
-              <li><a href="{{ path('cards_search') }}">Cards</a></li>
+              <li><a href="{{ path('cards_sets') }}">Sets</a></li>
               <li class="hidden-sm dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Factions <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
@@ -133,8 +133,7 @@
                 </ul>
               </li>
               <li class="hidden-sm"><a href="{{ path('card_reviews_list') }}">Reviews</a></li>
-              <li><a href="{{ path('cards_rulings') }}">Rules</a></li>
-              <li><a href="{{ path('card_rulings_list') }}">Rulings</a></li>
+              <li><a href="{{ path('card_rulings') }}">Rulings</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li class="dropdown hidden-xs hidden-lg">
@@ -145,6 +144,9 @@
                   </form>
                 </div>
               </li>
+              <li><a href="{{ path('search_syntax') }}">Syntax</a></li>
+              <li><a href="{{ path('advanced_search') }}">Advanced</a></li>
+              <li>|</li>
               <li id="login">
                 <a href="#" class="dropdown-toggle loginname" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span><b class="caret"></b></a>
               </li>

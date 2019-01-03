@@ -125,19 +125,23 @@ class CardsData
                     "total"     => $max,
                     "url"       => $this->router->generate('cards_list', ['pack_code' => $pack->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),
                     "search"    => "e:" . $pack->getCode(),
+                    "icon"      => $pack->getCycle()->getCode(),
                 ];
             }
+
             if ($cycle->getSize() === 1) {
                 $cycles[] = $packs[0];
             } else {
                 $cycles[] = [
                     "name"   => $cycle->getName(),
                     "code"   => $cycle->getCode(),
+                    "available"  => $packs[0]["available"],
                     "known"  => intval($sreal),
                     "total"  => $smax,
                     "url"    => $this->router->generate('cards_cycle', ['cycle_code' => $cycle->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),
                     "search" => 'c:' . $cycle->getCode(),
                     "packs"  => $packs,
+                    "icon"   => $cycle->getCode(),
                 ];
             }
         }

@@ -193,7 +193,7 @@ decklist_new:
         _locale: en
     requirements:
         _locale: \w\w
-    
+
 
 decklists_searchform:
     path: /{_locale}/decklists/search
@@ -203,7 +203,7 @@ decklists_searchform:
         _locale: en
     requirements:
         _locale: \w\w
-    
+
 decklists_list:
     path: /{_locale}/decklists/{type}/{page}
     methods: [GET]
@@ -287,7 +287,7 @@ decklists_diff:
         _locale: \w\w
         decklist1_id: \d+
         decklist2_id: \d+
-    
+
 prebuilt_view:
     path: /{_locale}/prebuilt/{prebuilt_code}
     methods: [GET]
@@ -314,7 +314,7 @@ user_profile_save:
         _locale: en
     requirements:
         _locale: \w\w
-    
+
 user_profile_view:
     path: /{_locale}/profile/{user_id}/{user_name}/{page}
     methods: [GET]
@@ -326,18 +326,18 @@ user_profile_view:
     requirements:
         _locale: \w\w
         user_id: \d+
-        
+
 user_validate_introduction:
     path: /user/validate_introduction/{introduction}
     methods: [POST]
     defaults:
         _controller: AppBundle:Default:validateIntroduction
-      
+
 user_reset_introductions:
     path: /user/reset_introductions
     defaults:
         _controller: AppBundle:Default:resetIntroductions
-      
+
 user_follow:
     path: /user/follow/{user_id}
     methods: [GET]
@@ -353,7 +353,7 @@ user_unfollow:
         _controller: AppBundle:Social:unfollow
     requirements:
         user_id: \d+
-    
+
 user_comments:
     path: /{_locale}/user/comments/{page}
     methods: [GET]
@@ -382,8 +382,8 @@ donators:
         _locale: en
     requirements:
         _locale: \w\w
-        
-        
+
+
 tools_demo:
     path: /tools/demo
     methods: [GET]
@@ -419,26 +419,26 @@ user_info:
     path: /info
     defaults:
         _controller: AppBundle:Info:get
-    
+
 card_ruling_post:
     path: /ruling/post
     methods: [POST]
-    defaults: 
+    defaults:
         _controller: AppBundle:Ruling:post
 
 card_ruling_edit:
     path: /ruling/edit
     methods: [POST]
-    defaults: 
+    defaults:
         _controller: AppBundle:Ruling:edit
 
 card_ruling_delete:
     path: /ruling/delete
     methods: [POST]
-    defaults: 
+    defaults:
         _controller: AppBundle:Ruling:delete
 
-card_rulings_list:
+card_rulings:
     path: /{_locale}/rulings
     methods: [GET]
     defaults:
@@ -446,17 +446,17 @@ card_rulings_list:
         _locale: en
     requirements:
         _locale: \w\w
-    
+
 card_review_post:
     path: /review/post
     methods: [POST]
-    defaults: 
+    defaults:
         _controller: AppBundle:Review:post
 
 card_review_edit:
     path: /review/edit
     methods: [POST]
-    defaults: 
+    defaults:
         _controller: AppBundle:Review:edit
 
 card_review_like:
@@ -464,12 +464,12 @@ card_review_like:
     methods: [POST]
     defaults:
         _controller: AppBundle:Review:like
-        
+
 card_review_remove:
     path: /review/remove/{id}
     defaults:
         _controller: AppBundle:Review:remove
-        
+
 card_reviews_list:
     path: /{_locale}/reviews/{page}
     defaults:
@@ -479,7 +479,7 @@ card_reviews_list:
     requirements:
         _locale: \w\w
         page: \d+
-        
+
 card_reviews_list_byauthor:
     path: /{_locale}/reviewsbyauthor/{user_id}/{page}
     defaults:
@@ -494,7 +494,7 @@ card_reviews_list_byauthor:
 card_reviewcomment_post:
     path: /review/comment
     methods: [POST]
-    defaults: 
+    defaults:
         _controller: AppBundle:Review:comment
 
 faction_page:
@@ -517,7 +517,7 @@ activity_feed:
         _locale: \w\w
         days: \d+
 
-        
+
 # API 2.0
 
 api_doc:
@@ -547,13 +547,13 @@ api_public_pack:
         _controller: AppBundle:PublicApi20:pack
     requirements:
         pack_code: "\\w+"
-         
+
 api_public_packs:
     path: /api/2.0/public/packs
     methods: [GET]
     defaults:
         _controller: AppBundle:PublicApi20:packs
-                
+
 api_public_cycle:
     path: /api/2.0/public/cycle/{cycle_code}
     methods: [GET]
@@ -561,7 +561,7 @@ api_public_cycle:
         _controller: AppBundle:PublicApi20:cycle
     requirements:
         cycle_code: "[\\w-]+"
-        
+
 api_public_cycles:
     path: /api/2.0/public/cycles
     methods: [GET]
@@ -575,7 +575,7 @@ api_public_faction:
         _controller: AppBundle:PublicApi20:faction
     requirements:
         faction_code: "[\\w-]+"
-        
+
 api_public_factions:
     path: /api/2.0/public/factions
     methods: [GET]
@@ -589,7 +589,7 @@ api_public_side:
         _controller: AppBundle:PublicApi20:side
     requirements:
         side_code: "[\\w-]+"
-        
+
 api_public_sides:
     path: /api/2.0/public/sides
     methods: [GET]
@@ -603,7 +603,7 @@ api_public_type:
         _controller: AppBundle:PublicApi20:type
     requirements:
         type_code: "[\\w-]+"
-        
+
 api_public_types:
     path: /api/2.0/public/types
     methods: [GET]
@@ -633,25 +633,25 @@ api_public_deck:
         _controller: AppBundle:PublicApi20:deck
     requirements:
         deck_id: "\\d+"
-        
+
 api_public_prebuilts:
     path: /api/2.0/public/prebuilts
     methods: [GET]
     defaults:
         _controller: AppBundle:PublicApi20:prebuilts
-        
+
 api_public_mwl:
     path: /api/2.0/public/mwl
     methods: [GET]
     defaults:
         _controller: AppBundle:PublicApi20:mwl
-        
+
 api_private_decks:
     path: /api/2.0/private/decks
     methods: [GET]
     defaults:
         _controller: AppBundle:PrivateApi20:decks
-        
+
 api_private_deck_load:
     path: /api/2.0/private/deck/{deck_id}
     methods: [GET]
@@ -659,19 +659,19 @@ api_private_deck_load:
         _controller: AppBundle:PrivateApi20:loadDeck
     requirements:
         deck_id: "\\d+"
-        
+
 api_private_deck_save:
     path: /api/2.0/private/deck/save
     methods: [POST]
     defaults:
         _controller: AppBundle:PrivateApi20:saveDeck
-        
+
 api_private_deck_publish:
     path: /api/2.0/private/deck/publish
     methods: [POST]
     defaults:
         _controller: AppBundle:PrivateApi20:publishDeck
-        
+
 api_private_decklists:
     path: /api/2.0/private/decklists
     methods: [GET]
@@ -683,7 +683,7 @@ api_private_account_info:
     methods: [GET]
     defaults:
         _controller: AppBundle:PrivateApi20:accountInfo
-        
+
 cards_list:
     path:  /{_locale}/set/{pack_code}/{view}/{sort}/{page}
     defaults:
@@ -715,7 +715,7 @@ cards_cycle:
     requirements:
         _locale: \w\w
 
-cards_search:
+advanced_search:
     path:  /{_locale}/search
     defaults:
         _controller: AppBundle:Search:form
@@ -741,10 +741,18 @@ cards_about:
     requirements:
         _locale: \w\w
 
-cards_rulings:
-    path:  /{_locale}/rules
+search_syntax:
+    path: /{_locale}/syntax
     defaults:
-        _controller: AppBundle:Default:rules
+        _controller: AppBundle:Default:syntax
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+cards_sets:
+    path: /{_locale}/sets
+    defaults:
+        _controller: AppBundle:Search:sets
         _locale: en
     requirements:
         _locale: \w\w
