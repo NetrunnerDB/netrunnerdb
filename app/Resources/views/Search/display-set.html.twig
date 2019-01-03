@@ -28,8 +28,8 @@
                </td>
             </tr>
             {% if cycle.packs is defined %}
-               <tr class="even">
-                  {% for pack in cycle.packs %}
+               {% for pack in cycle.packs %}
+                  <tr class="even">
                      <td data-th="Name">
                         <a href="{{ pack.url }}" class="card" data-index="{{ pack.code }}">
                            <span class="icon icon-{{ pack.pack_name }}"></span>
@@ -42,8 +42,8 @@
                      <td data-th="Date">
                         {{ pack.available }}
                      </td>
-                  {% endfor %}
-               </tr>
+                  </tr>
+               {% endfor %}
             {% endif %}
          {% endfor %}
       </table>
