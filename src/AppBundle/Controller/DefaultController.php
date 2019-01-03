@@ -155,4 +155,18 @@ class DefaultController extends Controller
             "pagetitle" => "About",
         ], $response);
     }
+
+    /**
+     * @return Response
+     */
+    public function syntaxAction()
+    {
+        $response = new Response();
+        $response->setPublic();
+        $response->setMaxAge($this->getParameter('long_cache'));
+
+        return $this->render('/Default/syntax.html.twig', [
+            "pagetitle" => "Help",
+        ], $response);
+    }
 }

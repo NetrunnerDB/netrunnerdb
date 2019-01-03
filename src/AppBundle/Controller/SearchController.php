@@ -76,14 +76,6 @@ class SearchController extends Controller
             return $elt ["illustrator"];
         }, $list_illustrators);
 
-        $prebuilts = $entityManager->getRepository('AppBundle:Prebuilt')->findBy([], [
-            "position" => "ASC",
-        ]);
-
-        $allsets = $this->renderView('/Default/allsets.html.twig', [
-            "data" => $cardsData->allsetsdata(),
-        ]);
-
         return $this->render('/Search/searchform.html.twig', [
             "pagetitle"       => "Card Search",
             "pagedescription" => "Find all the cards of the game, easily searchable.",
@@ -92,8 +84,6 @@ class SearchController extends Controller
             "types"           => $types,
             "keywords"        => $keywords,
             "illustrators"    => $illustrators,
-            "allsets"         => $allsets,
-            "prebuilts"       => $prebuilts,
         ], $response);
     }
 
@@ -499,6 +489,17 @@ class SearchController extends Controller
             "pagetitle"       => $title,
             "metadescription" => $meta,
             "locales"         => $locales,
+        ], $response);
+    }
+
+    public function setsAction(EntityManagerInterface $entityManager, CardsData $cardsData)
+    {
+        $response = new Response();
+        $response->setPublic();
+        $response->setMaxAge($this->getParameter('long_cache'));
+
+        return $this->render('/Search/display-set.html.twig', [
+            "data" => $cardsData->allsetsdata(),
         ], $response);
     }
 
