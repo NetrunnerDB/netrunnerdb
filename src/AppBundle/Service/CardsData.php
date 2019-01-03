@@ -118,13 +118,14 @@ class CardsData
                 $max = $pack->getSize();
                 $smax += $max;
                 $packs[] = [
-                    "name"      => $pack->getName(),
-                    "code"      => $pack->getCode(),
-                    "available" => $pack->getDateRelease() ? $pack->getDateRelease()->format('Y-m-d') : '',
-                    "known"     => $pack->getCardCount(),
-                    "total"     => $max,
-                    "url"       => $this->router->generate('cards_list', ['pack_code' => $pack->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),
-                    "search"    => "e:" . $pack->getCode(),
+                    "name"       => $pack->getName(),
+                    "code"       => $pack->getCode(),
+                    "available"  => $pack->getDateRelease() ? $pack->getDateRelease()->format('Y-m-d') : '',
+                    "known"      => $pack->getCardCount(),
+                    "total"      => $max,
+                    "url"        => $this->router->generate('cards_list', ['pack_code' => $pack->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),
+                    "search"     => "e:" . $pack->getCode(),
+                    "cycle_code" => $pack->getCycle()->getCode(),
                 ];
             }
             if ($cycle->getSize() === 1) {
@@ -133,6 +134,7 @@ class CardsData
                 $cycles[] = [
                     "name"   => $cycle->getName(),
                     "code"   => $cycle->getCode(),
+                    "available"  => $packs[0]["available"],
                     "known"  => intval($sreal),
                     "total"  => $smax,
                     "url"    => $this->router->generate('cards_cycle', ['cycle_code' => $cycle->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),

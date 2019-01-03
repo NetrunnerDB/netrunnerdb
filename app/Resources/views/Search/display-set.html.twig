@@ -22,12 +22,14 @@
                   </a>
                </td>
                <td data-th="Count">
-                  {{ cycle.total }}
+                  {% if cycle.total > 0 %}
+                     {{ cycle.total }}
+                  {% else %}
+                     {{ cycle.known }}
+                  {% endif %}
                </td>
                <td data-th="Date">
-                  {% if cycle.packs is defined %}
-                  {{ cycle.packs[0].available }}
-                  {% endif %}
+                  {{ cycle.available }}
                </td>
             </tr>
             {% if cycle.packs is defined %}
@@ -40,7 +42,11 @@
                         </a>
                      </td>
                      <td data-th="Count">
-                        {{ pack.total }}
+                        {% if pack.total > 0 %}
+                           {{ pack.total }}
+                        {% else %}
+                           {{ pack.known }}
+                        {% endif %}
                      </td>
                      <td data-th="Date">
                         {{ pack.available }}
