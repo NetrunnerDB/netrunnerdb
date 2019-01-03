@@ -351,6 +351,9 @@ border-radius: 10px;
   width: 6.5em;
   display: inline-block;
 }
+.cell-indent {
+	text-indent: 25px;
+}
 @media (min-width: 480px) {
   .rwd-table td:before {
     display: none;

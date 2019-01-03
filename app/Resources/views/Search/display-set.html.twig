@@ -35,7 +35,7 @@
             {% if cycle.packs is defined %}
                {% for pack in cycle.packs %}
                   <tr class="even">
-                     <td data-th="Name">
+                     <td class="cell-indent" data-th="Name">
                         <a href="{{ pack.url }}" class="card" data-index="{{ pack.code }}">
                            <span class="icon icon-subroutine"></span>
                            {{ pack.name }}
