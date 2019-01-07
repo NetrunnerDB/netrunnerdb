@@ -2,7 +2,7 @@ $(document).on('data.app', function() {
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
 		var regexp = new RegExp(q, 'i');
-		var matchingCards = NRDB.data.cards.find({title: regexp});
+		var matchingCards = NRDB.data.cards.find({normalized_title: regexp});
 		var latestCards = select_only_latest_cards(matchingCards);
 		cb(latestCards);
 	}

@@ -93,6 +93,7 @@
                                 if (dbName === 'cards') {
                                     response.data.forEach(function (card) {
                                       card.imageUrl = card.image_url || response.imageUrlTemplate.replace(/{code}/, card.code);
+                                      card.normalized_title = card.normalize('NFD').replace(/[^\x00-\x7F]+/, '').toLowerCase().trim();
                                     });
                                 }
 
