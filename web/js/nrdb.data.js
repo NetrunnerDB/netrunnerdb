@@ -32,56 +32,56 @@
         data.masters = {};
 
         Promise.resolve(dbNames)
-                .then(function (dbNames) {
-                    return Promise.all(_.map(dbNames, function (dbName) {
-                        data.masters[dbName] = data.db.collection('master_' + dbName, {primaryKey: 'code', changeTimestamp: true});
-                        return data.fdb_load(data.masters[dbName]);
-                    }));
-                })
-                .then(function (collections) {
-                    return Promise.all(_.map(collections, function (collection) {
-                        // doing various on the collection to make sure we can run with it
-                        var age_of_database = new Date() - new Date(collection.metaData().lastChange);
-                        if (age_of_database > 864000000) {
-                            console.log('database is older than 10 days => refresh it');
-                            collection.setData([]);
-                            return false;
-                        }
-                        if (collection.count() === 0) {
-                            console.log('database is empty => load it');
-                            return false;
-                        }
-                        return true;
-                    }));
-                })
-                .then(function (collectionsInOrder) {
-                    console.log('all db successfully reloaded from storage');
-                    if (!_.every(collectionsInOrder)) {
+            .then(function (dbNames) {
+                return Promise.all(_.map(dbNames, function (dbName) {
+                    data.masters[dbName] = data.db.collection('master_' + dbName, {primaryKey: 'code', changeTimestamp: true});
+                    return data.fdb_load(data.masters[dbName]);
+                }));
+            })
+            .then(function (collections) {
+                return Promise.all(_.map(collections, function (collection) {
+                    // doing various on the collection to make sure we can run with it
+                    var age_of_database = new Date() - new Date(collection.metaData().lastChange);
+                    if (age_of_database > 864000000) {
+                        console.log('database is older than 10 days => refresh it');
+                        collection.setData([]);
+                        return false;
+                    }
+                    if (collection.count() === 0) {
+                        console.log('database is empty => load it');
                         return false;
                     }
                     return true;
-                }, function (message) {
-                    console.log('error when reloading db', message);
+                }));
+            })
+            .then(function (collectionsInOrder) {
+                console.log('all db successfully reloaded from storage');
+                if (!_.every(collectionsInOrder)) {
                     return false;
-                })
-                .then(function (allCollectionsInOrder) {
-                    /*
-                     * data has been fetched from local store
-                     */
-                    force_update = !allCollectionsInOrder;
+                }
+                return true;
+            }, function (message) {
+                console.log('error when reloading db', message);
+                return false;
+            })
+            .then(function (allCollectionsInOrder) {
+                /*
+                 * data has been fetched from local store
+                 */
+                force_update = !allCollectionsInOrder;
 
-                    /*
-                     * triggering event that data is loaded
-                     */
-                    if (!force_update) {
-                        data.release();
-                    }
-                })
-                .then(function () {
-                    return Promise.all(_.map(dbNames, function (dbName) {
-                        return new Promise(function (resolve, reject) {
+                /*
+                 * triggering event that data is loaded
+                 */
+                if (!force_update) {
+                    data.release();
+                }
+            })
+            .then(function () {
+                return Promise.all(_.map(dbNames, function (dbName) {
+                    return new Promise(function (resolve, reject) {
 
-                            $.ajax(Routing.generate('api_public_' + dbName))
+                        $.ajax(Routing.generate('api_public_' + dbName))
                             .then(function (response, textStatus, jqXHR) {
                                 var lastModifiedData = new Date(jqXHR.getResponseHeader('Last-Modified'));
                                 var locale = jqXHR.getResponseHeader('Content-Language');
@@ -92,8 +92,8 @@
 
                                 if (dbName === 'cards') {
                                     response.data.forEach(function (card) {
-                                      card.imageUrl = card.image_url || response.imageUrlTemplate.replace(/{code}/, card.code);
-                                      card.normalized_title = card.normalize('NFD').replace(/[^\x00-\x7F]+/, '').toLowerCase().trim();
+                                        card.imageUrl = card.image_url || response.imageUrlTemplate.replace(/{code}/, card.code);
+                                        card.normalized_title = _.deburr(card.title).toLowerCase().trim();
                                     });
                                 }
 
@@ -124,34 +124,34 @@
                                 console.log('error when requesting packs', errorThrown || jqXHR);
                                 reject(false);
                             });
-                        });
-                    }));
-                })
-                .then(function (collectionsUpdated) {
-                    if (force_update) {
-                        data.release();
-                        return;
-                    }
+                    });
+                }));
+            })
+            .then(function (collectionsUpdated) {
+                if (force_update) {
+                    data.release();
+                    return;
+                }
 
-                    if (_.find(collectionsUpdated)) {
-                        /*
-                         * we display a message informing the user that they can reload their page to use the updated data
-                         * except if we are on the front page, because data is not essential on the front page
-                         */
-                        NRDB.ui.showBanner("A new version of the data is available. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.");
-                    }
-
-                }, function (dataLoaded) {
+                if (_.find(collectionsUpdated)) {
                     /*
-                     * if not all data has been loaded, we can't run the site properly
+                     * we display a message informing the user that they can reload their page to use the updated data
+                     * except if we are on the front page, because data is not essential on the front page
                      */
-                    if (!_.every(dataLoaded)) {
-                        NRDB.ui.showBanner("Unable to load the data. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.");
-                        return;
-                    } else {
-                        data.release();
-                    }
-                });
+                    NRDB.ui.showBanner("A new version of the data is available. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.");
+                }
+
+            }, function (dataLoaded) {
+                /*
+                 * if not all data has been loaded, we can't run the site properly
+                 */
+                if (!_.every(dataLoaded)) {
+                    NRDB.ui.showBanner("Unable to load the data. Click <a href=\"javascript:window.location.reload(true)\">here</a> to reload your page.");
+                    return;
+                } else {
+                    data.release();
+                }
+            });
     };
 
     /**
