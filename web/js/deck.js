@@ -101,7 +101,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
 		var regexp = new RegExp(q, 'i');
-		var matchingCards = NRDB.data.cards.find({title: regexp, pack_code: Filters.pack_code || []});
+		var matchingCards = NRDB.data.cards.find({normalized_title: regexp, pack_code: Filters.pack_code || []});
 		var latestCards = select_only_latest_cards(matchingCards);
 		cb(latestCards);
 	}
