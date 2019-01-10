@@ -351,6 +351,9 @@ border-radius: 10px;
   width: 6.5em;
   display: inline-block;
 }
+.cell-indent {
+	text-indent: 25px;
+}
 @media (min-width: 480px) {
   .rwd-table td:before {
     display: none;
@@ -507,6 +510,12 @@ ul.rulings-list blockquote {
 
 #restricted, #rotated {
 	color: red;
+}
+
+.search-example {
+  border: 1px solid #888;
+  font-family: monospace;
+  padding: 0 2px;
 }
 
 /*** screen reader fallback ***/

@@ -126,23 +126,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * @param CardsData $cardsData
-     * @return Response
-     */
-    public function rulesAction(CardsData $cardsData)
-    {
-        $response = new Response();
-        $response->setPublic();
-        $response->setMaxAge($this->getParameter('long_cache'));
-
-        $page = $cardsData->replaceSymbols($this->renderView('/Default/rules.html.twig', ["pagetitle" => "Rules", "pagedescription" => "Refer to the official rules of the game."]));
-
-        $response->setContent($page);
-
-        return $response;
-    }
-
-    /**
      * @return Response
      */
     public function aboutAction()
@@ -152,7 +135,21 @@ class DefaultController extends Controller
         $response->setMaxAge($this->getParameter('long_cache'));
 
         return $this->render('/Default/about.html.twig', [
-            "pagetitle" => "About",
+            "pagetitle" => "About NetrunnerDB",
+        ], $response);
+    }
+
+    /**
+     * @return Response
+     */
+    public function syntaxAction()
+    {
+        $response = new Response();
+        $response->setPublic();
+        $response->setMaxAge($this->getParameter('long_cache'));
+
+        return $this->render('/Default/syntax.html.twig', [
+            "pagetitle" => "Search Syntax Reference",
         ], $response);
     }
 }
