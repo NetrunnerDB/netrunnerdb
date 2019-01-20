@@ -52,6 +52,8 @@ class User extends BaseUser
     
     private $donation;
 
+    private $patreon_pledge_cents;
+
     /**
      * @var Collection|Deck[]
      */
@@ -161,6 +163,7 @@ class User extends BaseUser
         $this->faction = 'neutral-runner';
         $this->creation = new \DateTime();
         $this->donation = 0;
+        $this->patreon_pledge_cents = 0;
 
         parent::__construct();
     }
@@ -298,6 +301,33 @@ class User extends BaseUser
         return $this;
     }
     
+    /**
+     * @return integer
+     */
+    public function getPledgeCents()
+    {
+        return $this->patreon_pledge_cents;
+    }
+
+    /**
+     * @param integer $pledge_cents
+     * @return User
+     */
+    public function setPledgeCents(int $pledge_cents)
+    {
+        $this->patreon_pledge_cents = $pledge_cents;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSupporter()
+    {
+        return ($this->donation > 0 || $this->patreon_pledge_cents > 0);
+    }
+
     /**
      * @return Deck[]|Collection
      */
