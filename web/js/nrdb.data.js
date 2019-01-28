@@ -93,7 +93,6 @@
                                 if (dbName === 'cards') {
                                     response.data.forEach(function (card) {
                                         card.imageUrl = card.image_url || response.imageUrlTemplate.replace(/{code}/, card.code);
-                                        card.normalized_title = _.deburr(card.title).toLowerCase().trim();
                                     });
                                 }
 

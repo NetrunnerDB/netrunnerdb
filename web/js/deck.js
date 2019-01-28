@@ -100,10 +100,13 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
+		var matchingPacks = NRDB.data.cards.find({pack_code: Filters.pack_code || []});
+		var latestCards = select_only_latest_cards(matchingPacks);
 		var regexp = new RegExp(q, 'i');
-		var matchingCards = NRDB.data.cards.find({normalized_title: regexp, pack_code: Filters.pack_code || []});
-		var latestCards = select_only_latest_cards(matchingCards);
-		cb(latestCards);
+		var matchingCards = _.filter(latestCards, function (card) {
+			return regexp.test(_.deburr(card.title).toLowerCase().trim());
+		});
+		cb(matchingCards);
 	}
 
 	$('#filter-text').typeahead({

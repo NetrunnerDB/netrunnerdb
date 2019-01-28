@@ -1,10 +1,12 @@
 $(document).on('data.app', function() {
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
+		var latestCards = select_only_latest_cards(NRDB.data.cards.find());
 		var regexp = new RegExp(q, 'i');
-		var matchingCards = NRDB.data.cards.find({normalized_title: regexp});
-		var latestCards = select_only_latest_cards(matchingCards);
-		cb(latestCards);
+		var matchingCards = _.filter(latestCards, function (card) {
+			return regexp.test(_.deburr(card.title).toLowerCase().trim());
+		});
+		cb(matchingCards);
 	}
 
 	$('#filter-text').typeahead({
