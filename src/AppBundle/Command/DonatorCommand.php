@@ -60,7 +60,7 @@ class DonatorCommand extends ContainerAwareCommand
                 if ($type == 'paypal') {
                     $user->setDonation($amount + $user->getDonation());
                 } else {
-                    $user->setPledgeCents($amount * 100);
+                    $user->setPatreonPledgeCents($amount * 100);
                 }
                 $this->entityManager->flush();
                 $output->writeln(date('c') . " " . "Success");
@@ -68,7 +68,7 @@ class DonatorCommand extends ContainerAwareCommand
                 $output->writeln(date('c') . " " . "Cannot find user [$email]");
             }
         } else {
-            $output->writeln(date('c') . " " . "Invalid donation type");
+            $output->writeln(date('c') . " " . "Invalid donation type [$type]: expected 'patreon' or 'paypal'");
         }
     }
 }

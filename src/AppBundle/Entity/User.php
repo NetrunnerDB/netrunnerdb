@@ -304,7 +304,7 @@ class User extends BaseUser
     /**
      * @return integer
      */
-    public function getPledgeCents()
+    public function getPatreonPledgeCents()
     {
         return $this->patreon_pledge_cents;
     }
@@ -313,7 +313,7 @@ class User extends BaseUser
      * @param integer $pledge_cents
      * @return User
      */
-    public function setPledgeCents(int $pledge_cents)
+    public function setPatreonPledgeCents(int $pledge_cents)
     {
         $this->patreon_pledge_cents = $pledge_cents;
 
