@@ -13,6 +13,12 @@ function debounce(fn, delay) {
     };
 }
 
+// Use the cycle and pack positions to order cards by number properly since the
+// pack codes and pack position values aren't enough to sort packs.
+function makeCycleAndPackPosition(pack) {
+  return String(1000 + pack.cycle.position) + String(1000 + pack.position);
+}
+
 function getDisplayDescriptions(sort) {
     var dd = {
         'type': [
@@ -288,7 +294,7 @@ function update_deck(options) {
     if (DisplaySort === 'number' && displayDescription.length === 0) {
         var rows = [];
         NRDB.data.packs.find().forEach(function (pack) {
-            rows.push({ id: pack.code, label: pack.name });
+            rows.push({ id: makeCycleAndPackPosition(pack), label: pack.name});
         });
         displayDescription.push(rows);
     }
@@ -300,6 +306,18 @@ function update_deck(options) {
     var cols_size = 12 / displayDescription.length;
     for (var colnum = 0; colnum < displayDescription.length; colnum++) {
         var rows = displayDescription[colnum];
+        // Don't rely on the rows being put into displayDescription in order.
+	// Explicitly sort them by their provided ID.
+        rows.sort((a,b) => {
+          if (a.id < b.id) {
+            return -1;
+          }
+          if (a.id > b.id) {
+            return 1;
+          }
+          return 0;
+	});
+
         var div = $('<div>').addClass('col-sm-' + cols_size).appendTo($('#deck-content'));
         for (var rownum = 0; rownum < rows.length; rownum++) {
             var row = rows[rownum];
@@ -411,7 +429,7 @@ function update_deck(options) {
         } else if (DisplaySort === 'faction') {
             criteria = card.faction_code;
         } else if (DisplaySort === 'number') {
-            criteria = card.pack_code;
+            criteria = makeCycleAndPackPosition(card.pack);
         } else if (DisplaySort === 'title') {
             criteria = 'cards';
         }
