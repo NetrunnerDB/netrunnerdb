@@ -100,13 +100,10 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
-		var matchingPacks = NRDB.data.cards.find({pack_code: Filters.pack_code || []});
-		var latestCards = select_only_latest_cards(matchingPacks);
 		var regexp = new RegExp(q, 'i');
-		var matchingCards = _.filter(latestCards, function (card) {
-			return regexp.test(_.deburr(card.title).toLowerCase().trim());
-		});
-		cb(matchingCards);
+		var matchingCards = NRDB.data.cards.find({normalized_title: regexp, pack_code: Filters.pack_code || []}, {'$orderBy':{'title': 1}});
+		var latestCards = select_only_latest_cards(matchingCards);
+		cb(latestCards);
 	}
 
 	$('#filter-text').typeahead({
@@ -164,6 +161,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	
 });
 
+// This will filter matchingCards to only the latest version of each card, preserving the original order of matchingCards.
 function select_only_latest_cards(matchingCards) {
 	var latestCardsByTitle = {};
 	for (var card of matchingCards) {
@@ -172,7 +170,9 @@ function select_only_latest_cards(matchingCards) {
 			latestCardsByTitle[card.title] = card;
 		}
 	}
-	return _.sortBy(latestCardsByTitle, 'title');
+	return matchingCards.filter(function(value, index, arr) {
+		return value.code == latestCardsByTitle[value.title].code;
+	});
 }
 
 function create_collection_tab(initialPackSelection) {
@@ -734,7 +734,7 @@ function update_filtered() {
 	var orderBy = {};
 	orderBy[Sort] = Order;
 	if(Sort != 'title') orderBy['title'] = 1;
-	
+
 	var matchingCards = NRDB.data.cards.find(SmartFilterQuery, {'$orderBy':orderBy});
 	var sortedCards = select_only_latest_cards(matchingCards);
 
