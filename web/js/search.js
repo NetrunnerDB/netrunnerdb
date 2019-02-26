@@ -6,7 +6,7 @@ $(document).on('data.app', function() {
 		var matchingCards = _.filter(latestCards, function (card) {
 			return regexp.test(_.deburr(card.title).toLowerCase().trim());
 		});
-		cb(matchingCards);
+		cb(_.sortBy(matchingCards, 'title'));
 	}
 
 	$('#filter-text').typeahead({
@@ -28,7 +28,9 @@ function select_only_latest_cards(matchingCards) {
 			latestCardsByTitle[card.title] = card;
 		}
 	}
-	return _.sortBy(latestCardsByTitle, 'title');
+	return matchingCards.filter(function(value, index, arr) {
+		return value.code == latestCardsByTitle[value.title].code;
+	});
 }
 
 function handle_checkbox_change() {
