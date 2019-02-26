@@ -592,7 +592,7 @@ class CardsData
 
         switch ($sortorder) {
             case 'set':
-                $qb->orderBy('y.code')->addOrderBy('c.position');
+                $qb->orderBy('p.name')->addOrderBy('c.position');
                 break;
             case 'name':
                 $qb->orderBy('c.title');
