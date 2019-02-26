@@ -41,7 +41,7 @@ class SuggestionsCommand extends ContainerAwareCommand
     {
         ini_set('memory_limit', '1G');
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
-        
+
         $side_code = $input->getArgument('side');
         $side = $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
         if (!$side instanceof Side) {
@@ -52,10 +52,10 @@ class SuggestionsCommand extends ContainerAwareCommand
         $output->writeln('done');
     }
 
-    private function addToMatrix(array &$matrix, array $cardIndexById, int $card_id_1, int $card_id_2)
+    private function addToMatrix(array &$matrix, array $cardIndexByTitle, string $card_1, string $card_2)
     {
-        $card_index_1 = $cardIndexById[$card_id_1];
-        $card_index_2 = $cardIndexById[$card_id_2];
+        $card_index_1 = $cardIndexByTitle[$card_1];
+        $card_index_2 = $cardIndexByTitle[$card_2];
         if (!isset($matrix[$card_index_1])) {
             $matrix[$card_index_1] = [];
         }
@@ -64,44 +64,43 @@ class SuggestionsCommand extends ContainerAwareCommand
         }
         $matrix[$card_index_1][$card_index_2] += 1;
     }
-    
-    private function fillMatrix(array &$matrix, array $cardIndexById, int $side_id)
+
+    private function fillMatrix(array &$matrix, array $cardIndexByTitle, int $side_id)
     {
         $dbh = $this->entityManager->getConnection();
-        
+
         // a numeric array of all the decklists
         $decklists = $dbh->executeQuery(
-                "SELECT
-				d.id
+                "SELECT d.id
                 from deck d
                 where d.side_id=?
                 order by d.id",
             [ $side_id ]
         )->fetchAll();
-        
+
         // for each decklist, will give the cards included in this decklist
         $stmt = $dbh->prepare(
-                "SELECT
-				d.card_id
+                "SELECT c.title
                 from deckslot d
+                join card c on d.card_id=c.id
                 where d.deck_id=?
-                order by d.card_id"
+                order by c.title"
         );
-        
+
         foreach ($decklists as $decklist_id) {
             $stmt->execute([$decklist_id['id']]);
             // numeric array of card ids found in the decklist
             $slots = $stmt->fetchAll();
-        
+
             // for each pair of card id found in $slots, we add 1 in the correct spot in $matrix
-            for ($i=0; $i<count($slots); $i++) {
-                for ($j=$i+1; $j<count($slots); $j++) {
-                    $this->addToMatrix($matrix, $cardIndexById, $slots[$j]['card_id'], $slots[$i]['card_id']);
+            for ($i = 0; $i < count($slots); $i++) {
+                for ($j = $i + 1; $j < count($slots); $j++) {
+                    $this->addToMatrix($matrix, $cardIndexByTitle, $slots[$j]['title'], $slots[$i]['title']);
                 }
             }
         }
     }
-    
+
     private function normalizeMatrix(array &$matrix, array $cardsByIndex)
     {
         /*
@@ -114,7 +113,7 @@ class SuggestionsCommand extends ContainerAwareCommand
     	 * so we want $matrix(A,B) > $matrix(A,C)
     	 * so we want $divider(A,B) < $divider(A,C)
     	 */
-        
+
         for ($i=0; $i<count($matrix); $i++) {
             for ($j=0; $j<$i; $j++) {
                 //$divider = min($cardsByIndex[$i]['nbdecklists'], $cardsByIndex[$j]['nbdecklists']);
@@ -127,64 +126,58 @@ class SuggestionsCommand extends ContainerAwareCommand
             }
         }
     }
-    
+
     private function getCardsByIndex(int $side_id)
     {
         $dbh = $this->entityManager->getConnection();
-        
+
         return $dbh->executeQuery(
-                "SELECT
-				c.id,
-                c.code,
+                "SELECT c.title,
                 count(*) nbdecklists
                 from card c
                 join deckslot d on d.card_id=c.id
                 where c.side_id=?
-                group by c.id, c.code, c.faction_id
-                order by c.id",
-        
+                group by c.title
+                order by c.title",
             [ $side_id ]
-        
         )->fetchAll();
     }
-    
+
     /**
      * returns a matrix where each point x,y is
      * the probability that the cards x and y
      * are seen together in a decklist
-     * also returns an array of card codes
-     * x and y are private indexes, not card.id
+     * also returns an array of card titles.
+     * x and y are private indexes
      */
     private function getSuggestions(Side $side)
     {
         $side_id = $side->getId();
-        
+
         // a numeric array giving all cards with the number of decklists they appear on
         $cardsByIndex = $this->getCardsByIndex($side_id);
-       
-        // an associative array giving for each card id, its position in $cardsByIndex (card index)
-        $cardIndexById = array_flip(array_map(function ($card) {
-            return intval($card['id']);
-        }, $cardsByIndex));
-        
-        // an associative array giving for each card index, its code
-        $cardCodesByIndex = array_map(function ($card) {
-            return $card['code'];
+
+        // an associative array giving for each card index, its title
+        $cardTitlesByIndex = array_map(function ($card) {
+            return $card['title'];
         }, $cardsByIndex);
-        
+
+        // an associative array giving for each card title, its position in $cardsByIndex (card index)
+        $cardIndexByTitle = array_flip($cardTitlesByIndex);
+
         // a numeric array of numeric arrays giving for each couple of card indexes, how many decklists have both cards
         $matrix = [];
-        
+
         // initializing that matrix with zeros
         foreach ($cardsByIndex as $index => $card) {
             $matrix[$index] = $index ? array_fill(0, $index, 0) : [];
         }
-        
-        $this->fillMatrix($matrix, $cardIndexById, $side_id);
+
+        $this->fillMatrix($matrix, $cardIndexByTitle, $side_id);
         $this->normalizeMatrix($matrix, $cardsByIndex);
-        
+
         return [
-                "index" => $cardCodesByIndex,
+                "index" => $cardTitlesByIndex,
                 "matrix" => $matrix
         ];
     }

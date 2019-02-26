@@ -1,7 +1,7 @@
 (function(suggestions, $) {
-	suggestions.codesFromindex = [];
+	suggestions.titlesFromIndex = [];
 	suggestions.matrix = [];
-	suggestions.indexFromCodes = {};
+	suggestions.indexFromTitles = {};
 	suggestions.current = [];
 	suggestions.exclusions = [];
 	suggestions.number;
@@ -10,16 +10,16 @@
 		suggestions.promise = $.ajax('/'+side+'.json', {
 			dataType: 'json',
 			success: function (data) {
-				suggestions.codesFromindex = data.index;
+				suggestions.titlesFromIndex = data.index;
 				suggestions.matrix = data.matrix;
 				// reconstitute the full matrix from the lower half matrix
-				for(var i=0; i<suggestions.matrix.length; i++) {
-					for(var j=i; j<suggestions.matrix.length; j++) {
+				for(var i = 0; i < suggestions.matrix.length; i++) {
+					for(var j = i; j < suggestions.matrix.length; j++) {
 						suggestions.matrix[i][j] = suggestions.matrix[j][i];
 					}
 				}
-				for(var i=0; i<suggestions.codesFromindex.length; i++) {
-					suggestions.indexFromCodes[suggestions.codesFromindex[i]] = i;
+				for(var i = 0; i < suggestions.titlesFromIndex.length; i++) {
+					suggestions.indexFromTitles[suggestions.titlesFromIndex[i]] = i;
 				}
 			},
 			error: function( jqXHR, textStatus, errorThrown ) {
@@ -28,24 +28,24 @@
 		});
 		suggestions.promise.done(suggestions.compute);
 	};
-        
+
         suggestions.refresh = function () {
                 suggestions.number = parseInt(NRDB.settings.getItem('show-suggestions'), 10);
         }
 
 	suggestions.compute = function() {
 		suggestions.refresh();
-                
+
                 // init current suggestions
-                suggestions.codesFromindex.forEach(function (code, index) {
+                suggestions.titlesFromIndex.forEach(function (title, index) {
                         suggestions.current[index] = {
-                                code: code,
+                                title: title,
                                 proba: 0
                         };
                 });
                 // find used cards
                 var indexes = NRDB.data.cards.find({indeck:{'$gt':0}}).map(function (card) {
-                        return suggestions.indexFromCodes[card.code];
+                        return suggestions.indexFromTitles[card.title];
                 });
                 // add suggestions of all used cards
                 indexes.forEach(function (i) {
@@ -61,7 +61,7 @@
                 });
                 // remove suggestions of identity
                 NRDB.data.cards.find({type_code:'identity'}).map(function (card) {
-                        return suggestions.indexFromCodes[card.code];
+                        return suggestions.indexFromTitles[card.title];
                 }).forEach(function (i) {
                         if(suggestions.current[i]) suggestions.current[i].proba = 0;
                 });
@@ -73,13 +73,13 @@
                 suggestions.current.sort(function (a, b) {
                         return (b.proba - a.proba);
                 });
-                
+
 		suggestions.show();
 	};
 
 	suggestions.show = function() {
                 suggestions.refresh();
-                
+
                 var table = $('#table-suggestions');
 		var tbody = table.children('tbody');
 		tbody.empty();
@@ -93,53 +93,54 @@
 		var nb = 0;
 		for(var i=0; i<suggestions.current.length; i++) {
 			if(suggestions.current[i].proba === 0) continue;
-			var card = NRDB.data.cards.findById(suggestions.current[i].code);
+			var cards = NRDB.data.cards.find({title: suggestions.current[i].title}, {$orderBy: {code: -1}});
+			var card = cards[0];
 			if(is_card_usable(card) && Filters.pack_code.indexOf(card.pack_code) > -1) {
 				var div = suggestions.div(card);
-				div.on('click', 'button.close', suggestions.exclude.bind(this, card.code));
+				div.on('click', 'button.close', suggestions.exclude.bind(this, card.title));
 				tbody.append(div);
 				if(++nb >= suggestions.number) break;
 			}
 		}
 	};
 
-	suggestions.div = function(record) {
-		var faction = record.faction_code;
+	suggestions.div = function(card) {
+		var faction = card.faction_code;
 		var influ = "";
-		for (var i = 0; i < record.factioncost; i++)
+		for (var i = 0; i < card.factioncost; i++)
 			influ += "●";
 
 		var radios = '';
-		for (var i = 0; i <= record.maxqty; i++) {
+		for (var i = 0; i <= card.maxqty; i++) {
 			radios += '<label class="btn btn-xs btn-default'
-					+ (i == record.indeck ? ' active' : '')
-					+ '"><input type="radio" name="qty-' + record.code
+					+ (i == card.indeck ? ' active' : '')
+					+ '"><input type="radio" name="qty-' + card.code
 					+ '" value="' + i + '">' + i + '</label>';
 		}
 
-		var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
-					+ Url_FactionImage.replace('xxx', record.faction_code)
-					+ '" alt="'+record.title+'">';
+		var imgsrc = card.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
+					+ Url_FactionImage.replace('xxx', card.faction_code)
+					+ '" alt="'+card.title+'">';
 		var div = $('<tr class="card-container" data-index="'
-					+ record.code
+					+ card.code
 					+ '"><td><button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Remove</span></button></td>'
 					+ '<td><div class="btn-group" data-toggle="buttons">'
 					+ radios
 					+ '</div></td><td><a class="card" href="'
-					+ Routing.generate('cards_zoom', {card_code:record.code})
+					+ Routing.generate('cards_zoom', {card_code:card.code})
 					+ '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
-					+ record.title + '</a></td><td class="influence influence-' + faction
-					+ '">' + influ + '</td><td class="type" title="' + record.type.name
+					+ card.title + '</a></td><td class="influence influence-' + faction
+					+ '">' + influ + '</td><td class="type" title="' + card.type.name
 					+ '"><img src="/images/types/'
-					+ record.type_code + '.png" alt="'+record.type.name+'">'
-					+ '</td><td class="faction" title="' + record.faction.name + '">'
+					+ card.type_code + '.png" alt="'+card.type.name+'">'
+					+ '</td><td class="faction" title="' + card.faction.name + '">'
 					+ imgsrc + '</td></tr>');
 
 		return div;
 	};
 
-	suggestions.exclude = function(code) {
-		suggestions.exclusions.push(suggestions.indexFromCodes[code]);
+	suggestions.exclude = function(title) {
+		suggestions.exclusions.push(suggestions.indexFromTitles[title]);
 		suggestions.compute();
 	};
 
