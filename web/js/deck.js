@@ -106,7 +106,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 		var matchingCards = _.filter(latestCards, function (card) {
 			return regexp.test(_.deburr(card.title).toLowerCase().trim());
 		});
-		cb(matchingCards);
+		cb(_.sortBy(matchingCards, 'title'));
 	}
 
 	$('#filter-text').typeahead({
