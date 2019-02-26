@@ -119,7 +119,7 @@
 
 		var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
 					+ Url_FactionImage.replace('xxx', record.faction_code)
-					+ '.png" alt="'+record.title+'">';
+					+ '" alt="'+record.title+'">';
 		var div = $('<tr class="card-container" data-index="'
 					+ record.code
 					+ '"><td><button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Remove</span></button></td>'
