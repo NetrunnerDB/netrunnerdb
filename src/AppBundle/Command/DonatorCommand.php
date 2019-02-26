@@ -31,16 +31,22 @@ class DonatorCommand extends ContainerAwareCommand
                 'Email address or username of user'
             )
             ->addArgument(
-                'donation',
+                'type',
                 InputArgument::REQUIRED,
-                'Amount of donation'
+                '"paypal" or "patreon"'
+            )
+            ->addArgument(
+                'amount',
+                InputArgument::REQUIRED,
+                'Amount of donation in US dollars'
             );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $email = $input->getArgument('email');
-        $donation = $input->getArgument('donation');
+        $type = $input->getArgument('type');
+        $amount = $input->getArgument('amount');
 
         $repo = $this->entityManager->getRepository('AppBundle:User');
         /** @var User $user */
@@ -49,12 +55,20 @@ class DonatorCommand extends ContainerAwareCommand
             $user = $repo->findOneBy(['username' => $email]);
         }
 
-        if ($user instanceof User) {
-            $user->setDonation($donation + $user->getDonation());
-            $this->entityManager->flush();
-            $output->writeln(date('c') . " " . "Success");
+        if ($type == 'patreon' or $type == 'paypal') {
+            if ($user instanceof User) {
+                if ($type == 'paypal') {
+                    $user->setDonation($amount + $user->getDonation());
+                } else {
+                    $user->setPatreonPledgeCents($amount * 100);
+                }
+                $this->entityManager->flush();
+                $output->writeln(date('c') . " " . "Success");
+            } else {
+                $output->writeln(date('c') . " " . "Cannot find user [$email]");
+            }
         } else {
-            $output->writeln(date('c') . " " . "Cannot find user [$email]");
+            $output->writeln(date('c') . " " . "Invalid donation type [$type]: expected 'patreon' or 'paypal'");
         }
     }
 }

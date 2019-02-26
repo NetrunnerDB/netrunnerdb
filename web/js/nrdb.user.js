@@ -46,7 +46,7 @@
     
     user.always = function () {
         // show ads if not donator
-        if(user.data && user.data.donation > 0) {
+        if(user.data && user.data.is_supporter) {
             // thank you!
         } else {
             user.showAds();
