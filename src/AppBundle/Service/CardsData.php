@@ -952,11 +952,9 @@ class CardsData
             }
         }
 
-        $cardFilter = function ($card, $key) use ($latestCardsByTitle) {
+        return array_values(array_filter($matchingCards, function ($card) use ($latestCardsByTitle) {
             return $card->getCode() == $latestCardsByTitle[$card->getTitle()]->getCode();
-        };
-
-        return array_values(array_filter($matchingCards, 'cardFilter'));
+        }));
     }
 
     public function get_versions_by_code(array $cards_code)
