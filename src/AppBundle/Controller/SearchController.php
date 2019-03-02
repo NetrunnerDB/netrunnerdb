@@ -511,7 +511,6 @@ class SearchController extends Controller
      */
     public function setnavigation(Card $card, string $locale, EntityManagerInterface $entityManager)
     {
-        // $jason_prev = $card->findPriorCardByPosition($card->getPack(), $card->getPosition());
         $em = $entityManager->getRepository('AppBundle:Card');
         $prev = $em->createQueryBuilder('c')
             ->andWhere('c.pack = :pack')
