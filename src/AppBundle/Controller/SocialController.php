@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Legality;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use AppBundle\Service\CardsData;
 
 class SocialController extends Controller
 {
@@ -50,7 +51,7 @@ class SocialController extends Controller
 
         $analyse = $judge->analyse($deck->getSlots()->toArray());
 
-        if (is_string($analyse)) {
+        if (isset($analyse['problem'])) {
             $response->setData([
                 'allowed' => false,
                 'message' => $judge->problem($analyse),
@@ -110,7 +111,7 @@ class SocialController extends Controller
         }
 
         $analyse = $judge->analyse($deck->getSlots()->toArray());
-        if (is_string($analyse)) {
+        if (isset($analyse['problem'])) {
             throw $this->createAccessDeniedException();
         }
 
@@ -629,20 +630,23 @@ class SocialController extends Controller
 
     /**
      * @param Decklist $decklist
-     * @param Judge                  $judge
+     * @param Judge $judge
+     * @param CardsData $cardsData
      * @return Response
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function textexportAction(Decklist $decklist, Judge $judge)
+    public function textexportAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('long_cache'));
 
-        $classement = $judge->classe($decklist->getSlots()->toArray(), $decklist->getIdentity());
+        $name = mb_strtolower($decklist->getName());
+        $name = preg_replace('/[^a-zA-Z0-9_\-]/', '-', $name);
+        $name = preg_replace('/--+/', '-', $name);
 
-        $lines = [];
+        $lines = [$name];
         $types = [
             "Event",
             "Hardware",
@@ -660,34 +664,95 @@ class SocialController extends Controller
         ];
 
         $lines[] = sprintf(
-            "%s (%s)",
+            '%s (%s)',
             $decklist->getIdentity()->getTitle(),
             $decklist->getIdentity()->getPack()->getName()
         );
 
+        $classement = $judge->classe($decklist->getSlots()->toArray(), $decklist->getIdentity());
+
+        if (isset($classement['problem'])) {
+            $lines[] = sprintf(
+                "Warning: %s",
+                $classement['problem']
+            );
+        }
+
+        $mwl = $decklist->getMWL()->getCards();
         foreach ($types as $type) {
             if (isset($classement[$type]) && $classement[$type]['qty']) {
                 $lines[] = "";
                 $lines[] = $type . " (" . $classement[$type]['qty'] . ")";
                 foreach ($classement[$type]['slots'] as $slot) {
                     $inf = "";
+
+                    /** @var Card $card */
+                    $card = $slot['card'];
+                    $is_restricted = (
+                        isset($mwl[$card->getCode()])
+                        && isset($mwl[$card->getCode()]['is_restricted'])
+                        && ($mwl[$card->getCode()]['is_restricted'] === 1)
+                    );
+
+                    if ($is_restricted) {
+                        $inf .= "♘";
+                    }
+
                     for ($i = 0; $i < $slot['influence']; $i++) {
                         if ($i % 5 == 0) {
                             $inf .= " ";
                         }
                         $inf .= "•";
                     }
-                    /** @var Card $card */
-                    $card = $slot['card'];
-                    $lines[] = $slot['qty'] . "x " . $card->getTitle() . " (" . $card->getPack()->getName() . ") " . $inf;
+
+                    $lines[] = sprintf(
+                        '%sx %s (%s) %s',
+                        $slot['qty'],
+                        $card->getTitle(),
+                        $card->getPack()->getName(),
+                        trim($inf)
+                    );
                 }
             }
         }
-        $content = implode("\r\n", $lines);
 
-        $name = mb_strtolower($decklist->getName());
-        $name = preg_replace('/[^a-zA-Z0-9_\-]/', '-', $name);
-        $name = preg_replace('/--+/', '-', $name);
+        $lines[] = "";
+
+        $influenceSpent = $classement['influenceSpent'];
+        $influenceTotal = $decklist->getIdentity()->getInfluenceLimit();
+        $influenceLeft = 0;
+        if (is_numeric($influenceTotal)) {
+            $influenceLeft = $influenceTotal - $influenceSpent;
+        } else {
+            $influenceTotal = "infinite";
+        }
+
+        $lines[] = sprintf(
+            "%s influence spent (max %s, available %s)",
+            $influenceSpent,
+            $influenceTotal,
+            $influenceLeft
+        );
+
+        if ($decklist->getSide()->getCode() == "corp") {
+            $minAgendaPoints = floor($decklist->getDeckSize() / 5) * 2 + 2;
+
+            $lines[] = sprintf(
+                "%s agenda points (between %s and %s)",
+                $classement['agendaPoints'],
+                $minAgendaPoints,
+                $minAgendaPoints + 1
+            );
+        }
+
+        $lines[] = sprintf(
+            "%s cards (min %s)",
+            $classement['deckSize'],
+            $decklist->getIdentity()->getMinimumDeckSize()
+        );
+
+        $lines[] = "Cards up to " . $decklist->getLastPack()->getName();
+        $content = implode("\r\n", $lines);
 
         $response->headers->set('Content-Type', 'text/plain');
         $response->headers->set('Content-Disposition', 'attachment;filename=' . $name . ".txt");
