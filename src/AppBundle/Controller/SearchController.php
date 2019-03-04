@@ -511,8 +511,25 @@ class SearchController extends Controller
      */
     public function setnavigation(Card $card, string $locale, EntityManagerInterface $entityManager)
     {
-        $prev = $entityManager->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() - 1]);
-        $next = $entityManager->getRepository('AppBundle:Card')->findOneBy(["pack" => $card->getPack(), "position" => $card->getPosition() + 1]);
+        $em = $entityManager->getRepository('AppBundle:Card');
+        $prev = $em->createQueryBuilder('c')
+            ->andWhere('c.pack = :pack')
+            ->andWhere('c.position < :position')
+            ->setParameter('pack', $card->getPack())
+            ->setParameter('position', $card->getPosition())
+            ->orderBy('c.position', 'DESC')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
+        $next = $em->createQueryBuilder('c')
+            ->andWhere('c.pack = :pack')
+            ->andWhere('c.position > :position')
+            ->setParameter('pack', $card->getPack())
+            ->setParameter('position', $card->getPosition())
+            ->orderBy('c.position', 'ASC')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
 
         return $this->renderView('/Search/setnavigation.html.twig', [
             "prevtitle" => $prev instanceof Card ? $prev->getTitle() : "",
