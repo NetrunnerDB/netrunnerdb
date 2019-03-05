@@ -1,15 +1,6 @@
-{% set sort_options = {
-	'name': 'Name',
-	'set': 'Set Name',
-	'release-date': 'Release Date',
-	'faction': 'Faction',
-	'type': 'Type',
-	'cost': 'Cost',
-	'strength': 'Strength',
-} %}
 <div class="col-sm-4" style="margin-bottom:.5em">
 	<select name="sort" class="form-control">
-		{% for key, value in sort_options|cast_to_array %}
+		{% for key, value in sort_options %}
 			<option value={{key}} {% if sort == key %}selected{% endif %}>
 			Sort by {{value}}
 			</option>
@@ -17,16 +8,9 @@
 	</select>
 </div>
 
-{% set view_options = {
-	'list': 'a Checklist',
-	'text': 'a Spoiler',
-	'full': 'Full Cards',
-	'images': 'Images only',
-	'short': 'Names only',
-} %}
 <div class="col-sm-4" style="margin-bottom:.5em">
 	<select name="view" class="form-control">
-		{% for key, value in view_options|cast_to_array %}
+		{% for key, value in view_options %}
 			<option value={{key}} {% if view == key %}selected{% endif %}>
 			View as {{value}}
 			</option>
