@@ -18,17 +18,17 @@
 </div>
 
 {% set view_options = {
-	'list': 'Checklist',
-	'text': 'Spoiler',
+	'list': 'a Checklist',
+	'text': 'a Spoiler',
 	'full': 'Full Cards',
-	'images': 'Scans',
-	'short': 'Names',
+	'images': 'Images only',
+	'short': 'Names only',
 } %}
 <div class="col-sm-4" style="margin-bottom:.5em">
 	<select name="view" class="form-control">
 		{% for key, value in view_options|cast_to_array %}
 			<option value={{key}} {% if view == key %}selected{% endif %}>
-			Display as {{value}}
+			View as {{value}}
 			</option>
 		{% endfor %}
 	</select>
