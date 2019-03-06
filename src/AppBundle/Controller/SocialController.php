@@ -1144,7 +1144,7 @@ class SocialController extends Controller
 
         $dbh = $entityManager->getConnection();
 
-        $users = $dbh->executeQuery("SELECT * FROM user WHERE donation>0 ORDER BY donation DESC, username", [])->fetchAll(\PDO::FETCH_ASSOC);
+        $users = $dbh->executeQuery("SELECT * FROM user WHERE donation > 0 OR patreon_pledge_cents > 0 ORDER BY (donation + (patreon_pledge_cents * 100)) DESC, username", [])->fetchAll(\PDO::FETCH_ASSOC);
 
         return $this->render('/Default/donators.html.twig', [
             'pagetitle' => 'The Gracious Donators',
