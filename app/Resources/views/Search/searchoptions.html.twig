@@ -1,21 +1,23 @@
 <div class="col-sm-4" style="margin-bottom:.5em">
-<select name="sort" class="form-control">
-	<option value="name"    {% if sort|default('name') == "name"    %}selected{% endif %}>Sort by Name</option>
-	<option value="set"     {% if sort|default('name') == "set"     %}selected{% endif %}>Sort by Set</option>
-	<option value="faction" {% if sort|default('name') == "faction" %}selected{% endif %}>Sort by Faction</option>
-	<option value="type"    {% if sort|default('name') == "type"    %}selected{% endif %}>Sort by Type</option>
-	<option value="cost"    {% if sort|default('name') == "cost"    %}selected{% endif %}>Sort by Cost</option>
-	<option value="strength"{% if sort|default('name') == "strength"%}selected{% endif %}>Sort by Strength</option>
-</select>
+	<select name="sort" class="form-control">
+		{% for key, value in sort_options %}
+			<option value={{key}} {% if sort == key %}selected{% endif %}>
+			Sort by {{value}}
+			</option>
+		{% endfor %}
+	</select>
 </div>
+
 <div class="col-sm-4" style="margin-bottom:.5em">
-<select name="view" class="form-control">
-	<option value="list"    {% if view|default('list') == "list"    %}selected{% endif %}>View as a Checklist</option>
-	<option value="text"    {% if view|default('list') == "text" %}selected{% endif %}>View as a Spoiler</option>
-	<option value="full"    {% if view|default('list') == "full"    %}selected{% endif %}>View as Full Cards</option>
-	<option value="images"  {% if view|default('list') == "images"    %}selected{% endif %}>View as Scans only</option>
-        <option value="rulings"  {% if view|default('list') == "rulings"    %}selected{% endif %}>View Rulings</option>
-	<option value="short"   {% if view|default('list') == "short"   %}selected{% endif %}>View as Simple List</option>
-</select>
-<input name="_locale" type="hidden" value="{{ app.request.locale }}">
+	<select name="view" class="form-control">
+		{% for key, value in view_options %}
+			<option value={{key}} {% if view == key %}selected{% endif %}>
+			View as {{value}}
+			</option>
+		{% endfor %}
+	</select>
+</div>
+
+<div>
+	<input name="_locale" type="hidden" value="{{ app.request.locale }}">
 </div>

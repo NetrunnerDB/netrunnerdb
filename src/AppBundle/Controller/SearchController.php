@@ -14,6 +14,23 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SearchController extends Controller
 {
+    const SORT_OPTIONS = array(
+        'name'         => 'Name',
+        'set'          => 'Set Name',
+        'release-date' => 'Release Date',
+        'faction'      => 'Faction',
+        'type'         => 'Type',
+        'cost'         => 'Cost',
+        'strength'     => 'Strength'
+    );
+
+    const VIEW_OPTIONS = array(
+        'list'   => 'a Checklist',
+        'text'   => 'a Spoiler',
+        'full'   => 'Full Cards',
+        'images' => 'Images only',
+        'short'  => 'Names only'
+    );
     /**
      * @param EntityManagerInterface $entityManager
      * @param CardsData              $cardsData
@@ -84,6 +101,10 @@ class SearchController extends Controller
             "types"           => $types,
             "keywords"        => $keywords,
             "illustrators"    => $illustrators,
+            "sort"            => "name",
+            "view"            => "list",
+            "sort_options"    => self::SORT_OPTIONS,
+            "view_options"    => self::VIEW_OPTIONS,
         ], $response);
     }
 
@@ -468,9 +489,11 @@ class SearchController extends Controller
         }
 
         $searchbar = $this->renderView('/Search/searchbar.html.twig', [
-            "q"    => $q,
-            "view" => $view,
-            "sort" => $sort,
+            "q"            => $q,
+            "view"         => $view,
+            "sort"         => $sort,
+            "sort_options" => self::SORT_OPTIONS,
+            "view_options" => self::VIEW_OPTIONS,
         ]);
 
         if (empty($title)) {
