@@ -679,7 +679,7 @@ class CardsData
         $cardinfo['imageUrl'] = $cardinfo['imageUrl'] ?: $this->packages->getUrl($card->getCode() . ".png", "card_image");
 
         // replacing <trace>
-        $cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1<sup>\2</sup></strong>–', $cardinfo['text']);
+        $cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1 [\2]</strong>–', $cardinfo['text']);
 
         // replacing <errata>
         $cardinfo['text'] = preg_replace('/<errata>(.+)<\/errata>/', '<em><span class="glyphicon glyphicon-alert"></span> \1</em>', $cardinfo['text']);
