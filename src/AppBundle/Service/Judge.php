@@ -105,10 +105,11 @@ class Judge
             $classeur[$type]["slots"][] = $elt;
             $classeur[$type]["qty"] += $qty;
         }
-        if (is_string($analyse)) {
+
+        $classeur = array_merge($classeur, $analyse);
+
+        if (isset($analyse['problem'])) {
             $classeur['problem'] = $this->problem($analyse);
-        } else {
-            $classeur = array_merge($classeur, $analyse);
         }
 
         return $classeur;
@@ -208,6 +209,7 @@ class Judge
         $influenceSpent = 0;
         $agendaPoints = 0;
         $restricted = false;
+        $problem = null;
 
         /** @var SlotInterface $slot */
         foreach ($slots as $slot) {
@@ -215,7 +217,7 @@ class Judge
             $qty = $slot->getQuantity();
             if ($card->getType()->getName() == "Identity") {
                 if (isset($identity)) {
-                    return 'identities';
+                    $problem = 'identities';
                 }
                 $identity = $card;
             } else {
@@ -224,11 +226,11 @@ class Judge
         }
 
         if ($identity === null) {
-            return 'identity';
+            $problem = 'identity';
         }
 
         if ($deckSize < $identity->getMinimumDeckSize()) {
-            return 'deckSize';
+            $problem = 'deckSize';
         }
 
         $influenceLimit = $identity->getInfluenceLimit();
@@ -243,15 +245,15 @@ class Judge
             }
 
             if ($qty > $card->getDeckLimit() && $identity->getPack()->getCode() != "draft") {
-                return 'copies';
+                $problem = 'copies';
             }
 
             if ($card->getSide() !== $identity->getSide()) {
-                return 'side';
+                $problem = 'side';
             }
 
             if ($identity->getCode() == "03002" && $card->getFaction()->getCode() === "jinteki") {
-                return 'forbidden';
+                $problem = 'forbidden';
             }
 
             if ($card->getType()->getCode() === "agenda") {
@@ -259,7 +261,7 @@ class Judge
                     && $card->getFaction() !== $identity->getFaction()
                     && $identity->getFaction()->getCode() !== "neutral-corp"
                 ) {
-                    return 'agendas';
+                    $problem = 'agendas';
                 }
                 $agendaPoints += $card->getAgendaPoints() * $qty;
             }
@@ -276,29 +278,35 @@ class Judge
 
             if ($card->isRestricted()) {
                 if ($restricted) {
-                    return 'restricted';
+                    $problem = 'restricted';
                 }
                 $restricted = true;
             }
         }
 
         if ($influenceLimit !== null && $influenceSpent > $influenceLimit) {
-            return 'influence';
+            $problem = 'influence';
         }
 
         // agenda points rule, except for draft identities because Cube
         if ($identity->getSide()->getCode() == "corp" && $identity->getPack()->getCode() != "draft") {
             $minAgendaPoints = floor($deckSize / 5) * 2 + 2;
             if ($agendaPoints < $minAgendaPoints || $agendaPoints > $minAgendaPoints + 1) {
-                return 'agendapoints';
+                $problem = 'agendapoints';
             }
         }
 
-        return [
+        $result = [
             'deckSize'       => $deckSize,
             'influenceSpent' => $influenceSpent,
             'agendaPoints'   => $agendaPoints,
         ];
+
+        if (isset($problem)) {
+            $result['problem'] = $problem;
+        }
+
+        return $result;
     }
 
     public function getInfuenceLimit(Decklist $decklist)
@@ -330,9 +338,9 @@ class Judge
         return $influenceSpent;
     }
 
-    public function problem($problem)
+    public function problem($analyse)
     {
-        switch ($problem) {
+        switch ($analyse['problem']) {
             case 'identity':
                 return "The deck lacks an Identity card.";
                 break;
@@ -355,7 +363,7 @@ class Judge
                 return "The deck spends more influence than available on the Identity.";
                 break;
             case 'agendapoints':
-                return "The deck has a wrong number of Agenda Points.";
+                return "The deck has the wrong number of Agenda Points.";
                 break;
             case 'copies':
                 return "The deck has too many copies of a card.";
@@ -385,7 +393,7 @@ class Judge
 
         $analyse = $this->analyse($slots);
 
-        $legality->setIsLegal(is_array($analyse));
+        $legality->setIsLegal(!isset($analyse['problem']));
 
         return $legality->getIsLegal();
     }

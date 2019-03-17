@@ -147,7 +147,7 @@ class DeckManager
 
             $problem_message = '';
             if (isset($deck['problem'])) {
-                $problem_message = $this->judge->problem($deck['problem']);
+                $problem_message = $this->judge->problem($deck);
             }
             if ($decks[$i]['unsaved'] > 0) {
                 $problem_message = "This deck has unsaved changes.";
@@ -376,8 +376,8 @@ class DeckManager
             ];
         }
         $analyse = $this->judge->analyse($deck->getSlots()->toArray());
-        if (is_string($analyse)) {
-            $deck->setProblem($analyse);
+        if (isset($analyse['problem'])) {
+            $deck->setProblem($analyse['problem']);
         } else {
             $deck->setProblem(null);
             $deck->setDeckSize($analyse['deckSize']);
