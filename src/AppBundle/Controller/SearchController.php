@@ -25,11 +25,12 @@ class SearchController extends Controller
     );
 
     const VIEW_OPTIONS = array(
-        'list'   => 'a Checklist',
-        'text'   => 'a Spoiler',
-        'full'   => 'Full Cards',
-        'images' => 'Images only',
-        'short'  => 'Names only'
+        'list'    => 'a Checklist',
+        'text'    => 'a Spoiler',
+        'full'    => 'Full Cards',
+        'images'  => 'Images only',
+        'rulings' => 'Rulings only',
+        'short'   => 'Names only'
     );
     /**
      * @param EntityManagerInterface $entityManager
