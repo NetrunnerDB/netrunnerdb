@@ -45,7 +45,7 @@
         text = text.replace(/\[nbn\]/g, '<span class="icon icon-nbn" aria-hidden="true"></span><span class="icon-fallback">nbn</span>');
         text = text.replace(/\[weyland-consortium\]/g, '<span class="icon icon-weyland-consortium" aria-hidden="true"></span><span class="icon-fallback">weyland consortium</span>');
 
-        text = text.replace(/<trace>([^<]+) ([X\d]+)<\/trace>/g, '<strong>$1<sup>$2</sup></strong>–');
+        text = text.replace(/<trace>([^<]+) ([X\d]+)<\/trace>/g, '<strong>$1 [$2]</strong>–');
         text = text.replace(/<errata>(.+)<\/errata>/, '<em><span class="glyphicon glyphicon-alert"></span> $1</em>');
 
         text = text.split("\n").join('</p><p>');
