@@ -360,10 +360,10 @@ class CardsData
                 case 'o': // cost
                     $or = [];
                     foreach ($condition as $arg) {
-                        if ($arg === 'X') {
+                        if (($arg === 'x') or ($arg === 'X')) {
                             switch ($operator) {
                                 case ':':
-                                    $or[] = "(c.cost is null)";
+                                    $or[] = "(c.cost is null and (t.code not in ('agenda', 'identity')))";
                                     break;
                                 case '!':
                                     $or[] = "(c.cost is not null)";
@@ -455,10 +455,15 @@ class CardsData
                 case 'p': // strength
                     $or = [];
                     foreach ($condition as $arg) {
-                        if ($arg === 'X') {
+                        if (($arg === 'x') or ($arg === 'X')) {
                             switch ($operator) {
                                 case ':':
-                                    $or[] = "(c.strength is null)";
+                                    $or[] = "(c.strength is null and ((t.code = 'ice') or ((c.keywords = ?$i) or (c.keywords like ?" . ($i + 1) . ") or (c.keywords like ?" . ($i + 2) . ") or (c.keywords like ?" . ($i + 3) . "))))";
+                                    $ib = "Icebreaker";
+                                    $parameters[$i++] = "$ib";
+                                    $parameters[$i++] = "$ib %";
+                                    $parameters[$i++] = "% $ib";
+                                    $parameters[$i++] = "% $ib %";
                                     break;
                                 case '!':
                                     $or[] = "(c.strength is not null)";
@@ -673,8 +678,10 @@ class CardsData
             $cardinfo['cost'] = 'X';
         }
 
-        // setting the card strength to X if the strength is null and the card subtype has icebreaker
-        if ($cardinfo['strength'] === null && strstr($cardinfo['subtype'], 'Icebreaker') !== false) {
+        // setting the card strength to X if the strength is null and the card is ICE or Program - Icebreaker
+        if ($cardinfo['strength'] === null &&
+            ($cardinfo['type_code'] === 'ice' ||
+             strstr($cardinfo['subtype'], 'Icebreaker') !== false)) {
             $cardinfo['strength'] = 'X';
         }
 
