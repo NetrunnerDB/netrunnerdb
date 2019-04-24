@@ -263,6 +263,14 @@ function unicorn(card) {
     return mwlCard.is_restricted ? unicorn_emoji : '';
 }
 
+function check_card_rotation(card) {
+    var rotated_cycles = _.map(NRDB.data.cycles.find( { "rotated": true } ), 'code');
+    var is_rotated = rotated_cycles.find(function(c) {return c === card.pack.cycle_code;});
+
+    var rotated_emoji = ' <span title="Rotated card" style="display:inline-block;width:1.5em;">&#x1f504;</span> ';
+    return is_rotated ? rotated_emoji : '';
+}
+
 function update_deck(options) {
     var restrainOneColumn = false;
     if (options) {
@@ -336,7 +344,7 @@ function update_deck(options) {
     var cabinet = {};
     var parts = Identity.title.split(/: /);
 
-    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + unicorn(Identity));
+    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + check_card_rotation(Identity) + unicorn(Identity));
     $('#img_identity').prop('src', Identity.imageUrl);
     InfluenceLimit = Identity.influence_limit;
     if (typeof InfluenceLimit === "undefined")
@@ -440,7 +448,7 @@ function update_deck(options) {
             additional_info = '(<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ') ' + alert_number_of_sets + influence;
         }
 
-        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a>' + unicorn(card) + additional_info + '</div>');
+        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a>' + check_card_rotation(card) + unicorn(card) + additional_info + '</div>');
         item.appendTo($('#deck-content .deck-' + criteria));
 
         cabinet[criteria] |= 0;
