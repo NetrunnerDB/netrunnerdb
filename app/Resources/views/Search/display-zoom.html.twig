@@ -19,7 +19,16 @@
                                 <div class="panel-heading">
                                     <h3 class="panel-title card-title">
                                         {% if card.uniqueness == true %}&diams;{% endif %}
-                                        <a href="{{ card.url }}" class="card-title{% if card.available == false %} card-preview{% endif %}">{{ card.title }}</a>
+                                        <a href="{{ card.url }}" class="card-title{% if card.available == false %} card-preview{% endif %}">{{ card.title }}</a> 
+					{% if card.mwl_info|length %}
+					    {% if card.mwl_info[0].is_restricted %}
+					        <span title="Restricted card">&#x1f984;</span>
+					    {% endif%}
+					    {% if card.mwl_info[0].deck_limit is not null and card.mwl_info[0].deck_limit == 0 %}
+						<span title="Banned card"><font color="red">&cross;</font></span>
+					    {% endif %}
+                                        {% endif %}
+
                                     </h3>
                                 </div>
                                 <div class="panel-body">
