@@ -28,6 +28,9 @@
 						<span title="Banned card"><font color="red">&#x1f6ab;</font></span>
 					    {% endif %}
                                         {% endif %}
+					{% if card.is_rotated %}
+					    <span title="Rotated card">&#x1f504;</span>	
+					{% endif %}
                                     </h3>
                                 </div>
                                 <div class="panel-body">

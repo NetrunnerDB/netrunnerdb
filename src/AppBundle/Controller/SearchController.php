@@ -445,6 +445,8 @@ class SearchController extends Controller
                     $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
                     $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
+
+		    $cardinfo['is_rotated'] = $card->getPack()->getCycle()->getRotated();
                 }
                 if ($view == "rulings") {
                     $cardinfo['rulings'] = $cardsData->get_rulings(array($card));
