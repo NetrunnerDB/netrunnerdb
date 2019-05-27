@@ -13,8 +13,7 @@ $(document).on('data.app', function() {
 		});
 	});
 
-	var mwl_code = SelectedDeck.mwl_code, mwl_record = mwl_code && NRDB.data.mwl.findById(mwl_code);
-	MWL = mwl_record;
+	MWL = SelectedDeck.code && NRDB.data.mwl.findById(SelectedDeck.code);
 
 	update_deck();
 	NRDB.draw_simulator.init();
