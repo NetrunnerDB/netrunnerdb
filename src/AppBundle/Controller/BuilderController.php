@@ -438,7 +438,10 @@ class BuilderController extends Controller
             );
         }
 
-        $mwl = $deck->getMWL()->getCards();
+        $mwl = null;
+	if ($deck->getMWL()) {
+		$mwl = $deck->getMWL()->getCards();
+	}
         foreach ($types as $type) {
             if (isset($classement[$type]) && $classement[$type]['qty']) {
                 $lines[] = "";
@@ -449,7 +452,8 @@ class BuilderController extends Controller
                     /** @var Card $card */
                     $card = $slot['card'];
                     $is_restricted = (
-                        isset($mwl[$card->getCode()])
+			$mwl
+                        && isset($mwl[$card->getCode()])
                         && isset($mwl[$card->getCode()]['is_restricted'])
                         && ($mwl[$card->getCode()]['is_restricted'] === 1)
                     );
