@@ -739,7 +739,7 @@ class SocialController extends Controller
         );
 
         if ($decklist->getSide()->getCode() == "corp") {
-            $minAgendaPoints = floor($decklist->getDeckSize() / 5) * 2 + 2;
+            $minAgendaPoints = floor($classement['deckSize'] / 5) * 2 + 2;
 
             $lines[] = sprintf(
                 "%s agenda points (between %s and %s)",
