@@ -120,6 +120,9 @@
 .icon-ashes:before {
   content: "\e929";
 }
+.icon-magnum-opus-reprint:before {
+  content: "\e92a";
+}
 .icon-anarch:before {
   content: "\e91a";
 }
