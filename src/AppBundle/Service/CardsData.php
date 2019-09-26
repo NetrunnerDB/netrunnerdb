@@ -332,10 +332,10 @@ class CardsData
                     foreach ($condition as $arg) {
                         switch ($operator) {
                             case ':':
-                                $or[] = "(SUBSTRING(s.code,1,1) = ?$i)";
+                                $or[] = "(SUBSTRING(s.code,1,1) = SUBSTRING(?$i,1,1))";
                                 break;
                             case '!':
-                                $or[] = "(SUBSTRING(s.code,1,1) != ?$i)";
+                                $or[] = "(SUBSTRING(s.code,1,1) != SUBSTRING(?$i,1,1))";
                                 break;
                         }
                         $parameters[$i++] = $arg;
