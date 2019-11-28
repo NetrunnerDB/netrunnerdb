@@ -77,6 +77,7 @@ class CardsData
             '[haas-bioroid]'       => '<span class="icon icon-haas-bioroid" aria-hidden="true"></span><span class="icon-fallback">haas bioroid</span>',
             '[nbn]'                => '<span class="icon icon-nbn" aria-hidden="true"></span><span class="icon-fallback">nbn</span>',
             '[weyland-consortium]' => '<span class="icon icon-weyland-consortium" aria-hidden="true"></span><span class="icon-fallback">weyland consortium</span>',
+            '[interrupt]'          => '<span class="icon icon-interrupt" aria-hidden="true"></span><span class="icon-fallback">interrupt</span>',
         ];
 
         return str_replace(array_keys($map), array_values($map), $text);
