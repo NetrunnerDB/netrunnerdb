@@ -123,6 +123,9 @@
 .icon-magnum-opus-reprint:before {
   content: "\e92a";
 }
+.icon-interrupt:before {
+  content: "\e92b";
+}
 .icon-anarch:before {
   content: "\e91a";
 }
