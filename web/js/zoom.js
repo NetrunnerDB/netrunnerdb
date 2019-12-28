@@ -144,8 +144,69 @@ function edit_ruling(event) {
     
 }
 
+// TODO(plural): Share the preview functionality with the review method as well.
 function write_comment(event) {
-    $(this).replaceWith('<div class="input-group"><input type="text" class="form-control" name="comment" placeholder="Your comment"><span class="input-group-btn"><button class="btn btn-primary" type="submit">Post</button></span></div>');
+    event.preventDefault();
+    if(!NRDB.user.data.is_authenticated) {
+        alert('You must be logged in to leave a comment on a card.');
+        return;
+    }
+
+    $(this).replaceWith(
+        '<div class="input-group">' +
+        '  <input type="text" class="form-control comment-form-text" name="comment" placeholder="Your comment">' +
+        '    <span class="input-group-btn">' +
+        '      <button class="btn btn-primary" type="submit">Post</button>' +
+        '    </span>' +
+        '</div>' +
+        '<div class="well text-muted comment-form-preview">' +
+        '  <small>Preview. Look <a href="http://daringfireball.net/projects/markdown/dingus">here</a> for a Markdown syntax reference.</small>' +
+        '</div>');
+
+    var converter = new Markdown.Converter();
+    $('.comment-form-text').on(
+            'keyup',
+            function () {
+                $('.comment-form-preview').html(converter.makeHtml($('.comment-form-text').val()));
+            }
+    );
+
+    $('.comment-form-text').textcomplete([{
+            match: /\B#([\-+\w]*)$/,
+            search: function (term, callback) {
+                var regexp = new RegExp('\\b' + term, 'i');
+                callback(NRDB.data.cards.find({
+                    title: regexp
+                }));
+            },
+            template: function (value) {
+                return value.title;
+            },
+            replace: function (value) {
+                return '[' + value.title + ']('
+                        + Routing.generate('cards_zoom', {card_code: value.code})
+                        + ')';
+            },
+            index: 1
+        }, {
+            match: /\$([\-+\w]*)$/,
+            search: function (term, callback) {
+                var regexp = new RegExp('^' + term);
+                callback($.grep(['credit', 'recurring-credit', 'click', 'link', 'trash', 'subroutine', 'mu', '1mu', '2mu', '3mu',
+                    'anarch', 'criminal', 'shaper', 'haas-bioroid', 'weyland-consortium', 'jinteki', 'nbn'],
+                        function (symbol) {
+                            return regexp.test(symbol);
+                        }
+                ));
+            },
+            template: function (value) {
+                return value;
+            },
+            replace: function (value) {
+                return '<span class="icon icon-' + value + '"></span>';
+            },
+            index: 1
+        }]);
 }
 
 function form_comment_submit(event) {
@@ -184,6 +245,9 @@ function setup_edit() {
 
 function like_review(event) {
     event.preventDefault();
+    if(!NRDB.user.data.is_authenticated) {
+        return;
+    }
     var obj = $(this);
     var review_id = obj.closest('article.review').data('index');
     $.post(Routing.generate('card_review_like'), {
