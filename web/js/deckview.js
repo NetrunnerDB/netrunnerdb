@@ -1,4 +1,5 @@
 
+
 $(document).on('data.app', function() {
 	var sets_in_deck = {};
 	NRDB.data.cards.find().forEach(function(card) {
@@ -70,19 +71,62 @@ function confirm_publish() {
 	$('#publish-form-warning').remove();
 	$('#btn-publish-submit').text("Checking...").prop('disabled', true);
 	$.ajax(Routing.generate('deck_publish', {deck_id:SelectedDeck.id}), {
-	  success: function( response ) {
-		  var type = response.allowed ? 'warning' : 'danger';
-		  if(response.message) {
-			  $('#publish-deck-form').prepend('<div id="publish-form-warning" class="alert alert-'+type+'">'+response.message+'</div>');
-		  }
-		  if(response.allowed) {
-			  $('#btn-publish-submit').text("Go").prop('disabled', false);
-		  }
-	  },
-	  error: function( jqXHR, textStatus, errorThrown ) {
+		success: function( response ) {
+			var type = response.allowed ? 'warning' : 'danger';
+			if(response.message) {
+				$('#publish-deck-form').prepend('<div id="publish-form-warning" class="alert alert-'+type+'">'+response.message+'</div>');
+			}
+			if (response.allowed) {
+				$('#btn-publish-submit').text("Go").prop('disabled', false);
+			}
+
+			var converter = new Markdown.Converter();
+			$('#publish-deck-description-preview').html(converter.makeHtml($('#publish-deck-description').val()));
+			$('#publish-deck-description').on(
+				'keyup',
+				function () {
+					$('#publish-deck-description-preview').html(converter.makeHtml($('#publish-deck-description').val()));
+				}
+			);
+
+			$('#publish-deck-description').textcomplete([
+				{
+					match: /\B#([\-+\w]*)$/,
+					search: function (term, callback) {
+						var regexp = new RegExp('\\b' + term, 'i');
+						callback(NRDB.data.cards.find({
+						title: regexp
+						}));
+					},
+					template: function (value) { return value.title; },
+					replace: function (value) {
+						return '[' + value.title + ']('
+							+ Routing.generate('cards_zoom', {card_code: value.code})
+							+ ')';
+					},
+					index: 1
+				},
+				{
+					match: /\$([\-+\w]*)$/,
+					search: function (term, callback) {
+						var regexp = new RegExp('^' + term);
+						callback($.grep(
+								// TODO(plural): Extract this out somewhere and insure it has all the right symbols.
+								['credit', 'recurring-credit', 'click', 'link', 'trash', 'subroutine', 'mu', '1mu', '2mu', '3mu', 'anarch', 'criminal', 'shaper', 'haas-bioroid', 'weyland-consortium', 'jinteki', 'nbn'],
+								function (symbol) { return regexp.test(symbol); }
+						));
+					},
+					template: function (value) { return value; },
+					replace: function (value) {
+						return '<span class="icon icon-' + value + '"></span>';
+					},
+					index: 1
+				}]);
+		},
+		error: function( jqXHR, textStatus, errorThrown ) {
 			console.log('['+moment().format('YYYY-MM-DD HH:mm:ss')+'] Error on '+this.url, textStatus, errorThrown);
-	    $('#publish-deck-form').prepend('<div id="publish-form-alert" class="alert alert-danger">'+jqXHR.responseText+'</div>');
-	  }
+			$('#publish-deck-form').prepend('<div id="publish-form-alert" class="alert alert-danger">'+jqXHR.responseText+'</div>');
+		}
 	});
 	$('#publish-deck-name').val(SelectedDeck.name);
 	$('#publish-deck-id').val(SelectedDeck.id);
