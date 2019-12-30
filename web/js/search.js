@@ -1,7 +1,9 @@
 $(document).on('data.app', function() {
+	// We only need to calculate the latest_cards once and not on every findMatches call.
+	var latest_cards = select_only_latest_cards(NRDB.data.cards.find());
+
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
-		var latestCards = select_only_latest_cards(NRDB.data.cards.find());
 		var regexp = new RegExp(q, 'i');
 		var matchingCards = _.filter(latestCards, function (card) {
 			return regexp.test(_.deburr(card.title).toLowerCase().trim());
