@@ -26,7 +26,7 @@ class SearchController extends Controller
 
     const VIEW_OPTIONS = array(
         'list'    => 'a Checklist',
-        'text'    => 'a Spoiler',
+        'text'    => 'Text only',
         'full'    => 'Full Cards',
         'images'  => 'Images only',
         'rulings' => 'Rulings only',
