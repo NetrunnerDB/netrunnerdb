@@ -293,6 +293,7 @@ $(function () {
     $(document).on('click', '#btn-export-markdown', export_markdown);
     $(document).on('click', '#btn-export-plaintext', export_plaintext);
     $(document).on('click', '#btn-export-jintekinet', export_jintekinet);
+    $(document).on('click', '#btn-compare', compare_form);
     $(document).on('click', '#btn-compare-submit', compare_submit);
     $(document).on('click', '#btn-copy-decklist', copy_decklist);
     $(document).on('click', '#btn-moderation-absolve', moderation_absolve);

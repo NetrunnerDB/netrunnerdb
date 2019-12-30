@@ -361,11 +361,12 @@ class ReviewController extends Controller
     /**
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
+     * @param TextProcessor          $textProcessor
      * @return Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function commentAction(Request $request, EntityManagerInterface $entityManager)
+    public function commentAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
         $user = $this->getUser();
 
@@ -385,7 +386,12 @@ class ReviewController extends Controller
         $comment = new Reviewcomment();
         $comment->setReview($review);
         $comment->setAuthor($user);
-        $comment->setText($comment_text);
+        $comment_html = $textProcessor->markdown($comment_text);
+        if (!$comment_html) {
+            return new Response('Your comment is empty.');
+        }
+
+        $comment->setText($comment_html);
 
         $entityManager->persist($comment);
 

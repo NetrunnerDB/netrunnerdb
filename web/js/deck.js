@@ -19,18 +19,14 @@ function update_max_qty() {
 			maxqty : max_qty
 		});
 	});
-
 }
 
 Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
-	
-	NRDB.data.cards.remove({
-		side_code : {
-			"$ne" : Side
-		}
-	});
-	
 	NRDB.data.cards.find().forEach(function(card) {
+		// Only cards from the deck's side can be in the deck.
+		if (card.side_code != Side) {
+			return;
+		}
 		var indeck = 0;
 		if (Deck[card.code]) {
 			indeck = parseInt(Deck[card.code], 10);
@@ -100,7 +96,8 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
-		var matchingPacks = NRDB.data.cards.find({pack_code: Filters.pack_code || []});
+                // TODO(plural): Make this variable initialized at page load and only updated when the collection changes instead of here on every keypress!
+		var matchingPacks = NRDB.data.cards.find({side_code: Side, pack_code: Filters.pack_code || []});
 		var latestCards = select_only_latest_cards(matchingPacks);
 		var regexp = new RegExp(q, 'i');
 		var matchingCards = _.filter(latestCards, function (card) {
@@ -179,8 +176,6 @@ function select_only_latest_cards(matchingCards) {
 }
 
 function create_collection_tab(initialPackSelection) {
-	
-
 	var sets_in_deck = {};
 	NRDB.data.cards.find({indeck:{'$gt':0}}).forEach(function(card) {
 		sets_in_deck[card.pack_code] = 1;
@@ -234,7 +229,7 @@ function create_collection_tab(initialPackSelection) {
 	// triggers a refresh_collection();
 	// triggers a update_deck();
         
-        NRDB.suggestions.query(Side);
+	NRDB.suggestions.query(Side);
 }
 
 function get_filter_query(Filters) {
@@ -364,6 +359,7 @@ $(function() {
 		match : /\B#([\-+\w]*)$/,
 		search : function(term, callback) {
 			var regexp = new RegExp('\\b' + term, 'i');
+			// In the Notes section, we want to allow completion for *all* cards regardless of side.
 			callback(NRDB.data.cards.find({
 				title : regexp
 			}));
