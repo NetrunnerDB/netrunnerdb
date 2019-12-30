@@ -466,7 +466,7 @@ function confirm_publish(deck) {
 						title: regexp
 						}));
 					},
-					template: function (value) { return value.title; },
+					template: function (value) { return value.title + ' (' + value.pack.name + ')'; },
 					replace: function (value) {
 						return '[' + value.title + ']('
 							+ Routing.generate('cards_zoom', {card_code: value.code})
