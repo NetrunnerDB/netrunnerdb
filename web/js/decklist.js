@@ -373,10 +373,10 @@ function edit_form() {
     $('#editModal').modal('show');
 
 	var converter = new Markdown.Converter();
-	$('#publish-deck-description-preview').html(
+	$('#edit-decklist-description-preview').html(
 			converter.makeHtml($('#edit-decklist-description').val()));
 	$('#edit-decklist-description').on('keyup', function() {
-		$('#publish-deck-description-preview').html(
+		$('#edit-decklist-description-preview').html(
 				converter.makeHtml($('#edit-decklist-description').val()));
 	});
 
