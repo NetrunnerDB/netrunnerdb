@@ -370,17 +370,17 @@ function compare_form() {
 }
 
 function edit_form() {
-    $('#editModal').modal('show');
+    $('#publishModal').modal('show');
 
 	var converter = new Markdown.Converter();
-	$('#edit-decklist-description-preview').html(
-			converter.makeHtml($('#edit-decklist-description').val()));
-	$('#edit-decklist-description').on('keyup', function() {
-		$('#edit-decklist-description-preview').html(
-				converter.makeHtml($('#edit-decklist-description').val()));
+	$('#publish-decklist-description-preview').html(
+			converter.makeHtml($('#publish-decklist-description').val()));
+	$('#publish-decklist-description').on('keyup', function() {
+		$('#publish-decklist-description-preview').html(
+				converter.makeHtml($('#publish-decklist-description').val()));
 	});
 
-	$('#edit-decklist-description').textcomplete([{
+	$('#publish-decklist-description').textcomplete([{
 		match : /\B#([\-+\w]*)$/,
 		search : function(term, callback) {
 			var regexp = new RegExp('\\b' + term, 'i');

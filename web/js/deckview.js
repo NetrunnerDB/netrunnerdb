@@ -74,22 +74,22 @@ function confirm_publish() {
 		success: function( response ) {
 			var type = response.allowed ? 'warning' : 'danger';
 			if(response.message) {
-				$('#publish-deck-form').prepend('<div id="publish-form-warning" class="alert alert-'+type+'">'+response.message+'</div>');
+				$('#publish-decklist-form').prepend('<div id="publish-form-warning" class="alert alert-'+type+'">'+response.message+'</div>');
 			}
 			if (response.allowed) {
 				$('#btn-publish-submit').text("Go").prop('disabled', false);
 			}
 
 			var converter = new Markdown.Converter();
-			$('#publish-deck-description-preview').html(converter.makeHtml($('#publish-deck-description').val()));
-			$('#publish-deck-description').on(
+			$('#publish-decklist-description-preview').html(converter.makeHtml($('#publish-decklist-description').val()));
+			$('#publish-decklist-description').on(
 				'keyup',
 				function () {
-					$('#publish-deck-description-preview').html(converter.makeHtml($('#publish-deck-description').val()));
+					$('#publish-decklist-description-preview').html(converter.makeHtml($('#publish-decklist-description').val()));
 				}
 			);
 
-			$('#publish-deck-description').textcomplete([
+			$('#publish-decklist-description').textcomplete([
 				{
 					match: /\B#([\-+\w]*)$/,
 					search: function (term, callback) {
@@ -125,12 +125,12 @@ function confirm_publish() {
 		},
 		error: function( jqXHR, textStatus, errorThrown ) {
 			console.log('['+moment().format('YYYY-MM-DD HH:mm:ss')+'] Error on '+this.url, textStatus, errorThrown);
-			$('#publish-deck-form').prepend('<div id="publish-form-alert" class="alert alert-danger">'+jqXHR.responseText+'</div>');
+			$('#publish-decklist-form').prepend('<div id="publish-form-alert" class="alert alert-danger">'+jqXHR.responseText+'</div>');
 		}
 	});
-	$('#publish-deck-name').val(SelectedDeck.name);
+	$('#publish-decklist-name').val(SelectedDeck.name);
 	$('#publish-deck-id').val(SelectedDeck.id);
-	$('#publish-deck-description').val(SelectedDeck.description);
+	$('#publish-decklist-description').val(SelectedDeck.description);
 	$('#publishModal').modal('show');
 }
 
