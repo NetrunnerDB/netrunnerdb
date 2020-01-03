@@ -116,7 +116,7 @@ function setup_comment_form() {
                 callback(result);
             },
             template: function (value) {
-                return value.title;
+                return value.title + ' (' + value.pack.name + ')';
             },
             replace: function (value) {
                 return '[' + value.title + ']('
@@ -370,7 +370,51 @@ function compare_form() {
 }
 
 function edit_form() {
-    $('#editModal').modal('show');
+    $('#publishModal').modal('show');
+
+	var converter = new Markdown.Converter();
+	$('#publish-decklist-description-preview').html(
+		converter.makeHtml($('#publish-decklist-description').val()));
+	$('#publish-decklist-description').on('keyup', function() {
+		$('#publish-decklist-description-preview').html(
+				converter.makeHtml($('#publish-decklist-description').val()));
+	});
+
+	$('#publish-decklist-description').textcomplete([{
+		match : /\B#([\-+\w]*)$/,
+		search : function(term, callback) {
+			var regexp = new RegExp('\\b' + term, 'i');
+			// In the Notes section, we want to allow completion for *all* cards regardless of side.
+			callback(NRDB.data.cards.find({
+				title : regexp
+			}));
+		},
+		template : function(value) {
+			return value.title + ' (' + value.pack.name + ')';
+		},
+		replace : function(value) {
+			return '[' + value.title + ']('
+					+ Routing.generate('cards_zoom', {card_code:value.code})
+					+ ')';
+		},
+		index : 1
+	}, {
+		match : /\$([\-+\w]*)$/,
+		search : function(term, callback) {
+			var regexp = new RegExp('^' + term);
+			callback($.grep(['credit', 'recurring-credit', 'click', 'link', 'trash', 'subroutine', 'mu', '1mu', '2mu', '3mu',
+				'anarch', 'criminal', 'shaper', 'haas-bioroid', 'weyland-consortium', 'jinteki', 'nbn'],
+				function(symbol) { return regexp.test(symbol); }
+			));
+		},
+		template : function(value) {
+			return value;
+		},
+		replace : function(value) {
+			return '<span class="icon icon-' + value + '"></span>';
+		},
+		index : 1
+	}]);
 }
 
 function delete_form() {

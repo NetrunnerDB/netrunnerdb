@@ -365,7 +365,7 @@ $(function() {
 			}));
 		},
 		template : function(value) {
-			return value.title;
+			return value.title + ' (' + value.pack.name + ')';
 		},
 		replace : function(value) {
 			return '[' + value.title + ']('
