@@ -222,7 +222,7 @@ function do_action_deck(event) {
 	switch(action_id) {
 		case 'btn-view': location.href=Routing.generate('deck_view', {deck_id:deck.id,_locale:NRDB.locale}); break;
 		case 'btn-edit': location.href=Routing.generate('deck_edit', {deck_id:deck.id,_locale:NRDB.locale}); break;
-		case 'btn-publish': confirm_publish(deck); break;
+		case 'btn-publish': show_publish_deck_form(deck.id, deck.name, deck.description); break;
 		case 'btn-duplicate': location.href=Routing.generate('deck_duplicate', {deck_id:deck.id,_locale:NRDB.locale}); break;
 		case 'btn-delete': confirm_delete(deck); break;
 		case 'btn-download-text': location.href=Routing.generate('deck_export_text', {deck_id:deck.id,_locale:NRDB.locale}); break;
@@ -434,72 +434,6 @@ function tag_clear_process(event) {
 			alert('An error occured while updating the tags.');
 		}
 	});
-}
-
-function confirm_publish(deck) {
-	$('#publish-form-warning').remove();
-	$('#btn-publish-submit').text("Checking...").prop('disabled', true);
-	$.ajax(Routing.generate('deck_publish', {deck_id:deck.id}), {
-		success: function( response ) {
-			var type = response.allowed ? 'warning' : 'danger';
-			if(response.message) {
-				$('#publish-deck-form').prepend('<div id="publish-form-warning" class="alert alert-'+type+'">'+response.message+'</div>');
-			}
-			if (response.allowed) {
-				$('#btn-publish-submit').text("Go").prop('disabled', false);
-			}
-			var converter = new Markdown.Converter();
-			$('#publish-deck-description-preview').html(converter.makeHtml($('#publish-deck-description').val()));
-			$('#publish-deck-description').on(
-				'keyup',
-				function () {
-					$('#publish-deck-description-preview').html(converter.makeHtml($('#publish-deck-description').val()));
-				}
-			);
-
-			$('#publish-deck-description').textcomplete([
-				{
-					match: /\B#([\-+\w]*)$/,
-					search: function (term, callback) {
-						var regexp = new RegExp('\\b' + term, 'i');
-						callback(NRDB.data.cards.find({
-						title: regexp
-						}));
-					},
-					template: function (value) { return value.title + ' (' + value.pack.name + ')'; },
-					replace: function (value) {
-						return '[' + value.title + ']('
-							+ Routing.generate('cards_zoom', {card_code: value.code})
-							+ ')';
-					},
-					index: 1
-				},
-				{
-					match: /\$([\-+\w]*)$/,
-					search: function (term, callback) {
-						var regexp = new RegExp('^' + term);
-						callback($.grep(
-								// TODO(plural): Extract this out somewhere and insure it has all the right symbols.
-								['credit', 'recurring-credit', 'click', 'link', 'trash', 'subroutine', 'mu', '1mu', '2mu', '3mu', 'anarch', 'criminal', 'shaper', 'haas-bioroid', 'weyland-consortium', 'jinteki', 'nbn'],
-								function (symbol) { return regexp.test(symbol); }
-						));
-					},
-					template: function (value) { return value; },
-					replace: function (value) {
-						return '<span class="icon icon-' + value + '"></span>';
-					},
-					index: 1
-				}]);
-		},
-		error: function( jqXHR, textStatus, errorThrown ) {
-			console.log('['+moment().format('YYYY-MM-DD HH:mm:ss')+'] Error on '+this.url, textStatus, errorThrown);
-			$('#publish-deck-form').prepend('<div id="publish-form-alert" class="alert alert-danger">'+jqXHR.responseText+'</div>');
-		}
-	});
-	$('#publish-deck-name').val(deck.name);
-	$('#publish-deck-id').val(deck.id);
-	$('#publish-deck-description').val(deck.description);
-	$('#publishModal').modal('show');
 }
 
 function confirm_delete(deck) {
