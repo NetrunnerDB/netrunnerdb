@@ -1,6 +1,5 @@
 $(document).on('data.app', function() {
-	// We only need to calculate the latest_cards once and not on every findMatches call.
-	var latest_cards = select_only_latest_cards(NRDB.data.cards.find());
+	var latestCards = select_only_latest_cards(NRDB.data.cards.find());
 
 	function findMatches(q, cb) {
 		if(q.match(/^\w:/)) return;
@@ -17,7 +16,7 @@ $(document).on('data.app', function() {
 		minLength: 2
 	}, {
 		name: 'cardnames',
-		display: function(card) { return card.title + ' (' + card.pack.name + ')'; },
+		display: function(card) { return card.title; },
 		source: findMatches
 	});
 });
