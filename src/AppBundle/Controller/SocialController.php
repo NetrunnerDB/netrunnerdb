@@ -944,6 +944,30 @@ class SocialController extends Controller
     }
 
     /**
+	 * @param Request $request
+     * @param String $user_name
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function profileByUsernameAction(Request $request, String $user_name, EntityManagerInterface $entityManager)
+    {
+        $response = new Response();
+        $response->setPublic();
+        $response->setMaxAge($this->getParameter('short_cache'));
+
+        $found_users = $entityManager->getRepository('AppBundle:User')->findBy(['username' => $user_name]);
+		if (count($found_users) == 1) {
+			return $this->redirect($this->generateUrl('user_profile_view', [
+				"_locale"   => $request->getLocale(),
+				"user_id"   => $found_users[0]->getId(),
+				"user_name" => $found_users[0]->getUsername(),
+			]));
+		} else {
+			throw $this->createNotFoundException('The user could not be found.');
+		}
+    }
+
+    /**
      * @param User $user
      * @param EntityManagerInterface $entityManager
      * @return Response
