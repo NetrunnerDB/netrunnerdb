@@ -38,6 +38,9 @@ var UserId = {{ user.id }};
             {% endif %}
         {% endif %}
         </div>
+		<div>
+			<a href="https://alwaysberunning.net/profile/{{ user.id }}" target="_blank"><img src="https://alwaysberunning.net/favicon-96x96.png" width=30 height=30>&nbsp;Always Be Running Profile</a>	
+		</div>
 	</p>
     <a href="{{ path('user_follow',{user_id:user.id}) }}" class="btn btn-success" style="display:none" id="follow"><span class="glyphicon glyphicon glyphicon-plus"></span> Follow</a>
     <a href="{{ path('user_unfollow',{user_id:user.id}) }}" class="btn btn-info" style="display:none" id="unfollow"><span class="glyphicon glyphicon glyphicon-eye-open"></span> Following</a>
