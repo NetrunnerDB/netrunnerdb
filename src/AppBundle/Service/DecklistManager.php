@@ -824,7 +824,7 @@ class DecklistManager
                 where $where
                 and d.moderation_status in (0,1)
                 $group_by
-                order by $order desc
+                order by $order desc, d.name asc
                 limit $start, $limit",
             $params,
             $types

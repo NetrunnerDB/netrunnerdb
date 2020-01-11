@@ -315,6 +315,16 @@ user_profile_save:
     requirements:
         _locale: \w\w
 
+clean_user_profile_view:
+    path: /profile/{user_name}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:profileByUsername
+        user_name: null
+        _locale: en
+    requirements:
+        _locale: \w\w
+
 user_profile_view:
     path: /{_locale}/profile/{user_id}/{user_name}/{page}
     methods: [GET]
