@@ -157,6 +157,23 @@ class SearchController extends Controller
             . ($pack->getDateRelease() ? " published on " . $pack->getDateRelease()->format('Y/m/d') : "")
             . " by Fantasy Flight Games.";
 
+        // Find previous and next packs for navigation.
+        $em = $entityManager->getRepository('AppBundle:Pack');
+        $prev_pack = $em->createQueryBuilder('p')
+            ->where('p.dateRelease < :date_release')
+            ->setParameter('date_release', $pack->getDateRelease())
+            ->orderBy('p.dateRelease', 'DESC')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
+        $next_pack = $em->createQueryBuilder('p')
+            ->where('p.dateRelease > :date_release')
+            ->setParameter('date_release', $pack->getDateRelease())
+            ->orderBy('p.dateRelease', 'ASC')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
+
         return $this->forward(
             'AppBundle:Search:display',
             [
@@ -169,6 +186,9 @@ class SearchController extends Controller
                 'title'         => $pack->getName(),
                 'meta'          => $meta,
                 'locale'        => $request->getLocale(),
+                'currentPack'   => $pack,
+                'prevPack'      => $prev_pack,
+                'nextPack'      => $next_pack
             ]
         );
     }
@@ -317,6 +337,9 @@ class SearchController extends Controller
      * @param string                 $meta
      * @param string|null            $locale
      * @param array|null             $locales
+     * @param Pack|null              $currentPack
+     * @param Pack|null              $prevPack
+     * @param Pack|null              $nextPack
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @param CardsData              $cardsData
@@ -331,6 +354,9 @@ class SearchController extends Controller
         string $meta = "",
         string $locale = null,
         array $locales = null,
+        Pack $currentPack = null,
+        Pack $prevPack = null,
+        Pack $nextPack = null,
         Request $request,
         EntityManagerInterface $entityManager,
         CardsData $cardsData
@@ -459,7 +485,13 @@ class SearchController extends Controller
                 if (count($rows) == 1) {
                     $pagination = $this->setnavigation($card, $locale, $entityManager);
                 } else {
-                    $pagination = $this->pagination($nb_per_page, count($rows), $first, $q, $view, $sort, $locale);
+                    $currentPackUrl = $currentPack ? $this->generateUrl('cards_list', ['pack_code' => $currentPack->getCode(), "_locale" => $locale])  : '';
+                    $currentPackName = $currentPack ? $currentPack->getName() : "";
+                    $prevPackUrl = $prevPack ? $this->generateUrl('cards_list', ['pack_code' => $prevPack->getCode(), "_locale" => $locale])  : '';
+                    $prevPackName = $prevPack ? $prevPack->getName() : "";
+                    $nextPackUrl = $nextPack ? $this->generateUrl('cards_list', ['pack_code' => $nextPack->getCode(), "_locale" => $locale])  : '';
+                    $nextPackName = $nextPack ? $nextPack->getName() : "";
+                    $pagination = $this->pagination($nb_per_page, count($rows), $first, $q, $view, $sort, $locale, $currentPackUrl, $currentPackName, $prevPackUrl, $prevPackName, $nextPackUrl, $nextPackName);
                 }
             }
 
@@ -595,9 +627,15 @@ class SearchController extends Controller
      * @param string $view
      * @param string $sort
      * @param string $locale
+     * @param string $currentPackQuery
+     * @param string $currentPackName
+     * @param string $prevPackQuery
+     * @param string $prevPackName
+     * @param string $nextPackQuery
+     * @param string $nextPackName
      * @return string
      */
-    public function pagination(int $pagesize, int $total, int $current, string $q, string $view, string $sort, string $locale)
+    public function pagination(int $pagesize, int $total, int $current, string $q, string $view, string $sort, string $locale, string $currentPackQuery = null, $currentPackName = null, string $prevPackQuery = null, $prevPackName = null, string $nextPackQuery = null, $nextPackName = null)
     {
         if ($total < $pagesize) {
             $pagesize = $total;
@@ -629,14 +667,20 @@ class SearchController extends Controller
         }
 
         return $this->renderView('/Search/pagination.html.twig', [
-            "first"          => $first,
-            "prev"           => $prev,
-            "current"        => $current,
-            "next"           => $next,
-            "last"           => $last,
-            "count"          => $total,
-            "ellipsisbefore" => $pageindex > 3,
-            "ellipsisafter"  => $pageindex < $pagecount - 2,
+            "first"            => $first,
+            "prev"             => $prev,
+            "current"          => $current,
+            "next"             => $next,
+            "last"             => $last,
+            "count"            => $total,
+            "ellipsisbefore"   => $pageindex > 3,
+            "ellipsisafter"    => $pageindex < $pagecount - 2,
+            "currentPackQuery" => $currentPackQuery,
+            "currentPackName"  => $currentPackName,
+            "prevPackQuery"    => $prevPackQuery,
+            "prevPackName"     => $prevPackName,
+            "nextPackQuery"    => $nextPackQuery,
+            "nextPackName"     => $nextPackName
         ]);
     }
 }
