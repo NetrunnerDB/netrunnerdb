@@ -36,19 +36,19 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 			factioncost : card.faction_cost || 0
 		});
 	});
-	
+
 	find_identity();
-	
+
 	NRDB.draw_simulator.init();
 	update_max_qty();
 
 	$('#faction_code').empty();
-	
+
 	var factions = NRDB.data.factions.find({side_code: Side}).sort(function(a, b) {
-		return b.code.substr(0,7) === "neutral" 
+		return b.code.substr(0,7) === "neutral"
 			? -1
-			: a.code.substr(0,7) === "neutral" 
-				? 1 
+			: a.code.substr(0,7) === "neutral"
+				? 1
 				: a.code.localeCompare(b.code);
 	});
 	factions.forEach(function(faction) {
@@ -60,7 +60,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 		label.tooltip({container: 'body'});
 		$('#faction_code').append(label);
 	});
-	
+
 	$('#faction_code').button();
 	$('#faction_code').children('label[data-code='+Identity.faction_code+']').each(function(index, elt) {
 		$(elt).button('toggle');
@@ -87,7 +87,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	$('#type_code').children('label:first-child').each(function(index, elt) {
 		$(elt).button('toggle');
 	});
-	
+
 
 	$('input[name=Identity]').prop("checked", false);
 	if (Identity.code == "03002") {
@@ -148,7 +148,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 
 	var initialPackSelection = {};
 	var promises = [];
-	
+
 	NRDB.data.packs.find().forEach(function (pack) {
 		 promises.push(localforage.getItem('pack_code_'+ pack.code).then(function (value) {
 			 if(value) initialPackSelection[pack.code] = (value === "on");
@@ -158,7 +158,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 	Promise.all(promises).then(function () {
 		create_collection_tab(initialPackSelection);
 	});
-	
+
 });
 
 // This will filter matchingCards to only the latest version of each card, preserving the original order of matchingCards.
@@ -176,11 +176,38 @@ function select_only_latest_cards(matchingCards) {
 }
 
 function create_collection_tab(initialPackSelection) {
+    var rotated_cycles = Array();
+	rotated_cycles['draft'] = 1;
+	rotated_cycles['napd'] = 1;
+	NRDB.data.cycles.find( { "rotated": true } ).forEach(function(cycle) { rotated_cycles[cycle.code] = 1; });
+
+	var rotated_packs = Array();
+	NRDB.data.packs.find().forEach(function(pack) { if (rotated_cycles[pack.cycle.code]) { rotated_packs[pack.code] = 1; } });
+
+	$('#collection_current').on('click', function(event) {
+		event.preventDefault();
+		$('#pack_code').find(':checkbox').each(function() {
+			$(this).prop('checked', !(rotated_cycles[$(this).prop('name')] || rotated_packs[$(this).prop('name')]));
+		});
+	});
+	$('#collection_all').on('click', function(event) {
+		event.preventDefault();
+		$('#pack_code').find(':checkbox').each(function(){
+			$(this).prop('checked', true);
+		});
+	});
+	$('#collection_none').on('click', function(event) {
+		event.preventDefault();
+		$('#pack_code').find(':checkbox').each(function(){
+			$(this).prop('checked', false);
+		});
+	});
+
 	var sets_in_deck = {};
 	NRDB.data.cards.find({indeck:{'$gt':0}}).forEach(function(card) {
 		sets_in_deck[card.pack_code] = 1;
 	});
-	
+
 	$('#pack_code').empty();
 	var f = function(pack, $container) {
 		var released = !(pack.date_relase == null) && !pack.cycle.rotated;
@@ -202,7 +229,7 @@ function create_collection_tab(initialPackSelection) {
 			});
 
 			var $group = $('<div class="checkbox"></div>');
-			var $toggle = $('<div class="checkbox" data-toggle="checklist"><label><input type="checkbox">' + cycle.name + '</label></div>');
+			var $toggle = $('<div class="checkbox" data-toggle="checklist"><label><input type="checkbox" name="' + cycle.code + '">' + cycle.name + '</label></div>');
 			$group.append($toggle);
 			$group.append($list);
 			$('#pack_code').append($group);
@@ -222,13 +249,13 @@ function create_collection_tab(initialPackSelection) {
 		});
 		Filters[columnName] = arr;
 	});
-	
+
 	FilterQuery = get_filter_query(Filters);
 
 	$('#mwl_code').trigger('change');
 	// triggers a refresh_collection();
 	// triggers a update_deck();
-        
+
 	NRDB.suggestions.query(Side);
 }
 
@@ -259,7 +286,7 @@ function check_all_inactive() {
 $(function() {
 	// while editing a deck, we don't want to leave the page if the deck is unsaved
 	$(window).on('beforeunload', alert_if_unsaved);
-	
+
 	$('html,body').css('height', '100%');
 
 	$('#filter-text').on('typeahead:selected typeahead:autocompleted', NRDB.card_modal.typeahead);
@@ -273,7 +300,7 @@ $(function() {
 	});
 
 	$('#pack_code,.search-buttons').on('change', 'label', handle_input_change);
-	
+
 	$('.search-buttons').on('click', 'label', function(event) {
 		var dropdown = $(this).closest('ul').hasClass('dropdown-menu');
 		if (dropdown) {
@@ -309,7 +336,7 @@ $(function() {
 	$('#btn-save-as-copy').on('click', function(event) {
 		$('#deck-save-as-copy').val(1);
 	});
-	
+
 	$('#btn-cancel-edits').on('click', function(event) {
 		var edits = $.grep(Snapshots, function (snapshot) {
 			return snapshot.saved === false;
@@ -320,7 +347,7 @@ $(function() {
 		}
 		$('#deck-cancel-edits').val(1);
 	});
-	
+
 	$('#collection').on({
 		change : function(event) {
 			InputByTitle = false;
@@ -333,7 +360,7 @@ $(function() {
 			InputByTitle = false;
 		}
 	}, 'a.card');
-	
+
 	$('.modal').on({
 		change : handle_quantity_change
 	}, 'input[type=radio]');
@@ -341,7 +368,7 @@ $(function() {
 	$('thead').on({
 		click : handle_header_click
 	}, 'a[data-sort]');
-	
+
 	$('#cardModal').on({
 		keypress : function(event) {
 			var num = parseInt(event.which, 10) - 48;
@@ -498,11 +525,11 @@ function handle_input_change(event) {
 	var arr = [];
 	div.find("input[type=checkbox]").each(function(index, elt) {
 		var name = $(elt).attr('name');
-		
+
 		if (name && $(elt).prop('checked')) {
 			arr.push(name);
 		}
-		
+
 		if (columnName == "pack_code") {
 			var key = 'pack_code_' + name,
 				value = $(elt).prop('checked') ? "on" : "off";
@@ -729,7 +756,7 @@ function update_filtered() {
 
 	var counter = 0, container = $('#collection-table'), display_columns = NRDB.settings.getItem('display-columns');
 	var SmartFilterQuery = NRDB.smart_filter.get_query(FilterQuery);
-	
+
 	var orderBy = {};
 	orderBy[Sort] = Order;
 	if(Sort != 'title') orderBy['title'] = 1;

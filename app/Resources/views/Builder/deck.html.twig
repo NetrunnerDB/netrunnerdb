@@ -33,7 +33,6 @@ var Filters = {},
 	DisplaySortSecondary = 'name',
 	HideDisabled = true,
 	ShowOnlyDeck = false;
-	
 </script>
 
 {% endblock %}
@@ -130,7 +129,7 @@ var Filters = {},
     <li role="presentation"><a href="#tab-pane-collection" role="tab" data-toggle="tab">Collection</a></li>
     <li role="presentation"><a href="#tab-pane-settings" role="tab" data-toggle="tab">Settings</a></li>
    </ul>
-  
+
    <!-- Tab panes -->
   <div class="tab-content">
 	<!-- tabpanel Build -->
@@ -173,7 +172,7 @@ var Filters = {},
 	<!-- tabpanel Check -->
 	<div role="tabpanel" class="tab-pane" id="tab-pane-check">
 		{% include '/Builder/draw-simulator.html.twig' %}
-		
+
 		<!-- Graphs -->
 		<table class="table table-condensed" id="table-graph-costs">
 		<thead>
@@ -185,7 +184,7 @@ var Filters = {},
 		</tr>
 		</tbody>
 		</table>
-		
+
 		<table class="table table-condensed" id="table-graph-strengths">
 		<thead>
 		<tr><th colspan="1"><span class="glyphicon glyphicon-stats"></span> Repartition by Strength</th></tr>
@@ -258,10 +257,13 @@ var Filters = {},
 	</div>
     <!-- tabpanel Collection -->
     <div role="tabpanel" class="tab-pane" id="tab-pane-collection">
-    	<div class="panel panel-default">
-    		<div class="panel-heading">Select your packs</div>
-    		<div class="panel-body filter" id="pack_code"></div>
-    	</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">Select your packs |
+				<a href="#" id="collection_current">Current Cardpool</a> |
+				<a href="#" id="collection_all">All</a> |
+				<a href="#" id="collection_none">None</a></div>
+			<div class="panel-body filter" id="pack_code"></div>
+		</div>
     </div>
     <!-- tabpanel Settings -->
     <div role="tabpanel" class="tab-pane" id="tab-pane-settings">
@@ -301,10 +303,10 @@ var Filters = {},
   </div>
 
 </div>
-	
+
 </div><!-- .col-md-8 -->
 <!-- Right-side Column -->
-	
+
 </div><!-- .row -->
 </div><!-- .container -->
 
