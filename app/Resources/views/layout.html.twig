@@ -93,6 +93,7 @@
     <script src="{{ asset('/js/nrdb.format.js') }}"></script>
     <script src="{{ asset('/js/nrdb.tip.js') }}"></script>
     <script src="{{ asset('/js/nrdb.ui.js') }}"></script>
+    <script src="{{ asset('/js/topnav.js') }}"></script>
 
     {% block head %}{% endblock %}
 
@@ -139,11 +140,11 @@
               <li><a href="{{ path('card_rulings') }}">Rulings</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li class="dropdown hidden-xs hidden-lg">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-search"></span></a>
-                <div class="dropdown-menu">
-                  <form method="get" action="{{ path('cards_find') }}">
-                    <input type="text" placeholder="Card Search" class="form-control" name="q" title="{% include '/Search/searchtooltip.html.twig' %}">
+              <li class="dropdown" id="top_nav_card_search_menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Card Search&nbsp;&nbsp;<span class="glyphicon glyphicon-search"></span></a>
+                <div class="dropdown-menu" id="miney">
+                  <form id="top_nav_card_search_form" method="get" action="{{ path('cards_find') }}">
+                    <input type="text" placeholder="Card Search" class="form-control" name="q" id="top_nav_card_search" title="{% include '/Search/searchtooltip.html.twig' %}">
                   </form>
                 </div>
               </li>
@@ -154,11 +155,6 @@
                 <a href="#" class="dropdown-toggle loginname" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span><b class="caret"></b></a>
               </li>
             </ul>
-            <form class="navbar-form navbar-right visible-lg-block visible-xs-block" action="{{ path('cards_find') }}">
-              <div class="form-group">
-                <input type="text" placeholder="Card Search" class="form-control" name="q" title="{% include '/Search/searchtooltip.html.twig' %}">
-              </div>
-            </form>
           </div><!--/.navbar-collapse -->
           {% endblock %}
         </div>

@@ -6,6 +6,45 @@
 <div class="container">
 
     <script type="text/javascript">
+        Promise.all([NRDB.data.promise, NRDB.ui.promise]).then(function() {
+            // TODO(plural): Find a better place for this and remove the duplicate definitions.
+            // This will filter matchingCards to only the latest version of each card, preserving the original order of matchingCards.
+            function select_only_latest_cards(matchingCards) {
+                var latestCardsByTitle = {};
+                for (var card of matchingCards) {
+                    var latestCard = latestCardsByTitle[card.title];
+                    if (!latestCard || card.code > latestCard.code) {
+                        latestCardsByTitle[card.title] = card;
+                    }
+                }
+                return matchingCards.filter(function(value, index, arr) {
+                    return value.code == latestCardsByTitle[value.title].code;
+                });
+            }
+
+            // We only need to calculate the latest_cards once and not on every findMatches call.
+            var latest_cards = select_only_latest_cards(NRDB.data.cards.find());
+
+            function findMatches(q, cb) {
+                if (q.match(/^\w:/)) { return; }
+
+                var regexp = new RegExp(q, 'i');
+                var matchingCards = _.filter(latest_cards, function (card) {
+                    return regexp.test(_.deburr(card.title).toLowerCase().trim());
+                });
+                cb(_.sortBy(matchingCards, 'title'));
+            }
+
+            $('#q').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 2
+            }, {
+                display: function(card) { return card.title; },
+                source: findMatches
+            });
+        });
+
         $(function () {
             $('#faction-select').multiselect({
                 buttonWidth: '100%'
@@ -18,7 +57,7 @@
         <div class="col">
 
             <h1>{{ block('title') }}</h1>
-            <form method="GET" action="{{ path('cards_processSearchForm') }}" role="form" style="margin-bottom:2em">
+            <form id="advanced_search_form" method="GET" action="{{ path('cards_processSearchForm') }}" role="form" style="margin-bottom:2em">
 
                 <fieldset>
                     <legend>Title and texts</legend>
@@ -27,7 +66,7 @@
                             <div class="form-group">
                                 <label for="q">Title</label>
                                 <div class="input-group">
-                                    <input class="form-control" size="200" id="q" name="q" value="">
+                                    <input class="form-control" placeholder="Card Search" size="200" id="q" name="q" value="">
                                 </div>
                             </div>
                         </div>
