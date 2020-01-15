@@ -21,7 +21,7 @@
                 source: findMatches
             });
             $('#search-input').on('typeahead:selected typeahead:autocomplete', function(event, data) {
-                $('#search-input').typeahead('val', data.code);
+                location.href=Routing.generate('cards_zoom', {card_code:data.code, _locale:NRDB.locale});
             });
         });
     </script>
