@@ -8,7 +8,6 @@
     font-style: normal;
     font-weight: bold;
     text-rendering: optimizeLegibility;
-    font-display: swap;
 }
 
 /* Webfont: Lato-BoldItalic */@font-face {
@@ -21,7 +20,6 @@
     font-style: italic;
     font-weight: bold;
     text-rendering: optimizeLegibility;
-    font-display: swap;
 }
 
 /* Webfont: Lato-Italic */@font-face {
@@ -34,7 +32,6 @@
     font-style: italic;
     font-weight: normal;
     text-rendering: optimizeLegibility;
-    font-display: swap;
 }
 
 /* Webfont: Lato-Regular */@font-face {
@@ -47,6 +44,5 @@
     font-style: normal;
     font-weight: normal;
     text-rendering: optimizeLegibility;
-    font-display: swap;
 }
 
