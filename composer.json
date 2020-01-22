@@ -23,7 +23,7 @@
         "php": ">=7.0.0",
         "ext-zip": "*",
         "doctrine/doctrine-bundle": "^1.6",
-        "doctrine/orm": "^2.5",
+        "doctrine/orm": "^2.7",
         "ezyang/htmlpurifier": "^4.9",
         "friendsofsymfony/jsrouting-bundle": "^2.1",
         "friendsofsymfony/oauth-server-bundle": "^1.5",
