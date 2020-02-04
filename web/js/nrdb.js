@@ -257,10 +257,24 @@ function find_identity() {
     Identity = NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'identity' }).pop();
 }
 
+/**
+ *  takes a card and adds an unicorn based on the current card
+ * @param  card
+ * @return string
+ */
 function unicorn(card) {
+    var emoji = ""
     var mwlCard = get_mwl_modified_card(card);
     var unicorn_emoji = ' <span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ';
-    return mwlCard.is_restricted ? unicorn_emoji : '';
+    var prohibited_emoji = ' <span title="Restricted card" style="display:inline-block;width:1.5em;">🚫</span> ';
+
+    if (mwlCard.is_restricted) {
+        emoji = unicorn_emoji;
+    } else if (mwlCard.deck_limit == 0) {
+        //prohibited cards are only marked by having their limit set to 0
+        emoji = prohibited_emoji;
+    }
+    return emoji;
 }
 
 function update_deck(options) {
