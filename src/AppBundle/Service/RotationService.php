@@ -22,6 +22,22 @@ class RotationService
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * [returns the first entry of the descending sorted rotations]
+     * @return Rotation current Rotation
+     */
+    public function findCurrentRotation()
+    {
+        $rotations = $this->entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
+
+        //there should always be a rotation available
+        if(count($rotations) <= 0){
+            throw new \Exception("No current rotation found", 1);
+        }
+
+        return $rotations[0];
+    }
+
     public function findCompatibleRotation(Decklist $decklist)
     {
         $rotations = $this->entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
