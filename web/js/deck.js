@@ -189,18 +189,21 @@ function create_collection_tab(initialPackSelection) {
 		$('#pack_code').find(':checkbox').each(function() {
 			$(this).prop('checked', !(rotated_cycles[$(this).prop('name')] || rotated_packs[$(this).prop('name')]));
 		});
+		update_collection_packs();
 	});
 	$('#collection_all').on('click', function(event) {
 		event.preventDefault();
 		$('#pack_code').find(':checkbox').each(function(){
 			$(this).prop('checked', true);
 		});
+		update_collection_packs();
 	});
 	$('#collection_none').on('click', function(event) {
 		event.preventDefault();
 		$('#pack_code').find(':checkbox').each(function(){
 			$(this).prop('checked', false);
 		});
+		update_collection_packs();
 	});
 
 	var sets_in_deck = {};
@@ -519,9 +522,9 @@ function handle_header_click(event) {
 			Order > 0 ? '' : 'dropup');
 	refresh_collection();
 }
-function handle_input_change(event) {
-	var div = $(this).closest('.filter');
-	var columnName = div.attr('id');
+
+function update_collection_packs() {
+	var div = $('#pack_code')
 	var arr = [];
 	div.find("input[type=checkbox]").each(function(index, elt) {
 		var name = $(elt).attr('name');
@@ -530,16 +533,34 @@ function handle_input_change(event) {
 			arr.push(name);
 		}
 
-		if (columnName == "pack_code") {
-			var key = 'pack_code_' + name,
-				value = $(elt).prop('checked') ? "on" : "off";
-			localforage.setItem(key, value);
+		var key = 'pack_code_' + name, value = $(elt).prop('checked') ? "on" : "off";
+		localforage.setItem(key, value);
+	});
+	Filters['pack_code'] = arr;
+	FilterQuery = get_filter_query(Filters);
+	refresh_collection();
+}
+
+function handle_input_change(event) {
+	var div = $(this).closest('.filter');
+	var columnName = div.attr('id');
+	if (columnName == 'pack_code') {
+		update_collection_packs();
+		return;
+	}
+	var arr = [];
+	div.find("input[type=checkbox]").each(function(index, elt) {
+		var name = $(elt).attr('name');
+
+		if (name && $(elt).prop('checked')) {
+			arr.push(name);
 		}
 	});
 	Filters[columnName] = arr;
 	FilterQuery = get_filter_query(Filters);
 	refresh_collection();
 }
+
 function get_deck_content() {
 	return _.reduce(
 			NRDB.data.cards.find({indeck:{'$gt':0}}),
