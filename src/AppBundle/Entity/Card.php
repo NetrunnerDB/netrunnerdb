@@ -497,7 +497,7 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getFactionCost()
     {
-        return $this->factionCost;
+        return $this->factionCost === null ? 0 : $this->factionCost;
     }
 
     /**
