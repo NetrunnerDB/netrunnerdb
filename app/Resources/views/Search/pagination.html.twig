@@ -5,21 +5,11 @@
         {% if prevPackQuery %}<a href="{{ prevPackQuery }}">&larr; {{ prevPackName }}</a>{% endif %}
     </li>
     <li>
-    {% if currentPackQuery %}
-        <a href="{{ currentPackQuery }}">{{ currentPackName }}</a>
-    {% else %}
-        {{ first|raw }}
-        {% if ellipsisbefore %}<li class="disabled"><a href="#">...</a></li>{% endif %}
-        {{ prev|raw }}
-        {{ current|raw }}
-        {{ next|raw }}
-        {% if ellipsisafter %}<li class="disabled"><a href="#">...</a></li>{% endif %}
-	    {{ last|raw }}
-	{% endif %}
-	</li>
-	<li class="next">
-		{% if nextPackQuery %}<a href="{{ nextPackQuery }}">{{ nextPackName }} &rarr;</a>{% endif %}
-	</li>
+        {% if currentPackQuery %}<a href="{{ currentPackQuery }}">{{ currentPackName }}</a>{% endif %}
+    </li>
+    <li class="next">
+        {% if nextPackQuery %}<a href="{{ nextPackQuery }}">{{ nextPackName }} &rarr;</a>{% endif %}
+    </li>
 </ul>
 </div>
 </div>
