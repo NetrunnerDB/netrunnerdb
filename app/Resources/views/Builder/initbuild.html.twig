@@ -4,11 +4,11 @@
 
 <script type="text/javascript">
 $(function() {
-	$('.list-group').on('mouseenter touchstart', 'a', function(event) {
-		var card_code = $(this).data('code');
-		var card = NRDB.data.cards.findById(card_code);
-		$('#cardimg').prop('src', card.imageUrl);
-	});
+    $('.list-group').on('mouseenter touchstart', 'a', function(event) {
+        var card_code = $(this).data('code');
+        var card = NRDB.data.cards.findById(card_code);
+        $('#cardimg').prop('src', card.imageUrl);
+    });
     $(window).scroll(function() {
         var scrollingDiv = $("#initIdentity");
         if(!scrollingDiv.is(':visible')) return;
@@ -32,13 +32,15 @@ $(function() {
 <div class="col-sm-8">
 <div class="panel panel-default">
   <!-- Default panel contents -->
-  <div class="panel-heading"><b>Choose your identity</b></div>
+  <div class="panel-heading"><b>Choose your identity</b> <em>(🔄  rotated from current play, 🚫  banned by  current MWL)</em></div>
   <!-- List group -->
 <div class="list-group">
 {% for identity in identities %}
 <a href="{{ path('deck_initbuild', {card_code:identity.code}) }}" class="list-group-item" data-code="{{ identity.code }}">
-	<span class="icon icon-{{ identity.faction.code }} {{ identity.faction.code }}"></span>
-	<span>{{ identity.title(app.request.locale) }}</span> <span class="small">({{ identity.pack.name }})</span>
+    <span class="icon icon-{{ identity.faction.code }} {{ identity.faction.code }}"></span>
+    <span>{{ identity.title(app.request.locale) }}</span> <span class="small">({{ identity.pack.name }})</span>
+    <span>{% if identity.pack.cycle.rotated %}🔄{% endif %}</span>
+    <span>{% if identity.code in banned_cards|keys %}🚫{% endif %}</span>
 </a>
 {% endfor %}
 </div>
