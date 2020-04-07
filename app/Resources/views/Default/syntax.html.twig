@@ -38,6 +38,7 @@
             <li><code>h</code> &ndash; trash cost</li>
             <li><code>r</code> &ndash; release date</li>
             <li><code>u</code> &ndash; unique</li>
+            <li><code>z</code> &ndash; rotation</li>
           </ul>
         </li>
         <li>an <b>operator</b> is either:
@@ -49,6 +50,7 @@
           </ul>
         </li>
         <li><b>Special case</b> <code>r</code> (release date) uses only the operators <code>&lt;</code> (inclusive) and <code>&gt;</code> (exclusive) and only understands the arguments <code>now</code> or a date YYYY-MM-DD</li>
+        <li><b>Rotation</b> <code>z</code> Rotation takes 2 different options for the current rotation: <code>current</code> or <code>latest</code>.  Rotation can also specify a specific rotation.  Valid specific rotation options are <code>rotation-2017</code>, <code>rotation-2017</code>, or <code>rotation-2017</code>.
   </ul>
 
   <h2>Search examples</h2>
@@ -63,6 +65,7 @@
     <li><code>r&lt;2013-01-01</code> searches for all cards released up to Jan 1, 2013</li>
     <li><code>d:r|c</code> searches for all Runner and Corp cards</li>
     <li><code>x:&#34;the Corp loses 1[credit]&#34;</code> returns Amina, Corporate &#34;Grant&#34;, and Lamprey</li>
+    <li><code>d:corp z:current</code> returns all corp cards in the cycles valid for the latest rotation</li>
   </ul>
 </div>
 {% endblock %}
