@@ -584,16 +584,21 @@ class CardsData
                 case 'z': // rotation
                     // Instantiate the service only when its needed.
                     $rotationservice = new RotationService($this->entityManager);
-				    $rotation = null;
+                    $rotation = null;
                     if ($condition[0] == "current" || $condition[0] == "latest") {
                         $rotation = $rotationservice->findCurrentRotation();
                     } else {
-						$rotation = $rotationservice->findRotationByCode($condition[0]);
+                        $rotation = $rotationservice->findRotationByCode($condition[0]);
                     }
                     if ($rotation) {
                         // Add the valid cycles for the requested rotation and add them to the WHERE clause for the query.
-                        $cycles = "'" . implode("','", $rotation->normalize()["cycles"]) ."'";
-                        $clauses[] = "(y.code in ($cycles))";
+                        $cycles = $rotation->normalize()["cycles"];
+                        $placeholders = array();
+                        foreach($cycles as $cycle) {
+                        array_push($placeholders, "?$i");
+                            $parameters[$i++] = $cycle;
+                        }
+                        $clauses[] = "(y.code in (" . implode(", ", $placeholders) . "))";
                     }
                     $i++;
                     break;
