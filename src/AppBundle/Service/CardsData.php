@@ -8,6 +8,8 @@ use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\Ruling;
+use AppBundle\Entity\Rotation;
+use AppBundle\Service\RotationService;
 use AppBundle\Repository\PackRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Asset\Packages;
@@ -166,7 +168,6 @@ class CardsData
 
         $qb2 = null;
         $qb3 = null;
-
         $clauses = [];
         $parameters = [];
 
@@ -577,6 +578,27 @@ class CardsData
                         $clauses[] = "(c.uniqueness = 1)";
                     } else {
                         $clauses[] = "(c.uniqueness = 0)";
+                    }
+                    $i++;
+                    break;
+                case 'z': // rotation
+                    // Instantiate the service only when its needed.
+                    $rotationservice = new RotationService($this->entityManager);
+                    $rotation = null;
+                    if ($condition[0] == "current" || $condition[0] == "latest") {
+                        $rotation = $rotationservice->findCurrentRotation();
+                    } else {
+                        $rotation = $rotationservice->findRotationByCode($condition[0]);
+                    }
+                    if ($rotation) {
+                        // Add the valid cycles for the requested rotation and add them to the WHERE clause for the query.
+                        $cycles = $rotation->normalize()["cycles"];
+                        $placeholders = array();
+                        foreach($cycles as $cycle) {
+                        array_push($placeholders, "?$i");
+                            $parameters[$i++] = $cycle;
+                        }
+                        $clauses[] = "(y.code in (" . implode(", ", $placeholders) . "))";
                     }
                     $i++;
                     break;

@@ -257,10 +257,21 @@ function find_identity() {
     Identity = NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'identity' }).pop();
 }
 
+/**
+ * Returns a banned or restricted icon for the supplied card and selected MWL.
+ * @param  card
+ * @return string
+ */
 function unicorn(card) {
     var mwlCard = get_mwl_modified_card(card);
-    var unicorn_emoji = ' <span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ';
-    return mwlCard.is_restricted ? unicorn_emoji : '';
+
+    if (mwlCard.is_restricted) {
+        return ' <span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ';
+    } else if (mwlCard.deck_limit == 0) {
+        // Prohibited or banned cards are identified by having a deck_limit of 0.
+        return ' <span title="Banned card" style="display:inline-block;width:1.5em;">🚫</span> ';
+    }
+    return "";
 }
 
 function update_deck(options) {
