@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Deckchange;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use AppBundle\Service\CardsData;
+use Psr\Log\LoggerInterface;
 
 class BuilderController extends Controller
 {
@@ -30,7 +31,7 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function buildformAction(string $side_text, EntityManagerInterface $entityManager, CardsData $cardsData)
+    public function buildformAction(string $side_text, EntityManagerInterface $entityManager, CardsData $cardsData, LoggerInterface $logger)
     {
         $response = new Response();
         $response->setPublic();
@@ -52,6 +53,13 @@ class BuilderController extends Controller
         ]);
 
         $identities = $cardsData->select_only_latest_cards($identities);
+		$banned_cards = array();
+        foreach ($identities as $id) {
+			$i = $cardsData->get_mwl_info([$id]);
+			if (count($i) > 0 && $i[0]['active']) {
+				$banned_cards[$id->getCode()] = true;
+			}
+		}
 
         return $this->render(
 
@@ -59,6 +67,7 @@ class BuilderController extends Controller
             [
                 'pagetitle'  => "New deck",
                 "identities" => $identities,
+				"banned_cards"   => $banned_cards
             ],
 
             $response
@@ -69,11 +78,12 @@ class BuilderController extends Controller
     /**
      * @param string                 $card_code
      * @param EntityManagerInterface $entityManager
+     * @param CardsData              $cardsData
      * @return Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function initbuildAction(string $card_code, EntityManagerInterface $entityManager)
+    public function initbuildAction(string $card_code, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
