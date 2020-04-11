@@ -46,7 +46,7 @@ class CommentizeCommand extends ContainerAwareCommand
         $error = $this->review_to_comment($review_orig_id, $review_dest_id);
         $output->writeln(date('c') . " " . (empty($error) ? "Success" : $error));
     }
-    
+
     private function review_to_comment(int $review_orig_id, int $review_dest_id)
     {
         $repo = $this->entityManager->getRepository('AppBundle:Review');
@@ -56,7 +56,7 @@ class CommentizeCommand extends ContainerAwareCommand
 
         /** @var Review $review_dest */
         $review_dest = $repo->find($review_dest_id);
-        
+
         if (!$review_orig) {
             return "Review does not exist";
         }
@@ -66,10 +66,10 @@ class CommentizeCommand extends ContainerAwareCommand
         if ($review_orig->getComments()->count()) {
             return "Review has comments";
         }
-        
+
         $text = $review_orig->getText();
         $text = strip_tags($text);
-        
+
         $comment = new Reviewcomment();
         $comment->setAuthor($review_orig->getUser());
         $comment->setDatecreation($review_orig->getDateCreation());

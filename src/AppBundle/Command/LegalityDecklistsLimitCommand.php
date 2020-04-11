@@ -39,7 +39,7 @@ class LegalityDecklistsLimitCommand extends ContainerAwareCommand
                 . " JOIN card c ON c.id=s.card_id"
                 . " WHERE s.quantity>c.deck_limit"
                 . " AND d.id=s.decklist_id)";
-        
+
         $this->entityManager->getConnection()->executeQuery($sql);
 
         $output->writeln("<info>Done</info>");

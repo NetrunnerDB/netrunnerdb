@@ -35,14 +35,14 @@ class Reviews
                 u.faction usercolor,
                 u.reputation,
                 u.donation
-                from review r
+             from review r
                 join user u on r.user_id=u.id
                 join card c on r.card_id=c.id
                 join pack p on c.pack_id=p.id
-                where r.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
-        		and p.date_release is not null
-                order by r.date_creation desc
-                limit $start, $limit"
+             where r.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
+               and p.date_release is not null
+             order by r.date_creation desc
+             limit $start, $limit"
 
         )->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -74,14 +74,14 @@ class Reviews
                 u.faction usercolor,
                 u.reputation,
                 u.donation
-                from review r
+             from review r
                 join user u on r.user_id=u.id
                 join card c on r.card_id=c.id
                 join pack p on c.pack_id=p.id
-                where r.user_id=?
-        		and p.date_release is not null
-        		order by c.code asc
-                limit $start, $limit",
+             where r.user_id=?
+               and p.date_release is not null
+             order by c.code asc
+             limit $start, $limit",
 
             [
                 $user_id,

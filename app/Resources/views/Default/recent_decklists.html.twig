@@ -1,6 +1,6 @@
 <h3 class="section">Last 10 decklists <a href="{{ path('decklists_list', {type:'recent'}) }}" class="small">more</a></h3>
 <table class="table">
-	{% for decklist in decklists %}
-	{% include '/Decklist/decklist-row-always-xs.html.twig' %}
-	{% endfor %}
+  {% for decklist in decklists %}
+    {% include '/Decklist/decklist-row-always-xs.html.twig' %}
+  {% endfor %}
 </table>

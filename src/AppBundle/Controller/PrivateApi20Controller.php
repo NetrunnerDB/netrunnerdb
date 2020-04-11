@@ -27,36 +27,36 @@ class PrivateApi20Controller extends FOSRestController
         $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
         $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $response->setPrivate();
-        
+
         $content = [ 'version_number' => '2.0' ];
-        
+
         $content['data'] = array_map(function ($entity) {
             return (is_object($entity) && $entity instanceof NormalizableInterface) ? $entity->normalize() : $entity;
         }, $data);
-        
+
         $content['total'] = count($data);
-        
+
         $content['success'] = true;
-        
+
         $response->setData($content);
-        
+
         return $response;
     }
-    
+
     private function prepareFailedResponse(string $msg)
     {
         $response = new JsonResponse();
         $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $response->setPrivate();
-        
+
         $content = [ 'version_number' => '2.0' ];
-        
+
         $content['success'] = false;
-        
+
         $content['msg'] = $msg;
-        
+
         $response->setData($content);
-        
+
         return $response;
     }
 
@@ -76,22 +76,22 @@ class PrivateApi20Controller extends FOSRestController
     {
         /** @var User $user */
         $user = $this->getUser();
-        
+
         if (!$user) {
             throw $this->createAccessDeniedException();
         }
-        
+
         $includeHistory = $request->query->has('include_history') && $request->query->get('include_history');
 
         /** @var Deck $deck */
         $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
-        
+
         if (!$deck) {
             throw $this->createNotFoundException();
         }
-        
+
         $history = [];
-        
+
         if ($includeHistory) {
             $qb = $entityManager->createQueryBuilder();
             $qb->select('h')
@@ -103,7 +103,7 @@ class PrivateApi20Controller extends FOSRestController
                 ->setParameter('saved', true);
             $query = $qb->getQuery();
             $result = $query->getResult();
-            
+
             foreach ($result as $deckchange) {
                 /** @var Deckchange $deckchange */
                 $variation = json_decode($deckchange->getVariation(), true);
@@ -117,10 +117,10 @@ class PrivateApi20Controller extends FOSRestController
                 $history[$deckchange->getDateCreation()->format('c')] = $changes;
             }
         }
-        
+
         $data = $deck->normalize();
         $data['history'] = $history;
-        
+
         return $this->prepareResponse([$data]);
     }
 
@@ -150,17 +150,17 @@ class PrivateApi20Controller extends FOSRestController
         $requestJsonBody = $request->getContent();
         $requestContent = json_decode($requestJsonBody, true);
         $last_error = json_last_error();
-        
+
         if ($last_error) {
             return $this->prepareFailedResponse("Request body is not proper JSON [error code $last_error].");
         }
-        
+
         if (!key_exists('deck_id', $requestContent)) {
             return $this->prepareFailedResponse("Missing deck_id parameter.");
         }
-        
+
         $deck_id = $requestContent['deck_id'];
-        
+
         if ($deck_id) {
             $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
             if (!$deck) {
@@ -172,13 +172,13 @@ class PrivateApi20Controller extends FOSRestController
             }
             $deck = new Deck();
         }
-        
+
         $name = filter_var($requestContent['name'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
         $decklist_id = isset($requestContent['decklist_id']) ? filter_var($requestContent['decklist_id'], FILTER_SANITIZE_NUMBER_INT) : null;
         $description = isset($requestContent['description']) ? filter_var($requestContent['description'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : '';
         $tags = isset($requestContent['tags']) ? filter_var($requestContent['tags'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : '';
         $content = $requestContent['content'];
-        
+
         if (!$name) {
             return $this->prepareFailedResponse("Missing parameter 'name'.");
         }
@@ -219,34 +219,34 @@ class PrivateApi20Controller extends FOSRestController
     public function publishDeckAction(Request $request, EntityManagerInterface $entityManager, Judge $judge, TextProcessor $textProcessor, RotationService $rotationService)
     {
         $user = $this->getUser();
-    
+
         if (!$user) {
             throw $this->createAccessDeniedException();
         }
-    
+
         $requestJsonBody = $request->getContent();
         $requestContent = json_decode($requestJsonBody, true);
         $last_error = json_last_error();
-    
+
         if ($last_error) {
             return $this->prepareFailedResponse("Request body is not proper JSON [error code $last_error].");
         }
-    
+
         if (!key_exists('deck_id', $requestContent)) {
             return $this->prepareFailedResponse("Missing deck_id parameter.");
         }
-    
+
         $deck_id = $requestContent['deck_id'];
         $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
         if (!$deck instanceof Deck) {
             throw $this->createNotFoundException();
         }
-        
+
         $analyse = $judge->analyse($deck->getSlots()->toArray());
         if (is_string($analyse)) {
             return $this->prepareFailedResponse($judge->problem($analyse));
         }
-        
+
         $new_content = json_encode($deck->getContent());
         $new_signature = md5($new_content);
         $old_decklists = $entityManager->getRepository('AppBundle:Decklist')->findBy(['signature' => $new_signature]);
@@ -255,19 +255,19 @@ class PrivateApi20Controller extends FOSRestController
                 return $this->prepareFailedResponse("A decklist with this content already exists.");
             }
         }
-        
+
         $name = isset($requestContent['name']) ? filter_var($requestContent['name'], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES) : '';
         if (empty($name)) {
             $name = $deck->getName();
         }
         $name = substr($name, 0, 60);
-        
+
         $rawdescription = isset($requestContent['description']) ? trim($requestContent['description']) : '';
         if (empty($rawdescription)) {
             $rawdescription = $deck->getDescription();
         }
         $description = $textProcessor->markdown($rawdescription);
-        
+
         $decklist = new Decklist();
         $decklist->setName($name);
         $decklist->setPrettyname(preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($name)));
@@ -304,10 +304,10 @@ class PrivateApi20Controller extends FOSRestController
 
         $entityManager->persist($decklist);
         $entityManager->flush();
-        
+
         return $this->prepareResponse([$decklist]);
     }
-    
+
     /**
      * Get all decks
      *
@@ -323,13 +323,13 @@ class PrivateApi20Controller extends FOSRestController
     {
         /** @var User $user */
         $user = $this->getUser();
-    
+
         if (!$user) {
             throw $this->createAccessDeniedException();
         }
-    
+
         $data = $entityManager->getRepository('AppBundle:Deck')->findBy(['user' => $user]);
-    
+
         return $this->prepareResponse($data);
     }
 
@@ -348,16 +348,16 @@ class PrivateApi20Controller extends FOSRestController
     {
         /** @var User $user */
         $user = $this->getUser();
-    
+
         if (!$user) {
             throw $this->createAccessDeniedException();
         }
-    
+
         $data = $entityManager->getRepository('AppBundle:Decklist')->findBy(['user' => $user]);
-    
+
         return $this->prepareResponse($data);
     }
-    
+
     /**
      * Get account info
      *
@@ -373,11 +373,11 @@ class PrivateApi20Controller extends FOSRestController
     {
         /** @var User $user */
         $user = $this->getUser();
-    
+
         if (!$user) {
             throw $this->createAccessDeniedException();
         }
-    
+
         $info = [
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
@@ -385,7 +385,7 @@ class PrivateApi20Controller extends FOSRestController
                 'reputation' => $user->getReputation(),
                 'sharing' => $user->getShareDecks()
         ];
-    
+
         return $this->prepareResponse([$info]);
     }
 }

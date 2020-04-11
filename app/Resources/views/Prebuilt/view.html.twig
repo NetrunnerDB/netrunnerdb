@@ -5,18 +5,18 @@
 <script type="text/javascript">
 
 var Identity = null,
-	Prebuilt = {{ prebuilt|json_encode|raw }},
-	SelectedDeck = Prebuilt,
-	MWL = null,
-	DisplaySort = 'type',
-	DisplaySortSecondary = 'name';
+  Prebuilt = {{ prebuilt|json_encode|raw }},
+  SelectedDeck = Prebuilt,
+  MWL = null,
+  DisplaySort = 'type',
+  DisplaySortSecondary = 'name';
 
 $(document).on('data.app', function() {
-	for (var i = 0; i < Prebuilt.cards.length; i++) {
-		var slot = Prebuilt.cards[i];
-		NRDB.data.cards.updateById(slot.card_code, {indeck : parseInt(slot.qty, 10)});
-	}
-	update_deck();
+  for (var i = 0; i < Prebuilt.cards.length; i++) {
+    var slot = Prebuilt.cards[i];
+    NRDB.data.cards.updateById(slot.card_code, {indeck : parseInt(slot.qty, 10)});
+  }
+  update_deck();
 });
 
 </script>
@@ -40,20 +40,20 @@ $(document).on('data.app', function() {
 <div class="col-md-6">
 
 <div id="deck">
-	
+
 <!-- Identity and Stats -->
 <div class="row">
-	<div class="col-sm-3">
-		<img id="img_identity" src="#empty" alt="Identity" class="img-responsive  hidden-xs">
-	</div><!-- /.col-md-3 -->
-	<div class="col-sm-9">
-		<h3 id="identity"></h3>
-		<div id="influence"></div>
-		<div id="agendapoints"></div>
-		<div id="cardcount"></div>
-		<div id="restricted"></div>
-		<div id="limited"></div>
-	</div><!-- /.col-md-9 -->
+  <div class="col-sm-3">
+    <img id="img_identity" src="#empty" alt="Identity" class="img-responsive  hidden-xs">
+  </div><!-- /.col-md-3 -->
+  <div class="col-sm-9">
+    <h3 id="identity"></h3>
+    <div id="influence"></div>
+    <div id="agendapoints"></div>
+    <div id="cardcount"></div>
+    <div id="restricted"></div>
+    <div id="limited"></div>
+  </div><!-- /.col-md-9 -->
 </div><!-- /.row -->
 <!-- Identity and Stats -->
 

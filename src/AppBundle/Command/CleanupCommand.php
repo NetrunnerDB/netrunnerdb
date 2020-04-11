@@ -96,12 +96,12 @@ class CleanupCommand extends ContainerAwareCommand
             return;
         }
 
-        
+
         $qb->select('d');
         $result = $qb->getQuery()->setParameters(array_intersect_key($options, array_flip(['dotw', 'months', 'votes', 'favorites', 'comments', 'desclength'])))->getResult();
 
         $progress = new ProgressBar($output, $queryCount);
-        
+
         foreach ($result as $decklist) {
             $this->decklistManager->removeConstraints($decklist);
             $progress->advance();
@@ -109,19 +109,19 @@ class CleanupCommand extends ContainerAwareCommand
 
         $progress->finish();
         $this->entityManager->flush();
-        
+
         $output->writeln("\nRemoved $queryCount constraints.");
-        
+
         $progress = new ProgressBar($output, $queryCount);
-        
+
         foreach ($result as $decklist) {
             $this->entityManager->remove($decklist);
             $progress->advance();
         }
-        
+
         $progress->finish();
         $this->entityManager->flush();
-        
+
         $output->writeln("\nRemoved $queryCount decklists ($periodPct% of period, $totalPct% of total).");
     }
 }

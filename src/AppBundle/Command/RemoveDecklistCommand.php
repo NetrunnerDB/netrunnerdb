@@ -44,12 +44,12 @@ class RemoveDecklistCommand extends Command
 
         /** @var Decklist $decklist */
         $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-        
+
         $this->decklistManager->removeConstraints($decklist);
         $this->entityManager->remove($decklist);
-        
+
         $this->entityManager->flush();
-        
+
         $output->writeln("Done.");
     }
 }

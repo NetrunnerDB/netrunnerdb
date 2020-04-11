@@ -16,7 +16,7 @@ class Prebuilt implements NormalizableInterface, TimestampableInterface
      * @var integer
      */
     private $id;
-    
+
     /**
      * @var string
      */

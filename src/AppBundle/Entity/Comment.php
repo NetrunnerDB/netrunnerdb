@@ -26,7 +26,7 @@ class Comment
      * @var boolean
      */
     private $hidden;
-    
+
     /**
      * @var User
      */

@@ -14,7 +14,7 @@ var UserId = {{ user.id }};
   <h1><span class="{{ user.faction }}">{{ user.username }}</span>
   {% if user.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
     <small>{{ user.reputation }}</small></h1>
-	<p>
+    <p>
         Member since {{ user.creation|date('j M Y') }}
         <div>
         {% if nbdecklists > 1 %}
@@ -38,10 +38,10 @@ var UserId = {{ user.id }};
             {% endif %}
         {% endif %}
         </div>
-		<div>
-			<a href="https://alwaysberunning.net/profile/{{ user.id }}" target="_blank"><img src="https://alwaysberunning.net/favicon-96x96.png" width=30 height=30>&nbsp;Always Be Running Profile</a>	
-		</div>
-	</p>
+        <div>
+          <a href="https://alwaysberunning.net/profile/{{ user.id }}" target="_blank"><img src="https://alwaysberunning.net/favicon-96x96.png" width=30 height=30>&nbsp;Always Be Running Profile</a>
+        </div>
+    </p>
     <a href="{{ path('user_follow',{user_id:user.id}) }}" class="btn btn-success" style="display:none" id="follow"><span class="glyphicon glyphicon glyphicon-plus"></span> Follow</a>
     <a href="{{ path('user_unfollow',{user_id:user.id}) }}" class="btn btn-info" style="display:none" id="unfollow"><span class="glyphicon glyphicon glyphicon-eye-open"></span> Following</a>
     {% if user.resume %}

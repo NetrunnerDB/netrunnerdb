@@ -27,13 +27,13 @@ class ClaimsController extends AbstractOauthController
         if ($data === null) {
             throw new BadRequestHttpException("Malformed JSON");
         }
-        
+
         /** @var Claim $claim */
         $claim = $this->arrayTransformer->fromArray($data, 'AppBundle\Entity\Claim');
 
         return $claim;
     }
-          
+
     /**
      * Create a claim
      *
