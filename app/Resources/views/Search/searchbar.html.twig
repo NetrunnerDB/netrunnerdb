@@ -27,18 +27,18 @@
     </script>
 
 <div class="row">
-	<form method="GET" action="{{ path('cards_find') }}" id="search-form" role="form">
-		<div class="col-sm-4">
-			<div class="input-group" style="margin-bottom:.5em">
-				<input class="form-control" size="30" name="q" id="search-input"
-					tabindex="1" value="{{ q|default('') }}"
-					placeholder="Card Search"
-					title="{% include '/Search/searchtooltip.html.twig' %}">
-				<span class="input-group-btn">
-					<button class="btn btn-primary" type="submit">Search</button>
-				</span>
-			</div><!-- /input-group -->
-		</div>
-		{% include '/Search/searchoptions.html.twig' %}
-	</form>
+  <form method="GET" action="{{ path('cards_find') }}" id="search-form" role="form">
+    <div class="col-sm-4">
+      <div class="input-group" style="margin-bottom:.5em">
+        <input class="form-control" size="30" name="q" id="search-input"
+          tabindex="1" value="{{ q|default('') }}"
+          placeholder="Card Search"
+          title="{% include '/Search/searchtooltip.html.twig' %}">
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="submit">Search</button>
+        </span>
+      </div><!-- /input-group -->
+    </div>
+    {% include '/Search/searchoptions.html.twig' %}
+  </form>
 </div>

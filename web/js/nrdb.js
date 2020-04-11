@@ -318,7 +318,7 @@ function update_deck(options) {
     for (var colnum = 0; colnum < displayDescription.length; colnum++) {
         var rows = displayDescription[colnum];
         // Don't rely on the rows being put into displayDescription in order.
-	// Explicitly sort them by their provided ID.
+        // Explicitly sort them by their provided ID.
         rows.sort((a,b) => {
           if (a.id < b.id) {
             return -1;
@@ -327,7 +327,7 @@ function update_deck(options) {
             return 1;
           }
           return 0;
-	});
+        });
 
         var div = $('<div>').addClass('col-sm-' + cols_size).appendTo($('#deck-content'));
         for (var rownum = 0; rownum < rows.length; rownum++) {

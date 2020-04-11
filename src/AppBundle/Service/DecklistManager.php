@@ -195,36 +195,36 @@ class DecklistManager
     {
         $dbh = $this->entityManager->getConnection();
 
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
-    			d.id,
-    			d.name,
-    			d.prettyname,
-    			d.date_creation,
-    			d.user_id,
-    			d.tournament_id,
-    			t.description tournament,
-                r.name rotation,
-    			u.username,
-    			u.faction usercolor,
-    			u.reputation,
-    			u.donation,
-    			c.code,
-    			c.title identity,
-                c.image_url identity_url,
-                p.name lastpack,
-    			d.nbvotes,
-    			d.nbfavorites,
-    			d.nbcomments
-    			from decklist d
-    			join user u on d.user_id=u.id
-    			join card c on d.identity_id=c.id
-    			join pack p on d.last_pack_id=p.id
-                left join tournament t on d.tournament_id=t.id
-                left join rotation r on d.rotation_id=r.id
-    			where dotw > 0
-    			order by dotw desc
-    			limit $start, $limit"
+        $rows = $dbh->executeQuery("
+            SELECT SQL_CALC_FOUND_ROWS
+              d.id,
+              d.name,
+              d.prettyname,
+              d.date_creation,
+              d.user_id,
+              d.tournament_id,
+              t.description tournament,
+              r.name rotation,
+              u.username,
+              u.faction usercolor,
+              u.reputation,
+              u.donation,
+              c.code,
+              c.title identity,
+              c.image_url identity_url,
+              p.name lastpack,
+              d.nbvotes,
+              d.nbfavorites,
+              d.nbcomments
+            from decklist d
+              join user u on d.user_id=u.id
+              join card c on d.identity_id=c.id
+              join pack p on d.last_pack_id=p.id
+              left join tournament t on d.tournament_id=t.id
+              left join rotation r on d.rotation_id=r.id
+            where dotw > 0
+            order by dotw desc
+            limit $start, $limit"
         )->fetchAll(\PDO::FETCH_ASSOC);
 
         $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];

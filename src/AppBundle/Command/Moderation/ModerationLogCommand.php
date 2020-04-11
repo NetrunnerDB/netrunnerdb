@@ -39,13 +39,13 @@ class ModerationLogCommand extends ContainerAwareCommand
             ->addArgument('limit', InputArgument::OPTIONAL, "Number of lines to display", 10)
         ;
     }
-    
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $limit = $input->getArgument('limit');
-                
+
         $moderationList = $this->entityManager->getRepository('AppBundle:Moderation')->findBy([], ['dateCreation' => 'DESC'], $limit);
-        
+
         $table = new Table($output);
         $table->setHeaders(['Date','Mod','Before','After','Id','Deck']);
         /** @var Moderation $moderation */
@@ -59,7 +59,7 @@ class ModerationLogCommand extends ContainerAwareCommand
                 $moderation->getDecklist()->getName()
             ]);
         }
-        
+
         $table->render();
     }
 }

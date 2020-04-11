@@ -23,12 +23,12 @@ class ModflagsController extends Controller
     public function getAction(EntityManagerInterface $entityManager)
     {
         $modflags = $entityManager->getRepository('AppBundle:Modflag')->findAll();
-        
+
         $content = [
             'count' => count($modflags),
             'data' => $modflags
         ];
-        
+
         $serializer = SerializerBuilder::create()->build();
 
         $response = new Response();

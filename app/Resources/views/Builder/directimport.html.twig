@@ -43,10 +43,10 @@ var CardDB, CardNames;
   <div class="form-group">
     <label for="mwl_code">Legality</label>
     <select class="form-control" name="mwl_code" id="mwl_code">
-  	{% for mwl in list_mwl %}
-  	<option value="{{ mwl.code }}">
-  		{{ mwl.name }}{% if not mwl.active %}{% if mwl.dateStart %} (after {{ mwl.dateStart|date('Y-m-d') }}){% endif %}{% else %} (active){% endif %}
-  	</option>
+    {% for mwl in list_mwl %}
+      <option value="{{ mwl.code }}">
+        {{ mwl.name }}{% if not mwl.active %}{% if mwl.dateStart %} (after {{ mwl.dateStart|date('Y-m-d') }}){% endif %}{% else %} (active){% endif %}
+      </option>
       {% endfor %}
       <option value="">Casual Play</option>
     </select>

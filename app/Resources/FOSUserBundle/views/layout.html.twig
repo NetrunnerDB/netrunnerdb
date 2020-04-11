@@ -3,40 +3,40 @@
 {% block head %}
 <script>
 $(function() {
-	var form = $('#main>form');
-	if(!form.length && $('.fos_user_user_show').length) {
-		prepare_reset_success();
-		return;
-	}
-	else if(form.hasClass('fos_user_registration_register')) prepare_registration_form(form);
-	else if(form.hasClass('fos_user_resetting_request')) prepare_resetting_form(form);
-	else if(form.hasClass('fos_user_resetting_reset')) prepare_resetting_reset(form);
-	
-	$('#main>div').addClass('alert alert-danger');
-	$('#main ul').addClass('text-danger');
+  var form = $('#main>form');
+  if(!form.length && $('.fos_user_user_show').length) {
+    prepare_reset_success();
+    return;
+  }
+  else if(form.hasClass('fos_user_registration_register')) prepare_registration_form(form);
+  else if(form.hasClass('fos_user_resetting_request')) prepare_resetting_form(form);
+  else if(form.hasClass('fos_user_resetting_reset')) prepare_resetting_reset(form);
+
+  $('#main>div').addClass('alert alert-danger');
+  $('#main ul').addClass('text-danger');
 });
 function prepare_reset_success() {
-	$('#title').text('Success. You are logged in.');
+  $('#title').text('Success. You are logged in.');
 }
 function prepare_registration_form(form) {
-	$('#title').text('Registration');
-	var div = $('#fos_user_registration_form');
-	div.children().addClass('form-group');
-	div.find('input').addClass('form-control');
-	form.find('input[type=submit]').addClass('btn btn-success');
+  $('#title').text('Registration');
+  var div = $('#fos_user_registration_form');
+  div.children().addClass('form-group');
+  div.find('input').addClass('form-control');
+  form.find('input[type=submit]').addClass('btn btn-success');
 }
 function prepare_resetting_form(form) {
-	$('#title').text('Reset password');
-	form.children().addClass('form-group');
-	form.find('input[type=text]').addClass('form-control');
-	form.find('input[type=submit]').addClass('btn btn-success');
+  $('#title').text('Reset password');
+  form.children().addClass('form-group');
+  form.find('input[type=text]').addClass('form-control');
+  form.find('input[type=submit]').addClass('btn btn-success');
 }
 function prepare_resetting_reset(form) {
-	$('#title').text('Reset password');
-	var div = $('#fos_user_resetting_form');
-	div.children().addClass('form-group');
-	div.find('input').addClass('form-control');
-	form.find('input[type=submit]').addClass('btn btn-success');
+  $('#title').text('Reset password');
+  var div = $('#fos_user_resetting_form');
+  div.children().addClass('form-group');
+  div.find('input').addClass('form-control');
+  form.find('input[type=submit]').addClass('btn btn-success');
 }
 </script>
 {% endblock %}

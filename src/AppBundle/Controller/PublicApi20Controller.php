@@ -32,7 +32,7 @@ class PublicApi20Controller extends FOSRestController
         $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $response->setPublic();
         $response->setMaxAge($this->getParameter('short_cache'));
-            
+
         $dateUpdate = array_reduce($entities, function ($carry, TimestampableInterface $item) {
             if (!$carry || ($item->getDateUpdate() > $carry)) {
                 return $item->getDateUpdate();
@@ -40,7 +40,7 @@ class PublicApi20Controller extends FOSRestController
                 return $carry;
             }
         });
-        
+
         $response->setLastModified($dateUpdate);
         if ($response->isNotModified($request)) {
             return $response;
@@ -53,14 +53,14 @@ class PublicApi20Controller extends FOSRestController
         $content['data'] = array_map(function (NormalizableInterface $entity) {
             return $entity->normalize();
         }, $entities);
-        
+
         $content['total'] = count($content['data']);
         $content['success'] = true;
         $content['version_number'] = '2.0';
         $content['last_updated'] = $dateUpdate ? $dateUpdate->format('c') : null;
-        
+
         $response->setData($content);
-        
+
         return $response;
     }
 
@@ -69,16 +69,16 @@ class PublicApi20Controller extends FOSRestController
         $response = new JsonResponse();
         $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         $response->setPrivate();
-    
+
         $content = [ 'version_number' => '2.0' ];
         $content['success'] = false;
         $content['msg'] = $msg;
-    
+
         $response->setData($content);
-    
+
         return $response;
     }
-    
+
     /**
      * Get a type
      *
@@ -93,14 +93,14 @@ class PublicApi20Controller extends FOSRestController
     public function typeAction(string $type_code, Request $request)
     {
         $type = $this->entityManager->getRepository('AppBundle:Type')->findOneBy(['code' => $type_code]);
-    
+
         if (!$type) {
             throw $this->createNotFoundException();
         }
-    
+
         return $this->prepareResponse([$type], $request);
     }
-    
+
     /**
      * Get all the types
      *
@@ -115,10 +115,10 @@ class PublicApi20Controller extends FOSRestController
     public function typesAction(Request $request)
     {
         $data = $this->entityManager->getRepository('AppBundle:Type')->findAll();
-    
+
         return $this->prepareResponse($data, $request);
     }
-    
+
     /**
      * Get a side
      *
@@ -133,14 +133,14 @@ class PublicApi20Controller extends FOSRestController
     public function sideAction(string $side_code, Request $request)
     {
         $side = $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
-    
+
         if (!$side) {
             throw $this->createNotFoundException();
         }
-    
+
         return $this->prepareResponse([$side], $request);
     }
-    
+
     /**
      * Get all the sides
      *
@@ -155,10 +155,10 @@ class PublicApi20Controller extends FOSRestController
     public function sidesAction(Request $request)
     {
         $data = $this->entityManager->getRepository('AppBundle:Side')->findAll();
-    
+
         return $this->prepareResponse($data, $request);
     }
-    
+
     /**
      * Get a faction
      *
@@ -173,14 +173,14 @@ class PublicApi20Controller extends FOSRestController
     public function factionAction(string $faction_code, Request $request)
     {
         $faction = $this->entityManager->getRepository('AppBundle:Faction')->findOneBy(['code' => $faction_code]);
-    
+
         if (!$faction) {
             throw $this->createNotFoundException();
         }
-    
+
         return $this->prepareResponse([$faction], $request);
     }
-    
+
     /**
      * Get all the factions
      *
@@ -195,10 +195,10 @@ class PublicApi20Controller extends FOSRestController
     public function factionsAction(Request $request)
     {
         $data = $this->entityManager->getRepository('AppBundle:Faction')->findAll();
-    
+
         return $this->prepareResponse($data, $request);
     }
-    
+
     /**
      * Get a cycle
      *
@@ -213,14 +213,14 @@ class PublicApi20Controller extends FOSRestController
     public function cycleAction(string $cycle_code, Request $request)
     {
         $cycle = $this->entityManager->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
-    
+
         if (!$cycle) {
             throw $this->createNotFoundException();
         }
-        
+
         return $this->prepareResponse([$cycle], $request);
     }
-    
+
     /**
      * Get all the cycles
      *
@@ -235,7 +235,7 @@ class PublicApi20Controller extends FOSRestController
     public function cyclesAction(Request $request)
     {
         $data = $this->entityManager->getRepository('AppBundle:Cycle')->findAll();
-        
+
         return $this->prepareResponse($data, $request);
     }
 
@@ -253,14 +253,14 @@ class PublicApi20Controller extends FOSRestController
     public function packAction(string $pack_code, Request $request)
     {
         $pack = $this->entityManager->getRepository('AppBundle:Pack')->findOneBy(['code' => $pack_code]);
-    
+
         if (!$pack) {
             throw $this->createNotFoundException();
         }
-        
+
         return $this->prepareResponse([$pack], $request);
     }
-    
+
     /**
      * Get all the packs as an array of JSON objects.
      *
@@ -275,7 +275,7 @@ class PublicApi20Controller extends FOSRestController
     public function packsAction(Request $request)
     {
         $data = $this->entityManager->getRepository('AppBundle:Pack')->findAll();
-    
+
         return $this->prepareResponse($data, $request);
     }
 
@@ -297,10 +297,10 @@ class PublicApi20Controller extends FOSRestController
         if (!$card) {
             throw $this->createNotFoundException();
         }
-        
+
         return $this->prepareResponse([$card], $request, ['imageUrlTemplate' => $request->getSchemeAndHttpHost() . '/card_image/{code}.png']);
     }
-    
+
     /**
      * Get all the cards as an array of JSON objects.
      *
@@ -315,7 +315,7 @@ class PublicApi20Controller extends FOSRestController
     public function cardsAction(Request $request)
     {
         $data = $this->entityManager->getRepository('AppBundle:Card')->findAll();
-        
+
         return $this->prepareResponse($data, $request, ['imageUrlTemplate' => $request->getSchemeAndHttpHost() . '/card_image/{code}.png']);
     }
 
@@ -353,19 +353,19 @@ class PublicApi20Controller extends FOSRestController
         $date_from = new \DateTime($date);
         $date_to = clone($date_from);
         $date_to->modify('+1 day');
-        
+
         $date_today = new \DateTime();
         if ($date_today < $date_from) {
             return $this->prepareFailedResponse("Date is in the future");
         }
-        
+
         $qb = $entityManager->createQueryBuilder()->select('d')->from('AppBundle:Decklist', 'd');
         $qb->where($qb->expr()->between('d.dateCreation', ':date_from', ':date_to'));
         $qb->setParameter('date_from', $date_from, Type::DATETIME);
         $qb->setParameter('date_to', $date_to, Type::DATETIME);
-        
+
         $data = $qb->getQuery()->execute();
-    
+
         return $this->prepareResponse($data, $request);
     }
 
@@ -387,7 +387,7 @@ class PublicApi20Controller extends FOSRestController
         if (!$deck->getUser()->getShareDecks()) {
             throw $this->createAccessDeniedException();
         }
-        
+
         return $this->prepareResponse([$deck], $request);
     }
 
@@ -405,10 +405,10 @@ class PublicApi20Controller extends FOSRestController
     public function prebuiltsAction(Request $request)
     {
         $data = $this->entityManager->getRepository('AppBundle:Prebuilt')->findAll();
-    
+
         return $this->prepareResponse($data, $request);
     }
-    
+
     /**
      * Get all MWL data
      *
@@ -423,7 +423,7 @@ class PublicApi20Controller extends FOSRestController
     public function mwlAction(Request $request)
     {
         $data = $this->entityManager->getRepository('AppBundle:Mwl')->findAll();
-    
+
         return $this->prepareResponse($data, $request);
     }
 }

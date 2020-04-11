@@ -27,68 +27,68 @@ class HighlightCommand extends ContainerAwareCommand
             $rows = $dbh
                 ->executeQuery(
                     "SELECT
-				d.id,
-				d.date_update,
-				d.name,
-				d.prettyname,
-				d.date_creation,
-				d.rawdescription,
-				d.description,
-				d.precedent_decklist_id precedent,
-				u.id user_id,
-				u.username,
-				u.faction usercolor,
-				u.reputation,
-				u.donation,
-				c.code identity_code,
-				f.code faction_code,
-				d.nbvotes,
-				d.nbfavorites,
-				d.nbcomments,
-				m.code as mwl_code
-				FROM decklist d
-				JOIN user u ON d.user_id=u.id
-				JOIN card c ON d.identity_id=c.id
-				JOIN faction f ON d.faction_id=f.id
-				JOIN mwl m ON d.mwl_id = m.id
-				WHERE d.id=?
-				",
+                       d.id,
+                       d.date_update,
+                       d.name,
+                       d.prettyname,
+                       d.date_creation,
+                       d.rawdescription,
+                       d.description,
+                       d.precedent_decklist_id precedent,
+                       u.id user_id,
+                       u.username,
+                       u.faction usercolor,
+                       u.reputation,
+                       u.donation,
+                       c.code identity_code,
+                       f.code faction_code,
+                       d.nbvotes,
+                       d.nbfavorites,
+                       d.nbcomments,
+                       m.code as mwl_code
+                     FROM decklist d
+                       JOIN user u ON d.user_id=u.id
+                       JOIN card c ON d.identity_id=c.id
+                       JOIN faction f ON d.faction_id=f.id
+                       JOIN mwl m ON d.mwl_id = m.id
+                     WHERE d.id=?
+                       ",
                     [$decklist_id]
                 )->fetchAll();
         } else {
             $rows = $dbh
                 ->executeQuery(
                     "SELECT
-				d.id,
-				d.date_update,
-				d.name,
-				d.prettyname,
-				d.date_creation,
-				d.rawdescription,
-				d.description,
-				d.precedent_decklist_id precedent,
-				u.id user_id,
-				u.username,
-				u.faction usercolor,
-				u.reputation,
-				u.donation,
-				c.code identity_code,
-				f.code faction_code,
-				d.nbvotes,
-				d.nbfavorites,
-				d.nbcomments,
-				m.code as mwl_code
-				FROM decklist d
-				JOIN user u ON d.user_id=u.id
-				JOIN card c ON d.identity_id=c.id
-				JOIN faction f ON d.faction_id=f.id
-				JOIN mwl m ON d.mwl_id = m.id
-				WHERE d.date_creation > date_sub( current_date, INTERVAL 7 DAY )
-				AND u.enabled=1
-				AND d.moderation_status=0
-                    ORDER BY nbvotes DESC , nbcomments DESC
-                    LIMIT 0,1
-    				",
+                       d.id,
+                       d.date_update,
+                       d.name,
+                       d.prettyname,
+                       d.date_creation,
+                       d.rawdescription,
+                       d.description,
+                       d.precedent_decklist_id precedent,
+                       u.id user_id,
+                       u.username,
+                       u.faction usercolor,
+                       u.reputation,
+                       u.donation,
+                       c.code identity_code,
+                       f.code faction_code,
+                       d.nbvotes,
+                       d.nbfavorites,
+                       d.nbcomments,
+                       m.code as mwl_code
+                     FROM decklist d
+                       JOIN user u ON d.user_id=u.id
+                       JOIN card c ON d.identity_id=c.id
+                       JOIN faction f ON d.faction_id=f.id
+                       JOIN mwl m ON d.mwl_id = m.id
+                     WHERE d.date_creation > date_sub( current_date, INTERVAL 7 DAY )
+                       AND u.enabled=1
+                       AND d.moderation_status=0
+                     ORDER BY nbvotes DESC , nbcomments DESC
+                     LIMIT 0,1
+                           ",
                     []
                 )->fetchAll();
         }
@@ -102,12 +102,12 @@ class HighlightCommand extends ContainerAwareCommand
         $cards = $dbh
             ->executeQuery(
                 "SELECT
-				c.code card_code,
-				s.quantity qty
-				FROM decklistslot s
-				JOIN card c ON s.card_id=c.id
-				WHERE s.decklist_id=?
-				ORDER BY c.code ASC",
+                   c.code card_code,
+                   s.quantity qty
+                 FROM decklistslot s
+                   JOIN card c ON s.card_id=c.id
+                 WHERE s.decklist_id=?
+                 ORDER BY c.code ASC",
                 [$decklist['id']]
             )->fetchAll();
 

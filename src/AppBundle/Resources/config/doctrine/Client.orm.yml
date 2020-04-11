@@ -14,4 +14,4 @@ AppBundle\Entity\Client:
                 strategy: AUTO
         name:
             type: string
-            
+

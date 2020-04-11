@@ -1,10 +1,10 @@
 <a href="{{ path('cards_zoom',{card_code:item.review.card.code}) }}#review-{{ item.review.id }}" class="list-group-item no-popup{% if item.unchecked %} list-group-item-warning{% endif %}">
-	<span class="glyphicon glyphicon-education" style="margin-right:1em"></span>
-	{% if item.review.user.id != app.user.id %}
-	<span class="username {{ item.review.user.faction }}">{{ item.review.user.username }}</span>
-	{% else %}
-	You
-	{% endif %}
-	published a review of
-	<b><span class="card-name">{{ item.review.card.title }}</span></b>
+  <span class="glyphicon glyphicon-education" style="margin-right:1em"></span>
+  {% if item.review.user.id != app.user.id %}
+  <span class="username {{ item.review.user.faction }}">{{ item.review.user.username }}</span>
+  {% else %}
+  You
+  {% endif %}
+  published a review of
+  <b><span class="card-name">{{ item.review.card.title }}</span></b>
 </a>

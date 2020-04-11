@@ -1,10 +1,10 @@
 <a href="{{ path('decklist_detail', { 'decklist_id': item.decklist.id, 'decklist_name': item.decklist.prettyname|e('url') }) }}" class="list-group-item{% if item.unchecked %} list-group-item-warning{% endif %}">
-	<span class="glyphicon glyphicon-list-alt" style="margin-right:1em"></span>
-	{% if item.decklist.user.id != app.user.id %}
-	<span class="username {{ item.decklist.user.faction }}">{{ item.decklist.user.username }}</span>
-	{% else %}
-	You
-	{% endif %}
-	published the decklist 
-	<b><span class="decklist-name">{{ item.decklist.name }}</span></b>
+  <span class="glyphicon glyphicon-list-alt" style="margin-right:1em"></span>
+  {% if item.decklist.user.id != app.user.id %}
+  <span class="username {{ item.decklist.user.faction }}">{{ item.decklist.user.username }}</span>
+  {% else %}
+  You
+  {% endif %}
+  published the decklist
+  <b><span class="decklist-name">{{ item.decklist.name }}</span></b>
 </a>

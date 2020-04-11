@@ -1,27 +1,27 @@
 <tr>
-	<td style="width:67px">
-		<img data-src="{{ decklist.identity_url ? decklist.identity_url : asset('/card_image/'~decklist.code~'.png') }}" alt="{{ decklist.identity }}" style="width:51px;height:71px" class="lazyload">
-	</td>
-	<td>
-		<div>
-			<a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a>
-		</div>
-		<div class="small">
-			<i>{{ decklist.lastpack }}</i>
-		</div>
-		<div class="small">
-			<div>
-	    		<a href="{{ path('user_profile_view', {user_id:decklist.user_id,user_name:decklist.username|e('url')}) }}" class="{{ decklist.usercolor }}">{{ decklist.username }}</a>
-	    		{% if decklist.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
-	    		<small class="reputation">{{ decklist.reputation }}</small>
-			</div>
-			<div>
-				{% if decklist.tournament %}
-				<span class="text-success">
-		            <span class="glyphicon glyphicon-certificate"></span> {{ decklist.tournament }}
-		        </span>
-			    {% endif %}
-			</div>
-		</div>
-	</td>
+  <td style="width:67px">
+    <img data-src="{{ decklist.identity_url ? decklist.identity_url : asset('/card_image/'~decklist.code~'.png') }}" alt="{{ decklist.identity }}" style="width:51px;height:71px" class="lazyload">
+  </td>
+  <td>
+    <div>
+      <a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a>
+    </div>
+    <div class="small">
+      <i>{{ decklist.lastpack }}</i>
+    </div>
+    <div class="small">
+      <div>
+          <a href="{{ path('user_profile_view', {user_id:decklist.user_id,user_name:decklist.username|e('url')}) }}" class="{{ decklist.usercolor }}">{{ decklist.username }}</a>
+          {% if decklist.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
+          <small class="reputation">{{ decklist.reputation }}</small>
+      </div>
+      <div>
+        {% if decklist.tournament %}
+        <span class="text-success">
+                <span class="glyphicon glyphicon-certificate"></span> {{ decklist.tournament }}
+            </span>
+          {% endif %}
+      </div>
+    </div>
+  </td>
 </tr>

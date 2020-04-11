@@ -25,13 +25,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   }
   function readArguments() {
     if(!container.hasAttribute || !container.getAttribute) throw Error("Unsupported browser");
-    
+
     var default_options = {
     'id': null, // integer
     'columns': null, // integer
     'stats': 'yes' // 'yes'|'no'
     };
-    
+
     Object.keys(default_options).forEach(function(option) {
       if(container.hasAttribute('data-'+option)) {
         options[option] = container.getAttribute('data-'+option);
@@ -40,13 +40,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         options[option] = default_options[option];
       }
     });
-    
+
     // data-columns="2" => only accepts integers as value, otherwise assume no columns
     options['columns'] = parseInt(options['columns'], 10);
-    
+
     // data-stats="no" => no stats-data ; any other value => stats-data
     options['stats'] = (options['stats'] !== 'no');
-    
+
     if(!options.id) throw Error("Missing data-id on container");
     return decklist_id = options.id;
   }
@@ -185,7 +185,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   		if(identity.code == "03029" && card.type_code == "program") {
   			// The Professor: first program is free
   			inf = (quantity-1) * card.faction_cost;
-  		} else if(card.code === '10018') { 
+  		} else if(card.code === '10018') {
   			// Mumba Temple: 15 or fewer ice
   			if(countCardCopies(decklist_content.filter(function(card) { return card.type_code === 'ice'; })) <= 15) {
   				inf = 0;
@@ -342,7 +342,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       insertHTML(reason);
     });
   }
-  
+
   registerMutationObserver();
   dbLoadedPromise = createDatabases(['types', 'sides', 'factions', 'cycles', 'packs', 'cards', 'mwl']);
   displayDecklist();

@@ -183,7 +183,7 @@ class Faction implements NormalizableInterface, TimestampableInterface, CodeName
 
         return $this;
     }
-    
+
     /**
      * Remove cards
      * @param Card $cards

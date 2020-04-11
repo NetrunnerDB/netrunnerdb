@@ -40,34 +40,34 @@ class DeckManager
     public function getByUser(User $user, bool $decode_variation = false)
     {
         $dbh = $this->entityManager->getConnection();
-        $decks = $dbh->executeQuery(
-            "SELECT
-				d.id,
-				d.name,
-				DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
-                DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
-				d.description,
-                d.tags,
-                m.code mwl_code,
-                (SELECT count(*) FROM deckchange c WHERE c.deck_id=d.id AND c.saved=0) unsaved,
-                d.problem,
-				c.title identity_title,
-                c.code identity_code,
-                c.image_url identity_url,
-				f.code faction_code,
-        		LPAD(y.position * 10 + p.position, 6, '0') lastpack_global_position,
-                p.cycle_id cycle_id,
-                p.position pack_number,
-				s.name side
-				FROM deck d
-        		LEFT JOIN mwl m ON d.mwl_id=m.id
-				LEFT JOIN card c ON d.identity_id=c.id
-				LEFT JOIN faction f ON c.faction_id=f.id
-				LEFT JOIN side s ON d.side_id=s.id
-                LEFT JOIN pack p ON d.last_pack_id=p.id
-        		LEFT JOIN cycle y ON p.cycle_id=y.id
-				WHERE d.user_id=?
-				ORDER BY date_update DESC",
+        $decks = $dbh->executeQuery("
+            SELECT
+              d.id,
+              d.name,
+              DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
+              DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
+              d.description,
+              d.tags,
+              m.code mwl_code,
+              (SELECT count(*) FROM deckchange c WHERE c.deck_id=d.id AND c.saved=0) unsaved,
+              d.problem,
+              c.title identity_title,
+              c.code identity_code,
+              c.image_url identity_url,
+              f.code faction_code,
+              LPAD(y.position * 10 + p.position, 6, '0') lastpack_global_position,
+              p.cycle_id cycle_id,
+              p.position pack_number,
+              s.name side
+            FROM deck d
+              LEFT JOIN mwl m ON d.mwl_id=m.id
+              LEFT JOIN card c ON d.identity_id=c.id
+              LEFT JOIN faction f ON c.faction_id=f.id
+              LEFT JOIN side s ON d.side_id=s.id
+              LEFT JOIN pack p ON d.last_pack_id=p.id
+              LEFT JOIN cycle y ON p.cycle_id=y.id
+            WHERE d.user_id=?
+            ORDER BY date_update DESC",
             [
                 $user->getId(),
             ]
@@ -80,15 +80,15 @@ class DeckManager
 
         // slots
 
-        $rows = $dbh->executeQuery(
-            "SELECT
-				s.deck_id,
-				c.code card_code,
-				s.quantity qty
-				FROM deckslot s
-				JOIN card c ON s.card_id=c.id
-				JOIN deck d ON s.deck_id=d.id
-				WHERE d.user_id=?",
+        $rows = $dbh->executeQuery("
+            SELECT
+              s.deck_id,
+              c.code card_code,
+              s.quantity qty
+            FROM deckslot s
+              JOIN card c ON s.card_id=c.id
+              JOIN deck d ON s.deck_id=d.id
+            WHERE d.user_id=?",
 
             [
                 $user->getId(),
@@ -110,14 +110,14 @@ class DeckManager
 
         // changes
 
-        $rows = $dbh->executeQuery(
-            "SELECT
-                DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
-				c.variation,
-                c.deck_id
-				FROM deckchange c
-				JOIN deck d ON c.deck_id=d.id
-				WHERE d.user_id=? AND c.saved=1",
+        $rows = $dbh->executeQuery("
+            SELECT
+              DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
+              c.variation,
+              c.deck_id
+            FROM deckchange c
+              JOIN deck d ON c.deck_id=d.id
+            WHERE d.user_id=? AND c.saved=1",
 
             [
                 $user->getId(),
@@ -162,27 +162,27 @@ class DeckManager
     public function getById(int $deck_id, bool $decode_variation = false)
     {
         $dbh = $this->entityManager->getConnection();
-        $deck = $dbh->executeQuery(
-            "SELECT
-				d.id,
-				d.name,
-				DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
-				DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
-				d.description,
-                d.tags,
-                m.code mwl_code,
-                (SELECT count(*) FROM deckchange c WHERE c.deck_id=d.id AND c.saved=0) unsaved,
-                d.problem,
-				c.title identity_title,
-                c.code identity_code,
-				f.code faction_code,
-				s.name side
-				FROM deck d
-        		LEFT JOIN mwl m ON d.mwl_id=m.id
-				LEFT JOIN card c ON d.identity_id=c.id
-				LEFT JOIN faction f ON c.faction_id=f.id
-				LEFT JOIN side s ON d.side_id=s.id
-				WHERE d.id=?",
+        $deck = $dbh->executeQuery("
+            SELECT
+              d.id,
+              d.name,
+              DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
+              DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
+              d.description,
+              d.tags,
+              m.code mwl_code,
+              (SELECT count(*) FROM deckchange c WHERE c.deck_id=d.id AND c.saved=0) unsaved,
+              d.problem,
+              c.title identity_title,
+              c.code identity_code,
+              f.code faction_code,
+              s.name side
+            FROM deck d
+              LEFT JOIN mwl m ON d.mwl_id=m.id
+              LEFT JOIN card c ON d.identity_id=c.id
+              LEFT JOIN faction f ON c.faction_id=f.id
+              LEFT JOIN side s ON d.side_id=s.id
+            WHERE d.id=?",
             [
                 $deck_id,
             ]
@@ -191,14 +191,14 @@ class DeckManager
 
         $deck['id'] = intval($deck['id']);
 
-        $rows = $dbh->executeQuery(
-            "SELECT
-				c.code card_code,
-				s.quantity qty
-				FROM deckslot s
-				JOIN card c ON s.card_id=c.id
-				JOIN deck d ON s.deck_id=d.id
-				WHERE d.id=?",
+        $rows = $dbh->executeQuery("
+            SELECT
+              c.code card_code,
+              s.quantity qty
+            FROM deckslot s
+              JOIN card c ON s.card_id=c.id
+              JOIN deck d ON s.deck_id=d.id
+            WHERE d.id=?",
 
             [
                 $deck_id,
@@ -214,13 +214,13 @@ class DeckManager
         }
         $deck['cards'] = $cards;
 
-        $rows = $dbh->executeQuery(
-            "SELECT
-				DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
-				c.variation
-				FROM deckchange c
-				WHERE c.deck_id=? AND c.saved=1
-                ORDER BY date_creation DESC",
+        $rows = $dbh->executeQuery("
+            SELECT
+              DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
+              c.variation
+            FROM deckchange c
+            WHERE c.deck_id=? AND c.saved=1
+            ORDER BY date_creation DESC",
 
             [
                 $deck_id,
