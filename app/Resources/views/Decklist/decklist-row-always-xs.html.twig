@@ -1,6 +1,6 @@
 <tr>
 	<td style="width:67px">
-		<img src="{{ decklist.identity_url ? decklist.identity_url : asset('/card_image/'~decklist.code~'.png') }}" alt="{{ decklist.identity }}" style="width:51px;height:71px">
+		<img data-src="{{ decklist.identity_url ? decklist.identity_url : asset('/card_image/'~decklist.code~'.png') }}" alt="{{ decklist.identity }}" style="width:51px;height:71px" class="lazyload">
 	</td>
 	<td>
 		<div>
