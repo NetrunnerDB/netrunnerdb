@@ -53,13 +53,13 @@ class BuilderController extends Controller
         ]);
 
         $identities = $cardsData->select_only_latest_cards($identities);
-		$banned_cards = array();
+        $banned_cards = array();
         foreach ($identities as $id) {
-			$i = $cardsData->get_mwl_info([$id]);
-			if (count($i) > 0 && $i[0]['active']) {
-				$banned_cards[$id->getCode()] = true;
-			}
-		}
+            $i = $cardsData->get_mwl_info([$id]);
+            if (count($i) > 0 && $i[0]['active']) {
+                $banned_cards[$id->getCode()] = true;
+            }
+         }
 
         return $this->render(
 
@@ -67,7 +67,7 @@ class BuilderController extends Controller
             [
                 'pagetitle'  => "New deck",
                 "identities" => $identities,
-				"banned_cards"   => $banned_cards
+                "banned_cards"   => $banned_cards
             ],
 
             $response
@@ -449,9 +449,9 @@ class BuilderController extends Controller
         }
 
         $mwl = null;
-	if ($deck->getMWL()) {
-		$mwl = $deck->getMWL()->getCards();
-	}
+        if ($deck->getMWL()) {
+            $mwl = $deck->getMWL()->getCards();
+        }
         foreach ($types as $type) {
             if (isset($classement[$type]) && $classement[$type]['qty']) {
                 $lines[] = "";
@@ -462,7 +462,7 @@ class BuilderController extends Controller
                     /** @var Card $card */
                     $card = $slot['card'];
                     $is_restricted = (
-			$mwl
+                        $mwl
                         && isset($mwl[$card->getCode()])
                         && isset($mwl[$card->getCode()]['is_restricted'])
                         && ($mwl[$card->getCode()]['is_restricted'] === 1)
@@ -739,23 +739,24 @@ class BuilderController extends Controller
     public function editAction(int $deck_id, EntityManagerInterface $entityManager)
     {
         $dbh = $entityManager->getConnection();
-        $rows = $dbh->executeQuery("SELECT
-				d.id,
-				d.name,
-				m.code mwl_code,
-				DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
-                DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
-                d.description,
-                d.tags,
-                u.id user_id,
-                (SELECT count(*) FROM deckchange c WHERE c.deck_id=d.id AND c.saved=0) unsaved,
-                s.name side_name
-				FROM deck d
-        		LEFT JOIN mwl m ON d.mwl_id=m.id
-                LEFT JOIN user u ON d.user_id=u.id
-				LEFT JOIN side s ON d.side_id=s.id
-				WHERE d.id=?
-				", [
+        $rows = $dbh->executeQuery("
+            SELECT
+              d.id,
+              d.name,
+              m.code mwl_code,
+              DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
+              DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
+              d.description,
+              d.tags,
+              u.id user_id,
+              (SELECT count(*) FROM deckchange c WHERE c.deck_id=d.id AND c.saved=0) unsaved,
+              s.name side_name
+            FROM deck d
+              LEFT JOIN mwl m ON d.mwl_id=m.id
+              LEFT JOIN user u ON d.user_id=u.id
+              LEFT JOIN side s ON d.side_id=s.id
+            WHERE d.id=?
+              ", [
             $deck_id,
         ])->fetchAll();
 
@@ -767,12 +768,13 @@ class BuilderController extends Controller
 
         $deck['side_name'] = mb_strtolower($deck['side_name']);
 
-        $rows = $dbh->executeQuery("SELECT
-				c.code,
-				s.quantity
-				FROM deckslot s
-				JOIN card c ON s.card_id=c.id
-				WHERE s.deck_id=?", [
+        $rows = $dbh->executeQuery("
+            SELECT
+              c.code,
+              s.quantity
+            FROM deckslot s
+              JOIN card c ON s.card_id=c.id
+            WHERE s.deck_id=?", [
             $deck_id,
         ])->fetchAll();
 
@@ -783,13 +785,14 @@ class BuilderController extends Controller
 
         $snapshots = [];
 
-        $rows = $dbh->executeQuery("SELECT
-				DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
-				c.variation,
-                c.saved
-				FROM deckchange c
-				WHERE c.deck_id=? AND c.saved=1
-                ORDER BY date_creation DESC", [$deck_id])->fetchAll();
+        $rows = $dbh->executeQuery("
+            SELECT
+              DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
+              c.variation,
+              c.saved
+            FROM deckchange c
+            WHERE c.deck_id=? AND c.saved=1
+            ORDER BY date_creation DESC", [$deck_id])->fetchAll();
 
         // recreating the versions with the variation info, starting from $preversion
         $preversion = $cards;
@@ -823,13 +826,14 @@ class BuilderController extends Controller
         $row['variation'] = null;
         array_unshift($snapshots, $row);
 
-        $rows = $dbh->executeQuery("SELECT
-				DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
-				c.variation,
-                c.saved
-				FROM deckchange c
-				WHERE c.deck_id=? AND c.saved=0
-                ORDER BY date_creation ASC", [$deck_id])->fetchAll();
+        $rows = $dbh->executeQuery("
+            SELECT
+              DATE_FORMAT(c.date_creation, '%Y-%m-%dT%TZ') date_creation,
+              c.variation,
+              c.saved
+            FROM deckchange c
+            WHERE c.deck_id=? AND c.saved=0
+            ORDER BY date_creation ASC", [$deck_id])->fetchAll();
 
         // recreating the snapshots with the variation info, starting from $postversion
         $postversion = $cards;
@@ -863,16 +867,16 @@ class BuilderController extends Controller
 
         $published_decklists = $dbh->executeQuery(
             "SELECT
-					d.id,
-					d.name,
-					d.prettyname,
-					d.nbvotes,
-					d.nbfavorites,
-					d.nbcomments
-					FROM decklist d
-					WHERE d.parent_deck_id=?
-                                        AND d.moderation_status IN (0,1)
-					ORDER BY d.date_creation ASC",
+               d.id,
+               d.name,
+               d.prettyname,
+               d.nbvotes,
+               d.nbfavorites,
+               d.nbcomments
+             FROM decklist d
+             WHERE d.parent_deck_id=?
+               AND d.moderation_status IN (0,1)
+             ORDER BY d.date_creation ASC",
 
             [
                 $deck_id,
@@ -882,16 +886,16 @@ class BuilderController extends Controller
 
         $parent_decklists = $dbh->executeQuery(
             "SELECT
-					d.id,
-					d.name,
-					d.prettyname,
-					d.nbvotes,
-					d.nbfavorites,
-					d.nbcomments
-					FROM decklist d, deck
-					WHERE deck.id = ? AND d.id=deck.parent_decklist_id
-                                        AND d.moderation_status IN (0,1)
-					ORDER BY d.date_creation ASC",
+               d.id,
+               d.name,
+               d.prettyname,
+               d.nbvotes,
+               d.nbfavorites,
+               d.nbcomments
+             FROM decklist d, deck
+             WHERE deck.id = ? AND d.id=deck.parent_decklist_id
+               AND d.moderation_status IN (0,1)
+             ORDER BY d.date_creation ASC",
 
             [
                 $deck_id,
@@ -923,26 +927,27 @@ class BuilderController extends Controller
     public function viewAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge)
     {
         $dbh = $entityManager->getConnection();
-        $rows = $dbh->executeQuery("SELECT
-				d.id,
-				d.name,
-				d.description,
-				m.code,
-                d.problem,
-        		d.date_update,
-				s.name side_name,
-				c.code identity_code,
-				f.code faction_code,
-				CASE WHEN u.id=? THEN 1 ELSE 0 END is_owner
-                FROM deck d
-        		LEFT JOIN mwl m  ON d.mwl_id=m.id
-                LEFT JOIN user u ON d.user_id=u.id
-				LEFT JOIN side s ON d.side_id=s.id
-				LEFT JOIN card c ON d.identity_id=c.id
-				LEFT JOIN faction f ON c.faction_id=f.id
-                WHERE d.id=?
-                AND (u.id=? OR u.share_decks=1)
-				", [
+        $rows = $dbh->executeQuery("
+            SELECT
+              d.id,
+              d.name,
+              d.description,
+              m.code,
+              d.problem,
+              d.date_update,
+              s.name side_name,
+              c.code identity_code,
+              f.code faction_code,
+              CASE WHEN u.id=? THEN 1 ELSE 0 END is_owner
+            FROM deck d
+              LEFT JOIN mwl m  ON d.mwl_id=m.id
+              LEFT JOIN user u ON d.user_id=u.id
+              LEFT JOIN side s ON d.side_id=s.id
+              LEFT JOIN card c ON d.identity_id=c.id
+              LEFT JOIN faction f ON c.faction_id=f.id
+            WHERE d.id=?
+              AND (u.id=? OR u.share_decks=1)
+               ", [
             $this->getUser() ? $this->getUser()->getId() : null,
             $deck_id,
             $this->getUser() ? $this->getUser()->getId() : null,
@@ -955,12 +960,13 @@ class BuilderController extends Controller
 
         $deck['side_name'] = mb_strtolower($deck['side_name']);
 
-        $rows = $dbh->executeQuery("SELECT
-				c.code,
-				s.quantity
-				FROM deckslot s
-				JOIN card c ON s.card_id=c.id
-				WHERE s.deck_id=?", [
+        $rows = $dbh->executeQuery("
+            SELECT
+              c.code,
+              s.quantity
+            FROM deckslot s
+              JOIN card c ON s.card_id=c.id
+            WHERE s.deck_id=?", [
             $deck_id,
         ])->fetchAll();
 
@@ -970,50 +976,48 @@ class BuilderController extends Controller
         }
         $deck['slots'] = $cards;
 
-        $published_decklists = $dbh->executeQuery(
-            "SELECT
-					d.id,
-					d.name,
-					d.prettyname,
-					d.nbvotes,
-					d.nbfavorites,
-					d.nbcomments
-					FROM decklist d
-					WHERE d.parent_deck_id=?
-                                        AND d.moderation_status IN (0,1)
-					ORDER BY d.date_creation ASC",
-
+        $published_decklists = $dbh->executeQuery("
+            SELECT
+              d.id,
+              d.name,
+              d.prettyname,
+              d.nbvotes,
+              d.nbfavorites,
+              d.nbcomments
+            FROM decklist d
+            WHERE d.parent_deck_id=?
+              AND d.moderation_status IN (0,1)
+            ORDER BY d.date_creation ASC",
             [
                 $deck_id,
             ]
 
         )->fetchAll();
 
-        $parent_decklists = $dbh->executeQuery(
-            "SELECT
-					d.id,
-					d.name,
-					d.prettyname,
-					d.nbvotes,
-					d.nbfavorites,
-					d.nbcomments
-					FROM decklist d, deck
-					WHERE deck.id = ? AND d.id=deck.parent_decklist_id
-                                        AND d.moderation_status IN (0,1)
-					ORDER BY d.date_creation ASC",
-
+        $parent_decklists = $dbh->executeQuery("
+            SELECT
+              d.id,
+              d.name,
+              d.prettyname,
+              d.nbvotes,
+              d.nbfavorites,
+              d.nbcomments
+            FROM decklist d, deck
+            WHERE deck.id = ? AND d.id=deck.parent_decklist_id
+              AND d.moderation_status IN (0,1)
+            ORDER BY d.date_creation ASC",
             [
                 $deck_id,
             ]
 
         )->fetchAll();
 
-        $tournaments = $dbh->executeQuery(
-            "SELECT
-					t.id,
-					t.description
-                FROM tournament t
-                ORDER BY t.description DESC"
+        $tournaments = $dbh->executeQuery("
+          SELECT
+            t.id,
+            t.description
+          FROM tournament t
+          ORDER BY t.description DESC"
         )->fetchAll();
 
         $problem = $deck['problem'];
@@ -1049,10 +1053,10 @@ class BuilderController extends Controller
 
         $tournaments = $entityManager->getConnection()->executeQuery(
             "SELECT
-					t.id,
-					t.description
-                FROM tournament t
-                ORDER BY t.description DESC"
+               t.id,
+               t.description
+             FROM tournament t
+             ORDER BY t.description DESC"
         )->fetchAll();
 
         $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);

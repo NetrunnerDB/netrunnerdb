@@ -31,7 +31,7 @@
 </div>
 
 <div class="reviews row">
-	<div class="col-lg-8 col-lg-push-2">
+  <div class="col-lg-8 col-lg-push-2">
 {% if reviews|length > 0 %}{% for i in 0..reviews|length-1 %}{% set review = reviews[i] %}{% set card = review.card %}
 <div class="row" style="margin-bottom:1em;padding-bottom:1em;border-bottom:1px solid #ddd"><div class="col-lg-12">
     <div class="review-header">
@@ -41,12 +41,12 @@
     <article class="review" data-index="{{ review.id }}" id="review-{{ review.id }}">
        <div class="review-like">
            <a id="review-social-icon-like" href="#" class="social-icon-like" data-toggle="tooltip" data-placement="bottom" title="Like that review">
-        	   <span class="glyphicon glyphicon-heart"></span> <span class="num">{{ review.nbvotes }}</span>
-    	   </a>
+             <span class="glyphicon glyphicon-heart"></span> <span class="num">{{ review.nbvotes }}</span>
+         </a>
        </div>
        <div class="review-content">
        <div class="review-text">
-    	   {{ review.text|raw }}
+         {{ review.text|raw }}
        </div>
        <div class="review-date">
            <time datetime="{{ review.dateCreation|date('c') }}">{{ review.dateCreation|date('j M Y') }}</time>
@@ -54,7 +54,7 @@
        <div class="review-author">
            <a href="{{ path('user_profile_view', {user_id:review.user.id,user_name:review.user.username|e('url')}) }}" rel="author" class="username {{ review.user.faction }}">{{ review.user.username }}</a>
            {% if review.user.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
-    	   <small class="reputation">{{ review.user.reputation }}</small>
+         <small class="reputation">{{ review.user.reputation }}</small>
        </div>
        
        {% if review.comments|length %}

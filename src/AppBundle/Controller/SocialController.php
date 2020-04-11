@@ -207,38 +207,38 @@ class SocialController extends Controller
         $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery(
             "SELECT
-				d.id,
-				d.date_update,
-				d.name,
-				d.prettyname,
-				d.date_creation,
-				d.rawdescription,
-				d.description,
-                		d.signature,
-				d.precedent_decklist_id precedent,
-                                d.tournament_id,
-                                t.description tournament,
-				u.id user_id,
-				u.username,
-				u.faction usercolor,
-				u.reputation,
-				u.donation,
-				c.code identity_code,
-				f.code faction_code,
-				d.nbvotes,
-				d.nbfavorites,
-				d.nbcomments,
-                                d.moderation_status,
-                                d.is_legal,
-                                d.rotation_id
-				FROM decklist d
-				JOIN user u ON d.user_id=u.id
-				JOIN card c ON d.identity_id=c.id
-				JOIN faction f ON d.faction_id=f.id
-                                LEFT JOIN tournament t ON d.tournament_id=t.id
-				WHERE d.id=?
-                                AND d.moderation_status IN (0,1,2)
-				",
+               d.id,
+               d.date_update,
+               d.name,
+               d.prettyname,
+               d.date_creation,
+               d.rawdescription,
+               d.description,
+               d.signature,
+               d.precedent_decklist_id precedent,
+               d.tournament_id,
+               t.description tournament,
+               u.id user_id,
+               u.username,
+               u.faction usercolor,
+               u.reputation,
+               u.donation,
+               c.code identity_code,
+               f.code faction_code,
+               d.nbvotes,
+               d.nbfavorites,
+               d.nbcomments,
+               d.moderation_status,
+               d.is_legal,
+               d.rotation_id
+             FROM decklist d
+               JOIN user u ON d.user_id=u.id
+               JOIN card c ON d.identity_id=c.id
+               JOIN faction f ON d.faction_id=f.id
+               LEFT JOIN tournament t ON d.tournament_id=t.id
+             WHERE d.id=?
+               AND d.moderation_status IN (0,1,2)
+               ",
             [
                 $decklist_id,
             ]
@@ -252,18 +252,18 @@ class SocialController extends Controller
 
         $comments = $dbh->executeQuery(
             "SELECT
-				c.id,
-				c.date_creation,
-				c.user_id,
-				u.username author,
-				u.faction authorcolor,
-                u.donation,
-				c.text,
-                c.hidden
-				FROM comment c
-				JOIN user u ON c.user_id=u.id
-				WHERE c.decklist_id=?
-				ORDER BY date_creation ASC",
+               c.id,
+               c.date_creation,
+               c.user_id,
+               u.username author,
+               u.faction authorcolor,
+               u.donation,
+               c.text,
+               c.hidden
+             FROM comment c
+               JOIN user u ON c.user_id=u.id
+             WHERE c.decklist_id=?
+             ORDER BY date_creation ASC",
             [
                 $decklist_id,
             ]
@@ -273,13 +273,14 @@ class SocialController extends Controller
             return $item['author'];
         }, $comments))));
 
-        $cards = $dbh->executeQuery("SELECT
-				c.code card_code,
-				s.quantity qty
-				FROM decklistslot s
-				JOIN card c ON s.card_id=c.id
-				WHERE s.decklist_id=?
-				ORDER BY c.code ASC", [
+        $cards = $dbh->executeQuery("
+             SELECT
+               c.code card_code,
+               s.quantity qty
+             FROM decklistslot s
+               JOIN card c ON s.card_id=c.id
+             WHERE s.decklist_id=?
+             ORDER BY c.code ASC", [
             $decklist_id,
         ])->fetchAll();
 
@@ -289,16 +290,16 @@ class SocialController extends Controller
 
         $precedent_decklists = $dbh->executeQuery(
             "SELECT
-					d.id,
-					d.name,
-					d.prettyname,
-					d.nbvotes,
-					d.nbfavorites,
-					d.nbcomments
-					FROM decklist d
-					WHERE d.id=?
-                                        AND d.moderation_status IN (0,1)
-					ORDER BY d.date_creation ASC",
+               d.id,
+               d.name,
+               d.prettyname,
+               d.nbvotes,
+               d.nbfavorites,
+               d.nbcomments
+             FROM decklist d
+             WHERE d.id=?
+               AND d.moderation_status IN (0,1)
+             ORDER BY d.date_creation ASC",
             [
                 $decklist['precedent'],
             ]
@@ -306,16 +307,16 @@ class SocialController extends Controller
 
         $successor_decklists = $dbh->executeQuery(
             "SELECT
-					d.id,
-					d.name,
-					d.prettyname,
-					d.nbvotes,
-					d.nbfavorites,
-					d.nbcomments
-					FROM decklist d
-					WHERE d.precedent_decklist_id=?
-                                        AND d.moderation_status IN (0,1)
-					ORDER BY d.date_creation ASC",
+               d.id,
+               d.name,
+               d.prettyname,
+               d.nbvotes,
+               d.nbfavorites,
+               d.nbcomments
+             FROM decklist d
+             WHERE d.precedent_decklist_id=?
+               AND d.moderation_status IN (0,1)
+             ORDER BY d.date_creation ASC",
             [
                 $decklist_id,
             ]
@@ -323,15 +324,15 @@ class SocialController extends Controller
 
         $duplicate = $dbh->executeQuery(
             "SELECT
-					d.id,
-					d.name,
-					d.prettyname
-					FROM decklist d
-					WHERE d.signature=?
-					AND d.date_creation<?
-                                        AND d.moderation_status IN (0,1)
-					ORDER BY d.date_creation ASC
-					LIMIT 0,1",
+               d.id,
+               d.name,
+               d.prettyname
+             FROM decklist d
+             WHERE d.signature=?
+               AND d.date_creation<?
+               AND d.moderation_status IN (0,1)
+             ORDER BY d.date_creation ASC
+             LIMIT 0,1",
             [
                 $decklist['signature'],
                 $decklist['date_creation'],
@@ -340,29 +341,26 @@ class SocialController extends Controller
 
         $tournaments = $dbh->executeQuery(
             "SELECT
-					t.id,
-					t.description
-                FROM tournament t
-                ORDER BY t.description DESC"
+               t.id,
+               t.description
+             FROM tournament t
+             ORDER BY t.description DESC"
         )->fetchAll();
 
         $legalities = $dbh->executeQuery(
             "SELECT
-        			m.code,
-        			m.name,
-        			l.is_legal
-        		FROM legality l
-        		LEFT JOIN mwl m ON l.mwl_id=m.id
-        		WHERE l.decklist_id=?
-        		ORDER BY m.date_start DESC",
+               m.code,
+               m.name,
+               l.is_legal
+             FROM legality l
+               LEFT JOIN mwl m ON l.mwl_id=m.id
+             WHERE l.decklist_id=?
+             ORDER BY m.date_start DESC",
             [$decklist_id]
         )->fetchAll();
 
         $mwl = $dbh->executeQuery(
-            "SELECT
-                m.code
-            FROM mwl m
-            WHERE m.active=1"
+            "SELECT m.code FROM mwl m WHERE m.active=1"
         )->fetch();
         if ($mwl) {
             $mwl = $mwl['code'];
@@ -384,19 +382,20 @@ class SocialController extends Controller
             . "JOIN user u ON u.id=c.user_id "
             . "WHERE d.id=?", [$decklist_id])->fetchAll();
 
-        $packs = $dbh->executeQuery("SELECT DISTINCT
-				p.code code,
-				p.name name,
-				p.position pack_position,
-				y.code cycle_code,
-				y.name cycle_name,
-				y.position cycle_position
-				FROM pack p
-				JOIN cycle y ON p.cycle_id=y.id
-        		JOIN card c ON c.pack_id=p.id
-        		JOIN decklistslot s ON s.card_id=c.id
-				WHERE s.decklist_id=?
-				ORDER BY y.position ASC, p.position ASC", [$decklist_id])->fetchAll();
+        $packs = $dbh->executeQuery("
+             SELECT DISTINCT
+               p.code code,
+               p.name name,
+               p.position pack_position,
+               y.code cycle_code,
+               y.name cycle_name,
+               y.position cycle_position
+             FROM pack p
+               JOIN cycle y ON p.cycle_id=y.id
+               JOIN card c ON c.pack_id=p.id
+               JOIN decklistslot s ON s.card_id=c.id
+             WHERE s.decklist_id=?
+             ORDER BY y.position ASC, p.position ASC", [$decklist_id])->fetchAll();
 
         return $this->render('/Decklist/decklist.html.twig', [
             'pagetitle'           => $decklist['name'],
@@ -438,11 +437,11 @@ class SocialController extends Controller
 
         $dbh = $entityManager->getConnection();
         $is_favorite = $dbh->executeQuery("SELECT
-				count(*)
-				FROM decklist d
-				JOIN favorite f ON f.decklist_id=d.id
-				WHERE f.user_id=?
-				AND d.id=?", [
+               count(*)
+               FROM decklist d
+               JOIN favorite f ON f.decklist_id=d.id
+               WHERE f.user_id=?
+               AND d.id=?", [
             $user->getId(),
             $decklist_id,
         ])
@@ -681,7 +680,7 @@ class SocialController extends Controller
         $mwl = null;
         if ($decklist->getMWL()) {
           $mwl = $decklist->getMWL()->getCards();
-	}
+        }
         foreach ($types as $type) {
             if (isset($classement[$type]) && $classement[$type]['qty']) {
                 $lines[] = "";
@@ -692,7 +691,7 @@ class SocialController extends Controller
                     /** @var Card $card */
                     $card = $slot['card'];
                     $is_restricted = (
-			$mwl
+                        $mwl
                         && isset($mwl[$card->getCode()])
                         && isset($mwl[$card->getCode()]['is_restricted'])
                         && ($mwl[$card->getCode()]['is_restricted'] === 1)
@@ -944,7 +943,7 @@ class SocialController extends Controller
     }
 
     /**
-	 * @param Request $request
+     * @param Request $request
      * @param String $user_name
      * @param EntityManagerInterface $entityManager
      * @return Response
@@ -956,15 +955,15 @@ class SocialController extends Controller
         $response->setMaxAge($this->getParameter('short_cache'));
 
         $found_users = $entityManager->getRepository('AppBundle:User')->findBy(['username' => $user_name]);
-		if (count($found_users) == 1) {
-			return $this->redirect($this->generateUrl('user_profile_view', [
-				"_locale"   => $request->getLocale(),
-				"user_id"   => $found_users[0]->getId(),
-				"user_name" => $found_users[0]->getUsername(),
-			]));
-		} else {
-			throw $this->createNotFoundException('The user could not be found.');
-		}
+        if (count($found_users) == 1) {
+            return $this->redirect($this->generateUrl('user_profile_view', [
+               "_locale"   => $request->getLocale(),
+               "user_id"   => $found_users[0]->getId(),
+               "user_name" => $found_users[0]->getUsername(),
+            ]));
+        } else {
+            throw $this->createNotFoundException('The user could not be found.');
+        }
     }
 
     /**
@@ -1091,17 +1090,17 @@ class SocialController extends Controller
 
         $comments = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
-				c.id,
-				c.text,
-				c.date_creation,
-				d.id decklist_id,
-				d.name decklist_name,
-				d.prettyname decklist_prettyname
-				from comment c
-				join decklist d on c.decklist_id=d.id
-				where c.user_id=?
-				order by date_creation desc
-				limit $start, $limit",
+               c.id,
+               c.text,
+               c.date_creation,
+               d.id decklist_id,
+               d.name decklist_name,
+               d.prettyname decklist_prettyname
+               from comment c
+               join decklist d on c.decklist_id=d.id
+               where c.user_id=?
+               order by date_creation desc
+               limit $start, $limit",
             [
                 $user->getId(),
             ]
@@ -1170,19 +1169,19 @@ class SocialController extends Controller
 
         $comments = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
-				c.id,
-				c.text,
-				c.date_creation,
-				d.id decklist_id,
-				d.name decklist_name,
-				d.prettyname decklist_prettyname,
-				u.id user_id,
-				u.username author
-				from comment c
-				join decklist d on c.decklist_id=d.id
-				join user u on c.user_id=u.id
-				order by date_creation desc
-				limit $start, $limit",
+               c.id,
+               c.text,
+               c.date_creation,
+               d.id decklist_id,
+               d.name decklist_name,
+               d.prettyname decklist_prettyname,
+               u.id user_id,
+               u.username author
+               from comment c
+               join decklist d on c.decklist_id=d.id
+               join user u on c.user_id=u.id
+               order by date_creation desc
+               limit $start, $limit",
             []
         )->fetchAll(\PDO::FETCH_ASSOC);
 

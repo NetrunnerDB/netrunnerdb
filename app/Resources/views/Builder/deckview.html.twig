@@ -10,18 +10,18 @@
 <script type="text/javascript">
 
 var Identity = null,
-	Deck = {{ deck|json_encode|raw }},
-	SelectedDeck = Deck,
-	DisplaySort = 'type',
-	DisplaySortSecondary = 'name',
-	Order = 1,
-	Identity = null,
-	InfluenceSpent = 0,
-	InfluenceLimit = 0,
-	MinimumDeckSize = 0,
-	DeckSize = 0,
-	MWL = null;
-	
+  Deck = {{ deck|json_encode|raw }},
+  SelectedDeck = Deck,
+  DisplaySort = 'type',
+  DisplaySortSecondary = 'name',
+  Order = 1,
+  Identity = null,
+  InfluenceSpent = 0,
+  InfluenceLimit = 0,
+  MinimumDeckSize = 0,
+  DeckSize = 0,
+  MWL = null;
+  
 </script>
 {% endblock %}
 
@@ -33,92 +33,92 @@ var Identity = null,
 
 <!-- Title -->
 <div>
-	<h1 style="border-bottom:1px solid lightgray"><span class="icon icon-{{ deck.faction_code }} {{ deck.faction_code }}"></span> {{ deck.name }}</h1>
-	{% if deck.problem %}
-	<div class="alert alert-danger" role="alert">{{ deck.message }}</div>
-	{% endif %}
+  <h1 style="border-bottom:1px solid lightgray"><span class="icon icon-{{ deck.faction_code }} {{ deck.faction_code }}"></span> {{ deck.name }}</h1>
+  {% if deck.problem %}
+  <div class="alert alert-danger" role="alert">{{ deck.message }}</div>
+  {% endif %}
 </div>
 
 <!-- Buttons -->
 <div class="btn-actions text-center">
-	{% if deck.is_owner %}
-	<div class="btn-group" role="group" style="margin-bottom:5px">
-    	<button type="button" id="btn-print" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-print"></span> Print</button>
+  {% if deck.is_owner %}
+  <div class="btn-group" role="group" style="margin-bottom:5px">
+      <button type="button" id="btn-print" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-print"></span> Print</button>
     </div>
     <div class="btn-group" role="group" style="margin-bottom:5px">
-		<button type="button" id="btn-edit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
-	</div>
-	<div class="btn-group" role="group" style="margin-bottom:5px">
-		<button type="button" id="btn-publish" disabled="disabled" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-share"></span> Publish</button>
-	</div>
-	<div class="btn-group" role="group" style="margin-bottom:5px">
-		<button type="button" id="btn-delete" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span> Delete</button>
-	</div>
-	{% endif %}
+    <button type="button" id="btn-edit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
+  </div>
+  <div class="btn-group" role="group" style="margin-bottom:5px">
+    <button type="button" id="btn-publish" disabled="disabled" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-share"></span> Publish</button>
+  </div>
+  <div class="btn-group" role="group" style="margin-bottom:5px">
+    <button type="button" id="btn-delete" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+  </div>
+  {% endif %}
 </div>
 
 <div class="btn-actions text-center hidden-print">
-	<div class="btn-group" style="margin-bottom:5px">
-		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-			<span class="glyphicon glyphicon-sort"></span>
-			Sort
-			<span class="caret"></span>
-		</button>
-		<ul class="dropdown-menu" role="menu" id="menu-sort">
-			<li><a href="#" id="btn-sort-type"><label><input type="radio" name="sort-order" checked="checked">by Type</label></a></li>
-			<li><a href="#" id="btn-sort-number"><label><input type="radio" name="sort-order">by Set</label></a></li>
-			<li><a href="#" id="btn-sort-faction"><label><input type="radio" name="sort-order">by Faction</label></a></li>
-			<li><a href="#" id="btn-sort-faction-type"><label><input type="radio" name="sort-order">by Faction, then Type</label></a></li>
-			<li><a href="#" id="btn-sort-faction-number"><label><input type="radio" name="sort-order">by Faction, then Set</label></a></li>
-			<li><a href="#" id="btn-sort-title"><label><input type="radio" name="sort-order">by Name</label></a></li>
-	    </ul>
-	</div>
-	<div class="btn-group" style="margin-bottom:5px">
-		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-			<span class="glyphicon glyphicon-download"></span> Download <span class="caret"></span>
-		</button>
-		<ul class="dropdown-menu" role="menu">
-			<li><a href="#" id="btn-download-text">Text file</a></li>
-			<li><a href="#" id="btn-download-octgn">Octgn file</a></li>
-		</ul>
-	</div>
-	<div class="btn-group" style="margin-bottom:5px">
-		<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-			<span class="glyphicon glyphicon-export"></span> Export <span class="caret"></span>
-		</button>
-		<ul class="dropdown-menu" role="menu">
-			<li><a href="#" id="btn-display-plain">Plain</a></li>
-			<li><a href="#" id="btn-display-bbcode">bbCode</a></li>
-			<li><a href="#" id="btn-display-markdown">Markdown</a></li>
-			<li><a href="#" id="btn-display-jintekinet">Jinteki.net</a></li>
-		</ul>
-	</div>
+  <div class="btn-group" style="margin-bottom:5px">
+    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+      <span class="glyphicon glyphicon-sort"></span>
+      Sort
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" id="menu-sort">
+      <li><a href="#" id="btn-sort-type"><label><input type="radio" name="sort-order" checked="checked">by Type</label></a></li>
+      <li><a href="#" id="btn-sort-number"><label><input type="radio" name="sort-order">by Set</label></a></li>
+      <li><a href="#" id="btn-sort-faction"><label><input type="radio" name="sort-order">by Faction</label></a></li>
+      <li><a href="#" id="btn-sort-faction-type"><label><input type="radio" name="sort-order">by Faction, then Type</label></a></li>
+      <li><a href="#" id="btn-sort-faction-number"><label><input type="radio" name="sort-order">by Faction, then Set</label></a></li>
+      <li><a href="#" id="btn-sort-title"><label><input type="radio" name="sort-order">by Name</label></a></li>
+      </ul>
+  </div>
+  <div class="btn-group" style="margin-bottom:5px">
+    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+      <span class="glyphicon glyphicon-download"></span> Download <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#" id="btn-download-text">Text file</a></li>
+      <li><a href="#" id="btn-download-octgn">Octgn file</a></li>
+    </ul>
+  </div>
+  <div class="btn-group" style="margin-bottom:5px">
+    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+      <span class="glyphicon glyphicon-export"></span> Export <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#" id="btn-display-plain">Plain</a></li>
+      <li><a href="#" id="btn-display-bbcode">bbCode</a></li>
+      <li><a href="#" id="btn-display-markdown">Markdown</a></li>
+      <li><a href="#" id="btn-display-jintekinet">Jinteki.net</a></li>
+    </ul>
+  </div>
 </div>
 
 <div id="deck">
-	<!-- Identity and Stats -->
-	<div class="row">
-		<div class="col-sm-12">
-			<h3 id="identity"></h3>
-			<div id="influence"></div>
-			<div id="agendapoints"></div>
-			<div id="cardcount"></div>
-			<div id="latestpack"></div>
-			<div id="restricted"></div>
-			<div id="limited"></div>
-		</div><!-- /.col-sm-9 -->
-	</div><!-- /.row -->
-	<!-- Identity and Stats -->
-	
-	<!-- Deck Content -->
-	<div class="row" id="deck-content" style="margin-bottom:10px">
-	</div><!-- /#deck-content -->
-	<!-- Deck Content -->
+  <!-- Identity and Stats -->
+  <div class="row">
+    <div class="col-sm-12">
+      <h3 id="identity"></h3>
+      <div id="influence"></div>
+      <div id="agendapoints"></div>
+      <div id="cardcount"></div>
+      <div id="latestpack"></div>
+      <div id="restricted"></div>
+      <div id="limited"></div>
+    </div><!-- /.col-sm-9 -->
+  </div><!-- /.row -->
+  <!-- Identity and Stats -->
+  
+  <!-- Deck Content -->
+  <div class="row" id="deck-content" style="margin-bottom:10px">
+  </div><!-- /#deck-content -->
+  <!-- Deck Content -->
 </div><!-- /#deck -->
 
 <!-- Timestamp -->
 <p class="text-right">
-	Last updated <time datetime="{{ deck.date_update|date('c') }}" title="{{ deck.date_update|date('Y-m-d H:i:s P') }}">{{ deck.date_update|date('j M Y') }}</time>
+  Last updated <time datetime="{{ deck.date_update|date('c') }}" title="{{ deck.date_update|date('Y-m-d H:i:s P') }}">{{ deck.date_update|date('j M Y') }}</time>
 </p>
 
 <!-- Tools -->
@@ -145,7 +145,7 @@ var Identity = null,
 </thead>
 <tbody>
 <tr>
-	<td><div id="costChart"></div></td>
+  <td><div id="costChart"></div></td>
 </tr>
 </tbody>
 </table>
@@ -156,53 +156,53 @@ var Identity = null,
 </thead>
 <tbody>
 <tr>
-	<td><div id="strengthChart"></div></td>
+  <td><div id="strengthChart"></div></td>
 </tr>
 </tbody>
 </table>
 
 <!-- Published decklists Table -->
 <table class="table table-condensed" id="table-predecessor">
-	<thead>
-		<tr><th colspan="4"><span class="glyphicon glyphicon-share"></span> Published versions</th></tr>
-	</thead>
-	<tbody>
-	{% if published_decklists|length %}
-	{% for decklist in published_decklists %}
-		<tr>
-			<td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
-			<td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
-			<td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
-			<td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
-		</tr>
-	{% endfor %}
-	{% else %}
-		<tr><td>None.</td></tr>
-	{% endif %}
-	</tbody>
+  <thead>
+    <tr><th colspan="4"><span class="glyphicon glyphicon-share"></span> Published versions</th></tr>
+  </thead>
+  <tbody>
+  {% if published_decklists|length %}
+  {% for decklist in published_decklists %}
+    <tr>
+      <td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+      <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
+      <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
+      <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
+    </tr>
+  {% endfor %}
+  {% else %}
+    <tr><td>None.</td></tr>
+  {% endif %}
+  </tbody>
 </table>
 <!-- Published decklists Table -->
-	<!-- Copied-from decklists Table -->
-	<table class="table table-condensed" id="table-parent">
-			<thead>
-				<tr><th colspan="{% if parent_decklists|length %}4{% else %}1{% endif %}"><span class="glyphicon glyphicon-import"></span> Copied from</th></tr>
-			</thead>
-			<tbody>
-			{% if parent_decklists|length %}
-				{% for decklist in parent_decklists %}
-						<tr>
-								<td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
-								<td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
-								<td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
-								<td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
-							</tr>
-					{% endfor %}
-				{% else %}
-					<tr><td>None.</td></tr>
-				{% endif %}
-			</tbody>
-		</table>
-	<!-- Copied-from decklists Table -->
+  <!-- Copied-from decklists Table -->
+  <table class="table table-condensed" id="table-parent">
+      <thead>
+        <tr><th colspan="{% if parent_decklists|length %}4{% else %}1{% endif %}"><span class="glyphicon glyphicon-import"></span> Copied from</th></tr>
+      </thead>
+      <tbody>
+      {% if parent_decklists|length %}
+        {% for decklist in parent_decklists %}
+            <tr>
+                <td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+                <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
+                <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
+                <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
+              </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td>None.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  <!-- Copied-from decklists Table -->
 </div>
 
 </div>
@@ -220,72 +220,72 @@ var Identity = null,
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
-						<form class="form-horizontal" role="form">
-						    <div class="form-group">
-						        <label for="inputEmail3" class="col-xs-7 control-label">Number of cards in deck</label>
-						        <div class="col-xs-2">
-						            <input type="number" class="form-control" id="odds-calculator-N" value="0">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="inputPassword3" class="col-xs-7 control-label">Number of <em>desired</em> cards in deck</label>
-								<div class="col-xs-2">
-									<input type="number" class="form-control" id="odds-calculator-K" value="0">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="inputPassword3" class="col-xs-7 control-label">Number of cards drawn</label>
-								<div class="col-xs-2">
-									<input type="number" class="form-control" id="odds-calculator-n" value="0">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="inputPassword3" class="col-xs-7 control-label">Number of <em>desired</em> cards in draw (at least)</label>
-								<div class="col-xs-2">
-									<input type="number" class="form-control" id="odds-calculator-k" value="0">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="inputPassword3" class="col-xs-7 control-label">Probability of such an outcome</label>
-								<div class="col-xs-2">
-									 <p class="form-control-static"><span id="odds-calculator-p"></span>%</p>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-7 control-label">Number of cards in deck</label>
+                    <div class="col-xs-2">
+                        <input type="number" class="form-control" id="odds-calculator-N" value="0">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputPassword3" class="col-xs-7 control-label">Number of <em>desired</em> cards in deck</label>
+                <div class="col-xs-2">
+                  <input type="number" class="form-control" id="odds-calculator-K" value="0">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputPassword3" class="col-xs-7 control-label">Number of cards drawn</label>
+                <div class="col-xs-2">
+                  <input type="number" class="form-control" id="odds-calculator-n" value="0">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputPassword3" class="col-xs-7 control-label">Number of <em>desired</em> cards in draw (at least)</label>
+                <div class="col-xs-2">
+                  <input type="number" class="form-control" id="odds-calculator-k" value="0">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputPassword3" class="col-xs-7 control-label">Probability of such an outcome</label>
+                <div class="col-xs-2">
+                   <p class="form-control-static"><span id="odds-calculator-p"></span>%</p>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- Modal -->
 
 <!-- Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3 class="modal-title">Delete deck</h3>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-12">
-						<form action="{{ path('deck_delete') }}" method="POST" enctype="application/x-www-form-urlencoded" id="delete-deck-form">
-							<input type="hidden" name="deck_id" id="delete-deck-id" value="">
-							<p>
-							Are you sure that you want to delete the deck <b id="delete-deck-name"></b>?
-							</p>
-							<div class="pull-right">
-								<button type="submit" class="btn btn-danger">Yes, delete</button>
-								<button type="button" class="btn btn-default" onclick="$('#deleteModal').modal('hide')">Cancel</button>
-							</div>
-						</form>
-					</div><!-- /#modal-info -->
-				</div><!-- /.row -->
-			</div><!-- /.modal-body -->
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title">Delete deck</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form action="{{ path('deck_delete') }}" method="POST" enctype="application/x-www-form-urlencoded" id="delete-deck-form">
+              <input type="hidden" name="deck_id" id="delete-deck-id" value="">
+              <p>
+              Are you sure that you want to delete the deck <b id="delete-deck-name"></b>?
+              </p>
+              <div class="pull-right">
+                <button type="submit" class="btn btn-danger">Yes, delete</button>
+                <button type="button" class="btn btn-default" onclick="$('#deleteModal').modal('hide')">Cancel</button>
+              </div>
+            </form>
+          </div><!-- /#modal-info -->
+        </div><!-- /.row -->
+      </div><!-- /.modal-body -->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- Modal -->
 
@@ -293,23 +293,23 @@ var Identity = null,
 
 <!-- Modal -->
 <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3 class="modal-title" id="exportModalLabel">Export deck</h3>
-			</div>
-		    <div class="modal-body">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="form-group">
-							<textarea class="form-control" id="export-deck" rows="20"></textarea>
-						</div>
-					</div><!-- /#modal-info -->
-				</div><!-- /.row -->
-			</div><!-- /.modal-body -->
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="exportModalLabel">Export deck</h3>
+      </div>
+        <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <textarea class="form-control" id="export-deck" rows="20"></textarea>
+            </div>
+          </div><!-- /#modal-info -->
+        </div><!-- /.row -->
+      </div><!-- /.modal-body -->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- Modal -->
 

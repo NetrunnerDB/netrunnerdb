@@ -7,10 +7,10 @@
 <script type="text/javascript">
 
 var Identity = null,
-	Decklist = {{ decklist|json_encode|raw }},
-        MWL = null,
-	DisplaySort = 'type',
-	DisplaySortSecondary = 'name';
+  Decklist = {{ decklist|json_encode|raw }},
+  MWL = null,
+  DisplaySort = 'type',
+  DisplaySortSecondary = 'name';
 
 </script>
 <script type="application/ld+json">
@@ -29,16 +29,16 @@ var Identity = null,
 {% block body %}
 
 <div class="container" id="index_page">
-	{% include '/Default/navbar-factions.html.twig' %}
-    <div class="row">
-        <div class="col-md-8">
-            {% include '/Default/decklist_of_the_week.html.twig' %}
-        </div>
-        <div class="col-md-4">
-			{% include '/Default/recent_decklists.html.twig' %}
-	        {% include '/Default/google_adaptable_ad.html.twig' %}
-        </div>
+  {% include '/Default/navbar-factions.html.twig' %}
+  <div class="row">
+    <div class="col-md-8">
+      {% include '/Default/decklist_of_the_week.html.twig' %}
     </div>
+    <div class="col-md-4">
+      {% include '/Default/recent_decklists.html.twig' %}
+      {% include '/Default/google_adaptable_ad.html.twig' %}
+    </div>
+  </div>
 </div> <!-- .container -->
 
 {% endblock %}

@@ -1,23 +1,23 @@
 <div class="col-sm-4" style="margin-bottom:.5em">
-	<select name="sort" class="form-control">
-		{% for key, value in sort_options %}
-			<option value={{key}} {% if sort == key %}selected{% endif %}>
-			Sort by {{value}}
-			</option>
-		{% endfor %}
-	</select>
+  <select name="sort" class="form-control">
+    {% for key, value in sort_options %}
+      <option value={{key}} {% if sort == key %}selected{% endif %}>
+      Sort by {{value}}
+      </option>
+    {% endfor %}
+  </select>
 </div>
 
 <div class="col-sm-4" style="margin-bottom:.5em">
-	<select name="view" class="form-control">
-		{% for key, value in view_options %}
-			<option value={{key}} {% if view == key %}selected{% endif %}>
-			View as {{value}}
-			</option>
-		{% endfor %}
-	</select>
+  <select name="view" class="form-control">
+    {% for key, value in view_options %}
+      <option value={{key}} {% if view == key %}selected{% endif %}>
+      View as {{value}}
+      </option>
+    {% endfor %}
+  </select>
 </div>
 
 <div>
-	<input name="_locale" type="hidden" value="{{ app.request.locale }}">
+  <input name="_locale" type="hidden" value="{{ app.request.locale }}">
 </div>

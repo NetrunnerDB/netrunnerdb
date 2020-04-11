@@ -8,15 +8,15 @@
 <script type="text/javascript">
 
 var Identity = null,
-	Decklist = {{ decklist|json_encode|raw }},
-	Commenters = {{ commenters|json_encode|raw }},
-	SelectedDeck = Decklist,
-	MWL = {{ mwl|json_encode|raw }},
-	DisplaySort = 'type',
-	DisplaySortSecondary = 'name';
+  Decklist = {{ decklist|json_encode|raw }},
+  Commenters = {{ commenters|json_encode|raw }},
+  SelectedDeck = Decklist,
+  MWL = {{ mwl|json_encode|raw }},
+  DisplaySort = 'type',
+  DisplaySortSecondary = 'name';
 
 NRDB.user.params.decklist_id = Decklist.id;
-	
+  
 </script>
 {% endblock %}
 {% block body %}
@@ -37,15 +37,15 @@ NRDB.user.params.decklist_id = Decklist.id;
                 <span><span class="glyphicon glyphicon-calendar"></span> <time datetime="{{ decklist.date_creation|date('c') }}">{{ decklist.date_creation|date('j M Y') }}</time></span>
                 |
                 <a id="social-icon-like" href="#" class="social-icon-like" data-toggle="tooltip" data-placement="bottom" title="Like">
-                	<span class="glyphicon glyphicon-heart"></span> <span class="num">{{ decklist.nbvotes }}</span>
+                  <span class="glyphicon glyphicon-heart"></span> <span class="num">{{ decklist.nbvotes }}</span>
                 </a>
                 |
                 <a id="social-icon-favorite" href="#" class="social-icon-favorite" data-toggle="tooltip" data-placement="bottom" title="Favorite">
-                	<span class="glyphicon glyphicon-star"></span> <span class="num">{{ decklist.nbfavorites }}</span>
+                  <span class="glyphicon glyphicon-star"></span> <span class="num">{{ decklist.nbfavorites }}</span>
                 </a>
                 |
                 <a id="social-icon-comment" href="#comments" class="social-icon-comment" data-toggle="tooltip" data-placement="bottom" title="Comment">
-                	<span class="glyphicon glyphicon-comment"></span> <span class="num">{{ decklist.nbcomments }}</span>
+                  <span class="glyphicon glyphicon-comment"></span> <span class="num">{{ decklist.nbcomments }}</span>
                 </a>
             </div>
             {% if duplicate %}
@@ -65,50 +65,50 @@ NRDB.user.params.decklist_id = Decklist.id;
     <li role="presentation"><a href="#packs" data-toggle="tab">Packs</a></li>
     <li role="presentation"><a href="#tools" data-toggle="tab">Info</a></li>
     <li role="presentation" class="dropdown">
-    	<a href="#" id="actions" class="dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
-    	<ul class="dropdown-menu" id="btn-group-decklist">
-    		<li><a href="#" id="btn-copy-decklist">Copy into my decks</a></li>
-			<li><a href="#" id="btn-compare">Compare with another decklist</a></li>
-    		<li class="dropdown-header"><span class="glyphicon glyphicon-download"></span> Download</li>
-	    		<li><a href="#" id="btn-download-text">Text file</a></li>
-				<li><a href="#" id="btn-download-octgn">Octgn file</a></li>
-    		<li class="dropdown-header"><span class="glyphicon glyphicon-export"></span> Export</li>
-				<li><a href="#" id="btn-export-bbcode">bbCode</a></li>
-				<li><a href="#" id="btn-export-markdown">Markdown (Reddit)</a></li>
-				<li><a href="#" id="btn-export-plaintext">Plain text</a></li>
-				<li><a href="#" id="btn-export-jintekinet">Jinteki.net format</a></li>
-    		<li class="dropdown-header"><span class="glyphicon glyphicon-sort"></span> Sort</li>
-				<li><a href="#" id="btn-sort-type">by Type</a></li>
-				<li><a href="#" id="btn-sort-number">by Set</a></li>
-				<li><a href="#" id="btn-sort-faction">by Faction</a></li>
-				<li><a href="#" id="btn-sort-faction-type">by Faction, then Type</a></li>
-				<li><a href="#" id="btn-sort-faction-number">by Faction, then Set</a></li>
-				<li><a href="#" id="btn-sort-title">by Name</a></li>
-		</ul>
-	</li>
+      <a href="#" id="actions" class="dropdown-toggle" data-toggle="dropdown">Actions <span class="caret"></span></a>
+      <ul class="dropdown-menu" id="btn-group-decklist">
+        <li><a href="#" id="btn-copy-decklist">Copy into my decks</a></li>
+      <li><a href="#" id="btn-compare">Compare with another decklist</a></li>
+        <li class="dropdown-header"><span class="glyphicon glyphicon-download"></span> Download</li>
+          <li><a href="#" id="btn-download-text">Text file</a></li>
+        <li><a href="#" id="btn-download-octgn">Octgn file</a></li>
+        <li class="dropdown-header"><span class="glyphicon glyphicon-export"></span> Export</li>
+        <li><a href="#" id="btn-export-bbcode">bbCode</a></li>
+        <li><a href="#" id="btn-export-markdown">Markdown (Reddit)</a></li>
+        <li><a href="#" id="btn-export-plaintext">Plain text</a></li>
+        <li><a href="#" id="btn-export-jintekinet">Jinteki.net format</a></li>
+        <li class="dropdown-header"><span class="glyphicon glyphicon-sort"></span> Sort</li>
+        <li><a href="#" id="btn-sort-type">by Type</a></li>
+        <li><a href="#" id="btn-sort-number">by Set</a></li>
+        <li><a href="#" id="btn-sort-faction">by Faction</a></li>
+        <li><a href="#" id="btn-sort-faction-type">by Faction, then Type</a></li>
+        <li><a href="#" id="btn-sort-faction-number">by Faction, then Set</a></li>
+        <li><a href="#" id="btn-sort-title">by Name</a></li>
+    </ul>
+  </li>
 </ul>
 <div class="tab-content" style="border-bottom:1px solid #ddd;padding-bottom:20px">
 <div role="tabpanel" class="tab-pane active" id="deck">
-	
+  
 <!-- Identity and Stats -->
 <div class="row">
-	<div class="col-sm-3">
-		<img id="img_identity" src="#empty" alt="Identity" class="img-responsive  hidden-xs">
-	</div><!-- /.col-md-3 -->
-	<div class="col-sm-9">
-		<h3 id="identity"></h3>
-		<div id="influence"></div>
-		<div id="agendapoints"></div>
-		<div id="cardcount"></div>
-		<div id="latestpack"></div>
-		<div id="restricted"></div>
-		<div id="limited"></div>
-		{% if decklist.tournament %}
+  <div class="col-sm-3">
+    <img id="img_identity" src="#empty" alt="Identity" class="img-responsive  hidden-xs">
+  </div><!-- /.col-md-3 -->
+  <div class="col-sm-9">
+    <h3 id="identity"></h3>
+    <div id="influence"></div>
+    <div id="agendapoints"></div>
+    <div id="cardcount"></div>
+    <div id="latestpack"></div>
+    <div id="restricted"></div>
+    <div id="limited"></div>
+    {% if decklist.tournament %}
         <a class="btn btn-ghost btn-success btn-sm" href="{{ path('decklists_list', {type:'tournament'}) }}">
             <span class="glyphicon glyphicon-certificate"></span> {{ decklist.tournament }}
         </a>
         {% endif %}
-	</div><!-- /.col-md-9 -->
+  </div><!-- /.col-md-9 -->
 </div><!-- /.row -->
 <!-- Identity and Stats -->
 
@@ -125,9 +125,9 @@ NRDB.user.params.decklist_id = Decklist.id;
 {% for legality in legalities %}
 <tr>
     <td>
-    	{% if legality.is_legal %}<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
-    	{% else %}<span class="glyphicon glyphicon-thumbs-down" style="color:red"></span>{% endif %}
-    	<a href="#" class="change_mwl" data-code="{{ legality.code }}">{{ legality.name }}</a>
+      {% if legality.is_legal %}<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
+      {% else %}<span class="glyphicon glyphicon-thumbs-down" style="color:red"></span>{% endif %}
+      <a href="#" class="change_mwl" data-code="{{ legality.code }}">{{ legality.name }}</a>
     </td>
 </tr>
 {% endfor %}
@@ -136,20 +136,20 @@ NRDB.user.params.decklist_id = Decklist.id;
 
 <!-- Rotation -->
 <table class="table table-condensed" id="table-rotation">
-	<thead>
-	<tr><th colspan="1"><span class="glyphicon glyphicon-repeat"></span> Rotation</th></tr>
-	</thead>
-	<tbody>
-	<tr>
-		<td>
-			{% if rotation %}
-			Deck valid after {{ rotation }}
-			{% else %}
-			Pre-rotation decklist
-			{% endif %}
-		</td>
-	</tr>
-	</tbody>
+  <thead>
+  <tr><th colspan="1"><span class="glyphicon glyphicon-repeat"></span> Rotation</th></tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>
+      {% if rotation %}
+      Deck valid after {{ rotation }}
+      {% else %}
+      Pre-rotation decklist
+      {% endif %}
+    </td>
+  </tr>
+  </tbody>
 </table>
 
 <!-- Claims -->
@@ -162,7 +162,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 {% for claim in claims %}
 <tr>
     <td>
-    	<a href="{{ claim.url|raw }}" class="tournament_claim">{{ claim.name }}</a>
+      <a href="{{ claim.url|raw }}" class="tournament_claim">{{ claim.name }}</a>
     </td>
     <td>
         #{{ claim.rank }} of {{ claim.participants }}
@@ -188,7 +188,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 {% for pack in packs %}
 <tr>
     <td>
-    	<span class="small icon icon-fw icon-{{ pack.cycle_code }}" title="{{ pack.cycle_name }}"></span> <a href="{{ path('cards_list',{pack_code:pack.code}) }}">{{ pack.name }}</a>
+      <span class="small icon icon-fw icon-{{ pack.cycle_code }}" title="{{ pack.cycle_name }}"></span> <a href="{{ path('cards_list',{pack_code:pack.code}) }}">{{ pack.name }}</a>
     </td>
 </tr>
 {% endfor %}
@@ -227,10 +227,10 @@ NRDB.user.params.decklist_id = Decklist.id;
 {% if precedent_decklists|length %}
 {% for decklist in precedent_decklists %}
 <tr>
-	<td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
-	<td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
-	<td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
-	<td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
+  <td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+  <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
+  <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
+  <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
 </tr>
 {% endfor %}
 {% else %}
@@ -248,10 +248,10 @@ NRDB.user.params.decklist_id = Decklist.id;
 {% if successor_decklists|length %}
 {% for decklist in successor_decklists %}
 <tr>
-	<td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
-	<td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
-	<td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
-	<td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
+  <td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+  <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
+  <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
+  <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
 </tr>
 {% endfor %}
 {% else %}
@@ -266,9 +266,9 @@ NRDB.user.params.decklist_id = Decklist.id;
 </thead>
 <tbody>
 <tr>
-	<td>
-		<input style="width:100%;font-size:small" value="&lt;div data-id=&quot;{{ decklist.id }}&quot; class=&quot;nrdb-ext-decklist&quot;>&lt;script src=&quot;{{ app.request.getSchemeAndHttpHost() ~ '/ext-decklist.js' }}&quot;>&lt;/script>&lt;/div>">
-	</td>
+  <td>
+    <input style="width:100%;font-size:small" value="&lt;div data-id=&quot;{{ decklist.id }}&quot; class=&quot;nrdb-ext-decklist&quot;>&lt;script src=&quot;{{ app.request.getSchemeAndHttpHost() ~ '/ext-decklist.js' }}&quot;>&lt;/script>&lt;/div>">
+  </td>
 </tr>
 </tbody>
 </table>
@@ -324,23 +324,23 @@ NRDB.user.params.decklist_id = Decklist.id;
 
 <!-- Modal -->
 <div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3 class="modal-title" id="exportModalLabel">Export decklist</h3>
-			</div>
-		    <div class="modal-body">
-				<div class="row">
-					<div class="col-md-12">
-						<div class="form-group">
-							<textarea class="form-control" id="export-deck" rows="20"></textarea>
-						</div>
-					</div><!-- /#modal-info -->
-				</div><!-- /.row -->
-			</div><!-- /.modal-body -->
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="exportModalLabel">Export decklist</h3>
+      </div>
+        <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group">
+              <textarea class="form-control" id="export-deck" rows="20"></textarea>
+            </div>
+          </div><!-- /#modal-info -->
+        </div><!-- /.row -->
+      </div><!-- /.modal-body -->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- Modal -->
 
@@ -348,28 +348,28 @@ NRDB.user.params.decklist_id = Decklist.id;
 
 <!-- DeleteModal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3 class="modal-title" id="deleteModalLabel">Delete decklist</h3>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-12">
-						<form action="{{ path('decklist_delete', {decklist_id:decklist.id}) }}" method="POST" enctype="application/x-www-form-urlencoded" id="delete-decklistform">
-							<input type="hidden" name="decklist_id" id="delete-decklist-id" value="{{ decklist.id }}">
-							<p>Are you sure you want to delete this decklist?</p>
-							<div class="pull-right">
-								<button type="submit" id="btn-delete-submit" class="btn btn-danger">Yes, delete</button>
-								<button type="button" class="btn btn-default" onclick="$('#deleteModal').modal('hide')">Cancel</button>
-							</div>
-						</form>
-					</div><!-- /#modal-info -->
-				</div><!-- /.row -->
-			</div><!-- /.modal-body -->
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="deleteModalLabel">Delete decklist</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form action="{{ path('decklist_delete', {decklist_id:decklist.id}) }}" method="POST" enctype="application/x-www-form-urlencoded" id="delete-decklistform">
+              <input type="hidden" name="decklist_id" id="delete-decklist-id" value="{{ decklist.id }}">
+              <p>Are you sure you want to delete this decklist?</p>
+              <div class="pull-right">
+                <button type="submit" id="btn-delete-submit" class="btn btn-danger">Yes, delete</button>
+                <button type="button" class="btn btn-default" onclick="$('#deleteModal').modal('hide')">Cancel</button>
+              </div>
+            </form>
+          </div><!-- /#modal-info -->
+        </div><!-- /.row -->
+      </div><!-- /.modal-body -->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- Modal -->
 
@@ -384,99 +384,99 @@ NRDB.user.params.decklist_id = Decklist.id;
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12">
-						<form class="form-horizontal" role="form">
-						    <div class="form-group">
-						        <label for="odds-calculator-N" class="col-xs-7 control-label">Number of cards in deck</label>
-						        <div class="col-xs-2">
-						            <input type="number" class="form-control" id="odds-calculator-N" value="0">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="odds-calculator-K" class="col-xs-7 control-label">Number of <em>desired</em> cards in deck</label>
-								<div class="col-xs-2">
-									<input type="number" class="form-control" id="odds-calculator-K" value="0">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="odds-calculator-n" class="col-xs-7 control-label">Number of cards drawn</label>
-								<div class="col-xs-2">
-									<input type="number" class="form-control" id="odds-calculator-n" value="0">
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="odds-calculator-k" class="col-xs-7 control-label">Number of <em>desired</em> cards in draw (at least)</label>
-								<div class="col-xs-2">
-									<input type="number" class="form-control" id="odds-calculator-k" value="0">
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-xs-7 control-label">Probability of such an outcome</label>
-								<div class="col-xs-2">
-									 <p class="form-control-static"><span id="odds-calculator-p"></span>%</p>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="odds-calculator-N" class="col-xs-7 control-label">Number of cards in deck</label>
+                    <div class="col-xs-2">
+                        <input type="number" class="form-control" id="odds-calculator-N" value="0">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="odds-calculator-K" class="col-xs-7 control-label">Number of <em>desired</em> cards in deck</label>
+                <div class="col-xs-2">
+                  <input type="number" class="form-control" id="odds-calculator-K" value="0">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="odds-calculator-n" class="col-xs-7 control-label">Number of cards drawn</label>
+                <div class="col-xs-2">
+                  <input type="number" class="form-control" id="odds-calculator-n" value="0">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="odds-calculator-k" class="col-xs-7 control-label">Number of <em>desired</em> cards in draw (at least)</label>
+                <div class="col-xs-2">
+                  <input type="number" class="form-control" id="odds-calculator-k" value="0">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-7 control-label">Probability of such an outcome</label>
+                <div class="col-xs-2">
+                   <p class="form-control-static"><span id="odds-calculator-p"></span>%</p>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- Modal -->
 
 <!-- Modal -->
 <div class="modal fade" id="compareModal" tabindex="-1" role="dialog" aria-labelledby="compareModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3 class="modal-title" id="compareModalLabel">Compare with another decklist</h3>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-12">
-						<input type="hidden" name="decklist1_id" id="compare-decklist-id" value="{{ decklist.id }}">
-						<div class="form-group">
-							<label for="decklist2_url">Link or ID of the other decklist</label>
-							<input type="text" class="form-control" name="decklist2_url" id="decklist2_url" maxlength="250" placeholder="Copy the URL link of a decklist">
-						</div>
-						<div class="pull-right">
-							<button type="submit" id="btn-compare-submit" class="btn btn-success">Go</button>
-							<button type="button" class="btn btn-default" onclick="$('#compareModal').modal('hide')">Cancel</button>
-						</div>
-					</div><!-- /#modal-info -->
-				</div><!-- /.row -->
-			</div><!-- /.modal-body -->
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="compareModalLabel">Compare with another decklist</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <input type="hidden" name="decklist1_id" id="compare-decklist-id" value="{{ decklist.id }}">
+            <div class="form-group">
+              <label for="decklist2_url">Link or ID of the other decklist</label>
+              <input type="text" class="form-control" name="decklist2_url" id="decklist2_url" maxlength="250" placeholder="Copy the URL link of a decklist">
+            </div>
+            <div class="pull-right">
+              <button type="submit" id="btn-compare-submit" class="btn btn-success">Go</button>
+              <button type="button" class="btn btn-default" onclick="$('#compareModal').modal('hide')">Cancel</button>
+            </div>
+          </div><!-- /#modal-info -->
+        </div><!-- /.row -->
+      </div><!-- /.modal-body -->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- Modal -->
 
 <!-- Modal -->
 <div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3 class="modal-title" id="moderationModalLabel">Compare with another decklist</h3>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-md-12">
-						<input type="hidden" name="decklist1_id" id="moderation-decklist-id" value="{{ decklist.id }}">
-						<div class="form-group">
-							<label for="moderation-reason">Reason for moderation</label>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="moderationModalLabel">Compare with another decklist</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <input type="hidden" name="decklist1_id" id="moderation-decklist-id" value="{{ decklist.id }}">
+            <div class="form-group">
+              <label for="moderation-reason">Reason for moderation</label>
                                                         <select class="form-control" name="modflag_id" id="moderation-reason"></select>
-						</div>
-						<div class="pull-right">
-							<button type="submit" id="btn-moderation-submit" class="btn btn-success">Moderate</button>
-							<button type="button" class="btn btn-default" onclick="$('#moderationModal').modal('hide')">Cancel</button>
-						</div>
-					</div><!-- /#modal-info -->
-				</div><!-- /.row -->
-			</div><!-- /.modal-body -->
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
+            </div>
+            <div class="pull-right">
+              <button type="submit" id="btn-moderation-submit" class="btn btn-success">Moderate</button>
+              <button type="button" class="btn btn-default" onclick="$('#moderationModal').modal('hide')">Cancel</button>
+            </div>
+          </div><!-- /#modal-info -->
+        </div><!-- /.row -->
+      </div><!-- /.modal-body -->
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- Modal -->
 

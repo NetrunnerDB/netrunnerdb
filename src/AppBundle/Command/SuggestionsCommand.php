@@ -104,15 +104,15 @@ class SuggestionsCommand extends ContainerAwareCommand
     private function normalizeMatrix(array &$matrix, array $cardsByIndex)
     {
         /*
-    	 * now we have to weight the cards. The numbers in $matrix are the number of decklists
-    	 * that include both x and y cards, so they are relative to the commonness of both
-    	 * cards.
-    	 * if an uncommon card A is often paired with an uncommon card B and a common card C,
-    	 * what result do we want when the user picks A ?
-    	 * -> we want to suggest B more than C
-    	 * so we want $matrix(A,B) > $matrix(A,C)
-    	 * so we want $divider(A,B) < $divider(A,C)
-    	 */
+         * now we have to weight the cards. The numbers in $matrix are the number of decklists
+         * that include both x and y cards, so they are relative to the commonness of both
+         * cards.
+         * if an uncommon card A is often paired with an uncommon card B and a common card C,
+         * what result do we want when the user picks A ?
+         * -> we want to suggest B more than C
+         * so we want $matrix(A,B) > $matrix(A,C)
+         * so we want $divider(A,B) < $divider(A,C)
+         */
 
         for ($i=0; $i<count($matrix); $i++) {
             for ($j=0; $j<$i; $j++) {
