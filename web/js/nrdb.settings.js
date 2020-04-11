@@ -1,5 +1,5 @@
 (function(settings, $) {
-  
+
   // all the settings, initialized with their default value
   var cache = {
       'show-disabled': false,
@@ -13,7 +13,7 @@
       'sort-order': 'type',
             'check-rotation': true
   };
-  
+
   settings.load = function load() {
     // first give them the default values
     _.forIn(cache, function (defaultValue, key) {
@@ -43,19 +43,19 @@
       $(document).trigger('settings.app');
     });
   };
-  
+
   settings.getItem = function (key) {
     return cache[key];
   };
-  
+
   settings.promise = new Promise(function (resolve, reject) {
-    
+
     $(document).on('settings.app', resolve);
 
   });
-  
+
   $(function () {
     settings.load();
   });
-  
+
 })(NRDB.settings = {}, jQuery);

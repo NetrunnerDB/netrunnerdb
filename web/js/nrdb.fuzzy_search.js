@@ -15,7 +15,7 @@
       }
       if(name == "" || name == 'influence spent' || name == 'agenda points' || name == 'cards') return;
       if(types.indexOf(name) > -1) return;
-      
+
       var options = [];
       var query = NRDB.data.cards.find({token: new RegExp(name, 'i')});
       if(query.length) {
@@ -40,7 +40,7 @@
                 if (a.score == b.score && a.card.title == b.card.title) {
                     return a.card.code < b.card.code
                 }
-                return a.score > b.score ? -1 : a.score < b.score ? 1 : 0; 
+                return a.score > b.score ? -1 : a.score < b.score ? 1 : 0;
             });
         var bestScore = matches[0].score;
         for(var i=0; i<max_results && matches[i].score > 0.4 && matches[i].score > bestScore * 0.9; i++) {
@@ -49,7 +49,7 @@
       }
         return { qty: qty, cards: options };
     };
-    
+
     $(document).on('data.app', function() {
       NRDB.data.cards.find().forEach(function (card) {
         NRDB.data.cards.updateById(card.code, {
@@ -57,5 +57,5 @@
         });
       });
     });
-  
+
 })(NRDB.fuzzy_search = {}, jQuery);

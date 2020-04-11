@@ -1,6 +1,6 @@
 (function(draw_simulator, $) {
   var deck = null, initial_size = 0, draw_count = 0, container = null;
-  
+
   draw_simulator.reset = function() {
     if(container) container.empty();
     deck = null;
@@ -48,7 +48,7 @@
       special_button.text(identity.title.split(":")[0]).attr("disabled",false).show();
     }
   }
-  
+
   function do_draw(draw, draw_type) {
     for(var pick = 0; pick < draw && deck.length > 0; pick++) {
       var rand = Math.floor(Math.random() * deck.length);
@@ -75,7 +75,7 @@
     }
     update_odds();
   }
-  
+
   draw_simulator.handle_click = function(event) {
 
     event.preventDefault();
@@ -114,7 +114,7 @@
     do_draw(draw, draw_type);
 
   };
-  
+
   draw_simulator.toggle_opacity = function(event) {
     $(this).css('opacity', 1.5 - parseFloat($(this).css('opacity')));
   };

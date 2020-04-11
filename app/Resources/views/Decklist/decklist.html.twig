@@ -16,7 +16,7 @@ var Identity = null,
   DisplaySortSecondary = 'name';
 
 NRDB.user.params.decklist_id = Decklist.id;
-  
+
 </script>
 {% endblock %}
 {% block body %}
@@ -25,7 +25,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 
 {% if not decklist.is_legal %}
     <div class="alert alert-warning" role="alert">This decklist is not legal for tournament play currently, due to <a href="https://www.fantasyflightgames.com/en/products/android-netrunner-the-card-game/">Card Errata</a>, <a href="https://www.fantasyflightgames.com/en/news/2014/11/5/when-new-programs-overwrite-the-old/">Rotation</a> or <a href="https://www.fantasyflightgames.com/en/products/android-netrunner-the-card-game/">the Most Wanted List</a>.</div>
-{% endif %}        
+{% endif %}
 <div class="row">
     <div class="col-xs-12 panel-group">
         <h1 class="decklist-name">
@@ -89,7 +89,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 </ul>
 <div class="tab-content" style="border-bottom:1px solid #ddd;padding-bottom:20px">
 <div role="tabpanel" class="tab-pane active" id="deck">
-  
+
 <!-- Identity and Stats -->
 <div class="row">
   <div class="col-sm-3">

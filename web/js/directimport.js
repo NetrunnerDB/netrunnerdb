@@ -39,9 +39,9 @@ function import_one_line(line, lineNumber) {
   } else {
     qty_text = qty+"x ";
   }
-  
+
   if(options.length == 0) {
-    if(qty == null) return; 
+    if(qty == null) return;
     return '<i>No match for '+name+'</i>';
   } else if(options.length == 1) {
     return '<input type="hidden" name="'+lineNumber+'" value="'+options[0].code+':'+qty_int+'">'

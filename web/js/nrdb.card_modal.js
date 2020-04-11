@@ -1,11 +1,11 @@
 (function(card_modal, $) {
   var modal = null;
-  
+
   card_modal.create_element = function() {
     modal = $('<div class="modal" id="cardModal" tabindex="-1" role="dialog" aria-labelledby="cardModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h3 class="modal-title card-title">Modal title</h3><div class="row"><div class="col-sm-12 text-center"><div class="btn-group modal-qty" data-toggle="buttons"></div></div></div></div><div class="modal-body"><div class="row"><div class="col-sm-6 modal-image"></div><div class="col-sm-6 modal-info"></div></div></div><div class="modal-footer"><a role="button" href="#" class="btn btn-default card-modal-link no-popup">Go to card page</a><button type="button" class="btn btn-primary" data-dismiss="modal">Close</button></div></div></div></div>');
     modal.appendTo('body');
   };
-  
+
   card_modal.display_modal = function(event, element) {
     event.preventDefault();
     $(element).qtip('hide');
@@ -39,7 +39,7 @@
           qty += '<label class="btn btn-default"><input type="radio" name="qty" value="'+i+'">'+i+'</label>';
         }
         qtyelt.html(qty);
-         
+
         qtyelt.find('label').each(function (index, element) {
         if(index == card.indeck) $(element).addClass('active');
         else $(element).removeClass('active');
@@ -53,7 +53,7 @@
         qtyelt.find('label').addClass("disabled").find('input[type=radio]').attr("disabled", true);
       }
 
-      
+
     } else {
       if(qtyelt) qtyelt.closest('.row').remove();
     }
@@ -63,5 +63,5 @@
   $(function () {
     card_modal.create_element();
   });
-  
+
 })(NRDB.card_modal = {}, jQuery);

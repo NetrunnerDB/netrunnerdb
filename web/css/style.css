@@ -319,7 +319,7 @@ tbody .btn-group{white-space:nowrap}
 #deck_gallery td > div > img { height: 100% ; border: 1px solid white; border-radius: 10px;}
 #deck_gallery td > div > div { background: rgba(0, 0, 0, 0.5); position: absolute; left: 1px; bottom: 1px; color: white; width: 24px; height: 24px; line-height: 24px; font-size: 16px; font-weight: bold; text-align: center; border-radius: 15px; font-family: monospace }
 
-@-webkit-keyframes animDonator { 
+@-webkit-keyframes animDonator {
   0% { color: rgba(255,223,48, 1); }
   100% { color: rgba(255,223,48, 0.2); }
 }
@@ -434,7 +434,7 @@ div.ad-blocked {
   background: -webkit-linear-gradient(top, #ffe5e5 0%,#e5e5ff 100%); /* Chrome10+,Safari5.1+ */
   background: -o-linear-gradient(top, #ffe5e5 0%,#e5e5ff 100%); /* Opera 11.10+ */
   background: -ms-linear-gradient(top, #ffe5e5 0%,#e5e5ff 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #ffe5e5 0%,#e5e5ff 100%); /* W3C */  
+  background: linear-gradient(to bottom, #ffe5e5 0%,#e5e5ff 100%); /* W3C */
   border-style: solid;
   border-width: 1px 0px;
   border-color: red blue blue red;

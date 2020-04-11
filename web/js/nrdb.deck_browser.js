@@ -8,7 +8,7 @@
     var focus = $('#deck_browser_center div:visible');
     focus.prev().show();
     focus.hide();
-  
+
   }
 
   function switch_right() {
@@ -18,7 +18,7 @@
     var focus = $('#deck_browser_center div:visible');
     focus.next().show();
     focus.hide();
-  
+
   }
 
   function focus_to(event) {
@@ -40,7 +40,7 @@
       else $(elt).hide();
     });
   }
-  
+
   deck_browser.update = function() {
 
     images = [ Identity.imageUrl ];

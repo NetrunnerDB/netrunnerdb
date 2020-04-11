@@ -41,7 +41,7 @@ function setup_moderation(moderation_status, moderation_reason, is_moderator) {
 
     if(!is_moderator) {
         return;
-    }        
+    }
 
     var $dropdown = $('#btn-group-decklist');
     $('<li class="dropdown-header"><span class="glyphicon glyphicon-ban-circle"></span> Moderation</li>').appendTo($dropdown);

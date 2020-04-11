@@ -21,7 +21,7 @@ class Card implements NormalizableInterface, TimestampableInterface
      * @var \DateTime
      */
     private $dateUpdate;
-    
+
     /**
      * @var string
      */

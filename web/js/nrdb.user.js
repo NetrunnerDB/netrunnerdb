@@ -41,7 +41,7 @@
         + '<li><a href="' + Routing.generate('fos_user_security_logout') + '">Jack out</a></li>'
         + '</ul>');
     };
-    
+
     user.always = function () {
         // show ads if not donator
         if(user.data && user.data.is_supporter) {
@@ -49,7 +49,7 @@
         } else {
             user.showAds();
         }
- 
+
         $(document).trigger('user.app');
     };
 

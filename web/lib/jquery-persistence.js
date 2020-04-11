@@ -5,26 +5,26 @@
 
 (function ($) {
   "use strict";
-  
+
   var toggle   = '[data-persistence]',
     eventName = 'persistence:change',
       eventNamespace = '.persistence';
-  
+
   function Persistence (element) {
     var self = this,
       $element = $(element);
-    
+
     $element.on('change' + eventNamespace, function (event) {
       self.save.call($element);
     });
   }
-  
+
   var proto = Persistence.prototype;
-  
+
   proto.load = function () {
     var $element = $(this),
       name = $element.attr('name');
-    
+
     return localforage.getItem(name).then(function (value) {
       if(value === null) return;
       switch($element.attr('type')) {
@@ -41,11 +41,11 @@
       $element.trigger(eventName, [ value ]);
     });
   }
-  
+
   proto.save = function () {
     var $element = $(this),
       name = $element.attr('name');
-  
+
     var value;
     switch($element.attr('type')) {
     case 'checkbox':
@@ -58,13 +58,13 @@
       value = $element.val();
       break;
     }
-    
+
     if(value === null) return;
     return localforage.setItem(name, value).then(function (value) {
       $element.trigger(eventName, [ value ]);
     });
   }
-  
+
     // PERSISTENCE PLUGIN DEFINITION
     // ==========================
 
@@ -81,5 +81,5 @@
     };
 
     $.fn.persistence.Constructor = Persistence;
-  
+
 })(jQuery);

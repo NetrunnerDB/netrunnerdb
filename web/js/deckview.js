@@ -19,7 +19,7 @@ $(document).on('data.app', function() {
   update_deck();
   NRDB.draw_simulator.init();
   NRDB.deck_gallery.update();
-  
+
   make_cost_graph();
   make_strength_graph();
 });
@@ -62,7 +62,7 @@ $(function() {
   $('.btn-actions').on({
     click: do_action_deck
   }, 'button[id],a[id]');
-  
+
   $('#btn-publish').prop('disabled', !!SelectedDeck.problem);
 
 });

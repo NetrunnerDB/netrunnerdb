@@ -1,5 +1,5 @@
 (function(diff, $) {
-  
+
 
   // takes an array of strings and returns an object where each string of the array
   // is a key of the object and the value is the number of occurences of the string in the array
@@ -21,7 +21,7 @@
    * content is a hash of pairs code-qty
    */
   diff.compute_simple = function (contents) {
-    
+
     var ensembles = [];
     for(var decknum=0; decknum<contents.length; decknum++) {
       var cards = [];
@@ -32,7 +32,7 @@
       });
       ensembles.push(cards);
     }
-    
+
     var conjunction = [];
     for(var i=0; i<ensembles[0].length; i++) {
       var code = ensembles[0][i];
@@ -50,14 +50,14 @@
         i--;
       }
     }
-    
+
     var listings = [];
     for(var i=0; i<ensembles.length; i++) {
       listings[i] = array_count(ensembles[i]);
     }
     var intersect = array_count(conjunction);
-    
+
     return [ listings, intersect ];
   };
-  
+
 })(NRDB.diff = {}, jQuery);

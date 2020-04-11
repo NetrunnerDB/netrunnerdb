@@ -57,7 +57,7 @@ class Side implements NormalizableInterface, TimestampableInterface, CodeNameInt
      * @var \DateTime
      */
     private $dateUpdate;
-    
+
     /**
      * Constructor
      */
@@ -73,7 +73,7 @@ class Side implements NormalizableInterface, TimestampableInterface, CodeNameInt
     {
         return $this->name ?: '(unknown)';
     }
-    
+
     public function normalize()
     {
         return [
@@ -81,7 +81,7 @@ class Side implements NormalizableInterface, TimestampableInterface, CodeNameInt
                 'name' => $this->name
         ];
     }
-    
+
     /**
      * @return integer
      */
@@ -137,7 +137,7 @@ class Side implements NormalizableInterface, TimestampableInterface, CodeNameInt
     {
         return $this->cards;
     }
-    
+
     /**
      * Add decks
      * @param Deck $decks
@@ -158,7 +158,7 @@ class Side implements NormalizableInterface, TimestampableInterface, CodeNameInt
     {
         $this->decks->removeElement($decks);
     }
-    
+
     /**
      * @return Collection
      */

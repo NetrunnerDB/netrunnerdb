@@ -32,7 +32,7 @@ class Type implements NormalizableInterface, TimestampableInterface, CodeNameInt
      * @var Side
      */
     private $side;
-    
+
     /**
      * @var boolean
      */
@@ -52,12 +52,12 @@ class Type implements NormalizableInterface, TimestampableInterface, CodeNameInt
      * @var integer
      */
     private $position;
-    
+
     /**
      * @var Collection
      */
     private $cards;
-    
+
     /**
      * Constructor
      */
@@ -81,7 +81,7 @@ class Type implements NormalizableInterface, TimestampableInterface, CodeNameInt
                 'side_code' => $this->side ? $this->side->getCode() : null
         ];
     }
-    
+
     /**
      * @return integer
      */
@@ -211,7 +211,7 @@ class Type implements NormalizableInterface, TimestampableInterface, CodeNameInt
     {
         return $this->side;
     }
-    
+
     /**
      * @param Side $side
      * @return $this
@@ -231,10 +231,10 @@ class Type implements NormalizableInterface, TimestampableInterface, CodeNameInt
     public function addCard(Card $cards)
     {
         $this->cards[] = $cards;
-    
+
         return $this;
     }
-    
+
     /**
      * Remove cards
      * @param Card $cards
@@ -243,7 +243,7 @@ class Type implements NormalizableInterface, TimestampableInterface, CodeNameInt
     {
         $this->cards->removeElement($cards);
     }
-    
+
     /**
      * @return Collection
      */

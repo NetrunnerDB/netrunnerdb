@@ -50,7 +50,7 @@ class Modflag
     {
         return $this->reason;
     }
-    
+
     /**
      * @param string $reason
      * @return Modflag

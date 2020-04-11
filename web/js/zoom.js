@@ -35,7 +35,7 @@ $.when(NRDB.user.deferred).then(function () {
 function add_ruling(event) {
     var cardId = $(this).closest('.rulings').data('card-id');
     $('#add-ruling-card-id').val(cardId);
-    
+
     var converter = new Markdown.Converter();
     $('#add-ruling-form-text').on(
             'keyup',
@@ -89,14 +89,14 @@ function delete_ruling(event) {
 }
 
 function edit_ruling(event) {
-    
+
     var cardId = $(this).closest('.rulings').data('card-id');
     $('#edit-ruling-card-id').val(cardId);
     var rulingId = $(this).closest('li').data('ruling-id');
     var rulingText = $(this).closest('li').data('ruling-text');
     $('#edit-ruling-id').val(rulingId);
     $('#edit-ruling-form-text').val(rulingText);
-    
+
     var converter = new Markdown.Converter();
     $('#edit-ruling-form-text').on(
             'keyup',
@@ -141,7 +141,7 @@ function edit_ruling(event) {
             },
             index: 1
         }]);
-    
+
 }
 
 // TODO(plural): Share the preview functionality with the review method as well.

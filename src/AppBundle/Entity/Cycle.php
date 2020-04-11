@@ -18,7 +18,7 @@ class Cycle implements NormalizableInterface, TimestampableInterface, CodeNameIn
      * @ORM\ManyToMany(targetEntity="Rotation", mappedBy="cycles")
      */
     protected $rotations;
-    
+
     /**
      * @var integer
      */
@@ -48,7 +48,7 @@ class Cycle implements NormalizableInterface, TimestampableInterface, CodeNameIn
      * @var boolean
      */
     private $rotated;
-    
+
     /**
      * @var Collection|Pack[]
      */

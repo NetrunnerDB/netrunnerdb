@@ -56,9 +56,9 @@
            {% if review.user.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
          <small class="reputation">{{ review.user.reputation }}</small>
        </div>
-       
+
        {% if review.comments|length %}
-       
+
        {% for comment in review.comments %}
        <div class="review-comment text-muted small">{{ comment.text }}
        &mdash;
@@ -67,7 +67,7 @@
        <time datetime="{{ comment.dateCreation|date('c') }}">{{ comment.dateCreation|date('j M Y') }}</time>
     </div>
        {% endfor %}
-       
+
        {% endif %}
        <form action="{{ path('card_reviewcomment_post') }}" method="POST" class="form-comment">
        <input type="hidden" name="comment_review_id" value="{{ review.id }}">

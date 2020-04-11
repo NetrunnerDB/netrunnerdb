@@ -40,7 +40,7 @@ class LegalityDecklistsMwlCommand extends ContainerAwareCommand
                 . " WHERE m.active=1"
                 . " AND l.is_legal=0"
                 . " AND d.id=l.decklist_id)";
-        
+
         $this->entityManager->getConnection()->executeQuery($sql);
 
         $output->writeln("<info>Done</info>");

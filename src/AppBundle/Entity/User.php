@@ -20,7 +20,7 @@ class User extends BaseUser
      * @var integer
      */
     private $reputation;
-    
+
     /**
      * @var string
      */
@@ -49,7 +49,7 @@ class User extends BaseUser
      * @var string
      */
     private $avatar;
-    
+
     private $donation;
 
     private $patreon_pledge_cents;
@@ -58,32 +58,32 @@ class User extends BaseUser
      * @var Collection|Deck[]
      */
     private $decks;
-    
+
     /**
      * @var Collection|Decklist[]
      */
     private $decklists;
-    
+
     /**
      * @var Collection|Comment[]
      */
     private $comments;
-    
+
     /**
      * @var Collection|Decklist[]
      */
     private $favorites;
-    
+
     /**
      * @var Collection|Decklist[]
      */
     private $votes;
-    
+
     /**
      * @var Collection|User[]
      */
     private $following;
-    
+
     /**
      * @var Collection|User[]
      */
@@ -123,17 +123,17 @@ class User extends BaseUser
      * @var Collection
      */
     private $reviewvotes;
-    
+
     /**
      * @var Collection
      */
     private $reviews;
-    
+
     /**
      * @var boolean
      */
     private $soft_ban = false;
-    
+
     /**
      * @var \DateTime
      */
@@ -149,7 +149,7 @@ class User extends BaseUser
      */
 
     private $introductions;
-    
+
     public function __construct()
     {
         $this->decks = new ArrayCollection();
@@ -300,7 +300,7 @@ class User extends BaseUser
 
         return $this;
     }
-    
+
     /**
      * @return integer
      */
@@ -335,7 +335,7 @@ class User extends BaseUser
     {
         return $this->decks;
     }
-    
+
     /**
      * @return Decklist[]|Collection
      */
@@ -403,7 +403,7 @@ class User extends BaseUser
     {
         return $this->votes;
     }
-    
+
     /**
      * @param User $user
      * @return $this
@@ -621,7 +621,7 @@ class User extends BaseUser
 
         return $this;
     }
-    
+
     /**
      * Remove comments
      * @param Comment $comments
@@ -770,7 +770,7 @@ class User extends BaseUser
     {
         return $this->autoload_images;
     }
-    
+
     /**
      * @param boolean $autoloadImages
      * @return User

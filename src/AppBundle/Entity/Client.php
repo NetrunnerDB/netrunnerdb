@@ -19,12 +19,12 @@ class Client extends BaseClient
     protected $id;
 
     protected $name;
-    
+
     /**
      * @var Collection
      */
     private $claims;
-    
+
     public function __construct()
     {
         parent::__construct();
