@@ -23,7 +23,7 @@
 
 <div class="row">
 <div class="col-md-3">
-<a href="{{ path('cards_zoom',{_locale:app.request.locale,card_code:item['identity'].code}) }}" class="no-popup"><img src="{{ item['identity'].imageUrl ? item['identity'].imageUrl : asset('/card_image/'~item['identity'].code~'.png') }}" class="img-responsive"></a>
+<a href="{{ path('cards_zoom',{_locale:app.request.locale,card_code:item['identity'].code}) }}" class="no-popup"><img src="{{ asset('/card_image/large/'~item['identity'].code~'.jpg') }}" class="img-responsive"></a>
 </div>
 <div class="col-md-9">
 <table class="table table-condensed">

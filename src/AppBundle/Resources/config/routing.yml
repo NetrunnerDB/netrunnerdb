@@ -7,6 +7,24 @@ netrunnerdb_index:
     requirements:
         _locale: \w\w
 
+slim_base:
+    path: /{_locale}/slim_base
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Index:slimbase
+        _locale: en
+    requirements:
+        _locale: \w\w
+
+slim:
+    path: /{_locale}/slim
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Index:slim
+        _locale: en
+    requirements:
+        _locale: \w\w
+
 deck_buildform:
     path:  /{_locale}/deck/new/{side_text}
     methods: [GET]
