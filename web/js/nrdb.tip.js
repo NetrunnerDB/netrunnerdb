@@ -67,8 +67,7 @@
                         solo: true
                     },
                     hide: {
-                        event: hide_event,
-                        delay: 10000,
+                        event: hide_event
                     }
                 }, event);
     };
