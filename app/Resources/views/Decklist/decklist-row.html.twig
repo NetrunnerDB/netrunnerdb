@@ -4,7 +4,7 @@
   </div>
   <div class="media" style="margin-top:0">
     <div class="media-left">
-      <img src="{{ decklist.identity_url ? decklist.identity_url : asset('/card_image/'~decklist.code~'.png') }}" alt="{{ decklist.identity }}" style="width:51px;height:71px">
+      <img data-src="{{ asset('/card_image/tiny/'~decklist.code~'.jpg') }}" alt="{{ decklist.identity }}" style="width:51px;height:71px" class="lazyload">
     </div>
     <div class="media-body">
       <div class="row h4 hidden-xs">

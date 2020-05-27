@@ -334,7 +334,7 @@ function update_deck(options) {
             var row = rows[rownum];
             var item = $('<h5> ' + row.label + ' (<span></span>)</h5>').hide();
             if (row.image) {
-                $('<img>').addClass(DisplaySort + '-icon').attr('src', row.image).attr('alt', row.label).prependTo(item);
+                $('<img>').addClass(DisplaySort + '-icon').addClass('lazyload').attr('data-src', row.image).attr('alt', row.label).prependTo(item);
             } else if (DisplaySort == "faction") {
                 $('<span class="icon icon-' + row.id + ' ' + row.id + '"></span>').prependTo(item);
             }
@@ -348,7 +348,7 @@ function update_deck(options) {
     var parts = Identity.title.split(/: /);
 
     $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + unicorn(Identity));
-    $('#img_identity').prop('src', Identity.imageUrl);
+    $('#img_identity').prop('src', '/card_image/medium/' + Identity.code + '.jpg');
     InfluenceLimit = Identity.influence_limit;
     if (typeof InfluenceLimit === "undefined")
         InfluenceLimit = Number.POSITIVE_INFINITY;

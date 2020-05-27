@@ -987,6 +987,38 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
+     * @return string
+     */
+    public function getTinyImagePath()
+    {
+      return '/tiny/' . $this->code . '.jpg';
+    }
+
+    /**
+     * @return string
+     */
+    public function getSmallImagePath()
+    {
+      return '/small/' . $this->code . '.jpg';
+    }
+
+    /**
+     * @return string
+     */
+    public function getMediumImagePath()
+    {
+      return '/medium/' . $this->code . '.jpg';
+    }
+
+    /**
+     * @return string
+     */
+    public function getLargeImagePath()
+    {
+      return '/large/' . $this->code . '.jpg';
+    }
+
+    /**
      * @return null|string
      */
     public function getImageUrl()

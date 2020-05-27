@@ -62,7 +62,7 @@
       }
     });
     for (var i = 0; i < images.length; i++) {
-      var div = $('<div><img src="' + images[i] + '" alt="Card Image"></div>');
+      var div = $('<div><img data-src="' + images[i] + '" class="lazyload" alt="Card Image"></div>');
       $('#deck_browser_left').append(div.data('index', i));
       $('#deck_browser_center').append(div.clone().data('index', i));
       $('#deck_browser_right').prepend(div.clone().data('index', i));
