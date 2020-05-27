@@ -97,7 +97,7 @@ class FactionController extends Controller
 
             // Sort the identities alphabetically. 
             usort($decklists, function ($a, $b) {
-                return strcasecmp(preg_replace('/^the\s+/i', '', $a['identity']->getTitle()), preg_replace('/^the\s+/i', '', $b['identity']->getTitle()));
+                return strcasecmp($a['identity']->getTitle(), $b['identity']->getTitle());
             });
 
             $result[] = [
