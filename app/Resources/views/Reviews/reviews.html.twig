@@ -35,7 +35,7 @@
 {% if reviews|length > 0 %}{% for i in 0..reviews|length-1 %}{% set review = reviews[i] %}{% set card = review.card %}
 <div class="row" style="margin-bottom:1em;padding-bottom:1em;border-bottom:1px solid #ddd"><div class="col-lg-12">
     <div class="review-header">
-        <img data-src="{{ review.card.imageUrl ? review.card.imageUrl : asset('/card_image/'~review.card.code~'.png') }}" alt="{{ review.card.title }}" class="pull-right lazyload" style="width:100px;margin:0 0 10px 10px">
+        <img data-src="{{ asset('/card_image/'~review.card.smallImagePath) }}" alt="{{ review.card.title }}" class="pull-right lazyload" style="width:100px;margin:0 0 10px 10px">
         <h4 style="text-align:right"><a href="{{ path('cards_zoom',{card_code:review.card.code}) }}#review-{{ review.id }}" data-index="{{ review.card.code }}" class="card card-title">{{ review.card.title }}</a></h4>
     </div>
     <article class="review" data-index="{{ review.id }}" id="review-{{ review.id }}">
