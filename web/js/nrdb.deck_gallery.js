@@ -22,7 +22,7 @@
       qtys.push(card.indeck);
     });
     for (var i = 0; i < images.length; i++) {
-      var cell = $('<td><div><img src="' + images[i] + '" alt="Card Image"><div>'+qtys[i]+'</div></div></td>');
+      var cell = $('<td><div><img data-src="' + images[i] + '" class="lazyload" alt="Card Image"><div>'+qtys[i]+'</div></div></td>');
       $('#deck_gallery tr').append(cell.data('index', i));
     }
   };

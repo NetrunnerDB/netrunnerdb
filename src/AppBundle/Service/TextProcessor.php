@@ -85,7 +85,7 @@ class TextProcessor
     }
 
     /**
-     * adds class="img-responsive" to every <img> tag
+     * Switches src to data-src so the user preference to autoload images can take over in the browser and behave as the user intended
      *
      * @param string $string
      * @return null|string|string[]
