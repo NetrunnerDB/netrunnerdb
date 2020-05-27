@@ -31,8 +31,8 @@ class FactionController extends Controller
             $faction_name = $factions[0]->getName();
         }
 
-
         $result = [];
+        $banned_cards = array();
 
         foreach ($factions as $faction) {
 
@@ -83,6 +83,10 @@ class FactionController extends Controller
                 }
 
                 $identity = $cardsData->select_only_latest_cards($identities);
+                $i = $cardsData->get_mwl_info([$identity[0]]);
+                if (count($i) > 0 && $i[0]['active']) {
+                    $banned_cards[$identity[0]->getCode()] = true;
+                }
 
                 $decklists[] = [
                     'identity'  => $identity[0],
@@ -91,9 +95,9 @@ class FactionController extends Controller
                 ];
             }
 
-            // sort the identities from most points to least
+            // Sort the identities alphabetically. 
             usort($decklists, function ($a, $b) {
-                return $b['points'] - $a['points'];
+                return strcasecmp($a['identity']->getTitle(), $b['identity']->getTitle());
             });
 
             $result[] = [
@@ -103,8 +107,9 @@ class FactionController extends Controller
         }
 
         return $this->render('/Faction/faction.html.twig', [
-            "pagetitle" => "Faction Page: $faction_name",
-            "results"   => $result,
+            "pagetitle"    => "Faction Page: $faction_name",
+            "results"      => $result,
+            "banned_cards" => $banned_cards,
         ], $response);
     }
 }
