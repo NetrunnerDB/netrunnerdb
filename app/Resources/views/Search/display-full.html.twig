@@ -48,7 +48,7 @@
           <div class="col-sm-5" style="margin-bottom:2em">
             <div class="card-image">
               {% if card.imageUrl %}
-                 <img src="{{ asset('/card_image/'~card.large_image_path)  }}" alt="{{ card.title }}" class="img-responsive" style="margin:auto">
+                 <img data-src="{{ asset('/card_image/'~card.large_image_path)  }}" alt="{{ card.title }}" class="img-responsive lazyload" style="margin:auto">
               {% else %}
                  <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
               {% endif %}

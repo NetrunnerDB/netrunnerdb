@@ -18,7 +18,7 @@
     };
 
     ui.setupAllImages = function setupAllImages() {
-        $('img[data-src]').on('click', ui.loadImage);
+        $('img[data-src]').not('.lazyload .lazyloaded').on('click', ui.loadImage);
     };
 
     ui.loadAllImages = function loadAllImages() {

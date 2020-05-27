@@ -187,7 +187,7 @@
               {% for supported_locale in supported_locales %}
               <li>
                 <a href="{{ path(_route, _route_params|merge({'_locale': supported_locale})) }}">
-                  <img src="{{ asset('/images/flags/32px/flag_' ~ supported_locale ~ '.png') }}" style="height:19px">
+                  <img data-src="{{ asset('/images/flags/32px/flag_' ~ supported_locale ~ '.png') }}" style="height:19px" class="lazyload">
                 </a>
               </li>
               {% endfor %}
@@ -239,5 +239,6 @@
     {% if app.environment == 'prod' %}
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     {% endif %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.0/lazysizes.min.js" async></script>
   </body>
 </html>

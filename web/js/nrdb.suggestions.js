@@ -118,9 +118,9 @@
           + '" value="' + i + '">' + i + '</label>';
     }
 
-    var imgsrc = card.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
+    var imgsrc = card.faction_code.substr(0,7) === "neutral" ? "" : '<img data-src="'
           + Url_FactionImage.replace('xxx', card.faction_code)
-          + '" alt="'+card.title+'">';
+          + '" class="lazyload" alt="'+card.title+'">';
     var div = $('<tr class="card-container" data-index="'
           + card.code
           + '"><td><button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Remove</span></button></td>'
@@ -131,8 +131,8 @@
           + '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
           + card.title + '</a></td><td class="influence influence-' + faction
           + '">' + influ + '</td><td class="type" title="' + card.type.name
-          + '"><img src="/images/types/'
-          + card.type_code + '.png" alt="'+card.type.name+'">'
+          + '"><img data-src="/images/types/'
+          + card.type_code + '.png" class="lazyload" alt="'+card.type.name+'">'
           + '</td><td class="faction" title="' + card.faction.name + '">'
           + imgsrc + '</td></tr>');
 

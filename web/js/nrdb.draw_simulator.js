@@ -56,7 +56,7 @@
       var card = spliced[0];
       var card_element;
       if(card.imageUrl) {
-        card_element = $('<img src="/card_image/small/'+card.code+'.jpg" class="card-image" alt="'+card.title+'">');
+        card_element = $('<img data-src="/card_image/small/'+card.code+'.jpg" class="card-image lazyload" alt="'+card.title+'">');
       } else {
         card_element = $('<div class="card-proxy"><div>'+card.title+'</div></div>');
       }

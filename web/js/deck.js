@@ -54,9 +54,9 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
   factions.forEach(function(faction) {
     var label = $('<label class="btn btn-default btn-sm" data-code="' + faction.code
         + '" title="'+faction.name+'"><input type="checkbox" name="' + faction.code
-        + '"><img src="'
+        + '"><img data-src="'
         + Url_FactionImage.replace('xxx', faction.code)
-        + '" style="height:12px" alt="'+faction.code+'"></label>');
+        + '" style="height:12px" class="lazyload" alt="'+faction.code+'"></label>');
     label.tooltip({container: 'body'});
     $('#faction_code').append(label);
   });
@@ -78,8 +78,8 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
   types.forEach(function(type) {
     var label = $('<label class="btn btn-default btn-sm" data-code="'
         + type.code + '" title="'+type.name+'"><input type="checkbox" name="' + type.code
-        + '"><img src="' + Url_TypeImage.replace('xxx', type.code)
-        + '" style="height:12px" alt="'+type.code+'"></label>');
+        + '"><img data-src="' + Url_TypeImage.replace('xxx', type.code)
+        + '" style="height:12px" class="lazyload" alt="'+type.code+'"></label>');
     label.tooltip({container: 'body'});
     $('#type_code').append(label);
   });
@@ -702,9 +702,9 @@ function build_div(record) {
   switch (Number(NRDB.settings.getItem('display-columns'))) {
   case 1:
 
-    var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
+    var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img data-src="'
         + Url_FactionImage.replace('xxx', record.faction_code)
-        + '" alt="'+record.faction.name+'">';
+        + '" class="lazyload" alt="'+record.faction.name+'">';
     div = $('<tr class="card-container" data-index="'
         + record.code
         + '"><td><div class="btn-group" data-toggle="buttons">'
@@ -714,8 +714,8 @@ function build_div(record) {
         + '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
         + record.title + '</a> '+get_influence_penalty_icons(record)+'</td><td class="influence influence-' + record.faction_code
         + '">' + influ + '</td><td class="type" title="' + record.type.name
-        + '"><img src="/images/types/'
-        + record.type_code + '.png" alt="'+record.type.name+'">'
+        + '"><img data-src="/images/types/'
+        + record.type_code + '.png" class="lazyload" alt="'+record.type.name+'">'
         + '</td><td class="faction" title="' + record.faction.name + '">'
         + imgsrc + '</td></tr>');
     break;
