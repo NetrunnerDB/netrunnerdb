@@ -121,7 +121,7 @@ class SearchController extends Controller
         if (!$card instanceof Card) {
             throw $this->createNotFoundException();
         }
-        $meta = $card->getTitle() . ", a " . $card->getFaction()->getName() . " " . $card->getType()->getName() . " card for Android:Netrunner from the set " . $card->getPack()->getName() . " published by Fantasy Flight Games.";
+        $meta = $card->getTitle() . ", a " . $card->getFaction()->getName() . " " . $card->getType()->getName() . " card for Android: Netrunner from the set " . $card->getPack()->getName() . " published by Fantasy Flight Games.";
 
         return $this->forward(
             'AppBundle:Search:display',
@@ -153,7 +153,7 @@ class SearchController extends Controller
         if (!$pack instanceof Pack) {
             throw $this->createNotFoundException();
         }
-        $meta = $pack->getName() . ", a set of cards for Android:Netrunner"
+        $meta = $pack->getName() . ", a set of cards for Android: Netrunner"
             . ($pack->getDateRelease() ? " published on " . $pack->getDateRelease()->format('Y/m/d') : "")
             . " by Fantasy Flight Games.";
 
@@ -208,7 +208,7 @@ class SearchController extends Controller
         if (!$cycle instanceof Cycle) {
             throw $this->createNotFoundException();
         }
-        $meta = $cycle->getName() . ", a cycle of datapack for Android:Netrunner published by Fantasy Flight Games.";
+        $meta = $cycle->getName() . ", a cycle of datapack for Android: Netrunner published by Fantasy Flight Games.";
 
         return $this->forward(
             'AppBundle:Search:display',
