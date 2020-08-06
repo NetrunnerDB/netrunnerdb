@@ -97,7 +97,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
   function findMatches(q, cb) {
     if(q.match(/^\w:/)) return;
     // TODO(plural): Make this variable initialized at page load and only updated when the collection changes instead of here on every keypress!
-    var matchingPacks = NRDB.data.cards.find({side_code: Side, pack_code: Filters.pack_code || []});
+    var matchingPacks = NRDB.data.cards.find({maxqty: { '$gt': 0 }, side_code: Side, pack_code: Filters.pack_code || []});
     var latestCards = select_only_latest_cards(matchingPacks);
     var regexp = new RegExp(q, 'i');
     var matchingCards = _.filter(latestCards, function (card) {
@@ -776,7 +776,6 @@ function update_filtered() {
   $('#collection-grid').empty();
 
   var counter = 0, container = $('#collection-table'), display_columns = NRDB.settings.getItem('display-columns');
-  console.log(FilterQuery);
   var SmartFilterQuery = NRDB.smart_filter.get_query(FilterQuery);
 
   var orderBy = {};
