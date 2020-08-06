@@ -54,9 +54,9 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
   factions.forEach(function(faction) {
     var label = $('<label class="btn btn-default btn-sm" data-code="' + faction.code
         + '" title="'+faction.name+'"><input type="checkbox" name="' + faction.code
-        + '"><img data-src="'
+        + '"><img src="'
         + Url_FactionImage.replace('xxx', faction.code)
-        + '" style="height:12px" class="lazyload" alt="'+faction.code+'"></label>');
+        + '" style="height:12px" alt="'+faction.code+'"></label>');
     label.tooltip({container: 'body'});
     $('#faction_code').append(label);
   });
@@ -78,8 +78,8 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
   types.forEach(function(type) {
     var label = $('<label class="btn btn-default btn-sm" data-code="'
         + type.code + '" title="'+type.name+'"><input type="checkbox" name="' + type.code
-        + '"><img data-src="' + Url_TypeImage.replace('xxx', type.code)
-        + '" style="height:12px" class="lazyload" alt="'+type.code+'"></label>');
+        + '"><img src="' + Url_TypeImage.replace('xxx', type.code)
+        + '" style="height:12px" alt="'+type.code+'"></label>');
     label.tooltip({container: 'body'});
     $('#type_code').append(label);
   });
@@ -96,7 +96,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
 
   function findMatches(q, cb) {
     if(q.match(/^\w:/)) return;
-                // TODO(plural): Make this variable initialized at page load and only updated when the collection changes instead of here on every keypress!
+    // TODO(plural): Make this variable initialized at page load and only updated when the collection changes instead of here on every keypress!
     var matchingPacks = NRDB.data.cards.find({side_code: Side, pack_code: Filters.pack_code || []});
     var latestCards = select_only_latest_cards(matchingPacks);
     var regexp = new RegExp(q, 'i');
@@ -702,9 +702,9 @@ function build_div(record) {
   switch (Number(NRDB.settings.getItem('display-columns'))) {
   case 1:
 
-    var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img data-src="'
+    var imgsrc = record.faction_code.substr(0,7) === "neutral" ? "" : '<img src="'
         + Url_FactionImage.replace('xxx', record.faction_code)
-        + '" class="lazyload" alt="'+record.faction.name+'">';
+        + '" alt="'+record.faction.name+'">';
     div = $('<tr class="card-container" data-index="'
         + record.code
         + '"><td><div class="btn-group" data-toggle="buttons">'
@@ -714,8 +714,8 @@ function build_div(record) {
         + '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
         + record.title + '</a> '+get_influence_penalty_icons(record)+'</td><td class="influence influence-' + record.faction_code
         + '">' + influ + '</td><td class="type" title="' + record.type.name
-        + '"><img data-src="/images/types/'
-        + record.type_code + '.png" class="lazyload" alt="'+record.type.name+'">'
+        + '"><img src="/images/types/'
+        + record.type_code + '.png" alt="'+record.type.name+'">'
         + '</td><td class="faction" title="' + record.faction.name + '">'
         + imgsrc + '</td></tr>');
     break;
@@ -776,6 +776,7 @@ function update_filtered() {
   $('#collection-grid').empty();
 
   var counter = 0, container = $('#collection-table'), display_columns = NRDB.settings.getItem('display-columns');
+  console.log(FilterQuery);
   var SmartFilterQuery = NRDB.smart_filter.get_query(FilterQuery);
 
   var orderBy = {};
@@ -788,6 +789,13 @@ function update_filtered() {
   sortedCards.forEach(function(card) {
     if (ShowOnlyDeck && !card.indeck)
       return;
+
+    // Hide any cards that aren't legal for the ban list selected.
+    // This will prevent things like currents from showing up with a '0'
+    // option if Standard Ban List 2020.06 is active.
+    if (card.maxqty == 0) {
+      return;
+    }
 
     var unusable = !is_card_usable(card);
 
