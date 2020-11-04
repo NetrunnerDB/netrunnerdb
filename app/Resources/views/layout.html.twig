@@ -4,7 +4,7 @@
     <title>{{ pagetitle|default('Deckbuilder') }} &middot; NetrunnerDB</title>
     <link rel="icon" sizes="16x16" href="/favicon.png" />
     <link rel="icon" sizes="196x196" href="/icon.png" />
-    <link rel="apple-touch-icon" sizes="129x129" href="/apple-touch-icon.png" />
+    <link rel="nisei-icon" sizes="129x129" href="/nisei-icon.png" />
     {% if app.request.locale != "en" and app.request.attributes.get('_route') != "" %}
     {% set _route_params = app.request.attributes.get('_route_params')|default({}) %}
     {% set _get_params = app.request.query.all()|default({}) %}
