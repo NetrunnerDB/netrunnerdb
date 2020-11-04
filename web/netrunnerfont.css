@@ -45,12 +45,6 @@
 .icon-trash:before {
   content: "\e905";
 }
-.icon-link-half-top:before {
-  content: "\e906";
-}
-.icon-link-half-bottom:before {
-  content: "\e907";
-}
 .icon-link:before {
   content: "\e908";
 }

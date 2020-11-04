@@ -459,10 +459,10 @@ div.ad-blocked {
   font-size: 120%;
   line-height: 83%;
 }
-.navbar-brand:hover .icon-link-half-top {
+.navbar-brand:hover {
   color: brown;
 }
-.navbar-brand:hover .icon-link-half-bottom {
+.navbar-brand:hover {
   color: mediumblue;
 }
 
