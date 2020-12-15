@@ -126,6 +126,9 @@
 .icon-interrupt:before {
   content: "\e92b";
 }
+.icon-salvaged-memories:before {
+  content: "\e92c";
+}
 .icon-anarch:before {
   content: "\e91a";
 }
