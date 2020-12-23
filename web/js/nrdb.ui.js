@@ -12,7 +12,6 @@
         return new Promise(function (resolve, reject) {
             image.addEventListener('load', resolve);
             image.removeAttribute('data-src');
-            image.setAttribute('class', 'img-responsive');
             image.setAttribute('src', src);
         });
     };
