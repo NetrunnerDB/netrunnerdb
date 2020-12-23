@@ -573,6 +573,25 @@ class ImportStdCommand extends ContainerAwareCommand
             return $entity;
         }
 
+        // Special handling for rotation.
+        // The code above already catches new rotation entries, but if the only
+        // difference is in the cycles already in the db for an existing entry,
+        // we need to check that manually.  If those are the same, just let the
+        // existing handling do its work.
+        if ($entityName === 'AppBundle\Entity\Rotation') {
+            $json_cycles = $data['cycles'];
+            sort($json_cycles);
+            $db_cycles = array();
+            foreach ($entity->GetCycles() as $c) {
+                array_push($db_cycles, $c->GetCode());
+            }
+            sort($db_cycles);
+            if ($json_cycles != $db_cycles) {
+                $this->output->writeln("Cycles don't match for rotation <info>" . $entity->GetName() . "</info>, so updating it.");
+                return $entity;
+            }
+        }
+
         return null;
     }
 
