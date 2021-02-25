@@ -1088,7 +1088,7 @@ function make_cost_graph() {
         { name: 'Operation', data: [] },
         { name: 'Upgrade', data: [] },
         { name: 'Asset', data: [] },
-        { name: 'ICE', data: [], },
+        { name: 'Ice', data: [], },
     ];
     var xAxis = [];
 
@@ -1097,7 +1097,7 @@ function make_cost_graph() {
         var data = costs[j];
         for (var i = 0; i < cost_series.length; i++) {
             var type_name = cost_series[i].name;
-            cost_series[i].data.push(data && data[type_name] ? data[type_name] : 0);
+            cost_series[i].data.push((data && data[type_name]) ? data[type_name] : 0);
         }
     }
 

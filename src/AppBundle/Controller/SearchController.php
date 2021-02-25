@@ -405,7 +405,7 @@ class SearchController extends Controller
 
         $cardsData->validateConditions($conditions);
 
-        // reconstruction de la bonne chaine de recherche pour affichage
+        // reconstruction of the correct search string for display
         $q = $cardsData->buildQueryFromConditions($conditions);
         $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
         $rows = $cardsData->select_only_latest_cards($rows);
@@ -431,7 +431,7 @@ class SearchController extends Controller
                 }
             }
 
-            // calcul de la pagination
+            //  calculate pagination
             $nb_per_page = $pagesizes[$view];
             $first = $nb_per_page * ($page - 1);
             if ($first > count($rows)) {
@@ -447,7 +447,7 @@ class SearchController extends Controller
                 $versions = $cardsData->get_versions();
             }
 
-            // data à passer à la view
+            // data to pass to the view
             for ($rowindex = $first; $rowindex < $last && $rowindex < count($rows); $rowindex++) {
                 /** @var Card $card */
                 $card = $rows[$rowindex];
@@ -455,7 +455,12 @@ class SearchController extends Controller
                 $cardinfo = $cardsData->getCardInfo($card, $locale);
                 if (empty($availability[$pack->getCode()])) {
                     $availability[$pack->getCode()] = false;
-                    if ($pack->getDateRelease() && $pack->getDateRelease() <= new \DateTime()) {
+                    if (
+                        // Draft and Terminal Directive Campaign
+                        $pack->getCode() != "draft" && $pack->getCode() != "tdc" &&
+                        // Cards before release date
+                        $pack->getDateRelease() && $pack->getDateRelease() <= new \DateTime()
+                    ) {
                         $availability[$pack->getCode()] = true;
                     }
                 }
