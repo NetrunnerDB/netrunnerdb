@@ -349,13 +349,13 @@ class CardsData
                     foreach ($condition as $arg) {
                         switch ($operator) {
                             case ':':
-                                $or[] = "(c.illustrator = ?$i)";
+                                $or[] = "(c.illustrator like ?$i)";
                                 break;
                             case '!':
-                                $or[] = "(c.illustrator != ?$i)";
+                                $or[] = "(c.illustrator not like ?$i)";
                                 break;
                         }
-                        $parameters[$i++] = $arg;
+                        $parameters[$i++] = "%$arg%";
                     }
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;

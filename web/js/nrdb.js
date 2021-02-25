@@ -1079,15 +1079,17 @@ function make_cost_graph() {
     });
 
     // costChart
-    var cost_series = Identity.side_code === 'runner' ?
-        [{ name: 'Event', data: [] }, { name: 'Resource', data: [] }, { name: 'Hardware', data: [] }, {
-            name: 'Program',
-            data: [],
-        }]
-        : [{ name: 'Operation', data: [] }, { name: 'Upgrade', data: [] }, { name: 'Asset', data: [] }, {
-            name: 'ICE',
-            data: [],
-        }];
+    var cost_series = Identity.side_code === 'runner' ? [
+        { name: 'Event', data: [] },
+        { name: 'Resource', data: [] },
+        { name: 'Hardware', data: [] },
+        { name: 'Program', data: [], },
+    ] : [
+        { name: 'Operation', data: [] },
+        { name: 'Upgrade', data: [] },
+        { name: 'Asset', data: [] },
+        { name: 'ICE', data: [], },
+    ];
     var xAxis = [];
 
     for (var j = 0; j < costs.length; j++) {
