@@ -43,6 +43,11 @@ class Card implements NormalizableInterface, TimestampableInterface
     private $text;
 
     /**
+     * @var string
+     */
+    private $strippedText;
+
+    /**
      * @var integer
      */
     private $advancementCost;
@@ -227,6 +232,7 @@ class Card implements NormalizableInterface, TimestampableInterface
                 'flavor',
                 'keywords',
                 'text',
+                'stripped_text',
                 'cost',
                 'faction_cost',
                 'trash_cost',
@@ -412,6 +418,25 @@ class Card implements NormalizableInterface, TimestampableInterface
     public function setText(string $text)
     {
         $this->text = $text;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStrippedText()
+    {
+        return $this->strippedText;
+    }
+
+    /**
+     * @param string $text
+     * @return $this
+     */
+    public function setStrippedText(string $text)
+    {
+        $this->strippedText = $text;
 
         return $this;
     }

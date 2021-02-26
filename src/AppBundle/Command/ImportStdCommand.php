@@ -33,6 +33,39 @@ class ImportStdCommand extends ContainerAwareCommand
 
     private $collections = [];
 
+    private $xmlToStrip = [
+        "/<strong>/",
+        "/<\/strong>/",
+        "/<trace>/",
+        "/<\/trace>/",
+        "/<errata>/",
+        "/<\/errata>/",
+        "/<em>/",
+        "/<\/em>/",
+        "/<i>/",
+        "/<\/i>/",
+    ];
+
+    private $iconsToStrip = [
+        "/\[click]/",
+        "/\[credit]/",
+        "/\+(\d)\[mu]/",
+        "/\[link]/",
+        "/\[trash]/",
+        "/\[interrupt]/",
+        "/\[recurring-credit]/",
+    ];
+
+    private $replacementIcons = [
+        "click",
+        "credit",
+        '+$1 mu',
+        "link",
+        "trash",
+        "interrupt",
+        "recurring credit",
+    ];
+
     protected function configure()
     {
         $this
@@ -328,6 +361,7 @@ class ImportStdCommand extends ContainerAwareCommand
                 'flavor',
                 'keywords',
                 'text',
+                'stripped_text',
                 'cost',
                 'faction_cost',
                 'trash_cost',
@@ -457,6 +491,12 @@ class ImportStdCommand extends ContainerAwareCommand
                         }
                 }
             }
+        } elseif ($fieldName == "strippedText") {
+            $strippedText = ($entity->getText() ?: "");
+            $strippedText = preg_replace($this->xmlToStrip, "", $strippedText);
+            $strippedText = preg_replace($this->iconsToStrip, $this->replacementIcons, $strippedText);
+            $newTypedValue = $strippedText;
+            $newJsonValue = $strippedText;
         }
 
         $different = ($currentJsonValue !== $newJsonValue);
