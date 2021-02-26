@@ -659,7 +659,7 @@ class SocialController extends Controller
             "Barrier",
             "Code Gate",
             "Sentry",
-            "ICE",
+            "Ice",
         ];
 
         $lines[] = sprintf(

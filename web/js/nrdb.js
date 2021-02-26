@@ -1079,15 +1079,17 @@ function make_cost_graph() {
     });
 
     // costChart
-    var cost_series = Identity.side_code === 'runner' ?
-        [{ name: 'Event', data: [] }, { name: 'Resource', data: [] }, { name: 'Hardware', data: [] }, {
-            name: 'Program',
-            data: [],
-        }]
-        : [{ name: 'Operation', data: [] }, { name: 'Upgrade', data: [] }, { name: 'Asset', data: [] }, {
-            name: 'ICE',
-            data: [],
-        }];
+    var cost_series = Identity.side_code === 'runner' ? [
+        { name: 'Event', data: [] },
+        { name: 'Resource', data: [] },
+        { name: 'Hardware', data: [] },
+        { name: 'Program', data: [], },
+    ] : [
+        { name: 'Operation', data: [] },
+        { name: 'Upgrade', data: [] },
+        { name: 'Asset', data: [] },
+        { name: 'Ice', data: [], },
+    ];
     var xAxis = [];
 
     for (var j = 0; j < costs.length; j++) {
@@ -1095,7 +1097,7 @@ function make_cost_graph() {
         var data = costs[j];
         for (var i = 0; i < cost_series.length; i++) {
             var type_name = cost_series[i].name;
-            cost_series[i].data.push(data && data[type_name] ? data[type_name] : 0);
+            cost_series[i].data.push((data && data[type_name]) ? data[type_name] : 0);
         }
     }
 

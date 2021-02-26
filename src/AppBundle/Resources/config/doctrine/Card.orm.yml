@@ -88,6 +88,10 @@ AppBundle\Entity\Card:
             type: string
             length: '1024'
             nullable: true
+        strippedText:
+            type: string
+            length: '1024'
+            nullable: true
         advancementCost:
             type: smallint
             column: advancement_cost

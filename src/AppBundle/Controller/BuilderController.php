@@ -430,7 +430,7 @@ class BuilderController extends Controller
             "Barrier",
             "Code Gate",
             "Sentry",
-            "ICE",
+            "Ice",
         ];
 
         $lines[] = sprintf(

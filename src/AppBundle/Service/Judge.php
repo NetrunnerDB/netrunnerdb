@@ -78,7 +78,7 @@ class Judge
             if ($type == "Identity") {
                 continue;
             }
-            if ($type == "ICE") {
+            if ($type == "Ice") {
                 $keywords = explode(" - ", $card->getKeywords());
                 if (in_array("Barrier", $keywords)) {
                     $type = "Barrier";
