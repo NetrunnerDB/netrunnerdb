@@ -30,7 +30,7 @@ class PackRepository extends EntityRepository
         ]);
 
         $sql = 'SELECT ' . $selectClause . ', count(c.id) as cards from pack p
-                    join card c on c.pack_id=p.id
+                    left join card c on c.pack_id=p.id
                     where p.cycle_id = ?
                     group by p.id
                     order by p.position';
