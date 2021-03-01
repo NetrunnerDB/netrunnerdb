@@ -45,7 +45,7 @@
                                         <div class="card-illustrator">
                                             <small>
                                                 {{ card.faction_name }} &bull;
-                                                {% if card.illustrator %}{{ card.illustrator }} &bull; {% endif %}
+                                                {% if card.illustrator %} <a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'images','q':'i:"' ~ card.illustrator ~ '"'}) }}">{{ card.illustrator }}</a>&bull; {% endif %}
                                                 <span class="icon icon-{{ card.cycle_code }}"></span>
                                                 {{ card.pack_name }} {{ card.position }}
                                             </small>
