@@ -129,6 +129,12 @@
 .icon-salvaged-memories:before {
   content: "\e92c";
 }
+.icon-system-gateway:before {
+  content: "\e92d";
+}
+.icon-system-update-2021:before {
+  content: "\e92e";
+}
 .icon-anarch:before {
   content: "\e91a";
 }
