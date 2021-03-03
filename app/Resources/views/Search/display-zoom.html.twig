@@ -8,273 +8,328 @@
 {% endblock %}
 
 {% block main %}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="card-image">
+            {% if card.imageUrl %}
+            <img data-src="{{ asset('/card_image' ~ card.large_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload" style="margin:auto">
+            {% else %}
+            <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
+            {% endif %}
+        </div>
+    </div>
 
-    <div class="row">
-        <div class="col-md-9">
-            <div class="row">
-                {% for i in 0..cards|length-1 %}{% set card = cards[i] %}
-                    <div class="col-sm-7" style="margin-bottom:2em">
-                        <div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title card-title">
-                                        {% if card.uniqueness == true %}&diams;{% endif %}
-                                        <a href="{{ card.url }}" class="card-title{% if card.available == false %} card-preview{% endif %}">{{ card.title }}</a>
-                                    </h3>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="card-info">
-                                        <span class="card-type">{{ card.type_name }}</span>{% if card.subtype %}<span class="card-keywords">: {{ card.subtype }}</span>{% endif %}
-                                        <span class="card-prop">&bull;
-                                            {% if card.type_code == "agenda" %} Adv: {{ card.advancementcost }} &bull; Score: {{ card.agendapoints }} {% endif %}
-                                            {% if card.type_code == "identity" and card.side_code == "corp" %}Deck: {{ card.minimumdecksize }} &bull; Influence: {% if card.influencelimit is null %} &#8734; {% else %} {{ card.influencelimit }} {% endif %} {% endif %}
-                                            {% if card.type_code == "identity" and card.side_code == "runner" %}Link: {{ card.baselink }} &bull; Deck: {{ card.minimumdecksize }} &bull; Influence: {% if card.influencelimit is null %} &#8734; {% else %} {{ card.influencelimit }} {% endif %} {% endif %}
-                                            {% if card.type_code == "operation" or card.type_code == "event" %}Cost: {{ card.cost }} {% if card.trash is not null %}&bull; Trash: {{ card.trash }} {% endif %} &bull; Influence: {{ card.factioncost }}{% endif %}
-                                            {% if card.type_code == "resource" or card.type_code == "hardware" %}Install: {{ card.cost }} &bull; Influence: {{ card.factioncost }}{% endif %}
-                                            {% if card.type_code == "program" %}Install: {{ card.cost }} &bull; Memory: {{ card.memoryunits }} {% if card.strength is not null %}&bull; Strength: {{ card.strength }}{% endif %} &bull; Influence: {{ card.factioncost }}{% endif %}
-                                            {% if card.type_code == "asset" or card.type_code == "upgrade" %}Rez: {{ card.cost }} &bull; Trash: {{ card.trash }} &bull; Influence: {{ card.factioncost }}{% endif %}
-                                                {% if card.type_code == "ice" %}Rez: {{ card.cost }} &bull; Strength: {{ card.strength }} {% if card.trash is not null %}&bull; Trash: {{ card.trash }} {% endif %} &bull; Influence: {{ card.factioncost }}{% endif %}
-                                            </span>
-                                        </div>
-                                        <div class="card-text border-{{ card.faction_code }}">
-                                            {{ card.text|raw }}
-                                        </div>
-                                        <div class="card-flavor">
-                                            <small>{{ card.flavor|raw|nl2br }}</small>
-                                        </div>
-                                        <div class="card-illustrator">
-                                            <small>
-                                                {{ card.faction_name }} &bull;
-                                                {% if card.illustrator %} <a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'images','q':'i:"' ~ card.illustrator ~ '"'}) }}">{{ card.illustrator }}</a>&bull; {% endif %}
-                                                <span class="icon icon-{{ card.cycle_code }}"></span>
-                                                {{ card.pack_name }} {{ card.position }}
-                                            </small>
-                                        </div>
-                                        <div class="card-illustrator">
-                                            <small>
-                                                All sets:
-                                                {% for version in card.versions %}
-                                                    <a href="{{ path('cards_zoom',{_locale:app.request.locale,'card_code':version.code}) }}">
-                                                        <span class="icon icon-{{ version.cycle_code }}"> </span>
-                                                    </a>
-                                                {% endfor %}
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                                Links: <a href="{{ path('decklists_list',{type:'find',_locale:app.request.locale,'cards[]':card.code}) }}">Decklists</a> | <a href="{{ card.ancur_link }}">ANCUR</a>
-                            </div>
-                        </div>
-                        <div class="col-sm-5">
-                            <div class="card-image">
-                                {% if card.imageUrl %}
-                                    <img data-src="{{ asset('/card_image/'~card.large_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload" style="margin:auto">
-                                {% else %}
-                                    <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
-                                {% endif %}
-                            </div>
-                        </div>
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title card-title" style="display: flex; justify-content: space-between">
+                    <span class="card-title{% if card.available == false %} card-preview{% endif %}">
+                        {% if card.uniqueness == true %}&diams;{% endif %}
+                        {{ card.title }}
+                    </span>
+                    <span class="card-cost">
+                        {% if card.type_code == "agenda" %}
+                            {{ card.advancementcost }} <span class="icon icon-rez"></span>
+                            {{ card.agendapoints }} <span class="icon icon-agenda"></span>
+                        {% endif %}
+                        {% if card.type_code != "identity" and card.type_code != "agenda" %}
+                            {{ card.formatted_cost|raw }}
+                        {% endif %}
+                    </span>
+                </h3>
+            </div>
+
+            <div class="panel-body">
+                <div class="card-type">
+                    <div>
+                        {{ card.formatted_type|raw }}
                     </div>
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-12 MWL Entries" style="margin-top:2em">
-                            <div style="ine-height:34px" class="mwl-entries-header">
-                                <span style="font-size:24px">Ban List Entries</span>
-                                {% if card.mwl_info|length %}
-                                    <ul class="mwl-entries-list">
-                                        {% for mwl_info in card.mwl_info %}
-                                            {% if mwl_info.is_restricted == true %}
-                                                <li>{{ mwl_info.mwl_name }}{% if mwl_info.active %} (active){% endif %}: Restricted</li>
-                                            {% endif %}
-                                            {% if mwl_info.deck_limit is not null and mwl_info.deck_limit == 0 %}
-                                                <li>{{ mwl_info.mwl_name }}{% if mwl_info.active %} (active){% endif %}: Banned</li>
-                                            {% endif %}
-                                            {% if mwl_info.universal_faction_cost > 0 %}
-                                                <li>{{ mwl_info.mwl_name }}{% if mwl_info.active %} (active){% endif %}: {{ mwl_info.universal_faction_cost }} Universal Influence</li>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <p><i>No Ban List Entries for this card.</i></p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
+                <div class="card-stats">
+                    {% if card.type_code == "identity" %}
+                        Deck size: {{ card.minimumdecksize }}
+                        &bull;
+                        Available influence:
+                        {{ card.influencelimit ?? "&#8734;" }}
+                        {% if card.side_code == "runner" %}
+                            &bull;
+                            Link: {{ card.baselink }}
+                        {% endif %}
+                    {% elseif card.type_code in ["event", "operation"] %}
+                        {% if card.trash is not null %}
+                            Trash: {{ card.trash }}
+                        {% endif %}
+                    {% elseif card.type_code in ["asset", "upgrade"] %}
+                        Trash: {{ card.trash }}
+                    {% elseif card.type_code == "program" %}
+                        Memory: {{ card.memoryunits }}
+                        &bull;
+                        Strength: {{ card.strength ?? "-" }}
+                    {% elseif card.type_code == "ice" %}
+                        Strength: {{ card.strength }}
+                        {% if card.trash is not null %}
+                            &bull;
+                            Trash: {{ card.trash }}
+                        {% endif %}
+                    {% endif %}
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-12 rulings" data-card-id="{{ card.id }}" style="margin-top:2em">
-                            <div style="line-height:34px" class="rulings-header">
-                                <span style="font-size:24px">Rulings</span>
-                            </div>
-                            {% if card.rulings|length %}
-                                <ul class="rulings-list">
-                                    {% for ruling in card.rulings %}
-                                        <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}">{{ ruling.text | raw }}</li>
-                                        {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p><i>No rulings yet for this card.</i></p>
-                            {% endif %}
-                        </div>
-                    </div>
+                <div class="card-influence">
+                    {% if card.type_code != "identity" and card.type_code != "agenda" %}
+                        Influence:
+                        <span class="icon icon-{{ card.faction_code }} {{ card.faction_code }}"></span>
+                        {{ card.faction_cost_dots|raw }}
+                    {% endif %}
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-12" style="margin-top:2em">
-                            <div style="line-height:34px" class="reviews-header">
-                                <span style="font-size:24px">Reviews</span>
-                            </div>
-                            <form method="POST" action="{{ path('card_review_post') }}" style="clear:right" class="review-edit-form">
-                                <input type="hidden" name="card_id" value="{{ card.id }}">
-                                <input type="hidden" name="review_id" value="">
-                            </form>
-                            {% if card.reviews|length %}
-                                {% for review in card.reviews %}
-                                    <article class="review" data-index="{{ review.id }}" id="review-{{ review.id }}">
+                <div class="card-text border-{{ card.faction_code }}">
+                    {{ card.text|raw }}
+                </div>
 
-                                        <div class="review-like">
-                                            <a class="review-social-icon-like" href="#" class="social-icon-like" data-toggle="tooltip" data-placement="bottom" title="Like that review">
-                                                <span class="glyphicon glyphicon-heart"></span> <span class="num">{{ review.nbvotes }}</span>
-                                            </a>
-                                        </div>
-                                        <div class="review-content">
-                                            <div class="review-text">
-                                                {{ review.text|raw }}
-                                            </div>
-                                            <div class="review-date">
-                                                <time datetime="{{ review.date_creation|date('c') }}">{{ review.date_creation|date('j M Y') }}</time>
-                                            </div>
-                                            <div class="review-latestpack">
-                                                (<i>{{ review.latestpack }}</i> era)
-                                            </div>
-                                            <div class="review-author">
-                                                <a href="{{ path('user_profile_view', {user_id:review.author_id,user_name:review.author_name|e('url')}) }}" rel="author" class="username {{ review.author_color }}">{{ review.author_name }}</a>
-                                                {% if review.author_donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
-                                                <small class="reputation">{{ review.author_reputation }}</small>
-                                            </div>
+                <div class="card-flavor">
+                    <small>{{ card.flavor|raw|nl2br }}</small>
+                </div>
 
-                                            {% if review.comments|length %}
+                <div class="card-illustrator">
+                    {% if card.illustrator %}
+                        <small>
+                            Illustrated by <a href="{{ path('cards_find', {type:'find', _locale:app.request.locale, 'view':'images', 'q':'i:"' ~ card.illustrator ~ '"'}) }}">
+                                {{ card.illustrator }}
+                            </a>
+                        </small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        Links: <a href="{{ path('decklists_list', {type:'find',_locale:app.request.locale, 'cards[]':card.code}) }}">Decklists</a> | <a href="{{ card.ancur_link }}">ANCUR</a>
+    </div>
 
-                                                {% for comment in review.comments %}
-                                                    <div class="review-comment text-muted small">{{ comment.text|raw }}
-                                                        &mdash;
-                                                        <a title="{{ comment.author.reputation }} reputation" href="{{ path('user_profile_view', {user_id:comment.author.id,user_name:comment.author.username|e('url')}) }}" rel="author" class="username {{ comment.author.faction }}">{{ comment.author.username }}</a>
-                                                        {% if comment.author.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
-                                                        <time datetime="{{ comment.dateCreation|date('c') }}">{{ comment.dateCreation|date('j M Y') }}</time>
-                                                    </div>
-                                                {% endfor %}
+    <div class="col-sm-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name}} ({{ card.pack_code }})
+                </h3>
+                #{{ card.position }} &bull;
+                <a href="{{ path('cards_zoom',{_locale:app.request.locale, 'card_code':card.code}) }}"> English </a>
+            </div>
 
-                                            {% endif %}
-                                            <form action="{{ path('card_reviewcomment_post') }}" method="POST" class="form-comment">
-                                                <input type="hidden" name="comment_review_id" value="{{ review.id }}">
-                                                <button class="btn btn-link btn-write-comment">Add a comment</button  >
-                                            </form>
-                                        </div>
-                                    </article>
-                                {% endfor %}
-                            {% else %}
-                                <p><i>No reviews yet for this card.</i></p>
-                            {% endif %}
-                        </div>
+            <div class="panel-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <span>Printings</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for version in card.versions %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('cards_zoom',{_locale:app.request.locale, 'card_code':version.code}) }}">
+                                    <span class="icon icon-{{ version.cycle_code }}"></span> {{ version.pack_name }}
+                                </a>
+                            </td>
+                        </tr>
                         {% endfor %}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        {% include '/Default/google_adaptable_ad.html.twig' %}
-                    </div>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 MWL Entries" style="margin-top:2em">
+        <div style="ine-height:34px" class="mwl-entries-header">
+            <span style="font-size:24px">Ban List Entries</span>
+            {% if card.mwl_info|length %}
+            <ul class="mwl-entries-list">
+                {% for mwl_info in card.mwl_info %}
+                {% if mwl_info.is_restricted == true %}
+                <li>{{ mwl_info.mwl_name }}{% if mwl_info.active %} (active){% endif %}: Restricted</li>
+                {% endif %}
+                {% if mwl_info.deck_limit is not null and mwl_info.deck_limit == 0 %}
+                <li>{{ mwl_info.mwl_name }}{% if mwl_info.active %} (active){% endif %}: Banned</li>
+                {% endif %}
+                {% if mwl_info.universal_faction_cost > 0 %}
+                <li>{{ mwl_info.mwl_name }}{% if mwl_info.active %} (active){% endif %}: {{ mwl_info.universal_faction_cost }} Universal Influence</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p><i>No Ban List Entries for this card.</i></p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 rulings" data-card-id="{{ card.id }}" style="margin-top:2em">
+        <div style="line-height:34px" class="rulings-header">
+            <span style="font-size:24px">Rulings</span>
+        </div>
+        {% if card.rulings|length %}
+        <ul class="rulings-list">
+            {% for ruling in card.rulings %}
+            <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}">{{ ruling.text | raw }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p><i>No rulings yet for this card.</i></p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12" style="margin-top:2em">
+        <div style="line-height:34px" class="reviews-header">
+            <span style="font-size:24px">Reviews</span>
+        </div>
+        <form method="POST" action="{{ path('card_review_post') }}" style="clear:right" class="review-edit-form">
+            <input type="hidden" name="card_id" value="{{ card.id }}">
+            <input type="hidden" name="review_id" value="">
+        </form>
+        {% if card.reviews|length %}
+        {% for review in card.reviews %}
+        <article class="review" data-index="{{ review.id }}" id="review-{{ review.id }}">
+
+            <div class="review-like">
+                <a class="review-social-icon-like" href="#" class="social-icon-like" data-toggle="tooltip" data-placement="bottom" title="Like that review">
+                    <span class="glyphicon glyphicon-heart"></span> <span class="num">{{ review.nbvotes }}</span>
+                </a>
+            </div>
+            <div class="review-content">
+                <div class="review-text">
+                    {{ review.text|raw }}
+                </div>
+                <div class="review-date">
+                    <time datetime="{{ review.date_creation|date('c') }}">{{ review.date_creation|date('j M Y') }}</time>
+                </div>
+                <div class="review-latestpack">
+                    (<i>{{ review.latestpack }}</i> era)
+                </div>
+                <div class="review-author">
+                    <a href="{{ path('user_profile_view', {user_id:review.author_id,user_name:review.author_name|e('url')}) }}" rel="author" class="username {{ review.author_color }}">{{ review.author_name }}</a>
+                    {% if review.author_donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
+                    <small class="reputation">{{ review.author_reputation }}</small>
                 </div>
 
+                {% if review.comments|length %}
 
-                <!-- Modal -->
-                <div class="modal hidden-print" id="addRulingModal" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                <h3 class="modal-title">Add a ruling</h3>
+                {% for comment in review.comments %}
+                <div class="review-comment text-muted small">{{ comment.text|raw }}
+                    &mdash;
+                    <a title="{{ comment.author.reputation }} reputation" href="{{ path('user_profile_view', {user_id:comment.author.id,user_name:comment.author.username|e('url')}) }}" rel="author" class="username {{ comment.author.faction }}">{{ comment.author.username }}</a>
+                    {% if comment.author.donation > 0 %}<span class="glyphicon glyphicon-gift donator" title="NetrunnerDB Gracious Donator"></span>{% endif %}
+                    <time datetime="{{ comment.dateCreation|date('c') }}">{{ comment.dateCreation|date('j M Y') }}</time>
+                </div>
+                {% endfor %}
+
+                {% endif %}
+                <form action="{{ path('card_reviewcomment_post') }}" method="POST" class="form-comment">
+                    <input type="hidden" name="comment_review_id" value="{{ review.id }}">
+                    <button class="btn btn-link btn-write-comment">Add a comment</button  >
+                </form>
+            </div>
+        </article>
+        {% endfor %}
+        {% else %}
+        <p><i>No reviews yet for this card.</i></p>
+        {% endif %}
+    </div>
+</div>
+
+    <!-- Modal -->
+    <div class="modal hidden-print" id="addRulingModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title">Add a ruling</h3>
+                </div>
+                <div class="modal-body">
+                    <form class="form" role="form" action="{{ path('card_ruling_post') }}" method="post">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <input type="hidden" id="add-ruling-card-id" name="card_id">
+                                    <textarea class="form-control" id="add-ruling-form-text" name="text"></textarea>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <form class="form" role="form" action="{{ path('card_ruling_post') }}" method="post">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <input type="hidden" id="add-ruling-card-id" name="card_id">
-                                                <textarea class="form-control" id="add-ruling-form-text" name="text"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <div class="well text-muted" id="add-ruling-form-preview"><small>Preview.</small></div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </div>
-                                </form>
+                            <div class="col-sm-12">
+                                <div class="well text-muted" id="add-ruling-form-preview"><small>Preview.</small></div>
+                            </div>
+                            <div class="col-sm-12">
+                                <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
-                <!-- Modal -->
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
 
-                <!-- Modal -->
-                <div class="modal hidden-print" id="editRulingModal" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                <h3 class="modal-title">Edit a ruling</h3>
+    <!-- Modal -->
+    <div class="modal hidden-print" id="editRulingModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title">Edit a ruling</h3>
+                </div>
+                <div class="modal-body">
+                    <form class="form" role="form" action="{{ path('card_ruling_edit') }}" method="post">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <input type="hidden" id="edit-ruling-card-id" name="card_id">
+                                    <input type="hidden" id="edit-ruling-id" name="ruling_id">
+                                    <textarea class="form-control" id="edit-ruling-form-text" name="text"></textarea>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <form class="form" role="form" action="{{ path('card_ruling_edit') }}" method="post">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <input type="hidden" id="edit-ruling-card-id" name="card_id">
-                                                <input type="hidden" id="edit-ruling-id" name="ruling_id">
-                                                <textarea class="form-control" id="edit-ruling-form-text" name="text"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <div class="well text-muted" id="edit-ruling-form-preview"><small>Preview.</small></div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </div>
-                                </form>
+                            <div class="col-sm-12">
+                                <div class="well text-muted" id="edit-ruling-form-preview"><small>Preview.</small></div>
+                            </div>
+                            <div class="col-sm-12">
+                                <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
-                <!-- Modal -->
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
 
-                <!-- Modal -->
-                <div class="modal hidden-print" id="deleteRulingModal" tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                <h3 class="modal-title">Delete a ruling</h3>
+    <!-- Modal -->
+    <div class="modal hidden-print" id="deleteRulingModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title">Delete a ruling</h3>
+                </div>
+                <div class="modal-body">
+                    <form class="form" role="form" action="{{ path('card_ruling_delete') }}" method="post">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <input type="hidden" id="delete-ruling-id" name="ruling_id">
+                                    <label>Confirm deletion?</label>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <form class="form" role="form" action="{{ path('card_ruling_delete') }}" method="post">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <input type="hidden" id="delete-ruling-id" name="ruling_id">
-                                                <label>Confirm deletion?</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <button type="submit" class="btn btn-primary">Delete</button>
-                                        </div>
-                                    </div>
-                                </form>
+                            <div class="col-sm-12">
+                                <button type="submit" class="btn btn-primary">Delete</button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
-                <!-- Modal -->
-
-
-                {% endblock %}
-
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+{% endblock %}

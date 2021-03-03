@@ -4,15 +4,42 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
 .social>div>a, .social>div>span{margin:0 10px}
 
 /* classes .card-* used in card pages, card modal, card tip */
-.card-title{font-size:125%;position:relative;z-index: 10;margin-right: 15px}
-.card-text{border-left:2px solid #888}
-.card-text sup{line-height:0;font-size:x-small}
-.card-text p{margin:6px}
-.card-flavor{font-style:italic}
-.card-flavor em{font-style:normal}
 .pack-future, .card-preview{color:red}
-/* */
 
+.card-title {
+    font-size: 125%;
+    position: relative;
+    z-index: 10;
+    margin-right: 15px;
+}
+
+.card-cost {
+    font-size: 125%
+}
+
+.card-text {
+    border-left: 2px solid #888;
+}
+.card-text sup {
+    line-height: 0;
+    font-size: x-small;
+}
+.card-text p {
+    margin: 6px;
+}
+
+.card-flavor {
+    font-style: italic;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.card-flavor em {
+    font-style: normal;
+}
+
+.card-influence {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
 
 #push{clear:both}
 .type-icon,.faction-icon{vertical-align:text-bottom}
