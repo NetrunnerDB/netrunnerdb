@@ -73,7 +73,7 @@
                     {% endif %}
                 </div>
 
-                {% if card.type_code != "identity" and card.type_code != "agenda" %}
+                {% if card.type_code != "identity" and card.faction_cost_dots|length > 0 %}
                     <div class="card-influence">
                         Influence:
                         <span class="icon icon-{{ card.faction_code }} {{ card.faction_code }}"></span>

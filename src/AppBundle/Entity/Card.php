@@ -1082,9 +1082,14 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getFactionCostDots()
     {
-        if ($this->getFactionCost() == 0) {
+        if ($this->getType()->getName() == "Identity") {
             return "";
         }
+
+        if ($this->getType()->getName() == "Agenda" and !in_array($this->getFaction()->getCode(), ["neutral-corp", "neutral-runner"])) {
+            return "";
+        }
+
         $factionCost = $this->getFactionCost();
         $inf = "<span class=\"" . $this->faction->getCode() . "\">";
         $inf .= str_repeat("&#9679;", $factionCost) . "</span>";
