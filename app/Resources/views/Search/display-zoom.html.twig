@@ -39,18 +39,16 @@
                 </h3>
             </div>
 
-            <div class="panel-body">
+            <div class="panel-body card-panel">
                 <div class="card-type">
-                    <div>
-                        {{ card.formatted_type|raw }}
-                    </div>
+                    {{ card.formatted_type|raw }}
                 </div>
 
                 <div class="card-stats">
                     {% if card.type_code == "identity" %}
                         Deck size: {{ card.minimumdecksize }}
                         &bull;
-                        Available influence:
+                        Influence:
                         {{ card.influencelimit ?? "&#8734;" }}
                         {% if card.side_code == "runner" %}
                             &bull;
@@ -87,9 +85,11 @@
                     {{ card.text|raw }}
                 </div>
 
-                <div class="card-flavor">
-                    <small>{{ card.flavor|raw|nl2br }}</small>
-                </div>
+                {% if card.flavor %}
+                    <div class="card-flavor">
+                        {{ card.flavor|raw|nl2br }}
+                    </div>
+                {% endif %}
 
                 <div class="card-illustrator">
                     {% if card.illustrator %}

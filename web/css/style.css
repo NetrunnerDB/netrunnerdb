@@ -14,7 +14,7 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
 }
 
 .card-cost {
-    font-size: 125%
+    font-size: 125%;
 }
 
 .card-text {
@@ -30,15 +30,32 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
 
 .card-flavor {
     font-style: italic;
-    border-top: 1px solid rgba(0,0,0,0.1);
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+    font-size: 0.8em;
 }
+
+.card-flavor::before {
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    width: 95%;
+    content: "";
+    margin: 5px auto;
+    display: block;
+}
+
+.card-illustrator::before {
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    width: 95%;
+    content: "";
+    margin: 5px auto;
+    display: block;
+}
+
 .card-flavor em {
     font-style: normal;
 }
 
-.card-influence {
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+.card-panel {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 #push{clear:both}
