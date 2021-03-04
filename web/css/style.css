@@ -20,10 +20,12 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
 .card-text {
     border-left: 2px solid #888;
 }
+
 .card-text sup {
     line-height: 0;
     font-size: x-small;
 }
+
 .card-text p {
     margin: 6px;
 }
@@ -33,15 +35,7 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
     font-size: 0.8em;
 }
 
-.card-flavor::before {
-    border-top: 1px solid rgba(0, 0, 0, 0.2);
-    width: 95%;
-    content: "";
-    margin: 5px auto;
-    display: block;
-}
-
-.card-illustrator::before {
+.card-text::before, .card-flavor::before, .card-illustrator::before {
     border-top: 1px solid rgba(0, 0, 0, 0.2);
     width: 95%;
     content: "";

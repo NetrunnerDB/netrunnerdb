@@ -718,22 +718,29 @@ class CardsData
         $cardinfo['url'] = $this->router->generate('cards_zoom', ['card_code' => $card->getCode(), '_locale' => $locale], UrlGeneratorInterface::ABSOLUTE_URL);
         $cardinfo['imageUrl'] = $cardinfo['imageUrl'] ?: $this->packages->getUrl($card->getCode() . ".png", "card_image");
 
-        // replacing <trace>
-        $cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1 [\2]</strong>–', $cardinfo['text']);
+        // If the card has text
+        if (strlen($cardinfo['text']) > 0) {
+            // replacing <trace>
+            $cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1 [\2]</strong>–', $cardinfo['text']);
 
-        // replacing <errata>
-        $cardinfo['text'] = preg_replace('/<errata>(.+)<\/errata>/', '<em><span class="glyphicon glyphicon-alert"></span> \1</em>', $cardinfo['text']);
+            // replacing <errata>
+            $cardinfo['text'] = preg_replace('/<errata>(.+)<\/errata>/', '<em><span class="glyphicon glyphicon-alert"></span> \1</em>', $cardinfo['text']);
 
-        // replacing <champion>
-        $cardinfo['flavor'] = preg_replace('/<champion>(.+)<\/champion>/', '<span class="champion">\1</champion>', $cardinfo['flavor']);
+            $cardinfo['text'] = $this->replaceSymbols($cardinfo['text']);
+            $cardinfo['text'] = str_replace('&', '&amp;', $cardinfo['text']);
+            $cardinfo['text'] = implode(array_map(function ($l) {
+                return "<p>$l</p>";
+            }, explode("\n", $cardinfo['text'])));
+        }
 
-        $cardinfo['text'] = $this->replaceSymbols($cardinfo['text']);
-        $cardinfo['text'] = str_replace('&', '&amp;', $cardinfo['text']);
-        $cardinfo['text'] = implode(array_map(function ($l) {
-            return "<p>$l</p>";
-        }, explode("\n", $cardinfo['text'])));
-        $cardinfo['flavor'] = $this->replaceSymbols($cardinfo['flavor']);
-        $cardinfo['flavor'] = str_replace('&', '&amp;', $cardinfo['flavor']);
+        if (strlen($cardinfo['flavor']) > 0) {
+            // replacing <champion>
+            $cardinfo['flavor'] = preg_replace('/<champion>(.+)<\/champion>/', '<span class="champion">\1</champion>', $cardinfo['flavor']);
+
+            $cardinfo['flavor'] = $this->replaceSymbols($cardinfo['flavor']);
+            $cardinfo['flavor'] = str_replace('&', '&amp;', $cardinfo['flavor']);
+        }
+
         $cardinfo['cssfaction'] = str_replace(" ", "-", mb_strtolower($card->getFaction()->getName()));
 
         $cache[$card->getId()][$locale] = $cardinfo;
