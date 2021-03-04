@@ -538,10 +538,15 @@ class SearchController extends Controller
             $title = $q;
         }
 
+        if ($view == "zoom") {
+            $card = $cards[0];
+        }
+
         // attention si $s="short", $cards est un tableau à 2 niveaux au lieu de 1 seul
         return $this->render('/Search/display-' . $view . '.html.twig', [
             "view"            => $view,
             "sort"            => $sort,
+            "card"            => $card,
             "cards"           => $cards,
             "first"           => $first,
             "last"            => $last,

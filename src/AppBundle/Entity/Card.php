@@ -1061,4 +1061,47 @@ class Card implements NormalizableInterface, TimestampableInterface
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getFormattedType()
+    {
+        $formattedType = "<strong>" . $this->type;
+        $subtypes = $this->getKeywords();
+        if (!is_null($subtypes)) {
+            $formattedType .= ":</strong> " . $subtypes;
+        } else {
+            $formattedType .= "</strong>";
+        }
+        return $formattedType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFactionCostDots()
+    {
+        if ($this->getType()->getName() == "Identity") {
+            return "";
+        }
+
+        if ($this->getType()->getName() == "Agenda" and !in_array($this->getFaction()->getCode(), ["neutral-corp", "neutral-runner"])) {
+            return "";
+        }
+
+        $factionCost = $this->getFactionCost();
+        $inf = "<span class=\"" . $this->faction->getCode() . "\">";
+        $inf .= str_repeat("&#9679;", $factionCost) . "</span>";
+        $inf .= str_repeat("&#9675;", 5 - $factionCost);
+        return $inf;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormattedCost()
+    {
+        return $this->getCost() . "<span class=\"icon icon-credit\" aria-hidden=\"true\"></span><span class=\"icon-fallback\">[credit]</span>";
+    }
 }
