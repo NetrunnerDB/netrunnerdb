@@ -109,7 +109,7 @@ class CardsData
     public function allsetsdata()
     {
         /** @var Cycle[] $list_cycles */
-        $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "ASC"]);
+        $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "DESC"]);
         $cycles = [];
         foreach ($list_cycles as $cycle) {
             $packs = [];
