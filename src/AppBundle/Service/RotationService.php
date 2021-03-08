@@ -23,12 +23,17 @@ class RotationService
     }
 
     /**
-     * Returns the first entry of the descending sorted rotations
+     * Returns the first entry of the descending sorted rotations that is active by date_start.
      * @return Rotation current Rotation
      */
     public function findCurrentRotation()
     {
-        $rotation = $this->entityManager->getRepository(Rotation::class)->findOneBy([], ['dateStart' => 'DESC']);
+        $rotation = $this->entityManager->getRepository(Rotation::class)->createQueryBuilder('r')
+            ->where('r.dateStart <= CURRENT_DATE()')
+            ->orderBy('r.dateStart', 'DESC')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
 
         // There should always be a rotation available.
         if (!$rotation) {
