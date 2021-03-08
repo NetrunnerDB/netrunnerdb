@@ -879,12 +879,23 @@ class CardsData
                     $deck_limit = $card_mwl['deck_limit'] ?? null;
                     // Ceux-ci signifient la même chose
                     $universal_faction_cost = $card_mwl['universal_faction_cost'] ?? $card_mwl['global_penalty'] ?? 0;
-                    $response[] = [
+                    $response[$mwl->getName()] = [
                         'mwl_name'               => $mwl->getName(),
                         'active'                 => $mwl->getActive(),
+                        'no_effect'              => false,
                         'is_restricted'          => $is_restricted,
                         'deck_limit'             => $deck_limit,
                         'universal_faction_cost' => $universal_faction_cost,
+                    ];
+                  } else {
+                    // Ensure that there is an active MWL entry for each card to make it as easy to determine if a card is unaffected by the current ban list.
+                    $response[$mwl->getName()] = [
+                        'mwl_name'               => $mwl->getName(),
+                        'active'                 => $mwl->getActive(),
+                        'no_effect'              => true,
+                        'is_restricted'          => false,
+                        'deck_limit'             => null,
+                        'universal_faction_cost' => 0,
                     ];
                 }
             }

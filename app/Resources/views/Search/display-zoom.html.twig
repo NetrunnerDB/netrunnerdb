@@ -122,6 +122,34 @@
                     <thead>
                         <tr>
                             <th>
+                              <span>Standard Play Legality</span> <a id="mwl-history" href="" onClick="
+let entries = $.find('tr.card-mwl-inactive');  entries.forEach(x => x.style.display = (x.style.display == 'table-row' ? 'none' : 'table-row'));
+let l = $('#mwl-history'); l.html(l.text() == '(show all)' ? '(show only latest)' : '(show all)');
+return false;">(show all)</a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                       {% for mwl_info in card.mwl_info %}
+                       <tr class="card-mwl-{% if mwl_info.active %}active{% else %}inactive{% endif %}" style="display:{% if mwl_info.active %}table-row{% else %}none{% endif %}">
+                            <td>
+                              {% if mwl_info.no_effect %}<span title="No restrictions">✅</span>{% endif %}
+                              {% if mwl_info.is_restricted == true %}<span title="Restricted">🦄{% endif %}
+                              {% if mwl_info.deck_limit is not null and mwl_info.deck_limit == 0 %}<span title="Banned">🚫</span>{% endif %}
+                              {% if mwl_info.universal_faction_cost == 1 %}<span title="1 additional Universal Influence">1️⃣</span>{% endif %}
+                              {% if mwl_info.universal_faction_cost == 3 %}<span title="3 additional Universal Influence">3️⃣</span>{% endif %}
+                              {{ mwl_info.mwl_name }}{% if mwl_info.active %} (active) {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
                                 <span>Printings</span>
                             </th>
                         </tr>
@@ -139,31 +167,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12 MWL Entries" style="margin-top:2em">
-        <div style="ine-height:34px" class="mwl-entries-header">
-            <span style="font-size:24px">Ban List Entries</span>
-            {% if card.mwl_info|length %}
-            <ul class="mwl-entries-list">
-                {% for mwl_info in card.mwl_info %}
-                {% if mwl_info.is_restricted == true %}
-                <li>{{ mwl_info.mwl_name }}{% if mwl_info.active %} (active){% endif %}: Restricted</li>
-                {% endif %}
-                {% if mwl_info.deck_limit is not null and mwl_info.deck_limit == 0 %}
-                <li>{{ mwl_info.mwl_name }}{% if mwl_info.active %} (active){% endif %}: Banned</li>
-                {% endif %}
-                {% if mwl_info.universal_faction_cost > 0 %}
-                <li>{{ mwl_info.mwl_name }}{% if mwl_info.active %} (active){% endif %}: {{ mwl_info.universal_faction_cost }} Universal Influence</li>
-                {% endif %}
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p><i>No Ban List Entries for this card.</i></p>
-            {% endif %}
         </div>
     </div>
 </div>
