@@ -894,7 +894,7 @@ class CardsData
                         'active'                 => $mwl->getActive(),
                         'no_effect'              => true,
                         'is_restricted'          => false,
-                        'deck_limit'             => null,
+                        'deck_limit'             => 99, // for the callers of get_mwl_info, anything > 0 is good enough.
                         'universal_faction_cost' => 0,
                     ];
                 }
