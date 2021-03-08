@@ -56,7 +56,7 @@ class BuilderController extends Controller
         $banned_cards = array();
         foreach ($identities as $id) {
             $i = $cardsData->get_mwl_info([$id]);
-            if (count($i) > 0 && $i[0]['active']) {
+            if (count($i) > 0 && $i[array_keys($i)[0]]['active']) {
                 $banned_cards[$id->getCode()] = true;
             }
          }
