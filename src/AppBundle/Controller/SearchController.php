@@ -7,6 +7,7 @@ use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Type;
 use AppBundle\Service\CardsData;
+use AppBundle\Service\RotationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -126,14 +127,14 @@ class SearchController extends Controller
         return $this->forward(
             'AppBundle:Search:display',
             [
-                '_route'        => $request->attributes->get('_route'),
-                '_route_params' => $request->attributes->get('_route_params'),
-                'q'             => $card->getCode(),
-                'view'          => 'card',
-                'sort'          => 'set',
-                'title'         => $card->getTitle(),
-                'meta'          => $meta,
-                'locale'        => $request->getLocale(),
+                '_route'           => $request->attributes->get('_route'),
+                '_route_params'    => $request->attributes->get('_route_params'),
+                'q'                => $card->getCode(),
+                'view'             => 'card',
+                'sort'             => 'set',
+                'title'            => $card->getTitle(),
+                'meta'             => $meta,
+                'locale'           => $request->getLocale(),
             ]
         );
     }
@@ -538,8 +539,15 @@ class SearchController extends Controller
             $title = $q;
         }
 
+		$currentRotationCycles = [];
+
         if ($view == "zoom") {
             $card = $cards[0];
+			$rotationService = new RotationService($entityManager);
+			$currentRotation = $rotationService->findCurrentRotation();
+			foreach($currentRotation->getCycles()->toArray() as $cycle) {
+				$currentRotationCycles[$cycle->getCode()] = true;
+			}
         }
 
         // attention si $s="short", $cards est un tableau à 2 niveaux au lieu de 1 seul
@@ -555,6 +563,7 @@ class SearchController extends Controller
             "pagetitle"       => $title,
             "metadescription" => $meta,
             "locales"         => $locales,
+            "currentRotationCycles" => $currentRotationCycles,
         ], $response);
     }
 
