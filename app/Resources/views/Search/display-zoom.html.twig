@@ -125,7 +125,7 @@
 {% set is_ineligible = false %}
 {% set all_versions_rotated = true %}
 {% for version in card.versions %}
-  {% if (version.cycle_code == "draft") or (version.cycle_code == "terminal-directive") %}
+  {% if (version.cycle_code == "draft") or (version.pack_code == "tdc") %}
     {% set is_ineligible = true %}
   {% endif %}
   {% if currentRotationCycles[version.cycle_code] is defined %}
