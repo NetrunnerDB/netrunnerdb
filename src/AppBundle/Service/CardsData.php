@@ -881,12 +881,33 @@ class CardsData
                     $deck_limit = $card_mwl['deck_limit'] ?? null;
                     // Ceux-ci signifient la même chose
                     $universal_faction_cost = $card_mwl['universal_faction_cost'] ?? $card_mwl['global_penalty'] ?? 0;
-                    $response[] = [
+                    $legality = 'legal';
+                    if ($is_restricted) {
+                       $legality = 'restricted';
+                    } elseif (!is_null($deck_limit) && $deck_limit == 0) {
+                        $legality = 'banned';
+                    } elseif ($universal_faction_cost == 1) {
+                        $legality = '1-inf';
+                    } elseif ($universal_faction_cost == 3) {
+                        $legality = '3-inf';
+                    }
+                    $response[$mwl->getName()] = [
                         'mwl_name'               => $mwl->getName(),
                         'active'                 => $mwl->getActive(),
                         'is_restricted'          => $is_restricted,
                         'deck_limit'             => $deck_limit,
                         'universal_faction_cost' => $universal_faction_cost,
+                        'legality'               => $legality,
+                    ];
+                  } else {
+                    // Ensure that every card has MWL status for every MWL, not just the ones that specify it directly.
+                    $response[$mwl->getName()] = [
+                        'mwl_name'               => $mwl->getName(),
+                        'active'                 => $mwl->getActive(),
+                        'is_restricted'          => false,
+                        'deck_limit'             => null,
+                        'universal_faction_cost' => 0,
+                        'legality'               => 'legal',
                     ];
                 }
             }

@@ -556,6 +556,26 @@ ul.rulings-list blockquote {
   padding: 0 2px;
 }
 
+/* Card legality indicators */
+.legality-banned:before {
+  content: "🚫";
+}
+.legality-legal:before {
+  content: "✅";
+}
+.legality-rotated:before {
+  content: "🔄";
+}
+.legality-restricted:before {
+  content: "🦄";
+}
+.legality-1-inf:before {
+  content: "1️⃣";
+}
+.legality-3-inf:before {
+  content: "3️⃣";
+}
+
 /*** screen reader fallback ***/
 .icon-fallback {
   border: 0;

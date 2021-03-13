@@ -7,6 +7,7 @@ use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\Type;
 use AppBundle\Service\CardsData;
+use AppBundle\Service\RotationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -126,14 +127,14 @@ class SearchController extends Controller
         return $this->forward(
             'AppBundle:Search:display',
             [
-                '_route'        => $request->attributes->get('_route'),
-                '_route_params' => $request->attributes->get('_route_params'),
-                'q'             => $card->getCode(),
-                'view'          => 'card',
-                'sort'          => 'set',
-                'title'         => $card->getTitle(),
-                'meta'          => $meta,
-                'locale'        => $request->getLocale(),
+                '_route'           => $request->attributes->get('_route'),
+                '_route_params'    => $request->attributes->get('_route_params'),
+                'q'                => $card->getCode(),
+                'view'             => 'card',
+                'sort'             => 'set',
+                'title'            => $card->getTitle(),
+                'meta'             => $meta,
+                'locale'           => $request->getLocale(),
             ]
         );
     }
@@ -466,17 +467,42 @@ class SearchController extends Controller
                     }
                 }
                 $cardinfo['available'] = $availability[$pack->getCode()];
+
+                $currentRotationCycles = [];
+
                 if ($view == "zoom") {
                     $cardVersions = $versions[$card->getTitle()];
 
+                    $rotationService = new RotationService($entityManager);
+                    $currentRotation = $rotationService->findCurrentRotation();
+                    foreach($currentRotation->getCycles()->toArray() as $cycle) {
+                        $currentRotationCycles[$cycle->getCode()] = true;
+                    }
                     $cardinfo['versions'] = [];
+                    $standard_legal = true;
+                    $all_versions_rotated = true;
                     foreach ($cardVersions as $version) {
-                        $cardinfo['versions'][] = $cardsData->getCardInfo($version, $locale);
+                        $v = $cardsData->getCardInfo($version, $locale);
+                        $cardinfo['versions'][] = $v;
+                        // Draft and terminal directive campaign cards are not legal in standard.
+                        if ($v['cycle_code'] == 'draft' || $v['pack_code'] == 'tdc') {
+                            $standard_legal = false;
+                        }
+                        // If any version of the card is in a rotation-legal cycle, the card is considered legal.
+                        if (array_key_exists($v['cycle_code'], $currentRotationCycles)) {
+                          $all_versions_rotated = false;
+                        }
                     }
 
                     $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
                     $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
+
+                    if ($standard_legal) {
+                        $cardinfo['standard_legality'] = $all_versions_rotated ? 'rotated' : 'legal';
+                    } else {
+                        $cardinfo['standard_legality'] = 'banned';
+                    }
                 }
                 if ($view == "rulings") {
                     $cardinfo['rulings'] = $cardsData->get_rulings(array($card));
@@ -556,6 +582,7 @@ class SearchController extends Controller
             "pagetitle"       => $title,
             "metadescription" => $meta,
             "locales"         => $locales,
+            "currentRotationCycles" => $currentRotationCycles,
         ], $response);
     }
 
