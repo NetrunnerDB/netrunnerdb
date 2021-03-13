@@ -80,6 +80,10 @@ AppBundle\Entity\Card:
         title:
             type: string
             length: 255
+        strippedTitle:
+            type: string
+            length: '1024'
+            nullable: true
         keywords:
             type: string
             length: 255

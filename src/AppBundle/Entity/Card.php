@@ -33,6 +33,11 @@ class Card implements NormalizableInterface, TimestampableInterface
     private $title;
 
     /**
+     * @var string
+     */
+    private $strippedTitle;
+
+    /**
      * @var string|null
      */
     private $keywords;
@@ -380,6 +385,25 @@ class Card implements NormalizableInterface, TimestampableInterface
     public function setTitle(string $title)
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStrippedTitle()
+    {
+        return $this->strippedTitle;
+    }
+
+    /**
+     * @param string $title
+     * @return $this
+     */
+    public function setStrippedTitle(string $title)
+    {
+        $this->strippedTitle = $title;
 
         return $this;
     }
