@@ -455,10 +455,10 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @param string $text
+     * @param string|null $text
      * @return $this
      */
-    public function setStrippedText(string $text)
+    public function setStrippedText(string $text = null)
     {
         $this->strippedText = $text;
 
