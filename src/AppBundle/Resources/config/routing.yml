@@ -782,6 +782,18 @@ modflags_get:
     defaults:
         _controller: AppBundle:Modflags:get
 
+banlists:
+    path: /{_locale}/banlists
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Banlists:get
+
+formats:
+    path: /{_locale}/formats
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Formats:get
+
 claims:
     resource: "@AppBundle/Controller/ClaimsController.php"
     type:     annotation
