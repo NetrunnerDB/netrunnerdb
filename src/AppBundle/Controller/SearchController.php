@@ -466,17 +466,42 @@ class SearchController extends Controller
                     }
                 }
                 $cardinfo['available'] = $availability[$pack->getCode()];
+
+                $currentRotationCycles = [];
+
                 if ($view == "zoom") {
                     $cardVersions = $versions[$card->getTitle()];
 
+                    $rotationService = new RotationService($entityManager);
+                    $currentRotation = $rotationService->findCurrentRotation();
+                    foreach($currentRotation->getCycles()->toArray() as $cycle) {
+                        $currentRotationCycles[$cycle->getCode()] = true;
+                    }
                     $cardinfo['versions'] = [];
+                    $standard_legal = true;
+                    $all_versions_rotated = true;
                     foreach ($cardVersions as $version) {
-                        $cardinfo['versions'][] = $cardsData->getCardInfo($version, $locale);
+                        $v = $cardsData->getCardInfo($version, $locale);
+                        $cardinfo['versions'][] = $v;
+                        // Draft and terminal directive campaign cards are not legal in standard.
+                        if ($v['cycle_code'] == 'draft' || $v['pack_code'] == 'tdc') {
+                            $standard_legal = false;
+                        }
+                        // If any version of the card is in a rotation-legal cycle, the card is considered legal.
+                        if (array_key_exists($v['cycle_code'], $currentRotationCycles)) {
+                          $all_versions_rotated = false;
+                        }
                     }
 
                     $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
                     $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
+
+                    if ($standard_legal) {
+                        $cardinfo['standard_legality'] = $all_versions_rotated ? 'rotated' : 'legal';
+                    } else {
+                        $cardinfo['standard_legality'] = 'banned';
+                    }
                 }
                 if ($view == "rulings") {
                     $cardinfo['rulings'] = $cardsData->get_rulings(array($card));
@@ -539,15 +564,8 @@ class SearchController extends Controller
             $title = $q;
         }
 
-		$currentRotationCycles = [];
-
         if ($view == "zoom") {
             $card = $cards[0];
-			$rotationService = new RotationService($entityManager);
-			$currentRotation = $rotationService->findCurrentRotation();
-			foreach($currentRotation->getCycles()->toArray() as $cycle) {
-				$currentRotationCycles[$cycle->getCode()] = true;
-			}
         }
 
         // attention si $s="short", $cards est un tableau à 2 niveaux au lieu de 1 seul
