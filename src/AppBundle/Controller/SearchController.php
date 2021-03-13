@@ -406,6 +406,8 @@ class SearchController extends Controller
 
         $cardsData->validateConditions($conditions);
 
+        $card = null;
+
         // reconstruction of the correct search string for display
         $q = $cardsData->buildQueryFromConditions($conditions);
         $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
@@ -440,7 +442,6 @@ class SearchController extends Controller
             }
             $last = $first + $nb_per_page;
 
-            $card = null;
             $versions = null;
 
             if ($view == "zoom") {

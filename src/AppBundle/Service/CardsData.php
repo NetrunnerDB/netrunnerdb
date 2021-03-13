@@ -189,6 +189,8 @@ class CardsData
                             $like = implode('% ', str_split($arg));
                             $or[] = "(REPLACE(c.title, '-', ' ') like ?$i)";
                             $parameters[$i++] = "$like%";
+                            $or[] = "(c.strippedTitle like ?$i)";
+                            $parameters[$i++] = "$like%";
                         } else {
                             if ($arg == 'Franklin') {
                                 $arg = 'Crick';
