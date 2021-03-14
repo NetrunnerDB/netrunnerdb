@@ -223,6 +223,7 @@ class Card implements NormalizableInterface, TimestampableInterface
         $mandatoryFields = [
                 'code',
                 'title',
+                'stripped_title',
                 'position',
                 'uniqueness',
                 'deck_limit',
