@@ -480,6 +480,11 @@ class SearchController extends Controller
                     $cardinfo['versions'] = [];
                     $standard_legal = true;
                     $all_versions_rotated = true;
+
+                    // Startup legality is currently hard-coded since the DB doesn't know anything about it.
+                    $startupCycles = ['ashes' => true, 'system-gateway' => true, 'system-update-2021' => true];
+                    $startup_legal = false;
+
                     foreach ($cardVersions as $version) {
                         $v = $cardsData->getCardInfo($version, $locale);
                         $cardinfo['versions'][] = $v;
@@ -491,11 +496,16 @@ class SearchController extends Controller
                         if (array_key_exists($v['cycle_code'], $currentRotationCycles)) {
                           $all_versions_rotated = false;
                         }
+                        // Any printing of this card in a valid Startup cycle means the card is Startup legal.
+                        if (array_key_exists($v['cycle_code'], $startupCycles)) {
+                          $startup_legal = true;
+                        }
                     }
 
                     $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
                     $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
+                    $cardinfo['startup_legality'] = $startup_legal ? 'legal' : 'banned';
 
                     if ($standard_legal) {
                         $cardinfo['standard_legality'] = $all_versions_rotated ? 'rotated' : 'legal';
