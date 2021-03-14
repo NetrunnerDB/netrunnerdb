@@ -407,6 +407,7 @@ class SearchController extends Controller
         $cardsData->validateConditions($conditions);
 
         $card = null;
+        $currentRotationCycles = [];
 
         // reconstruction of the correct search string for display
         $q = $cardsData->buildQueryFromConditions($conditions);
@@ -468,7 +469,6 @@ class SearchController extends Controller
                 }
                 $cardinfo['available'] = $availability[$pack->getCode()];
 
-                $currentRotationCycles = [];
                 if ($view == "zoom") {
                     $cardVersions = $versions[$card->getTitle()];
 
