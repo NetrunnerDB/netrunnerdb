@@ -129,7 +129,7 @@
                                     {% for mwl_info in card.mwl_info %}
                                        {% if mwl_info.active %}class="legality-{{ mwl_info.legality }}"{% endif %}
                                     {% endfor %}> Standard Ban List<span>
-                                    <a id="mwl-history" href="" onClick="let entries = $.find('tr.card-mwl-inactive'); entries.forEach(x => x.style.display = (x.style.display == 'table-row' ? 'none' : 'table-row')); let l = $('#mwl-history'); l.html(l.text() == '(show history)' ? '(show only latest)' : '(show history)'); return false;">(show history)</a>
+                                    <a id="mwl-history" href="">(show history)</a>
                             </th>
                         </tr>
                     </thead>
