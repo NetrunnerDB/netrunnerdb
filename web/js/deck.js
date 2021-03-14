@@ -197,14 +197,14 @@ function create_collection_tab(initialPackSelection) {
     startup_packs['su21'] = 1;
     event.preventDefault();
     $('#pack_code').find(':checkbox').each(function() {
-      $(this).prop('checked', (startup_cycles[$(this).prop('name')] || startup_packs[$(this).prop('name')]));
+      $(this).prop('checked', Boolean(startup_cycles[$(this).prop('name')] || startup_packs[$(this).prop('name')]));
     });
     update_collection_packs();
   });
   $('#collection_standard').on('click', function(event) {
     event.preventDefault();
     $('#pack_code').find(':checkbox').each(function() {
-      $(this).prop('checked', !(rotated_cycles[$(this).prop('name')] || rotated_packs[$(this).prop('name')]));
+      $(this).prop('checked', !Boolean(rotated_cycles[$(this).prop('name')] || rotated_packs[$(this).prop('name')]));
     });
     update_collection_packs();
   });
