@@ -353,10 +353,9 @@ function write_review_open(event) {
 
 function show_mwl_history(event) {
     event.preventDefault();
-
     let entries = $.find('tr.card-mwl-inactive');
     entries.forEach(x => x.style.display = (x.style.display == 'table-row' ? 'none' : 'table-row'));
-    let l = $('#mwl-history');
-    l.html(l.text() == '(show history)' ? '(show only latest)' : '(show history)');
+    let l = event.currentTarget;
+    l.text = l.text == '(show history)' ? '(show only latest)' : '(show history)';
     return false;
 }
