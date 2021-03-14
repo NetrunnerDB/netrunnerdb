@@ -176,7 +176,7 @@ function select_only_latest_cards(matchingCards) {
 }
 
 function create_collection_tab(initialPackSelection) {
-    var rotated_cycles = Array();
+  var rotated_cycles = Array();
   rotated_cycles['draft'] = 1;
   rotated_cycles['napd'] = 1;
   NRDB.data.cycles.find( { "rotated": true } ).forEach(function(cycle) { rotated_cycles[cycle.code] = 1; });
@@ -184,7 +184,24 @@ function create_collection_tab(initialPackSelection) {
   var rotated_packs = Array();
   NRDB.data.packs.find().forEach(function(pack) { if (rotated_cycles[pack.cycle.code]) { rotated_packs[pack.code] = 1; } });
 
-  $('#collection_current').on('click', function(event) {
+  $('#collection_startup').on('click', function(event) {
+    let startup_cycles = Array();
+    startup_cycles['ashes'] = 1;
+    startup_cycles['system-gateway'] = 1;
+    startup_cycles['system-update-2021'] = 1;
+    let startup_packs = Array();
+    startup_packs['df'] = 1;
+    startup_packs['urbp'] = 1;
+    startup_packs['ur'] = 1;
+    startup_packs['sg'] = 1;
+    startup_packs['su21'] = 1;
+    event.preventDefault();
+    $('#pack_code').find(':checkbox').each(function() {
+      $(this).prop('checked', (startup_cycles[$(this).prop('name')] || startup_packs[$(this).prop('name')]));
+    });
+    update_collection_packs();
+  });
+  $('#collection_standard').on('click', function(event) {
     event.preventDefault();
     $('#pack_code').find(':checkbox').each(function() {
       $(this).prop('checked', !(rotated_cycles[$(this).prop('name')] || rotated_packs[$(this).prop('name')]));
@@ -217,8 +234,8 @@ function create_collection_tab(initialPackSelection) {
     var is_checked = released || sets_in_deck[pack.code] || initialPackSelection[pack.code] !== false;
     return $container.addClass("checkbox").append('<label><input type="checkbox" name="' + pack.code + '"' + (is_checked ? ' checked="checked"' : '')+ '>' + pack.name + '</label>');
   };
-  _.sortBy(NRDB.data.cycles.find(), 'position').forEach(function (cycle) {
-    var packs = _.sortBy(NRDB.data.packs.find({cycle_code:cycle.code}), 'position');
+  _.sortBy(NRDB.data.cycles.find(), 'position').reverse().forEach(function (cycle) {
+    var packs = _.sortBy(NRDB.data.packs.find({cycle_code:cycle.code}), 'position').reverse();
     if(cycle.size === 1) {
       if(packs.length) {
         var $div = f(packs[0], $('<div></div>'));
