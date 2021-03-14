@@ -5,6 +5,7 @@ $(function () {
     $(window.document).on('click', '.review-button', write_review_open);
     $(window.document).on('click', '.review-social-icon-like', like_review);
     $(window.document).on('click', '.btn-write-comment', write_comment);
+    $(window.document).on('click', '#mwl-history', show_mwl_history);
     $(window.document).on('submit', 'form.form-comment', form_comment_submit);
 });
 
@@ -348,4 +349,14 @@ function write_review_open(event) {
         $('.review-form-text').val(NRDB.user.data.review_text).trigger('keyup');
     }
 
+}
+
+function show_mwl_history(event) {
+    event.preventDefault();
+
+    let entries = $.find('tr.card-mwl-inactive');
+    entries.forEach(x => x.style.display = (x.style.display == 'table-row' ? 'none' : 'table-row'));
+    let l = $('#mwl-history');
+    l.html(l.text() == '(show history)' ? '(show only latest)' : '(show history)');
+    return false;
 }
