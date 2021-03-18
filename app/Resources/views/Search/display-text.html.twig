@@ -35,7 +35,9 @@
     {{ card.flavor|raw|nl2br }}
   </p>
   <p style="font-size:86.5%">
-    {{ card.illustrator }}
+    {% for illustrator in card.illustrators %}
+      {{ illustrator }}
+    {% endfor %}
   </p>
   <p>
     <span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }} {{ card.position }} &bull; {{ card.faction_name }}

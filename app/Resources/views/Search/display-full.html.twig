@@ -38,10 +38,10 @@
                   <div class="card-illustrator">
                     <small>
                     {{ card.faction_name }} &bull;
-{% for illustrator in card.illustrators %}
-                    <a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'images','q':'i:"' ~ illustrator ~ '"'}) }}">{{ illustrator }}</a> &bull;
-{% endfor %}
-					<span class="icon icon-{{ card.cycle_code }}"></span>
+                    {% for illustrator in card.illustrators %}
+                        <a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'images','q':'i:"' ~ illustrator ~ '"'}) }}">{{ illustrator }}</a> &bull;
+                    {% endfor %}
+                    <span class="icon icon-{{ card.cycle_code }}"></span>
                     {{ card.pack_name }} {{ card.position }}
                     </small>
                   </div>

@@ -96,8 +96,10 @@
                 {% if card.illustrator %}
                     <div class="card-illustrator">
                         <small>
-                            Illustrated by <a href="{{ path('cards_find', {type:'find', _locale:app.request.locale, 'view':'images', 'q':'i:"' ~ card.illustrator ~ '"'}) }}">
-                                {{ card.illustrator }}
+                            Illustrated by
+                                {% for illustrator in card.illustrators %}
+                                    <a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'images','q':'i:"' ~ illustrator ~ '"'}) }}">{{ illustrator }}</a>
+                                {% endfor %}
                             </a>
                         </small>
                     </div>
