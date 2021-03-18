@@ -682,6 +682,7 @@ class CardsData
             "faction_cost_dots" => $card->getFactionCostDots(),
             "flavor"            => $card->getFlavor(),
             "illustrator"       => $card->getIllustrator(),
+            "illustrators"      => preg_split("/\s*(&|\/|and)\s*/", $card->getIllustrator()),
             "influencelimit"    => $card->getInfluenceLimit(),
             "memoryunits"       => $card->getMemoryCost(),
             "minimumdecksize"   => $card->getMinimumDeckSize(),
