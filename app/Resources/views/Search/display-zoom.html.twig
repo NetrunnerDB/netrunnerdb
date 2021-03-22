@@ -29,8 +29,7 @@
                     </span>
                     <span class="card-cost">
                         {% if card.type_code == "agenda" %}
-                            {{ card.advancementcost }} <span class="icon icon-rez"></span>
-                            {{ card.agendapoints }} <span class="icon icon-agenda"></span>
+                            {{ card.advancementcost }}/{{ card.agendapoints }}
                         {% endif %}
                         {% if card.type_code != "identity" and card.type_code != "agenda" %}
                             {{ card.formatted_cost|raw }}
