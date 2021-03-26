@@ -488,6 +488,12 @@ class SearchController extends Controller
                     foreach ($cardVersions as $version) {
                         $v = $cardsData->getCardInfo($version, $locale);
                         $cardinfo['versions'][] = $v;
+                        // The 2 tutorial-only identity cards are invalid for startup and standard formats.
+                        if ($v['code'] == '30077' || $v['code'] == '30076') {
+                            $standard_legal = false;
+                            $startup_legal = false;
+                            continue;
+                        }
                         // Draft and terminal directive campaign cards are not legal in standard.
                         if ($v['cycle_code'] == 'draft' || $v['pack_code'] == 'tdc') {
                             $standard_legal = false;
