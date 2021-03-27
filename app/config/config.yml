@@ -25,6 +25,11 @@ framework:
         # https://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id: session.handler.native_file
         save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
+        # https://symfony.com/doc/current/components/http_foundation/session_configuration.html#configuring-garbage-collection
+        gc_probability: null
+        # One month = 30 * 24 * 60 * 60
+        gc_maxlifetime: 2592000
+        cookie_lifetime: 2592000
     fragments: ~
     http_method_override: true
     assets:
