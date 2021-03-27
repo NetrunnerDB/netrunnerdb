@@ -698,7 +698,6 @@ class CardsData
             "limited"           => $card->getDeckLimit(),
             "cycle_name"        => $card->getPack()->getCycle()->getName(),
             "cycle_code"        => $card->getPack()->getCycle()->getCode(),
-            "ancur_link"        => $card->getAncurLink(),
             "imageUrl"          => $card->getImageUrl(),
             "tiny_image_path"   => $card->getTinyImagePath(),
             "small_image_path"  => $card->getSmallImagePath(),

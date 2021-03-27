@@ -106,7 +106,7 @@
                 {% endif %}
             </div>
         </div>
-        Links: <a href="{{ path('decklists_list', {type:'find',_locale:app.request.locale, 'cards[]':card.code}) }}">Decklists</a> | <a href="{{ card.ancur_link }}">ANCUR</a>
+        <a href="{{ path('decklists_list', {type:'find',_locale:app.request.locale, 'cards[]':card.code}) }}">Decklists with this card</a>
     </div>
 
     <div class="col-sm-4">
