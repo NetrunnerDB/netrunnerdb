@@ -1106,6 +1106,10 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getFormattedCost()
     {
-        return $this->getCost() . "<span class=\"icon icon-credit\" aria-hidden=\"true\"></span><span class=\"icon-fallback\">[credit]</span>";
+		$cost = $this->getCost();
+		if ($cost == null && !($this->getType()->getName() == "Identity" || $this->getType()->getName() == "Agenda")) {
+			$cost = 'X';
+		}
+        return $cost . "<span class=\"icon icon-credit\" aria-hidden=\"true\"></span><span class=\"icon-fallback\">[credit]</span>";
     }
 }
