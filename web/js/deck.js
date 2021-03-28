@@ -370,6 +370,23 @@ $(function() {
 
   $('#collection').on({
     change : function(event) {
+      var el = event.target;
+      // don't allow setting your current ID to 0 copies.  That's silly.
+      var index = $(el).closest('.card-container').data('index') || $(el).closest('div.modal').data('index');
+      var card = NRDB.data.cards.findById(index);
+      if (card.type_code == 'identity') {
+        var in_collection = $(el).closest('#collection').length;
+        var quantity = parseInt($(el).val(), 10);
+        if (quantity == 0 && card.indeck == 1) {
+          var name = 'qty-' + card.code;
+          $('[name=' + name + '][value=0]').prop('checked', false);
+          $('[name=' + name + '][value=0]').parent().removeClass('active');
+          $('[name=' + name + '][value=1]').prop('checked', true);
+          $('[name=' + name + '][value=1]').parent().addClass('active');
+          event.preventDefault();
+          return;
+        }
+      }
       InputByTitle = false;
       handle_quantity_change.call(this, event);
     }
