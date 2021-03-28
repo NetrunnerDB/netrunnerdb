@@ -49,7 +49,7 @@
                         Deck size: {{ card.minimumdecksize }}
                         &bull;
                         Influence:
-                        {{ card.influencelimit ?? "&#8734;" }}
+                        {% if card.influencelimit ?? 0 == 0 %}&#8734;{% else %}{{ card.influencelimit }}{% endif %}
                         {% if card.side_code == "runner" %}
                             &bull;
                             Link: {{ card.baselink }}
