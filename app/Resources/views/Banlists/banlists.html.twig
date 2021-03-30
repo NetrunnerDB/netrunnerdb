@@ -2,15 +2,33 @@
 
 {% block title %}Ban Lists{% endblock %}
 
+{% block head %}
+
+<script type="text/javascript">
+var mwl = NRDB.data.mwl;
+</script>
+
+{% endblock %}
+
 {% block body %}
 <div class="container">
 
   <h1>{{ block('title') }}</h1>
 
-  <h2>Startup</h2>
+  <h1>Startup</h1>
   <p>No cards are currently banned in Startup.  Have a blast!</p>
 
-  <h2>Standard</h2>
+  <h1>Standard</h1>
+    {% for banlist in banlists %}
+    <h2>{{ banlist.name }} {% if banlist.active %}(active){% endif %}</h2>
+    <div>{{ banlist.cards|length }} cards. Start Date {{ banlist.start_date|date("Y-m-d") }}</div>
+    {{ dump(banlist) }}
+    <ul>
+      {% for card_code in banlist.cards|keys %}
+        <li>{{ card_code }}<img data-src="{{ asset('/card_image/medium/'~card_code~'.jpg') }}" class="img-responsive lazyload"> </li>
+      {% endfor %}
+    </ul>
+{% endfor %}
 
 </div>
 {% endblock %}
