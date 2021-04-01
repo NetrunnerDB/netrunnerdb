@@ -583,12 +583,30 @@ class CardsData
                     }
                     $i++;
                     break;
+                case 'b': // banlist 
+                    $mwl = null;
+                    if ($condition[0] == "active") {
+                        $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy(['active' => 1], ["dateStart" => "DESC"]);
+                    } elseif ($condition[0] == "latest") {
+                        $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy([], ["dateStart" => "DESC"]);
+                    } else {
+                        $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy(['code' => $condition[0]], ["dateStart" => "DESC"]);
+                    }
+                    if ($mwl) {
+                        // Exclude any cards banned by this banlist.
+                        $clauses[] = "(c.id NOT IN (SELECT mc.card_id FROM AppBundle:MwlCard mc WHERE mc.mwl_id = ?$i ) )";
+                        $parameters[$i++] = $mwl->getId();
+                    }
+                    $i++;
+                    break;
                 case 'z': // rotation
                     // Instantiate the service only when its needed.
                     $rotationservice = new RotationService($this->entityManager);
                     $rotation = null;
-                    if ($condition[0] == "current" || $condition[0] == "latest") {
+                    if ($condition[0] == "current") {
                         $rotation = $rotationservice->findCurrentRotation();
+                    } elseif ($condition[0] == "latest") {
+                        $rotation = $rotationservice->findLatestRotation();
                     } else {
                         $rotation = $rotationservice->findRotationByCode($condition[0]);
                     }
@@ -597,7 +615,7 @@ class CardsData
                         $cycles = $rotation->normalize()["cycles"];
                         $placeholders = array();
                         foreach($cycles as $cycle) {
-                        array_push($placeholders, "?$i");
+                            array_push($placeholders, "?$i");
                             $parameters[$i++] = $cycle;
                         }
                         $clauses[] = "(y.code in (" . implode(", ", $placeholders) . "))";
