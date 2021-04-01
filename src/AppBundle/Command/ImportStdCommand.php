@@ -505,8 +505,12 @@ class ImportStdCommand extends ContainerAwareCommand
             }
         }
 
-        $different = ($currentJsonValue !== $newJsonValue);
-        if ($different) {
+        // Special case faction cost for agenda and identity cards which will always have null values returned as 0.
+        if ($entityName == 'AppBundle\Entity\Card' && $fieldName == 'factionCost' && ($entity->getType()->getCode() == 'identity' || $entity->getType()->getCode() == 'agenda')) {
+            return;
+        }
+
+        if ($currentJsonValue !== $newJsonValue) {
             $this->output->writeln("Changing the <info>$fieldName</info> of <info>" . $entity . "</info>");
 
             $setter = 'set' . ucfirst($fieldName);

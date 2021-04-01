@@ -15,14 +15,14 @@ class MwlCard implements NormalizableInterface
     private $id;
 
     /**
-     * @var integer
+     * @var Mwl 
      */
-    private $mwl_id;
+    private $mwl;
 
     /**
-     * @var integer
+     * @var Card
      */
-    private $card_id;
+    private $card;
 
     /**
      * @var integer|null
@@ -45,37 +45,11 @@ class MwlCard implements NormalizableInterface
      private $is_banned;
 
     /**
-     * @var Mwl 
-     */
-    private $mwl;
-
-    /**
-     * @var Card
-     */
-    private $card;
-
-    /**
      * @return integer
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getMwlId()
-    {
-        return $this->mwl_id;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getCardId()
-    {
-        return $this->card_id;
     }
 
     /**
@@ -198,13 +172,13 @@ class MwlCard implements NormalizableInterface
     public function normalize()
     {
         return [
-            'id'            => $this->id,
-            'mwl_id'        => $this->mwl->id,
-            'card_id'       => $this->card->id,
-            'global_penalty' => $this->global_penalty,
+            'id'                     => $this->id,
+            'mwl_id'                 => $this->mwl->id,
+            'card_id'                => $this->card->id,
+            'global_penalty'         => $this->global_penalty,
             'universal_faction_cost' => $this->universal_faction_cost,
-            'is_restricted' => $this->is_restricted,
-            'is_banned' => $this->is_banned,
+            'is_restricted'          => $this->is_restricted,
+            'is_banned'              => $this->is_banned,
         ];
     }
 }
