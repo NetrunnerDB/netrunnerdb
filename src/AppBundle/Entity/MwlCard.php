@@ -15,14 +15,14 @@ class MwlCard implements NormalizableInterface
     private $id;
 
     /**
-     * @var integer
+     * @var Mwl 
      */
-    private $mwl_id;
+    private $mwl;
 
     /**
-     * @var integer
+     * @var Card
      */
-    private $card_id;
+    private $card;
 
     /**
      * @var integer|null
@@ -43,16 +43,6 @@ class MwlCard implements NormalizableInterface
      * @var bool|null
      */
      private $is_banned;
-
-    /**
-     * @var Mwl 
-     */
-    private $mwl;
-
-    /**
-     * @var Card
-     */
-    private $card;
 
     /**
      * @return integer
