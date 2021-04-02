@@ -630,10 +630,10 @@ class ImportStdCommand extends ContainerAwareCommand
         // we need to check that manually.  If those are the same, just let the
         // existing handling do its work.
         if ($entityName === 'AppBundle\Entity\Rotation') {
-            $json_cycles = $data['cycles'];
+            $json_cycles = $data['rotated'];
             sort($json_cycles);
             $db_cycles = array();
-            foreach ($entity->GetCycles() as $c) {
+            foreach ($entity->GetRotated() as $c) {
                 array_push($db_cycles, $c->GetCode());
             }
             sort($db_cycles);
