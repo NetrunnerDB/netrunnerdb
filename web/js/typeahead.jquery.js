@@ -1128,8 +1128,8 @@
 			// This fixes the tab behavior for the card search box.
             _onTabKeyed: function onTabKeyed(type, $e) {
                 this.moveCursor(+1);
-                var $selectable;
-                if ($selectable = this.menu.getActiveSelectable()) {
+                var $selectable = this.menu.getActiveSelectable();
+                if ($selectable) {
                     $e.preventDefault();
                 }
             },
