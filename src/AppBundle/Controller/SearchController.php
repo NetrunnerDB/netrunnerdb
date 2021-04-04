@@ -9,6 +9,7 @@ use AppBundle\Entity\Pack;
 use AppBundle\Entity\Rotation;
 use AppBundle\Entity\Type;
 use AppBundle\Service\CardsData;
+use AppBundle\Service\Illustrators;
 use AppBundle\Service\RotationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,7 +42,7 @@ class SearchController extends Controller
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function formAction(EntityManagerInterface $entityManager, CardsData $cardsData)
+    public function formAction(EntityManagerInterface $entityManager, CardsData $cardsData, Illustrators $illustrators)
     {
         $response = new Response();
         $response->setPublic();
@@ -96,7 +97,7 @@ class SearchController extends Controller
         $list_illustrators = $dbh->executeQuery("SELECT DISTINCT c.illustrator FROM card c WHERE c.illustrator != '' ORDER BY c.illustrator")->fetchAll();
         foreach ($list_illustrators as $illustrator) {
             $illustrator_map[$illustrator['illustrator']] = 1;
-            foreach (preg_split("/(\s*&\s*|\s*\/\s*| and )/", $illustrator['illustrator']) as $split) {
+            foreach ($illustrators->split($illustrator['illustrator']) as $split) {
                 $illustrator_map[$split] = 1;
             }
         }

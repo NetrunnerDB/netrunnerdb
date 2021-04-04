@@ -9,6 +9,7 @@ use AppBundle\Entity\Pack;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\Ruling;
 use AppBundle\Entity\Rotation;
+use AppBundle\Service\Illustrators;
 use AppBundle\Service\RotationService;
 use AppBundle\Repository\PackRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,16 +46,21 @@ class CardsData
     /** @var Packages $packages */
     private $packages;
 
+	/** @var Illustrators $illustrators */
+	private $illustrators;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         RepositoryFactory $repositoryFactory,
         RouterInterface $router,
-        Packages $packages
+		Packages $packages,
+		Illustrators $illustrators
     ) {
         $this->entityManager = $entityManager;
         $this->packRepository = $repositoryFactory->getPackRepository();
         $this->router = $router;
         $this->packages = $packages;
+		$this->illustrators = $illustrators;
     }
 
     /**
@@ -700,7 +706,7 @@ class CardsData
             "faction_cost_dots" => $card->getFactionCostDots(),
             "flavor"            => $card->getFlavor(),
             "illustrator"       => $card->getIllustrator(),
-            "illustrators"      => preg_split("/(\s*&\s*|\s*\/\s*| and )/", $card->getIllustrator()),
+            "illustrators"      => $this->illustrators->split($card->getIllustrator()),
             "influencelimit"    => $card->getInfluenceLimit(),
             "memoryunits"       => $card->getMemoryCost(),
             "minimumdecksize"   => $card->getMinimumDeckSize(),
