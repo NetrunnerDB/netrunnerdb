@@ -9,6 +9,7 @@ use AppBundle\Entity\Pack;
 use AppBundle\Entity\Rotation;
 use AppBundle\Entity\Type;
 use AppBundle\Service\CardsData;
+use AppBundle\Service\Illustrators;
 use AppBundle\Service\RotationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,7 +42,7 @@ class SearchController extends Controller
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function formAction(EntityManagerInterface $entityManager, CardsData $cardsData)
+    public function formAction(EntityManagerInterface $entityManager, CardsData $cardsData, Illustrators $illustrators)
     {
         $response = new Response();
         $response->setPublic();
@@ -92,10 +93,15 @@ class SearchController extends Controller
         $keywords = array_keys($keywords);
         sort($keywords);
 
+        $illustrator_map = array();
         $list_illustrators = $dbh->executeQuery("SELECT DISTINCT c.illustrator FROM card c WHERE c.illustrator != '' ORDER BY c.illustrator")->fetchAll();
-        $illustrators = array_map(function ($elt) {
-            return $elt ["illustrator"];
-        }, $list_illustrators);
+        foreach ($list_illustrators as $illustrator) {
+            $illustrator_map[$illustrator['illustrator']] = 1;
+            foreach ($illustrators->split($illustrator['illustrator']) as $split) {
+                $illustrator_map[$split] = 1;
+            }
+        }
+        ksort($illustrator_map);
 
         $banlists = $entityManager->getRepository(Mwl::class)->findBy([], ['dateStart' => 'DESC']);
         $rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
@@ -107,7 +113,7 @@ class SearchController extends Controller
             "cycles"          => $cycles,
             "types"           => $types,
             "keywords"        => $keywords,
-            "illustrators"    => $illustrators,
+            "illustrators"    => array_keys($illustrator_map),
             "rotations"       => $rotations,
             "banlists"        => $banlists,
             "sort"            => "name",
