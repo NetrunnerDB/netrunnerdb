@@ -15,6 +15,16 @@ class MwlCard implements NormalizableInterface
     private $id;
 
     /**
+     * @var integer
+     */
+    private $mwl_id;
+
+    /**
+     * @var integer
+     */
+    private $card_id;
+
+    /**
      * @var Mwl 
      */
     private $mwl;
