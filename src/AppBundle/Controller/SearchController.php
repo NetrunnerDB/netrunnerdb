@@ -90,10 +90,15 @@ class SearchController extends Controller
         $keywords = array_keys($keywords);
         sort($keywords);
 
+        $illustrator_map = array();
         $list_illustrators = $dbh->executeQuery("SELECT DISTINCT c.illustrator FROM card c WHERE c.illustrator != '' ORDER BY c.illustrator")->fetchAll();
-        $illustrators = array_map(function ($elt) {
-            return $elt ["illustrator"];
-        }, $list_illustrators);
+        foreach ($list_illustrators as $illustrator) {
+            $illustrator_map[$illustrator['illustrator']] = 1;
+            foreach (preg_split("/(\s*&\s*|\s*\/\s*| and )/", $illustrator['illustrator']) as $split) {
+                $illustrator_map[$split] = 1;
+            }
+        }
+        ksort($illustrator_map);
 
         return $this->render('/Search/advanced-search.html.twig', [
             "pagetitle"       => "Card Search",
@@ -102,7 +107,7 @@ class SearchController extends Controller
             "cycles"          => $cycles,
             "types"           => $types,
             "keywords"        => $keywords,
-            "illustrators"    => $illustrators,
+            "illustrators"    => array_keys($illustrator_map),
             "sort"            => "name",
             "view"            => "list",
             "sort_options"    => self::SORT_OPTIONS,
