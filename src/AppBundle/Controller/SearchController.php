@@ -4,7 +4,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Cycle;
+use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Pack;
+use AppBundle\Entity\Rotation;
 use AppBundle\Entity\Type;
 use AppBundle\Service\CardsData;
 use AppBundle\Service\RotationService;
@@ -100,7 +102,10 @@ class SearchController extends Controller
         }
         ksort($illustrator_map);
 
-        return $this->render('/Search/advanced-search.html.twig', [
+        $banlists = $entityManager->getRepository(Mwl::class)->findBy([], ['dateStart' => 'DESC']);
+        $rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
+
+     return $this->render('/Search/advanced-search.html.twig', [
             "pagetitle"       => "Card Search",
             "pagedescription" => "Find all the cards of the game, easily searchable.",
             "packs"           => $packs,
@@ -108,6 +113,8 @@ class SearchController extends Controller
             "types"           => $types,
             "keywords"        => $keywords,
             "illustrators"    => array_keys($illustrator_map),
+            "rotations"       => $rotations,
+            "banlists"        => $banlists,
             "sort"            => "name",
             "view"            => "list",
             "sort_options"    => self::SORT_OPTIONS,
@@ -248,7 +255,7 @@ class SearchController extends Controller
         if ($request->query->get('q') != "") {
             $params[] = $request->query->get('q');
         }
-        $keys = ["e", "t", "f", "s", "x", "p", "o", "n", "d", "r", "i", "l", "y", "a", "u"];
+        $keys = ["e", "t", "f", "s", "x", "p", "o", "n", "d", "r", "i", "l", "y", "a", "u", "b", "z"];
         foreach ($keys as $key) {
             $val = $request->query->get($key);
             if (isset($val) && $val != "") {

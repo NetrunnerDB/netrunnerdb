@@ -38,6 +38,7 @@
             <li><code>h</code> &ndash; trash cost</li>
             <li><code>r</code> &ndash; release date</li>
             <li><code>u</code> &ndash; unique</li>
+            <li><code>b</code> &ndash; banlist</li>
             <li><code>z</code> &ndash; rotation</li>
           </ul>
         </li>
@@ -50,7 +51,24 @@
           </ul>
         </li>
         <li><b>Special case</b> <code>r</code> (release date) uses only the operators <code>&lt;</code> (inclusive) and <code>&gt;</code> (exclusive) and only understands the arguments <code>now</code> or a date YYYY-MM-DD</li>
-        <li><b>Rotation</b> <code>z</code> Rotation takes 2 different options for the current rotation: <code>current</code> or <code>latest</code>.  Rotation can also specify a specific rotation.  Valid specific rotation options are <code>rotation-2017</code>, <code>rotation-2017</code>, or <code>rotation-2017</code>.
+        <li><b>Banlist</b> <code>b</code> will exclude any cards banned by that ban list. Banlist has 2 different special options in addition to specific banlists: <code>active</code> or <code>latest</code>. These two only differ when there is a yet-to-be-active banlist. Banlist can also specify a specific banlist.  Valid banlist options are 
+          <ul>
+          {% set latest_found = false %}
+          {% for banlist in banlists %}
+            <li><code>{{ banlist.code }}</code>{% if banlist.active %} (active){% endif %}{% if latest_found == false %} (latest){% set latest_found = true %}{% endif %}</li>
+          {% endfor %}
+          </ul>
+        </li>
+        <li><b>Rotation</b> <code>z</code> will restrict results to cards legal for that rotation. Rotation has 2 different special options in addition to specific rotations: <code>current</code> or <code>latest</code>. These two only differ when there is a yet-to-be-active rotation. Rotation can also specify a specific rotation.  Valid specific rotation options are 
+          <ul>
+          {% set active_found = false %}
+          {% set latest_found = false %}
+          {% set today = "now"|date("Y-m-d") %}
+          {% for rotation in rotations %}
+            <li><code>{{ rotation.code }}</code>{% if (active_found == false) and (today >= rotation.getDateStart|date("Y-m-d")) %} (active){% set active_found = true %}{% endif %}{% if latest_found == false %} (latest){% set latest_found = true %}{% endif %}</li>
+          {% endfor %}
+          </ul>
+        </li>
   </ul>
 
   <h2>Search examples</h2>
