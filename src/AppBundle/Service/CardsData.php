@@ -594,7 +594,7 @@ class CardsData
                     }
                     if ($mwl) {
                         // Exclude any cards banned by this banlist.
-                        $clauses[] = "(c.id NOT IN (SELECT mc.card_id FROM AppBundle:MwlCard mc WHERE mc.mwl_id = ?$i ) )";
+                        $clauses[] = "(c.id NOT IN (SELECT mc.card_id FROM AppBundle:MwlCard mc WHERE mc.mwl_id = ?$i))";
                         $parameters[$i++] = $mwl->getId();
                     }
                     $i++;
