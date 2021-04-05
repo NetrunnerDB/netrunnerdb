@@ -618,13 +618,13 @@ class CardsData
                     }
                     if ($rotation) {
                         // Add the valid cycles for the requested rotation and add them to the WHERE clause for the query.
-                        $cycles = $rotation->normalize()["cycles"];
+                        $cycles = $rotation->normalize()["rotated"];
                         $placeholders = array();
                         foreach($cycles as $cycle) {
                             array_push($placeholders, "?$i");
                             $parameters[$i++] = $cycle;
                         }
-                        $clauses[] = "(y.code in (" . implode(", ", $placeholders) . "))";
+                        $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . "))";
                     }
                     $i++;
                     break;
