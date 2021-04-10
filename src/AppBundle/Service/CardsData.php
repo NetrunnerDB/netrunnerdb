@@ -9,6 +9,7 @@ use AppBundle\Entity\Pack;
 use AppBundle\Entity\Review;
 use AppBundle\Entity\Ruling;
 use AppBundle\Entity\Rotation;
+use AppBundle\Service\Illustrators;
 use AppBundle\Service\RotationService;
 use AppBundle\Repository\PackRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -45,16 +46,21 @@ class CardsData
     /** @var Packages $packages */
     private $packages;
 
+	/** @var Illustrators $illustrators */
+	private $illustrators;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         RepositoryFactory $repositoryFactory,
         RouterInterface $router,
-        Packages $packages
+		Packages $packages,
+		Illustrators $illustrators
     ) {
         $this->entityManager = $entityManager;
         $this->packRepository = $repositoryFactory->getPackRepository();
         $this->router = $router;
         $this->packages = $packages;
+		$this->illustrators = $illustrators;
     }
 
     /**
@@ -583,12 +589,30 @@ class CardsData
                     }
                     $i++;
                     break;
+                case 'b': // banlist 
+                    $mwl = null;
+                    if ($condition[0] == "active") {
+                        $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy(['active' => 1], ["dateStart" => "DESC"]);
+                    } elseif ($condition[0] == "latest") {
+                        $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy([], ["dateStart" => "DESC"]);
+                    } else {
+                        $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy(['code' => $condition[0]], ["dateStart" => "DESC"]);
+                    }
+                    if ($mwl) {
+                        // Exclude any cards banned by this banlist.
+                        $clauses[] = "(c.id NOT IN (SELECT mc.card_id FROM AppBundle:MwlCard mc WHERE mc.mwl_id = ?$i))";
+                        $parameters[$i++] = $mwl->getId();
+                    }
+                    $i++;
+                    break;
                 case 'z': // rotation
                     // Instantiate the service only when its needed.
                     $rotationservice = new RotationService($this->entityManager);
                     $rotation = null;
-                    if ($condition[0] == "current" || $condition[0] == "latest") {
+                    if ($condition[0] == "current") {
                         $rotation = $rotationservice->findCurrentRotation();
+                    } elseif ($condition[0] == "latest") {
+                        $rotation = $rotationservice->findLatestRotation();
                     } else {
                         $rotation = $rotationservice->findRotationByCode($condition[0]);
                     }
@@ -597,7 +621,7 @@ class CardsData
                         $cycles = $rotation->normalize()["cycles"];
                         $placeholders = array();
                         foreach($cycles as $cycle) {
-                        array_push($placeholders, "?$i");
+                            array_push($placeholders, "?$i");
                             $parameters[$i++] = $cycle;
                         }
                         $clauses[] = "(y.code in (" . implode(", ", $placeholders) . "))";
@@ -682,7 +706,7 @@ class CardsData
             "faction_cost_dots" => $card->getFactionCostDots(),
             "flavor"            => $card->getFlavor(),
             "illustrator"       => $card->getIllustrator(),
-            "illustrators"      => preg_split("/\s*(&|\/|and)\s*/", $card->getIllustrator()),
+            "illustrators"      => $this->illustrators->split($card->getIllustrator()),
             "influencelimit"    => $card->getInfluenceLimit(),
             "memoryunits"       => $card->getMemoryCost(),
             "minimumdecksize"   => $card->getMinimumDeckSize(),
@@ -698,7 +722,6 @@ class CardsData
             "limited"           => $card->getDeckLimit(),
             "cycle_name"        => $card->getPack()->getCycle()->getName(),
             "cycle_code"        => $card->getPack()->getCycle()->getCode(),
-            "ancur_link"        => $card->getAncurLink(),
             "imageUrl"          => $card->getImageUrl(),
             "tiny_image_path"   => $card->getTinyImagePath(),
             "small_image_path"  => $card->getSmallImagePath(),

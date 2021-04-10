@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Cycle;
+use AppBundle\Entity\MwlCard;
 use AppBundle\Entity\Prebuilt;
 use AppBundle\Entity\Prebuiltslot;
 use AppBundle\Entity\Rotation;
@@ -394,7 +395,50 @@ class ImportStdCommand extends ContainerAwareCommand
             ], [], []);
             if ($mwl) {
                 $result[] = $mwl;
-                $this->entityManager->persist($mwl);
+                $this->entityManager->getConnection()->beginTransaction();
+                try {
+                    $this->entityManager->persist($mwl);
+                    $this->output->writeln("Wrote MWL with name <info>" . $mwl->getName() . "</info>");
+                    $q = $this->entityManager->createQuery('delete from AppBundle:MwlCard mc where mc.mwl_id = ?1');
+                    $q->setParameter(1, $mwl->getId());
+                    $q->execute();
+
+                    foreach ($mwlData['cards'] as $card_code => $mwl_entry) {
+                        $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
+                        if (!$card instanceof Card) {
+                            $this->output->writeln("<error>Couldn't load card with code $card_code</error>");
+                            continue;
+                        }
+                        $mwl_value = '';
+                        $mwl_card = new MwlCard();
+                        $mwl_card->setMwl($mwl);
+                        $mwl_card->setCard($card);
+                        if (array_key_exists('global_penalty', $mwl_entry)) {
+                            $mwl_card->setGlobalPenalty($mwl_entry['global_penalty']);
+                            $mwl_value = 'global penalty: ' . $mwl_entry['global_penalty'];
+                        }
+                        if (array_key_exists('universal_faction_cost', $mwl_entry)) {
+                            $mwl_card->setUniversalFactionCost($mwl_entry['universal_faction_cost']);
+                            $mwl_value = 'universal faction cost: ' . $mwl_entry['universal_faction_cost'];
+                        }
+                        if (array_key_exists('is_restricted', $mwl_entry)) {
+                            $mwl_card->setIsRestricted($mwl_entry['is_restricted']);
+                            $mwl_value = 'is_restricted: true';
+                        }
+                        if (array_key_exists('deck_limit', $mwl_entry)) {
+                            $mwl_card->setIsBanned(true);
+                            $mwl_value = 'is_banned: true';
+                        }
+                        $this->entityManager->persist($mwl_card);
+                        $this->output->writeln("Wrote MWL entry for MWL <info>" . $mwl->getName() . "</info> and card <info>" . $card->getTitle() . " (" . $card->getCode() . ")</info>, mwl value: <info>$mwl_value</info>");
+                    }
+                    $this->entityManager->persist($mwl);
+                    $this->entityManager->flush();
+                    $this->entityManager->getConnection()->commit();
+                } catch (Exception $e) {
+                    $this->entityManager->getConnection()->rollBack();
+                    throw $e;
+                }
             }
         }
 
@@ -461,8 +505,12 @@ class ImportStdCommand extends ContainerAwareCommand
             }
         }
 
-        $different = ($currentJsonValue !== $newJsonValue);
-        if ($different) {
+        // Special case faction cost for agenda and identity cards which will always have null values returned as 0.
+        if ($entityName == 'AppBundle\Entity\Card' && $fieldName == 'factionCost' && ($entity->getType()->getCode() == 'identity' || $entity->getType()->getCode() == 'agenda')) {
+            return;
+        }
+
+        if ($currentJsonValue !== $newJsonValue) {
             $this->output->writeln("Changing the <info>$fieldName</info> of <info>" . $entity . "</info>");
 
             $setter = 'set' . ucfirst($fieldName);

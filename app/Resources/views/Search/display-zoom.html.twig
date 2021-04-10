@@ -48,7 +48,7 @@
                         Deck size: {{ card.minimumdecksize }}
                         &bull;
                         Influence:
-                        {{ card.influencelimit ?? "&#8734;" }}
+                        {% if card.influencelimit ?? 0 == 0 %}&#8734;{% else %}{{ card.influencelimit }}{% endif %}
                         {% if card.side_code == "runner" %}
                             &bull;
                             Link: {{ card.baselink }}
@@ -105,7 +105,7 @@
                 {% endif %}
             </div>
         </div>
-        Links: <a href="{{ path('decklists_list', {type:'find',_locale:app.request.locale, 'cards[]':card.code}) }}">Decklists</a> | <a href="{{ card.ancur_link }}">ANCUR</a>
+        <a href="{{ path('decklists_list', {type:'find',_locale:app.request.locale, 'cards[]':card.code}) }}">Decklists with this card</a>
     </div>
 
     <div class="col-sm-4">
@@ -205,7 +205,7 @@
         <article class="review" data-index="{{ review.id }}" id="review-{{ review.id }}">
 
             <div class="review-like">
-                <a class="review-social-icon-like" href="#" class="social-icon-like" data-toggle="tooltip" data-placement="bottom" title="Like that review">
+                <a href="#" class="review-social-icon-like social-icon-like" data-toggle="tooltip" data-placement="bottom" title="Like that review">
                     <span class="glyphicon glyphicon-heart"></span> <span class="num">{{ review.nbvotes }}</span>
                 </a>
             </div>

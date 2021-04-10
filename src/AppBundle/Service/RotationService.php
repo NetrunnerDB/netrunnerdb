@@ -43,6 +43,22 @@ class RotationService
         return $rotation;
     }
 
+    /**
+     * Returns the rotation with the latest start date.
+     * @return Rotation latest Rotation
+     */
+    public function findLatestRotation()
+    {
+        $rotation = $this->entityManager->getRepository(Rotation::class)->findOneBy([], ['dateStart' => 'DESC']);
+
+        // There should always be a rotation available.
+        if (!$rotation) {
+            throw new \Exception("No latest rotation found", 1);
+        }
+
+        return $rotation;
+    }
+
     public function findCompatibleRotation(Decklist $decklist)
     {
         $rotations = $this->entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
