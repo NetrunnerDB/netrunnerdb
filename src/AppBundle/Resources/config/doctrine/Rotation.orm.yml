@@ -2,7 +2,7 @@ AppBundle\Entity\Rotation:
     type: entity
     table: rotation
     manyToMany:
-        cycles:
+        rotated:
             targetEntity: Cycle
             inversedBy: rotations
             joinTable:

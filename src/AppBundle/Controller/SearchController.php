@@ -487,7 +487,7 @@ class SearchController extends Controller
 
                     $rotationService = new RotationService($entityManager);
                     $currentRotation = $rotationService->findCurrentRotation();
-                    foreach($currentRotation->getCycles()->toArray() as $cycle) {
+                    foreach($currentRotation->getRotated()->toArray() as $cycle) {
                         $currentRotationCycles[$cycle->getCode()] = true;
                     }
                     $cardinfo['versions'] = [];
@@ -497,6 +497,8 @@ class SearchController extends Controller
                     // Startup legality is currently hard-coded since the DB doesn't know anything about it.
                     $startupCycles = ['ashes' => true, 'system-gateway' => true, 'system-update-2021' => true];
                     $startup_legal = false;
+                    
+                    $rotated_count = 0;
 
                     foreach ($cardVersions as $version) {
                         $v = $cardsData->getCardInfo($version, $locale);
@@ -511,15 +513,18 @@ class SearchController extends Controller
                         if ($v['cycle_code'] == 'draft' || $v['pack_code'] == 'tdc') {
                             $standard_legal = false;
                         }
-                        // If any version of the card is in a rotation-legal cycle, the card is considered legal.
+                        // Count the card's occurence in the rotated cycle(s)
                         if (array_key_exists($v['cycle_code'], $currentRotationCycles)) {
-                          $all_versions_rotated = false;
+                            ++$rotated_count;
                         }
                         // Any printing of this card in a valid Startup cycle means the card is Startup legal.
                         if (array_key_exists($v['cycle_code'], $startupCycles)) {
                           $startup_legal = true;
                         }
                     }
+                    
+                    // If any version of the card is not in a rotated cycle, the card is considered legal.
+                    $all_versions_rotated = $rotated_count == count($cardinfo['versions']);
 
                     $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
                     $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
