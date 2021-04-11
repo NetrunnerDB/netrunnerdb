@@ -19,8 +19,8 @@
   </p>
   <p class="card-props">
     {% if card.type_code == "agenda" %} Adv: {{ card.advancementcost }} &bull; Score: {{ card.agendapoints }} {% endif %}
-    {% if card.type_code == "identity" and card.side_code == "corp" %}Deck: {{ card.minimumdecksize }} &bull; Influence: {% if card.influencelimit is null %} &#8734; {% else %} {{ card.influencelimit }} {% endif %} {% endif %}
-    {% if card.type_code == "identity" and card.side_code == "runner" %}Link: {{ card.baselink }} &bull; Deck: {{ card.minimumdecksize }} &bull; Influence: {% if card.influencelimit is null %} &#8734; {% else %} {{ card.influencelimit }} {% endif %} {% endif %}
+    {% if card.type_code == "identity" and card.side_code == "corp" %}Deck: {{ card.minimumdecksize }} &bull; Influence: {% if card.influencelimit ?? 0 == 0 %} &#8734; {% else %} {{ card.influencelimit }} {% endif %} {% endif %}
+    {% if card.type_code == "identity" and card.side_code == "runner" %}Link: {{ card.baselink }} &bull; Deck: {{ card.minimumdecksize }} &bull; Influence: {% if card.influencelimit ?? 0 == 0 %} &#8734; {% else %} {{ card.influencelimit }} {% endif %} {% endif %}
     {% if card.type_code == "operation" or card.type_code == "event" %}Cost: {{ card.cost }} {% if card.trash is not null %}&bull; Trash: {{ card.trash }} {% endif %}&bull; Influence: {{ card.factioncost }}{% endif %}
     {% if card.type_code == "resource" or card.type_code == "hardware" %}Install: {{ card.cost }} &bull; Influence: {{ card.factioncost }}{% endif %}
     {% if card.type_code == "program" %}Install: {{ card.cost }} &bull; Memory: {{ card.memoryunits }} {% if card.strength %}&bull; Strength: {{ card.strength }}{% endif %} &bull; Influence: {{ card.factioncost }}{% endif %}
@@ -35,7 +35,9 @@
     {{ card.flavor|raw|nl2br }}
   </p>
   <p style="font-size:86.5%">
-    {{ card.illustrator }}
+    {% for illustrator in card.illustrators %}
+      {{ illustrator }}
+    {% endfor %}
   </p>
   <p>
     <span class="icon icon-{{ card.cycle_code }}"></span> {{ card.pack_name }} {{ card.position }} &bull; {{ card.faction_name }}

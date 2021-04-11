@@ -4,9 +4,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Cycle;
+use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Pack;
+use AppBundle\Entity\Rotation;
 use AppBundle\Entity\Type;
 use AppBundle\Service\CardsData;
+use AppBundle\Service\Illustrators;
+use AppBundle\Service\RotationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -38,7 +42,7 @@ class SearchController extends Controller
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function formAction(EntityManagerInterface $entityManager, CardsData $cardsData)
+    public function formAction(EntityManagerInterface $entityManager, CardsData $cardsData, Illustrators $illustrators)
     {
         $response = new Response();
         $response->setPublic();
@@ -89,19 +93,29 @@ class SearchController extends Controller
         $keywords = array_keys($keywords);
         sort($keywords);
 
+        $illustrator_map = array();
         $list_illustrators = $dbh->executeQuery("SELECT DISTINCT c.illustrator FROM card c WHERE c.illustrator != '' ORDER BY c.illustrator")->fetchAll();
-        $illustrators = array_map(function ($elt) {
-            return $elt ["illustrator"];
-        }, $list_illustrators);
+        foreach ($list_illustrators as $illustrator) {
+            $illustrator_map[$illustrator['illustrator']] = 1;
+            foreach ($illustrators->split($illustrator['illustrator']) as $split) {
+                $illustrator_map[$split] = 1;
+            }
+        }
+        ksort($illustrator_map);
 
-        return $this->render('/Search/advanced-search.html.twig', [
+        $banlists = $entityManager->getRepository(Mwl::class)->findBy([], ['dateStart' => 'DESC']);
+        $rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
+
+     return $this->render('/Search/advanced-search.html.twig', [
             "pagetitle"       => "Card Search",
             "pagedescription" => "Find all the cards of the game, easily searchable.",
             "packs"           => $packs,
             "cycles"          => $cycles,
             "types"           => $types,
             "keywords"        => $keywords,
-            "illustrators"    => $illustrators,
+            "illustrators"    => array_keys($illustrator_map),
+            "rotations"       => $rotations,
+            "banlists"        => $banlists,
             "sort"            => "name",
             "view"            => "list",
             "sort_options"    => self::SORT_OPTIONS,
@@ -126,14 +140,14 @@ class SearchController extends Controller
         return $this->forward(
             'AppBundle:Search:display',
             [
-                '_route'        => $request->attributes->get('_route'),
-                '_route_params' => $request->attributes->get('_route_params'),
-                'q'             => $card->getCode(),
-                'view'          => 'card',
-                'sort'          => 'set',
-                'title'         => $card->getTitle(),
-                'meta'          => $meta,
-                'locale'        => $request->getLocale(),
+                '_route'           => $request->attributes->get('_route'),
+                '_route_params'    => $request->attributes->get('_route_params'),
+                'q'                => $card->getCode(),
+                'view'             => 'card',
+                'sort'             => 'set',
+                'title'            => $card->getTitle(),
+                'meta'             => $meta,
+                'locale'           => $request->getLocale(),
             ]
         );
     }
@@ -242,7 +256,7 @@ class SearchController extends Controller
         if ($request->query->get('q') != "") {
             $params[] = $request->query->get('q');
         }
-        $keys = ["e", "t", "f", "s", "x", "p", "o", "n", "d", "r", "i", "l", "y", "a", "u"];
+        $keys = ["e", "t", "f", "s", "x", "p", "o", "n", "d", "r", "i", "l", "y", "a", "u", "b", "z"];
         foreach ($keys as $key) {
             $val = $request->query->get($key);
             if (isset($val) && $val != "") {
@@ -406,6 +420,7 @@ class SearchController extends Controller
         $cardsData->validateConditions($conditions);
 
         $card = null;
+        $currentRotationCycles = [];
 
         // reconstruction of the correct search string for display
         $q = $cardsData->buildQueryFromConditions($conditions);
@@ -466,17 +481,61 @@ class SearchController extends Controller
                     }
                 }
                 $cardinfo['available'] = $availability[$pack->getCode()];
+
                 if ($view == "zoom") {
                     $cardVersions = $versions[$card->getTitle()];
 
-                    $cardinfo['versions'] = [];
-                    foreach ($cardVersions as $version) {
-                        $cardinfo['versions'][] = $cardsData->getCardInfo($version, $locale);
+                    $rotationService = new RotationService($entityManager);
+                    $currentRotation = $rotationService->findCurrentRotation();
+                    foreach($currentRotation->getRotated()->toArray() as $cycle) {
+                        $currentRotationCycles[$cycle->getCode()] = true;
                     }
+                    $cardinfo['versions'] = [];
+                    $standard_legal = true;
+                    $all_versions_rotated = true;
+
+                    // Startup legality is currently hard-coded since the DB doesn't know anything about it.
+                    $startupCycles = ['ashes' => true, 'system-gateway' => true, 'system-update-2021' => true];
+                    $startup_legal = false;
+                    
+                    $rotated_count = 0;
+
+                    foreach ($cardVersions as $version) {
+                        $v = $cardsData->getCardInfo($version, $locale);
+                        $cardinfo['versions'][] = $v;
+                        // The 2 tutorial-only identity cards are invalid for startup and standard formats.
+                        if ($v['code'] == '30077' || $v['code'] == '30076') {
+                            $standard_legal = false;
+                            $startup_legal = false;
+                            continue;
+                        }
+                        // Draft and terminal directive campaign cards are not legal in standard.
+                        if ($v['cycle_code'] == 'draft' || $v['pack_code'] == 'tdc') {
+                            $standard_legal = false;
+                        }
+                        // Count the card's occurence in the rotated cycle(s)
+                        if (array_key_exists($v['cycle_code'], $currentRotationCycles)) {
+                            ++$rotated_count;
+                        }
+                        // Any printing of this card in a valid Startup cycle means the card is Startup legal.
+                        if (array_key_exists($v['cycle_code'], $startupCycles)) {
+                          $startup_legal = true;
+                        }
+                    }
+                    
+                    // If any version of the card is not in a rotated cycle, the card is considered legal.
+                    $all_versions_rotated = $rotated_count == count($cardinfo['versions']);
 
                     $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
                     $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
+                    $cardinfo['startup_legality'] = $startup_legal ? 'legal' : 'banned';
+
+                    if ($standard_legal) {
+                        $cardinfo['standard_legality'] = $all_versions_rotated ? 'rotated' : 'legal';
+                    } else {
+                        $cardinfo['standard_legality'] = 'banned';
+                    }
                 }
                 if ($view == "rulings") {
                     $cardinfo['rulings'] = $cardsData->get_rulings(array($card));
@@ -556,6 +615,7 @@ class SearchController extends Controller
             "pagetitle"       => $title,
             "metadescription" => $meta,
             "locales"         => $locales,
+            "currentRotationCycles" => $currentRotationCycles,
         ], $response);
     }
 

@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Faction;
+use AppBundle\Entity\Mwl;
+use AppBundle\Entity\Rotation;
 use AppBundle\Service\CardsData;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -142,14 +144,19 @@ class DefaultController extends Controller
     /**
      * @return Response
      */
-    public function syntaxAction()
+    public function syntaxAction(EntityManagerInterface $entityManager)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('long_cache'));
 
+        $banlists = $entityManager->getRepository(Mwl::class)->findBy([], ['dateStart' => 'DESC']);
+        $rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
+
         return $this->render('/Default/syntax.html.twig', [
             "pagetitle" => "Search Syntax Reference",
+            "banlists" => $banlists,
+            "rotations" => $rotations,
         ], $response);
     }
 }

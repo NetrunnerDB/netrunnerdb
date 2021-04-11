@@ -33,7 +33,7 @@ class PackRepository extends EntityRepository
                     left join card c on c.pack_id=p.id
                     where p.cycle_id = ?
                     group by p.id
-                    order by p.position';
+                    order by p.position DESC';
 
         $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
         $query->setParameter(1, $cycle->getId());

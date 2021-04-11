@@ -350,7 +350,7 @@ function update_deck(options) {
     $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + unicorn(Identity));
     $('#img_identity').prop('src', '/card_image/medium/' + Identity.code + '.jpg');
     InfluenceLimit = Identity.influence_limit;
-    if (typeof InfluenceLimit === "undefined")
+    if (InfluenceLimit == null || InfluenceLimit == 0)
         InfluenceLimit = Number.POSITIVE_INFINITY;
 
     check_decksize();

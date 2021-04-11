@@ -15,7 +15,7 @@ class Cycle implements NormalizableInterface, TimestampableInterface, CodeNameIn
 {
     /**
      * @var Collection|Rotation[]
-     * @ORM\ManyToMany(targetEntity="Rotation", mappedBy="cycles")
+     * @ORM\ManyToMany(targetEntity="Rotation", mappedBy="rotated")
      */
     protected $rotations;
 

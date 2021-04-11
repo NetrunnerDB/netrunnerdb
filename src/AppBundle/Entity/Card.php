@@ -223,6 +223,7 @@ class Card implements NormalizableInterface, TimestampableInterface
         $mandatoryFields = [
                 'code',
                 'title',
+                'stripped_title',
                 'position',
                 'uniqueness',
                 'deck_limit',
@@ -870,27 +871,6 @@ class Card implements NormalizableInterface, TimestampableInterface
     }
 
     /**
-     * @return string
-     */
-    public function getAncurLink()
-    {
-        $title = $this->title;
-        if ($this->getType()->getName() == "Identity") {
-            if ($this->getSide()->getName() == "Runner") {
-                $title = preg_replace('/: .*/', '', $title);
-            } else {
-                if (strstr($title, $this->getFaction()->getName()) === 0) {
-                    $title = preg_replace('/.*: /', '', $title);
-                } else {
-                    $title = preg_replace('/: .*/', '', $title);
-                }
-            }
-        }
-        $title_url = preg_replace('/ /', '_', $title);
-        return "http://ancur.wikia.com/wiki/".urlencode($title_url);
-    }
-
-    /**
      * @return Type
      */
     public function getType()
@@ -1126,6 +1106,10 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getFormattedCost()
     {
-        return $this->getCost() . "<span class=\"icon icon-credit\" aria-hidden=\"true\"></span><span class=\"icon-fallback\">[credit]</span>";
+        $cost = $this->getCost();
+        if (is_null($cost) && !($this->getType()->getName() == "Identity" || $this->getType()->getName() == "Agenda")) {
+            $cost = 'X';
+        }
+        return $cost . "<span class=\"icon icon-credit\" aria-hidden=\"true\"></span><span class=\"icon-fallback\">[credit]</span>";
     }
 }

@@ -26,7 +26,7 @@ class Rotation implements NormalizableInterface, TimestampableInterface
      *     }
      * )
      */
-    protected $cycles;
+    protected $rotated;
 
     /**
      * @var integer
@@ -66,7 +66,7 @@ class Rotation implements NormalizableInterface, TimestampableInterface
 
     public function __construct()
     {
-        $this->cycles = new ArrayCollection();
+        $this->rotated = new ArrayCollection();
     }
 
     public function __toString()
@@ -76,9 +76,9 @@ class Rotation implements NormalizableInterface, TimestampableInterface
 
     public function normalize()
     {
-        $cycles = [];
-        foreach ($this->cycles as $cycle) {
-            $cycles[] = $cycle->getCode();
+        $rotated = [];
+        foreach ($this->rotated as $cycle) {
+            $rotated[] = $cycle->getCode();
         }
 
         return  [
@@ -88,7 +88,7 @@ class Rotation implements NormalizableInterface, TimestampableInterface
             'code' => $this->code,
             'name' => $this->name,
             'date_start' => $this->dateStart ? $this->dateStart->format('Y-m-d') : null,
-            'cycles' => $cycles
+            'rotated' => $rotated
         ];
     }
 
@@ -140,36 +140,36 @@ class Rotation implements NormalizableInterface, TimestampableInterface
     }
 
     /** @return Collection|Cycle[] */
-    public function getCycles()
+    public function getRotated()
     {
-        return $this->cycles;
+        return $this->rotated;
     }
 
-    /** @param Collection|Cycle[] $cycles */
-    public function setCycles(Collection $cycles)
+    /** @param Collection|Cycle[] $rotated */
+    public function setRotated(Collection $rotated)
     {
-        $this->clearCycles();
-        foreach ($cycles as $cycle) {
+        $this->clearRotated();
+        foreach ($rotated as $cycle) {
             $this->addCycle($cycle);
         }
 
         return $this;
     }
 
-    public function clearCycles()
+    public function clearRotated()
     {
-        foreach ($this->getCycles() as $cycle) {
+        foreach ($this->getRotated() as $cycle) {
             $this->removeCycle($cycle);
         }
-        $this->cycles->clear();
+        $this->rotated->clear();
 
         return $this;
     }
 
     public function removeCycle(Cycle $cycle)
     {
-        if ($this->cycles->contains($cycle)) {
-            $this->cycles->removeElement($cycle);
+        if ($this->rotated->contains($cycle)) {
+            $this->rotated->removeElement($cycle);
             $cycle->removeRotation($this);
         }
 
@@ -178,8 +178,8 @@ class Rotation implements NormalizableInterface, TimestampableInterface
 
     public function addCycle(Cycle $cycle)
     {
-        if ($this->cycles->contains($cycle) === false) {
-            $this->cycles->add($cycle);
+        if ($this->rotated->contains($cycle) === false) {
+            $this->rotated->add($cycle);
             $cycle->addRotation($this);
         }
 

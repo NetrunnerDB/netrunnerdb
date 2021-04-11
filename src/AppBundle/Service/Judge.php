@@ -284,7 +284,7 @@ class Judge
             }
         }
 
-        if ($influenceLimit !== null && $influenceSpent > $influenceLimit) {
+        if (!($influenceLimit == null || $influenceLimit == 0) && $influenceSpent > $influenceLimit) {
             $problem = 'influence';
         }
 
