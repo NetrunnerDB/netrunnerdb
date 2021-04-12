@@ -15,20 +15,76 @@ var mwl = NRDB.data.mwl;
 
   <h1>{{ block('title') }}</h1>
 
-  <h1>Startup</h1>
-  <p>No cards are currently banned in Startup.  Have a blast!</p>
+      <h2>Startup Format</h2>
+      <p>No cards are currently banned in Startup.  Have a blast!</p>
+  
+      <h2>Standard Format</h2>
 
-  <h1>Standard</h1>
+  <div id="list">
+
     {% for banlist in banlists %}
-    <h2>{{ banlist.name }} {% if banlist.active %}(active){% endif %}</h2>
-    <div>{{ banlist.cards|length }} cards. Start Date {{ banlist.start_date|date("Y-m-d") }}</div>
-    {{ dump(banlist) }}
-    <ul>
-      {% for card_code in banlist.cards|keys %}
-        <li>{{ card_code }}<img data-src="{{ asset('/card_image/medium/'~card_code~'.jpg') }}" class="img-responsive lazyload"> </li>
-      {% endfor %}
-    </ul>
-{% endfor %}
+ 
+      <div class="row">
+        <div class="col-sm-12">
+          <h3>{{ banlist.name }} {% if banlist.active %}(active){% endif %}</h3>
+          <p>{{ banlist.num_cards }} cards. Start Date {{ banlist.start_date|date("Y-m-d") }}</p>
+        </div>
+      </div>
 
+      <div class="row">
+        <div class="col-sm-5">
+          <h3>Corp Cards</h3>
+          <ul>
+            {% for verdict in banlist.cards|keys|sort %}
+              <li><strong>{{ verdict }}</strong>
+                <ul>
+                  {% if verdict == 'Banned' and banlist.all_currents_banned %} 
+                    <li>All cards with <strong><a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'list','q':'s:current d:corp'}) }}">Current</a></strong> subtype.</li>
+                  {% endif %}
+                  {% for card in banlist.cards[verdict]|sort((a, b) => a.card.title <=> b.card.title) %}
+                    {% if card.card.side.code == 'corp' %}
+                      {% if banlist.all_currents_banned %}
+                        {% if "Current" not in card.card.keywords %} 
+                          <li><a href="{{ path('cards_zoom', {card_code:card.card.code}) }}">{{ card.card.title }}</a></li>
+                        {% endif %}
+                      {% else %}
+                        <li><a href="{{ path('cards_zoom', {card_code:card.card.code}) }}">{{ card.card.title }}</a></li>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </li> 
+            {% endfor %}
+          </ul>
+        </div>
+  
+        <div class="col-sm-7">
+          <h3>Runner Cards</h3>
+          <ul>
+            {% for verdict in banlist.cards|keys|sort %}
+              <li><strong>{{ verdict }}</strong>
+                <ul>
+                  {% if verdict == 'Banned' and banlist.all_currents_banned %} 
+                    <li>All cards with <strong><a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'list','q':'s:current d:runner'}) }}">Current</a></strong> subtype.</li>
+                  {% endif %}
+                  {% for card in banlist.cards[verdict]|sort((a, b) => a.card.title <=> b.card.title) %}
+                    {% if card.card.side.code == 'runner' %}
+                      {% if banlist.all_currents_banned %}
+                        {% if "Current" not in card.card.keywords %} 
+                          <li><a href="{{ path('cards_zoom', {card_code:card.card.code}) }}">{{ card.card.title }}</a></li>
+                        {% endif %}
+                      {% else %}
+                        <li><a href="{{ path('cards_zoom', {card_code:card.card.code}) }}">{{ card.card.title }}</a></li>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </li> 
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}
