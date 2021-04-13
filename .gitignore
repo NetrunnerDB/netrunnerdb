@@ -18,3 +18,5 @@
 /web/bundles/
 .php_cs.cache
 /web/card_image/
+/web/corp.json
+/web/runner.json
