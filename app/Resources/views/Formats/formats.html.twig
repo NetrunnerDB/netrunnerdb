@@ -7,9 +7,88 @@
 
   <h1>{{ block('title') }}</h1>
 
-  <h2>Startup</h2>
-  <h2>Standard</h2>
+  <div id="list">
 
+    <div class="row">
+      <div class="col-sm-6">
+        <h2>Standard Format</h2>
+        <p>Current Ban List: <strong>{{ standard_banlist.name }}</strong>, active as of <strong>{{ standard_banlist.dateStart|date("Y-m-d") }}</strong></p>
+      </div>
+      <div class="col-sm-6">
+        <h2>Startup Format</h2>
+        <p>Current Ban List: None</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3">
+        <h2>Corp Decklists</h2>
+        <ul>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'corp', 'packs':standard_pack_ids}) }}">Any Corp</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'haas-bioroid', 'packs':standard_pack_ids}) }}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'jinteki', 'packs':standard_pack_ids}) }}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'nbn', 'packs':standard_pack_ids}) }}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'weyland-consortium', 'packs':standard_pack_ids}) }}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-3">
+        <h2>Runner Decklists</h2>
+        <ul>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'runner', 'packs':standard_pack_ids}) }}">Any Runner</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'anarch', 'packs':standard_pack_ids}) }}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'criminal', 'packs':standard_pack_ids}) }}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'shaper', 'packs':standard_pack_ids}) }}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'adam', 'packs':standard_pack_ids}) }}"><span class="icon icon-adam influence-adam"></span> Adam</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'apex', 'packs':standard_pack_ids}) }}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'sunny-lebeau', 'packs':standard_pack_ids}) }}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>
+        </ul>
+      </div>
+
+      <div class="col-sm-3">
+        <h2>Corp Decklists</h2>
+        <ul>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'corp', 'packs':startup_pack_ids}) }}">Any Corp</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'haas-bioroid', 'packs':startup_pack_ids}) }}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'jinteki', 'packs':startup_pack_ids}) }}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'nbn', 'packs':startup_pack_ids}) }}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'weyland-consortium', 'packs':startup_pack_ids}) }}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-3">
+        <h2>Runner Decklists</h2>
+        <ul>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'runner', 'packs':startup_pack_ids}) }}">Any Runner</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'anarch', 'packs':startup_pack_ids}) }}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'criminal', 'packs':startup_pack_ids}) }}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'shaper', 'packs':startup_pack_ids}) }}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'adam', 'packs':startup_pack_ids}) }}"><span class="icon icon-adam influence-adam"></span> Adam</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'apex', 'packs':startup_pack_ids}) }}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>
+            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'sunny-lebeau', 'packs':startup_pack_ids}) }}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <h3>Legal Card Cycles - {{ num_standard_cards }} cards</h3>
+        <ul>
+        {% for cycle in standard_cycles %}
+          <li><a href="{{ path('cards_cycle', {cycle_code:cycle.code }) }}">{{ cycle.name }}</a></li>
+        {% endfor %}
+        </ul>
+      </div>
+  
+      <div class="col-sm-6">
+        <h3>Legal Card Cycles - {{ num_startup_cards }} cards</h3>
+        <ul>
+        {% for cycle in startup_cycles %}
+          <li><a href="{{ path('cards_cycle', {cycle_code:cycle.code }) }}">{{ cycle.name }}</a></li>
+        {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+ 
+ 
 </div>
 {% endblock %}
-

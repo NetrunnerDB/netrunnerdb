@@ -4,10 +4,6 @@
 
 {% block head %}
 
-<script type="text/javascript">
-var mwl = NRDB.data.mwl;
-</script>
-
 {% endblock %}
 
 {% block body %}
@@ -15,15 +11,18 @@ var mwl = NRDB.data.mwl;
 
   <h1>{{ block('title') }}</h1>
 
-      <h2>Startup Format</h2>
-      <p>No cards are currently banned in Startup.  Have a blast!</p>
-  
-      <h2>Standard Format</h2>
-
+  <h2>Startup Format</h2>
   <div id="list">
-
+    <div class="row">
+      <div class="col-sm-12">
+        <p>No cards are currently banned in Startup.  Have a blast!</p>
+      </div>
+    </div>
+  </div>
+  
+  <h2>Standard Format</h2>
+  <div id="list">
     {% for banlist in banlists %}
- 
       <div class="row">
         <div class="col-sm-12">
           <h3>{{ banlist.name }} {% if banlist.active %}(active){% endif %}</h3>

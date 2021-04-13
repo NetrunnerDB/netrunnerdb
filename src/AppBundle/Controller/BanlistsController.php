@@ -2,9 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Legality;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class BanlistsController extends Controller
@@ -12,7 +10,7 @@ class BanlistsController extends Controller
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function getAction(EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function getAction(EntityManagerInterface $entityManager)
     {
         $mwls = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
         $banlists = array();
@@ -80,10 +78,10 @@ class BanlistsController extends Controller
         }
 
         return $this->render('/Banlists/banlists.html.twig', [
-         'pagetitle'                     => "Ban Lists",
-         'banlists'                      => $banlists,
-         'unique_cards'                  => $unique_cards,
-         'mwl_codes_all_currents_banned' => $mwl_codes_all_currents_banned,
+            'pagetitle'                     => "Ban Lists",
+            'banlists'                      => $banlists,
+            'unique_cards'                  => $unique_cards,
+            'mwl_codes_all_currents_banned' => $mwl_codes_all_currents_banned,
         ]);
     }
 }
