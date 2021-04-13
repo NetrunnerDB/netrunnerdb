@@ -25,7 +25,7 @@
     {% for banlist in banlists %}
       <div class="row">
         <div class="col-sm-12">
-          <h3>{{ banlist.name }} {% if banlist.active %}(active){% endif %}</h3>
+          <h3><a name="{{ banlist.code }}"></a>{{ banlist.name }} {% if banlist.active %}(active){% endif %}</h3>
           <p>{{ banlist.num_cards }} cards. Start Date {{ banlist.start_date|date("Y-m-d") }}</p>
         </div>
       </div>
