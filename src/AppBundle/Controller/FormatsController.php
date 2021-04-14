@@ -15,20 +15,20 @@ class FormatsController extends Controller
     {
         $q = $entityManager->createQuery("SELECT c FROM AppBundle:Cycle c where c.code IN ('system-gateway', 'system-update-2021', 'ashes') ORDER BY c.position DESC");
         $startup_cycles = $q->getResult();
-        $startup_pack_ids = array();
+        $startup_packs = array();
         foreach ($startup_cycles as $cycle) {
             foreach ($cycle->getPacks() as $pack) {
-                $startup_pack_ids[] = $pack->getId();
+                $startup_packs[] = $pack->getCode();
             }
         }
 
         $q = $entityManager->createQuery("SELECT c FROM AppBundle:Cycle c WHERE c.rotated = 0 AND c.code != 'draft' ORDER BY c.position DESC");
         $standard_cycles = $q->getResult();
 
-        $standard_pack_ids = array();
+        $standard_packs = array();
         foreach ($standard_cycles as $cycle) {
             foreach ($cycle->getPacks() as $pack) {
-                $standard_pack_ids[] = $pack->getId();
+                $standard_packs[] = $pack->getCode();
             }
         }
 
@@ -55,10 +55,10 @@ class FormatsController extends Controller
         return $this->render('/Formats/formats.html.twig', [
             'pagetitle'          => "Play Formats",
             'startup_cycles'     => $startup_cycles,
-            'startup_pack_ids'   => $startup_pack_ids,
+            'startup_packs'   => $startup_packs,
             'num_startup_cards'  => $num_startup_cards,
             'standard_cycles'    => $standard_cycles,
-            'standard_pack_ids'  => $standard_pack_ids,
+            'standard_packs'  => $standard_packs,
             'standard_banlist'   => $standard_banlist,
             'num_standard_cards' => $num_standard_cards,
         ]);
