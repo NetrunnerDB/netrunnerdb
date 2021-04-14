@@ -19,27 +19,12 @@ $(document).on('data.app', function() {
     display: function(card) { return card.title; },
     source: findMatches
   });
-});
 
-function select_only_latest_cards(matchingCards) {
-  var latestCardsByTitle = {};
-  for (var card of matchingCards) {
-    var latestCard = latestCardsByTitle[card.title];
-    if (!latestCard || card.code > latestCard.code) {
-      latestCardsByTitle[card.title] = card;
-    }
-  }
-  return matchingCards.filter(function(value, index, arr) {
-    return value.code == latestCardsByTitle[value.title].code;
+  $('.cycle_checkbox').each(function() {
+    $(this).closest('.checkbox').checklist();
   });
-}
+  handle_checkbox_change();
 
-function handle_checkbox_change() {
-  $('#packs-on').text($('#allowed_packs').find('input[type="checkbox"]:checked').length);
-  $('#packs-off').text($('#allowed_packs').find('input[type="checkbox"]:not(:checked)').length);
-}
-
-$(function() {
   $('#filter-text').on('typeahead:selected typeahead:autocompleted', function(event, card) {
     var line = $(
       '<p class="background-' + card.faction_code +
@@ -57,6 +42,38 @@ $(function() {
 
   $('#allowed_packs').on('change', handle_checkbox_change);
 
+  let rotated_cycles = Array();
+  rotated_cycles['draft'] = 1;
+  rotated_cycles['napd'] = 1;
+  NRDB.data.cycles.find( { "rotated": true } ).forEach(function(cycle) { rotated_cycles[cycle.code] = 1; });
+
+  var startup_cycles = Array();
+  startup_cycles['ashes'] = 1;
+  startup_cycles['system-gateway'] = 1;
+  startup_cycles['system-update-2021'] = 1;
+  var rotated_packs = Array();
+  var startup_packs = Array();
+  NRDB.data.packs.find().forEach(function(pack) {
+    if (rotated_cycles[pack.cycle.code]) { rotated_packs[pack.code] = 1; }
+    if (startup_cycles[pack.cycle.code]) { startup_packs[pack.code] = 1; }
+  });
+
+  $('#select_startup').on('click', function (event) {
+    $('#allowed_packs').find('input[type="checkbox"]').each(function() {
+      $(this).prop('checked', Boolean(startup_cycles[this.value] || startup_packs[this.value]));
+    });
+    handle_checkbox_change();
+    return false;
+  });
+
+  $('#select_standard').on('click', function (event) {
+    $('#allowed_packs').find('input[type="checkbox"]').each(function() {
+      $(this).prop('checked', Boolean(!(rotated_cycles[this.value] || rotated_packs[this.value])));
+    });
+    handle_checkbox_change();
+    return false;
+  });
+
   $('#select_all').on('click', function (event) {
     $('#allowed_packs').find('input[type="checkbox"]:not(:checked)').prop('checked', true);
     handle_checkbox_change();
@@ -69,3 +86,21 @@ $(function() {
     return false;
   });
 });
+
+function select_only_latest_cards(matchingCards) {
+  var latestCardsByTitle = {};
+  for (var card of matchingCards) {
+    var latestCard = latestCardsByTitle[card.title];
+    if (!latestCard || card.code > latestCard.code) {
+      latestCardsByTitle[card.title] = card;
+    }
+  }
+  return matchingCards.filter(function(value, index, arr) {
+    return value.code == latestCardsByTitle[value.title].code;
+  });
+}
+
+function handle_checkbox_change() {
+  $('#packs-on').text($('#allowed_packs').find('input[type="checkbox"]:not(.cycle_checkbox):checked').length + ' on / ');
+  $('#packs-off').text($('#allowed_packs').find('input[type="checkbox"]:not(.cycle_checkbox):not(:checked)').length + ' off');
+}
