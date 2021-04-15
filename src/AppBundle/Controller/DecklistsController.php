@@ -183,23 +183,23 @@ class DecklistsController extends Controller
                 continue;
             }
 
-                $entry = ["label" => $cycle->getName(), "code" => $cycle->getCode(), "cycle_id" => $cycle->getId(), "packs" => []];
-                $packs = $cycle->getPacks()->toArray();
-                usort($packs, function ($a, $b) {
-                    if ($a->getPosition() == $b->getPosition()) { return 0; }
-                    return $a->getPosition() < $b->getPosition() ? 1 : -1;
-                });
+            $entry = ["label" => $cycle->getName(), "code" => $cycle->getCode(), "cycle_id" => $cycle->getId(), "packs" => []];
+            $packs = $cycle->getPacks()->toArray();
+            usort($packs, function ($a, $b) {
+                if ($a->getPosition() == $b->getPosition()) { return 0; }
+                return $a->getPosition() < $b->getPosition() ? 1 : -1;
+            });
 
-                $num_packs_on = 0;
-                foreach ($packs as $pack) {
-                    $checked = count($pack_codes) > 0 ? in_array($pack->getCode(), $pack_codes) : $pack->getDateRelease() !== null;
-                    if ($checked) {
-                        ++$num_packs_on;
-                    }
-                    $entry['packs'][] = ["code" => $pack->getCode(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === null];
+            $num_packs_on = 0;
+            foreach ($packs as $pack) {
+                $checked = count($pack_codes) > 0 ? in_array($pack->getCode(), $pack_codes) : $pack->getDateRelease() !== null;
+                if ($checked) {
+                    ++$num_packs_on;
                 }
-                $entry['checked'] = $num_packs_on == count($packs);
-                $cycles_and_packs[] = $entry;
+                $entry['packs'][] = ["code" => $pack->getCode(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === null];
+            }
+            $entry['checked'] = $num_packs_on == count($packs);
+            $cycles_and_packs[] = $entry;
         }
         return $cycles_and_packs;
     }
