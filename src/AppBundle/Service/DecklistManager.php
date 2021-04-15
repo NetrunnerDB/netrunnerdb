@@ -743,9 +743,9 @@ class DecklistManager
         }
 
         if (count($packs)) {
-            $wheres[] = 'not exists(select * from decklistslot join card on decklistslot.card_id=card.id where decklistslot.decklist_id=d.id and card.pack_id not in (?))';
+            $wheres[] = 'not exists(select * from decklistslot join card on decklistslot.card_id=card.id join pack on card.pack_id = pack.id where decklistslot.decklist_id=d.id and pack.code not in (?))';
             $params[] = array_unique($packs);
-            $types[] = Connection::PARAM_INT_ARRAY;
+            $types[] = Connection::PARAM_STR_ARRAY;
         }
         if (!empty($mwl_code)) {
             $wheres[] = 'exists(select * from legality join mwl on legality.mwl_id=mwl.id where legality.decklist_id=d.id and mwl.code=? and legality.is_legal=1)';

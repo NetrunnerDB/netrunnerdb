@@ -171,6 +171,39 @@ class DecklistsController extends Controller
         ], $response);
     }
 
+    // Defaults to checked if the pack is not draft and has been officiallly released.
+    // Will check only packs with entries in $pack_codes if it is non-empty.
+    private function getCyclesAndPacks(EntityManagerInterface $entityManager, array $pack_codes = [])
+    {
+        $cycles_and_packs = [];
+        $list_cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "DESC"]);
+        foreach ($list_cycles as $cycle) {
+            $size = $cycle->getPacks()->count();
+            if ($size == 0) {
+                continue;
+            }
+
+            $entry = ["label" => $cycle->getName(), "code" => $cycle->getCode(), "cycle_id" => $cycle->getId(), "packs" => []];
+            $packs = $cycle->getPacks()->toArray();
+            usort($packs, function ($a, $b) {
+                if ($a->getPosition() == $b->getPosition()) { return 0; }
+                return $a->getPosition() < $b->getPosition() ? 1 : -1;
+            });
+
+            $num_packs_on = 0;
+            foreach ($packs as $pack) {
+                $checked = count($pack_codes) > 0 ? in_array($pack->getCode(), $pack_codes) : $pack->getDateRelease() !== null;
+                if ($checked) {
+                    ++$num_packs_on;
+                }
+                $entry['packs'][] = ["code" => $pack->getCode(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === null];
+            }
+            $entry['checked'] = $num_packs_on == count($packs);
+            $cycles_and_packs[] = $entry;
+        }
+        return $cycles_and_packs;
+    }
+
     /**
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
@@ -192,43 +225,7 @@ class DecklistsController extends Controller
                 ORDER BY f.side_id ASC, f.name ASC"
         )->fetchAll();
 
-        $categories = [];
-        $on = 0;
-        $off = 0;
-        $categories[] = ["label" => "Core / Deluxe", "packs" => []];
-        $list_cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
-        foreach ($list_cycles as $cycle) {
-            $size = $cycle->getPacks()->count();
-            if ($size == 0) {
-                continue;
-            }
-            $first_pack = $cycle->getPacks()[0];
-            if ($size === 1 && $first_pack->getName() == $cycle->getName()) {
-                if ($cycle->getPosition() == 0) {
-                    $checked = false;
-                } else {
-                    $checked = $first_pack->getDateRelease() !== null;
-                }
-                if ($checked) {
-                    $on++;
-                } else {
-                    $off++;
-                }
-                $categories[0]["packs"][] = ["id" => $first_pack->getId(), "label" => $first_pack->getName(), "checked" => $checked, "future" => $first_pack->getDateRelease() === null];
-            } else {
-                $category = ["label" => $cycle->getName(), "packs" => []];
-                foreach ($cycle->getPacks() as $pack) {
-                    $checked = $pack->getDateRelease() !== null;
-                    if ($checked) {
-                        $on++;
-                    } else {
-                        $off++;
-                    }
-                    $category['packs'][] = ["id" => $pack->getId(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === null];
-                }
-                $categories[] = $category;
-            }
-        }
+        $cycles_and_packs = $this->getCyclesAndPacks($entityManager);
 
         $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
         $list_rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
@@ -241,16 +238,14 @@ class DecklistsController extends Controller
             'form'      => $this->renderView(
                 '/Search/form.html.twig',
                 [
-                    'allowed'        => $categories,
-                    'on'             => $on,
-                    'off'            => $off,
-                    'author'         => '',
-                    'title'          => '',
-                    'list_mwl'       => $list_mwl,
-                    'mwl_code'       => '',
-                    'list_rotations' => $list_rotations,
-                    'rotation_id'    => '',
-                    'is_legal'       => '',
+                    'cycles_and_packs' => $cycles_and_packs,
+                    'author'           => '',
+                    'title'            => '',
+                    'list_mwl'         => $list_mwl,
+                    'mwl_code'         => '',
+                    'list_rotations'   => $list_rotations,
+                    'rotation_id'      => '',
+                    'is_legal'         => '',
                 ]
             ),
         ], $response);
@@ -276,62 +271,20 @@ class DecklistsController extends Controller
         $rotation_id = $request->query->get('rotation_id');
         $is_legal = $request->query->get('is_legal');
 
-        if (!is_array($packs)) {
-            $packs = $dbh->executeQuery("SELECT id FROM pack")->fetchAll(\PDO::FETCH_COLUMN);
-        }
-
-        $categories = [];
-        $on = 0;
-        $off = 0;
-        $categories[] = ["label" => "Core / Deluxe", "packs" => []];
-        $list_cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "ASC"]);
-        foreach ($list_cycles as $cycle) {
-            $size = $cycle->getPacks()->count();
-            if ($size == 0) {
-                continue;
-            }
-            $first_pack = $cycle->getPacks()[0];
-            if ($size === 1 && $first_pack->getName() == $cycle->getName()) {
-                if ($cycle->getPosition() == 0) {
-                    $checked = false;
-                } else {
-                    $checked = count($packs) ? in_array($first_pack->getId(), $packs) : true;
-                }
-                if ($checked) {
-                    $on++;
-                } else {
-                    $off++;
-                }
-                $categories[0]["packs"][] = ["id" => $first_pack->getId(), "label" => $first_pack->getName(), "checked" => $checked, "future" => $first_pack->getDateRelease() === null];
-            } else {
-                $category = ["label" => $cycle->getName(), "packs" => []];
-                foreach ($cycle->getPacks() as $pack) {
-                    $checked = count($packs) ? in_array($pack->getId(), $packs) : true;
-                    if ($checked) {
-                        $on++;
-                    } else {
-                        $off++;
-                    }
-                    $category['packs'][] = ["id" => $pack->getId(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === null];
-                }
-                $categories[] = $category;
-            }
-        }
+        $cycles_and_packs = $this->getCyclesAndPacks($entityManager, is_array($packs) ? $packs : []);
 
         $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
         $list_rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
 
         $params = [
-            'allowed'        => $categories,
-            'on'             => $on,
-            'off'            => $off,
-            'author'         => $author_name,
-            'title'          => $decklist_title,
-            'list_mwl'       => $list_mwl,
-            'mwl_code'       => $mwl_code,
-            'list_rotations' => $list_rotations,
-            'rotation_id'    => $rotation_id,
-            'is_legal'       => $is_legal,
+            'cycles_and_packs' => $cycles_and_packs,
+            'author'           => $author_name,
+            'title'            => $decklist_title,
+            'list_mwl'         => $list_mwl,
+            'mwl_code'         => $mwl_code,
+            'list_rotations'   => $list_rotations,
+            'rotation_id'      => $rotation_id,
+            'is_legal'         => $is_legal,
         ];
         $params['sort_' . $sort] = ' selected="selected"';
         if (!empty($faction_code)) {

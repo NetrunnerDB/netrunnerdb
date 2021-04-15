@@ -79,16 +79,34 @@
             <button type="submit" class="btn btn-primary btn-block">Search</button>
         </div>
         <div class="col-sm-4">
-            <p><a data-toggle="collapse" data-target="#allowed_packs" href="#allowed_packs">Select allowed packs</a> (<span id="packs-on">{{ on }}</span> on, <span id="packs-off">{{ off }}</span> off)</p>
+            <p><a data-toggle="collapse" data-target="#allowed_packs" href="#allowed_packs">Select allowed packs</a> <span id="packs-on"></span> <span id="packs-off"></span></p>
             <div id="allowed_packs" class="collapse">
-                {% for category in allowed %}
-                    <p><small>{{ category.label }}</small></p>
-                    {% for pack in category.packs %}
-                        <div class="checkbox"><label class="{% if pack.future %}pack-future{% endif %}"><input type="checkbox" name="packs[]" value="{{ pack.id }}" {% if pack.checked %}checked="checked" {% endif %}>{{ pack.label }}</label></div>
+                <div>
+                    <a href="#" id="select_startup">Startup</a> |
+                    <a href="#" id="select_standard">Standard</a> |
+                    <a href="#" id="select_all">All</a> |
+                    <a href="#" id="select_none">None</a>
+                </div>
+
+                {% for category in cycles_and_packs %}
+                    <div class="checkbox -bs-checklist">
+                        {% if category.packs|length == 1 %}
+                            <div class="checkbox" data-toggle="checklist">
+                                <li class="checkbox"><label class="{% if category.packs[0].future %}pack-future{% endif %}"><input type="checkbox" name="packs[]" value="{{ category.packs[0].code }}" {% if category.packs[0].checked %}checked="checked" {% endif %}>{{ category.packs[0].label }}</label></li>
+                            </div>
+                        {% else %}
+                            <div class="checkbox" data-toggle="checklist">
+                              <label><input type="checkbox" class="cycle_checkbox" value="{{ category.code }}" id="cycle_{{ category.cycle_id }}" name="cycle_{{ category.cycle_id}}" {% if category.checked %}checked="checked"{% endif %}>{{ category.label }}</label>
+                            </div>
+                            <ul class="checkbox checklist-items">
+                            {% for pack in category.packs %}
+                                <li class="checkbox"><label class="{% if pack.future %}pack-future{% endif %}"><input type="checkbox" name="packs[]" value="{{ pack.code }}" {% if pack.checked %}checked="checked" {% endif %}>{{ pack.label }}</label></li>
+
                             {% endfor %}
-                        {% endfor %}
-                <a href="#" id="select_all"><span class="glyphicon glyphicon-ok"></span> all</a>
-                / <a href="#" id="select_none"><span class="glyphicon glyphicon-remove"></span> none</a>
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>
