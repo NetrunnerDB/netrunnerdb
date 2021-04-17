@@ -199,6 +199,11 @@ tbody .btn-group{white-space:nowrap}
 #table-draw-simulator-content div.card-proxy div{position: relative;top: 50%; transform: translateY(-50%);text-align:center}
 #draw-simulator-special {display: none;}
 
+.builder-legality-indicators {
+  display: inline-block;
+  margin: 0 5px 0 2px;
+}
+
 .twitter-typeahead{width:100%}
 .twitter-typeahead .tt-hint{color:#aaa;margin-left:11px;margin-top:4px}
 
@@ -607,4 +612,3 @@ ul.rulings-list blockquote {
     content: "";
   }
 }
-

@@ -268,7 +268,7 @@ function unicorn(card) {
     var result = [];
 
     function add_icon(icon, description) {
-        result.push('<span title="' + description + '" style="display:inline-block;width:1.5em;">' + icon + '</span>');
+        result.push('<span title="' + description + '">' + icon + '</span>');
     }
 
     // Check MWL
@@ -284,12 +284,12 @@ function unicorn(card) {
         var rotated_cycles = _.map(NRDB.data.cycles.find( { "rotated": true } ), 'code');
         var cycle = card.pack.cycle_code;
         if (rotated_cycles.indexOf(cycle) !== -1) {
-            add_icon('🔁', 'Rotated card');
+            add_icon('🔄', 'Rotated card');
         }
     }
 
     if (result.length) {
-        return ' ' + result.join('') + ' ';
+        return ' <span class="builder-legality-indicators">' + result.join(' ') + '</span> ';
     }
     return '';
 }
