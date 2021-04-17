@@ -258,20 +258,40 @@ function find_identity() {
 }
 
 /**
- * Returns a banned or restricted icon for the supplied card and selected MWL.
+ * Returns a banned, restricted, or rotated icon for the supplied card and selected MWL.
  * @param  card
  * @return string
  */
 function unicorn(card) {
     var mwlCard = get_mwl_modified_card(card);
 
+    var result = [];
+
+    function add_icon(icon, description) {
+        result.push('<span title="' + description + '" style="display:inline-block;width:1.5em;">' + icon + '</span>');
+    }
+
+    // Check MWL
     if (mwlCard.is_restricted) {
-        return ' <span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ';
+        add_icon('🦄', 'Restricted card');
     } else if (mwlCard.deck_limit == 0) {
         // Prohibited or banned cards are identified by having a deck_limit of 0.
-        return ' <span title="Banned card" style="display:inline-block;width:1.5em;">🚫</span> ';
+        add_icon('🚫', 'Banned card');
     }
-    return "";
+
+    // Check if set has rotated
+    if (NRDB.settings && NRDB.settings.getItem('check-rotation')) {
+        var rotated_cycles = _.map(NRDB.data.cycles.find( { "rotated": true } ), 'code');
+        var cycle = card.pack.cycle_code;
+        if (rotated_cycles.indexOf(cycle) !== -1) {
+            add_icon('🔁', 'Rotated card');
+        }
+    }
+
+    if (result.length) {
+        return ' ' + result.join('') + ' ';
+    }
+    return '';
 }
 
 function update_deck(options) {
