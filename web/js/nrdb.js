@@ -258,20 +258,40 @@ function find_identity() {
 }
 
 /**
- * Returns a banned or restricted icon for the supplied card and selected MWL.
+ * Returns a banned, restricted, or rotated icon for the supplied card and selected MWL.
  * @param  card
  * @return string
  */
-function unicorn(card) {
+function get_card_legality_icons(card) {
     var mwlCard = get_mwl_modified_card(card);
 
+    var result = [];
+
+    function add_icon(icon, description) {
+        result.push('<span title="' + description + '">' + icon + '</span>');
+    }
+
+    // Check MWL
     if (mwlCard.is_restricted) {
-        return ' <span title="Restricted card" style="display:inline-block;width:1.5em;">🦄</span> ';
+        add_icon('🦄', 'Restricted card');
     } else if (mwlCard.deck_limit == 0) {
         // Prohibited or banned cards are identified by having a deck_limit of 0.
-        return ' <span title="Banned card" style="display:inline-block;width:1.5em;">🚫</span> ';
+        add_icon('🚫', 'Banned card');
     }
-    return "";
+
+    // Check if set has rotated
+    if (NRDB.settings && NRDB.settings.getItem('check-rotation')) {
+        var rotated_cycles = _.map(NRDB.data.cycles.find( { "rotated": true } ), 'code');
+        var cycle = card.pack.cycle_code;
+        if (rotated_cycles.indexOf(cycle) !== -1) {
+            add_icon('🔄', 'Rotated card');
+        }
+    }
+
+    if (result.length) {
+        return ' <span class="builder-legality-indicators">' + result.join(' ') + '</span> ';
+    }
+    return '';
 }
 
 function update_deck(options) {
@@ -347,7 +367,7 @@ function update_deck(options) {
     var cabinet = {};
     var parts = Identity.title.split(/: /);
 
-    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + unicorn(Identity));
+    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + get_card_legality_icons(Identity));
     $('#img_identity').prop('src', '/card_image/medium/' + Identity.code + '.jpg');
     InfluenceLimit = Identity.influence_limit;
     if (InfluenceLimit == null || InfluenceLimit == 0)
@@ -451,7 +471,7 @@ function update_deck(options) {
             additional_info = '(<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ') ' + alert_number_of_sets + influence;
         }
 
-        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a>' + unicorn(card) + additional_info + '</div>');
+        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a>' + get_card_legality_icons(card) + additional_info + '</div>');
         item.appendTo($('#deck-content .deck-' + criteria));
 
         cabinet[criteria] |= 0;
