@@ -262,7 +262,7 @@ function find_identity() {
  * @param  card
  * @return string
  */
-function unicorn(card) {
+function get_card_legality_icons(card) {
     var mwlCard = get_mwl_modified_card(card);
 
     var result = [];
@@ -367,7 +367,7 @@ function update_deck(options) {
     var cabinet = {};
     var parts = Identity.title.split(/: /);
 
-    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + unicorn(Identity));
+    $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + get_card_legality_icons(Identity));
     $('#img_identity').prop('src', '/card_image/medium/' + Identity.code + '.jpg');
     InfluenceLimit = Identity.influence_limit;
     if (InfluenceLimit == null || InfluenceLimit == 0)
@@ -471,7 +471,7 @@ function update_deck(options) {
             additional_info = '(<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ') ' + alert_number_of_sets + influence;
         }
 
-        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a>' + unicorn(card) + additional_info + '</div>');
+        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a>' + get_card_legality_icons(card) + additional_info + '</div>');
         item.appendTo($('#deck-content .deck-' + criteria));
 
         cabinet[criteria] |= 0;
