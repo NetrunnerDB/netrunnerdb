@@ -638,7 +638,7 @@ function get_influence_cost_of_card_in_deck(card) {
         if (Identity.code == "03029" && card.type_code == "program") {
             // The Professor: first program is free
             inf = (card.indeck - 1) * card.faction_cost;
-        } else if (card.code === 'Mumba Temple') {
+        } else if (card.title === 'Mumba Temple') {
             // Mumba Temple: 15 or fewer ice
             if (count_card_copies(NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'ice' })) <= 15) {
                 inf = 0;
