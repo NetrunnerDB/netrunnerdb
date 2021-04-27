@@ -34,7 +34,8 @@ class BanlistsController extends Controller
         $mwl_codes_all_currents_banned = [
             'standard-ban-list-20-06' => true,
             'standard-ban-list-20-09' => true,
-            'standard-ban-list-21-04' => true
+            'standard-ban-list-21-04' => true,
+            'standard-ban-list-21-05' => true
         ];
 
         foreach ($mwls as $mwl) {
