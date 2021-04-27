@@ -168,7 +168,7 @@ class Judge
                 /** @var SlotInterface $potentialTarget */
                 $code = $potentialTarget->getCard()->getCode();
 
-                return $code === '01109' || $code === '20128' || $code === '25142';
+                return $code === '01109' || $code === '20128' || $code === '25142' || $code === '31080';
             });
             if ($this->countCards($targets) === 3) {
                 return 0;

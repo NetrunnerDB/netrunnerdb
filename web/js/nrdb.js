@@ -658,22 +658,22 @@ function get_influence_cost_of_card_in_deck(card) {
         if (Identity.code == "03029" && card.type_code == "program") {
             // The Professor: first program is free
             inf = (card.indeck - 1) * card.faction_cost;
-        } else if (card.code === '10018') {
+        } else if (card.title === 'Mumba Temple') {
             // Mumba Temple: 15 or fewer ice
             if (count_card_copies(NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'ice' })) <= 15) {
                 inf = 0;
             }
-        } else if (card.code === '10019') {
+        } else if (card.title === 'Museum of History') {
             // Museum of History: 50 or more cards
             if (DeckSize >= 50) {
                 inf = 0;
             }
-        } else if (card.code === '10038') {
+        } else if (card.title === 'PAD Factory') {
             // PAD Factory: 3 PAD Campaign
-            if (count_card_copies(NRDB.data.cards.find({ indeck: { '$gt': 0 }, code: ['01109', '20128','25142'] })) === 3) {
+            if (NRDB.data.cards.find({ indeck: { '$eq': 3 }, title: 'PAD Campaign' }).length === 1) {
                 inf = 0;
             }
-        } else if (card.code === '10076') {
+        } else if (card.title === 'Mumbad Virtual Tour') {
             // Mumbad Virtual Tour: 7 or more assets
             if (count_card_copies(NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'asset' })) >= 7) {
                 inf = 0;
