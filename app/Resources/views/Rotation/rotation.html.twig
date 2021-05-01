@@ -1,0 +1,95 @@
+{% extends '/layout.html.twig' %}
+
+{% block title %}Rotation{% endblock %}
+
+{% block head %}
+<script src="{{ asset('/js/rotation.js') }}"></script>
+<script type="text/javascript">
+var rotations = new Array();
+
+{% for r in rotations %}
+  rotations['{{ r.code }}'] = {
+    'code': '{{ r.code }}',
+    'name': '{{ r.name }}',
+    'date_start' : '{{ r.dateStart|date('Y-m-d') }}',
+  };
+  rotations['{{r.code}}']['rotated_cycles'] = new Array();
+  {% for c in r.getRotated %}
+	  rotations['{{r.code}}']['rotated_cycles']['{{ c.code }}'] = { 'code': '{{ c.code }}', 'name': '{{ c.name }}'};
+  {% endfor %}
+{% endfor %}
+
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+
+  <h1>{{ block('title') }}</h1>
+
+  <div id="list">
+    <div class="row">
+      <div class="col-sm-12">
+      </div>
+    </div>
+  </div> 
+
+  <div id="list">
+    <div class="row">
+      <div class="col-sm-12">
+        <h2>Rotation Card Comparison</h2>
+        <p>Choose two rotation card pools and see what is being added and removed.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        <select name="rotation_a" id="rotation_a">
+           <option value="">Select a Rotation Card Pool</option>
+           {% for r in rotations %}
+           <option value="{{ r.code }}">{{ r.name }} ({{ r.dateStart|date("Y-m-d") }})</option>
+           {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <select name="sort_by" id="sort_by">
+           <option value="">Select sorting options</option>
+           <option value="side_faction_type">Side / Faction / Type</option>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <select name="rotation_b" id="rotation_b">
+           <option value="">Select a Rotation Card Pool</option>
+           {% for r in rotations %}
+           <option value="{{ r.code }}">{{ r.name }} ({{ r.dateStart|date("Y-m-d") }})</option>
+           {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        <p>Cycles &amp; Packs</p>
+      </div>
+      <div class="col-sm-3">
+        <p>Removed Cards</p>
+      </div>
+      <div class="col-sm-3">
+        <p>Added Cards</p>
+      </div>
+      <div class="col-sm-3">
+        <p>Cycles &amp; Packs</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3" id="rotation_a_cycles_and_packs">
+      </div>
+      <div class="col-sm-3" id="removed_cards">
+      </div>
+      <div class="col-sm-3" id="added_cards">
+      </div>
+      <div class="col-sm-3" id="rotation_b_cycles_and_packs">
+      </div>
+    </div>
+  </div> 
+
+</div>
+{% endblock %}
