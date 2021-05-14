@@ -24,7 +24,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 <div class="container decklist">
 
 {% if not decklist.is_legal %}
-    <div class="alert alert-warning" role="alert">This decklist is not legal for tournament play currently, due to <a href="https://www.fantasyflightgames.com/en/products/android-netrunner-the-card-game/">Card Errata</a>, <a href="https://www.fantasyflightgames.com/en/news/2014/11/5/when-new-programs-overwrite-the-old/">Rotation</a> or <a href="https://www.fantasyflightgames.com/en/products/android-netrunner-the-card-game/">the Most Wanted List</a>.</div>
+    <div class="alert alert-warning" role="alert">This decklist is not legal for tournament play currently, due to <a href="https://www.fantasyflightgames.com/en/products/android-netrunner-the-card-game/">Card Errata</a>, <a href="https://www.fantasyflightgames.com/en/news/2014/11/5/when-new-programs-overwrite-the-old/">Rotation</a> or <a href="https://www.fantasyflightgames.com/en/products/android-netrunner-the-card-game/">Legality</a>.</div>
 {% endif %}
 <div class="row">
     <div class="col-xs-12 panel-group">
@@ -116,10 +116,10 @@ NRDB.user.params.decklist_id = Decklist.id;
 <div class="row" id="deck-content" style="margin-bottom:20px"></div>
 <!-- Deck Content -->
 
-<!-- MWL -->
+<!-- Legality -->
 <table class="table table-condensed" id="table-mwl">
 <thead>
-<tr><th colspan="1"><span class="glyphicon glyphicon-bell"></span> Most Wanted List</th></tr>
+<tr><th colspan="1"><span class="glyphicon glyphicon-bell"></span> Legality</th></tr>
 </thead>
 <tbody>
 {% for legality in legalities %}
