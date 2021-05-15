@@ -38,7 +38,7 @@
             <li><code>h</code> &ndash; trash cost</li>
             <li><code>r</code> &ndash; release date</li>
             <li><code>u</code> &ndash; unique</li>
-            <li><code>b</code> &ndash; banlist</li>
+            <li><code>b</code> &ndash; ban list</li>
             <li><code>z</code> &ndash; rotation</li>
           </ul>
         </li>
@@ -51,7 +51,7 @@
           </ul>
         </li>
         <li><b>Special case</b> <code>r</code> (release date) uses only the operators <code>&lt;</code> (inclusive) and <code>&gt;</code> (exclusive) and only understands the arguments <code>now</code> or a date YYYY-MM-DD</li>
-        <li><b>Banlist</b> <code>b</code> will exclude any cards banned by that ban list. Banlist has 2 different special options in addition to specific banlists: <code>active</code> or <code>latest</code>. These two only differ when there is a yet-to-be-active banlist. Banlist can also specify a specific banlist.  Valid banlist options are 
+        <li><b>Ban List</b> <code>b</code> will exclude any cards banned by that ban list. Ban List has 2 different special options in addition to specific Ban Lists: <code>active</code> or <code>latest</code>. These two only differ when there is a yet-to-be-active Ban List. Ban List can also specify a specific Ban List.  Valid Ban List options are 
           <ul>
           {% set latest_found = false %}
           {% for banlist in banlists %}

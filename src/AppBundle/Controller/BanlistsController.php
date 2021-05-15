@@ -52,7 +52,7 @@ class BanlistsController extends Controller
 
             $num_cards = 0;
             foreach ($mwl_cards as $code => $mwl_entry) {
-                // Use the MWL/Banlist verdict as the key for the array of cards with that same verdict.
+                // Use the MWL/Ban List verdict as the key for the array of cards with that same verdict.
                 // This simplifies the template logic to have these grouped in the controller.
                 $verdict = '';
                 if (array_key_exists('deck_limit', $mwl_entry)) {
