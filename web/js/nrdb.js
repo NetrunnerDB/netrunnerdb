@@ -250,7 +250,7 @@ function get_influence_penalty_icons(card, qty) {
     for (var i = 0; i < penalty; i++) {
         icons += '★';
     }
-    return '<span title="Most Wanted List">' + icons + '</span>';
+    return '<span title="Legality">' + icons + '</span>';
 }
 
 function find_identity() {
