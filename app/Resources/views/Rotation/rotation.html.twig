@@ -5,6 +5,8 @@
 {% block head %}
 <script src="{{ asset('/js/rotation.js') }}"></script>
 <script type="text/javascript">
+var Url_FactionImage = '{{  asset('/images/factions/16px/xxx.png') }}';
+var Url_TypeImage = '{{ asset('/images/types/xxx.png') }}';
 var rotations = new Array();
 
 {% for r in rotations %}
@@ -15,7 +17,7 @@ var rotations = new Array();
   };
   rotations['{{r.code}}']['rotated_cycles'] = new Array();
   {% for c in r.getRotated %}
-	  rotations['{{r.code}}']['rotated_cycles']['{{ c.code }}'] = { 'code': '{{ c.code }}', 'name': '{{ c.name }}'};
+    rotations['{{r.code}}']['rotated_cycles']['{{ c.code }}'] = { 'code': '{{ c.code }}', 'name': '{{ c.name }}'};
   {% endfor %}
 {% endfor %}
 
@@ -30,66 +32,89 @@ var rotations = new Array();
   <div id="list">
     <div class="row">
       <div class="col-sm-12">
-      </div>
-    </div>
-  </div> 
-
-  <div id="list">
-    <div class="row">
-      <div class="col-sm-12">
         <h2>Rotation Card Comparison</h2>
-        <p>Choose two rotation card pools and see what is being added and removed.</p>
+        <p>Choose two rotation card pools and see which cards are added and removed.</p>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-4">
-        <select name="rotation_a" id="rotation_a">
-           <option value="">Select a Rotation Card Pool</option>
-           {% for r in rotations %}
-           <option value="{{ r.code }}">{{ r.name }} ({{ r.dateStart|date("Y-m-d") }})</option>
-           {% endfor %}
-        </select>
-      </div>
-      <div class="col-sm-4">
-        <select name="sort_by" id="sort_by">
-           <option value="">Select sorting options</option>
-           <option value="side_faction_type">Side / Faction / Type</option>
-        </select>
-      </div>
-      <div class="col-sm-4">
-        <select name="rotation_b" id="rotation_b">
-           <option value="">Select a Rotation Card Pool</option>
-           {% for r in rotations %}
-           <option value="{{ r.code }}">{{ r.name }} ({{ r.dateStart|date("Y-m-d") }})</option>
-           {% endfor %}
-        </select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-sm-3">
-        <p>Cycles &amp; Packs</p>
-      </div>
-      <div class="col-sm-3">
-        <p>Removed Cards</p>
-      </div>
-      <div class="col-sm-3">
-        <p>Added Cards</p>
-      </div>
-      <div class="col-sm-3">
-        <p>Cycles &amp; Packs</p>
-      </div>
-    </div>
+
     <div class="row">
       <div class="col-sm-3" id="rotation_a_cycles_and_packs">
+        <div>
+          <h3>Old Card Pool</h3>
+          <select name="rotation_a" id="rotation_a">
+            <option value="">Select a Rotation Card Pool</option>
+            {% for r in rotations %}
+              <option value="{{ r.code }}">{{ r.name }} ({{ r.dateStart|date("Y-m-d") }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          {% for category in cycles_and_packs %}
+            <div class="checkbox -bs-checklist">
+              {% if category.packs|length == 1 %}
+                <div class="checkbox" data-toggle="checklist">
+                  <li class="checkbox"><label class="pack_checkbox {% if category.packs[0].future %}pack-future{% endif %}"><input type="checkbox" name="rotation_a_pack" value="{{ category.packs[0].code }}">{{ category.packs[0].label }}</label></li>
+                </div>
+              {% else %}
+                <div class="checkbox" data-toggle="checklist">
+                  <label><input type="checkbox" class="cycle_checkbox" value="{{ category.code }}" id="cycle_{{ category.cycle_id }}" name="rotation_a_cycle">{{ category.label }}</label>
+                </div>
+                <ul class="checkbox checklist-items">
+                  {% for pack in category.packs %}
+                    <li class="checkbox"><label class="pack_checkbox {% if pack.future %}pack-future{% endif %}"><input type="checkbox" name="rotation_a_pack" value="{{ pack.code }}">{{ pack.label }}</label></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
       </div>
-      <div class="col-sm-3" id="removed_cards">
-      </div>
-      <div class="col-sm-3" id="added_cards">
-      </div>
+
       <div class="col-sm-3" id="rotation_b_cycles_and_packs">
+        <div>
+          <h3>New Card Pool</h3>
+          <select name="rotation_b" id="rotation_b">
+             <option value="">Select a Rotation Card Pool</option>
+             {% for r in rotations %}
+               <option value="{{ r.code }}">{{ r.name }} ({{ r.dateStart|date("Y-m-d") }})</option>
+             {% endfor %}
+          </select>
+        </div>
+        <div>
+          {% for category in cycles_and_packs %}
+            <div class="checkbox -bs-checklist">
+              {% if category.packs|length == 1 %}
+                <div class="checkbox" data-toggle="checklist">
+                  <li class="checkbox"><label class="pack_checkbox {% if category.packs[0].future %}pack-future{% endif %}"><input type="checkbox" name="rotation_b_pack" value="{{ category.packs[0].code }}" >{{ category.packs[0].label }}</label></li>
+                </div>
+              {% else %}
+                <div class="checkbox" data-toggle="checklist">
+                  <label><input type="checkbox" class="cycle_checkbox" value="{{ category.code }}" id="cycle_{{ category.cycle_id }}" name="rotation_b_cycle">{{ category.label }}</label>
+                </div>
+                <ul class="checkbox checklist-items">
+                  {% for pack in category.packs %}
+                    <li class="checkbox"><label class="pack_checkbox {% if pack.future %}pack-future{% endif %}"><input type="checkbox" name="rotation_b_pack" value="{{ pack.code }}">{{ pack.label }}</label></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div>
+          <a id="all">All</a> | 
+          <a id="none">None</a> | 
+          <a id="only_corp">Only Corp Cards</a> | 
+          <a id="only_runner">Only Runner Cards</a>
+        </div>
+        <div id="faction_code" class="filter btn-group btn-group-justified" data-toggle="buttons"></div>
+        <div id="type_code" class="filter btn-group btn-group-justified" data-toggle="buttons"></div>
+        <div><p>Changed Cards</p></div>
+        <div id="diffs"></div>
       </div>
     </div>
-  </div> 
-
+  </div>
 </div>
 {% endblock %}

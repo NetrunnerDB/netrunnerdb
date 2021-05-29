@@ -158,6 +158,39 @@ class CardsData
         return $cycles;
     }
 
+    // Defaults to 'checked' if the pack is not draft and has been officiallly released.
+    // Will check only packs with entries in $pack_codes if it is non-empty.
+    public function getCyclesAndPacks(array $pack_codes = [])
+    {
+        $cycles_and_packs = [];
+        $list_cycles = $this->entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "DESC"]);
+        foreach ($list_cycles as $cycle) {
+            $size = $cycle->getPacks()->count();
+            if ($size == 0) {
+                continue;
+            }
+
+            $entry = ["label" => $cycle->getName(), "code" => $cycle->getCode(), "cycle_id" => $cycle->getId(), "packs" => []];
+            $packs = $cycle->getPacks()->toArray();
+            usort($packs, function ($a, $b) {
+                if ($a->getPosition() == $b->getPosition()) { return 0; }
+                return $a->getPosition() < $b->getPosition() ? 1 : -1;
+            });
+
+            $num_packs_on = 0;
+            foreach ($packs as $pack) {
+                $checked = count($pack_codes) > 0 ? in_array($pack->getCode(), $pack_codes) : $pack->getDateRelease() !== null;
+                if ($checked) {
+                    ++$num_packs_on;
+                }
+                $entry['packs'][] = ["code" => $pack->getCode(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === null];
+            }
+            $entry['checked'] = $num_packs_on == count($packs);
+            $cycles_and_packs[] = $entry;
+        }
+        return $cycles_and_packs;
+    }
+
     public function get_search_rows(array $conditions, string $sortorder, string $locale)
     {
         $i = 0;

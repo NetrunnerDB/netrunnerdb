@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Cycle;
 use AppBundle\Entity\Rotation;
+use AppBundle\Service\CardsData;
 use AppBundle\Service\DecklistManager;
 use AppBundle\Service\DiffService;
 use Doctrine\DBAL\Connection;
@@ -13,7 +14,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Decklist;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Service\CardsData;
 
 class DecklistsController extends Controller
 {
@@ -171,46 +171,13 @@ class DecklistsController extends Controller
         ], $response);
     }
 
-    // Defaults to checked if the pack is not draft and has been officiallly released.
-    // Will check only packs with entries in $pack_codes if it is non-empty.
-    private function getCyclesAndPacks(EntityManagerInterface $entityManager, array $pack_codes = [])
-    {
-        $cycles_and_packs = [];
-        $list_cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ["position" => "DESC"]);
-        foreach ($list_cycles as $cycle) {
-            $size = $cycle->getPacks()->count();
-            if ($size == 0) {
-                continue;
-            }
-
-            $entry = ["label" => $cycle->getName(), "code" => $cycle->getCode(), "cycle_id" => $cycle->getId(), "packs" => []];
-            $packs = $cycle->getPacks()->toArray();
-            usort($packs, function ($a, $b) {
-                if ($a->getPosition() == $b->getPosition()) { return 0; }
-                return $a->getPosition() < $b->getPosition() ? 1 : -1;
-            });
-
-            $num_packs_on = 0;
-            foreach ($packs as $pack) {
-                $checked = count($pack_codes) > 0 ? in_array($pack->getCode(), $pack_codes) : $pack->getDateRelease() !== null;
-                if ($checked) {
-                    ++$num_packs_on;
-                }
-                $entry['packs'][] = ["code" => $pack->getCode(), "label" => $pack->getName(), "checked" => $checked, "future" => $pack->getDateRelease() === null];
-            }
-            $entry['checked'] = $num_packs_on == count($packs);
-            $cycles_and_packs[] = $entry;
-        }
-        return $cycles_and_packs;
-    }
-
     /**
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function searchAction(Request $request, EntityManagerInterface $entityManager)
+    public function searchAction(Request $request, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -225,7 +192,7 @@ class DecklistsController extends Controller
                 ORDER BY f.side_id ASC, f.name ASC"
         )->fetchAll();
 
-        $cycles_and_packs = $this->getCyclesAndPacks($entityManager);
+        $cycles_and_packs = $cardsData->getCyclesAndPacks($entityManager);
 
         $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
         $list_rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
@@ -257,7 +224,7 @@ class DecklistsController extends Controller
      * @return string
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function searchForm(Request $request, EntityManagerInterface $entityManager)
+    private function searchForm(Request $request, EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $dbh = $entityManager->getConnection();
 
@@ -271,7 +238,7 @@ class DecklistsController extends Controller
         $rotation_id = $request->query->get('rotation_id');
         $is_legal = $request->query->get('is_legal');
 
-        $cycles_and_packs = $this->getCyclesAndPacks($entityManager, is_array($packs) ? $packs : []);
+        $cycles_and_packs = $cardsData->getCyclesAndPacks($entityManager, is_array($packs) ? $packs : []);
 
         $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
         $list_rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
