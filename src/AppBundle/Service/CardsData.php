@@ -622,7 +622,7 @@ class CardsData
                     }
                     $i++;
                     break;
-                case 'b': // banlist 
+                case 'b': // ban list 
                     $mwl = null;
                     if ($condition[0] == "active") {
                         $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy(['active' => 1], ["dateStart" => "DESC"]);
@@ -632,7 +632,7 @@ class CardsData
                         $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy(['code' => $condition[0]], ["dateStart" => "DESC"]);
                     }
                     if ($mwl) {
-                        // Exclude any cards banned by this banlist.
+                        // Exclude any cards banned by this ban list.
                         $clauses[] = "(c.id NOT IN (SELECT mc.card_id FROM AppBundle:MwlCard mc WHERE mc.mwl_id = ?$i))";
                         $parameters[$i++] = $mwl->getId();
                     }
