@@ -213,79 +213,66 @@ Promise.all([NRDB.data.promise]).then(function() {
   // Wire up All / None / Corp / Runner shortcuts
   $('#all').on('click', function(event) {
     event.preventDefault();
-	$('.btn').each(function() { $(this).addClass('active'); });
-	$('.btn').each(function() { $(this).addClass('active'); });
+    $('.btn').each(function() { $(this).addClass('active'); });
+    $('.btn').each(function() { $(this).addClass('active'); });
     update_filter();
   });
 
   $('#none').on('click', function(event) {
     event.preventDefault();
-	$('.btn').each(function() { $(this).removeClass('active'); });
-	$('.btn').each(function() { $(this).removeClass('active'); });
+    $('.btn').each(function() { $(this).removeClass('active'); });
+    $('.btn').each(function() { $(this).removeClass('active'); });
     update_filter();
   });
+
+  let only_side = function(event, side) {
+    event.preventDefault();
+    var factions = NRDB.data.factions.find({side_code: side}).sort(function(a, b) {
+        return b.code.substr(0,7) === "neutral"
+            ? -1
+            : a.code.substr(0,7) === "neutral"
+            ? 1
+            : a.code.localeCompare(b.code);
+    }).map(f => f.code);
+
+    $('#faction_code').children('label').each(function() {
+      if (factions.includes($(this).attr('data-code'))) {
+        $(this).addClass('active');
+      } else {
+        $(this).removeClass('active');
+      }
+    });
+    var types = NRDB.data.types.find({
+        is_subtype:false,
+        '$or': [{side_code: side}, {side_code: null}]
+    }).map(t => t.code);
+    $('#type_code').children('label').each(function() {
+      if (types.includes($(this).attr('data-code'))) {
+        $(this).addClass('active');
+      } else {
+        $(this).removeClass('active');
+      }
+    });
+    update_filter();
+  };
 
   $('#only_corp').on('click', function(event) {
-    event.preventDefault();
-    let Side = 'corp';
-    var factions = NRDB.data.factions.find({side_code: Side}).sort(function(a, b) {
-        return b.code.substr(0,7) === "neutral"
-            ? -1
-            : a.code.substr(0,7) === "neutral"
-            ? 1
-            : a.code.localeCompare(b.code);
-    }).map(f => f.code);
-
-    $('#faction_code').children('label').each(function() {
-      if (factions.includes($(this).attr('data-code'))) {
-        $(this).addClass('active');
-      } else {
-        $(this).removeClass('active');
-      }
-    });
-    var types = NRDB.data.types.find({
-        is_subtype:false,
-        '$or': [{side_code: Side}, {side_code: null}]
-    }).map(t => t.code);
-    $('#type_code').children('label').each(function() {
-      if (types.includes($(this).attr('data-code'))) {
-        $(this).addClass('active');
-      } else {
-        $(this).removeClass('active');
-      }
-    });
-    update_filter();
+    only_side(event, 'corp');
+  });
+  $('#only_runner').on('click', function(event) {
+    only_side(event, 'runner');
   });
 
-  $('#only_runner').on('click', function(event) {
+  let cardpoolShowHide = function(event, element, pool) {
     event.preventDefault();
-    let Side = 'runner';
-    var factions = NRDB.data.factions.find({side_code: Side}).sort(function(a, b) {
-        return b.code.substr(0,7) === "neutral"
-            ? -1
-            : a.code.substr(0,7) === "neutral"
-            ? 1
-            : a.code.localeCompare(b.code);
-    }).map(f => f.code);
+    element.text(element.text() === 'hide' ? 'show' : 'hide');
+    pool.toggle();
+  };
 
-    $('#faction_code').children('label').each(function() {
-      if (factions.includes($(this).attr('data-code'))) {
-        $(this).addClass('active');
-      } else {
-        $(this).removeClass('active');
-      }
-    });
-    var types = NRDB.data.types.find({
-        is_subtype:false,
-        '$or': [{side_code: Side }, {side_code: null}]
-    }).map(t => t.code);
-    $('#type_code').children('label').each(function() {
-      if (types.includes($(this).attr('data-code'))) {
-        $(this).addClass('active');
-      } else {
-        $(this).removeClass('active');
-      }
-    });
-    update_filter();
+  $('#show_hide_a').on('click', function(event) {
+    cardpoolShowHide(event, $(this), $('#card_pool_a'));
+  });
+  $('#show_hide_b').on('click', function(event) {
+    cardpoolShowHide(event, $(this), $('#card_pool_b'));
   });
 });

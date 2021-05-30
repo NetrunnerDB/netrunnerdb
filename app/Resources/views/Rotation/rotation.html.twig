@@ -40,15 +40,15 @@ var rotations = new Array();
     <div class="row">
       <div class="col-sm-3" id="rotation_a_cycles_and_packs">
         <div>
-          <h3>Old Card Pool</h3>
+          <h3>Old Card Pool (<a id="show_hide_a">hide</a>)</h3>
+        </div>
+        <div id="card_pool_a">
           <select name="rotation_a" id="rotation_a">
             <option value="">Select a Rotation Card Pool</option>
             {% for r in rotations %}
               <option value="{{ r.code }}">{{ r.name }} ({{ r.dateStart|date("Y-m-d") }})</option>
             {% endfor %}
           </select>
-        </div>
-        <div>
           {% for category in cycles_and_packs %}
             <div class="checkbox -bs-checklist">
               {% if category.packs|length == 1 %}
@@ -72,15 +72,15 @@ var rotations = new Array();
 
       <div class="col-sm-3" id="rotation_b_cycles_and_packs">
         <div>
-          <h3>New Card Pool</h3>
+          <h3>New Card Pool (<a id="show_hide_b">hide</a>)</h3>
+        </div>
+        <div id="card_pool_b">
           <select name="rotation_b" id="rotation_b">
              <option value="">Select a Rotation Card Pool</option>
              {% for r in rotations %}
                <option value="{{ r.code }}">{{ r.name }} ({{ r.dateStart|date("Y-m-d") }})</option>
              {% endfor %}
           </select>
-        </div>
-        <div>
           {% for category in cycles_and_packs %}
             <div class="checkbox -bs-checklist">
               {% if category.packs|length == 1 %}
