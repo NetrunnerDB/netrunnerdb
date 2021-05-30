@@ -147,6 +147,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
             'description'   => $this->description,
             'mwl_code'      => $this->mwl ? $this->mwl->getCode() : null,
             'cards'         => $cards,
+            'tags'          => $this->tags,
         ];
     }
 
