@@ -794,6 +794,12 @@ formats:
     defaults:
         _controller: AppBundle:Formats:get
 
+rotation:
+    path: /{_locale}/rotation
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Rotation:get
+
 claims:
     resource: "@AppBundle/Controller/ClaimsController.php"
     type:     annotation
