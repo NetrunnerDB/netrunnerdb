@@ -5,15 +5,15 @@
 {% block head %}
 <script src="{{ asset('/js/rotation.js') }}"></script>
 <script type="text/javascript">
-var Url_FactionImage = '{{  asset('/images/factions/16px/xxx.png') }}';
-var Url_TypeImage = '{{ asset('/images/types/xxx.png') }}';
+var Url_FactionImage = "{{  asset('/images/factions/16px/xxx.png') }}";
+var Url_TypeImage = "{{ asset('/images/types/xxx.png') }}";
 var rotations = new Array();
 
 {% for r in rotations %}
   rotations['{{ r.code }}'] = {
     'code': '{{ r.code }}',
     'name': '{{ r.name }}',
-    'date_start' : '{{ r.dateStart|date('Y-m-d') }}',
+    'date_start' : "{{ r.dateStart|date('Y-m-d') }}",
   };
   rotations['{{r.code}}']['rotated_cycles'] = new Array();
   {% for c in r.getRotated %}
