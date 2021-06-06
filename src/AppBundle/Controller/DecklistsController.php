@@ -45,7 +45,7 @@ class DecklistsController extends Controller
             case 'find':
                 $result = $decklistManager->find($start, $limit, $request, $cardsData);
                 $pagetitle = "Decklist search results";
-                $header = $this->searchForm($request, $entityManager);
+                $header = $this->searchForm($request, $entityManager, $cardsData);
                 break;
             case 'favorites':
                 $response->setPrivate();
@@ -192,7 +192,7 @@ class DecklistsController extends Controller
                 ORDER BY f.side_id ASC, f.name ASC"
         )->fetchAll();
 
-        $cycles_and_packs = $cardsData->getCyclesAndPacks($entityManager);
+        $cycles_and_packs = $cardsData->getCyclesAndPacks();
 
         $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
         $list_rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
@@ -238,7 +238,7 @@ class DecklistsController extends Controller
         $rotation_id = $request->query->get('rotation_id');
         $is_legal = $request->query->get('is_legal');
 
-        $cycles_and_packs = $cardsData->getCyclesAndPacks($entityManager, is_array($packs) ? $packs : []);
+        $cycles_and_packs = $cardsData->getCyclesAndPacks(is_array($packs) ? $packs : []);
 
         $list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
         $list_rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
