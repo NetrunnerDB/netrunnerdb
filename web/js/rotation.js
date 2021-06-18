@@ -256,11 +256,33 @@ Promise.all([NRDB.data.promise]).then(function() {
     update_filter();
   };
 
+  let only_side_types = function(event, side) {
+    event.preventDefault();
+    var types = NRDB.data.types.find({
+        is_subtype:false,
+        '$or': [{side_code: side}, {side_code: null}]
+    }).map(t => t.code);
+    $('#type_code').children('label').each(function() {
+      if (types.includes($(this).attr('data-code'))) {
+        $(this).addClass('active');
+      } else {
+        $(this).removeClass('active');
+      }
+    });
+    update_filter();
+  };
+
   $('#only_corp').on('click', function(event) {
     only_side(event, 'corp');
   });
+  $('#only_corp_types').on('click', function(event) {
+    only_side_types(event, 'corp');
+  });
   $('#only_runner').on('click', function(event) {
     only_side(event, 'runner');
+  });
+  $('#only_runner_types').on('click', function(event) {
+    only_side_types(event, 'runner');
   });
 
   let cardpoolShowHide = function(event, element, pool) {
