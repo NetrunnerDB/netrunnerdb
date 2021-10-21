@@ -84,7 +84,7 @@ class FactionController extends Controller
 
                 $identity = $cardsData->select_only_latest_cards($identities);
 
-                $i = $cardsData->get_mwl_info([$identity[0]]);
+                $i = $cardsData->get_mwl_info([$identity[0]], true /* active_only */);
                 if (count($i) > 0 && $i[array_keys($i)[0]]['active'] && $i[array_keys($i)[0]]['deck_limit'] === 0) {
                     $banned_cards[$identity[0]->getCode()] = true;
                 }

@@ -55,7 +55,7 @@ class BuilderController extends Controller
         $identities = $cardsData->select_only_latest_cards($identities);
         $banned_cards = array();
         foreach ($identities as $id) {
-            $i = $cardsData->get_mwl_info([$id]);
+            $i = $cardsData->get_mwl_info([$id], true /* active_only */);
             if (count($i) > 0 && $i[array_keys($i)[0]]['active'] && $i[array_keys($i)[0]]['deck_limit'] === 0) {
                 $banned_cards[$id->getCode()] = true;
             }
