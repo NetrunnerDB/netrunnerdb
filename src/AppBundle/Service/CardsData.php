@@ -923,10 +923,14 @@ class CardsData
         ));
     }
 
-    public function get_mwl_info(array $cards)
+    public function get_mwl_info(array $cards, bool $active_only = false)
     {
         $response = [];
-        $mwls = $this->entityManager->getRepository(Mwl::class)->findBy([], ["dateStart" => "DESC"]);
+        $filters = [];
+        if ($active_only) {
+            $filters = ["active" => 1];
+        }
+        $mwls = $this->entityManager->getRepository(Mwl::class)->findBy($filters, ["dateStart" => "DESC"]);
 
         foreach ($cards as $card) {
             $card_code = $card->getCode();
