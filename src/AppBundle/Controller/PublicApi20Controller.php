@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use DateTime;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use AppBundle\Entity\Deck;
@@ -13,70 +14,163 @@ use Symfony\Component\HttpFoundation\Request;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FOS\RestBundle\Controller\FOSRestController;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Psr\Log\LoggerInterface;
 
 class PublicApi20Controller extends FOSRestController
 {
     /** @var EntityManagerInterface $entityManager */
     protected $entityManager;
+    protected $cache;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, AdapterInterface $cache)
     {
-        $this->entityManager = $entityManager;
+      $this->entityManager = $entityManager;
+      $this->cache = $cache;
+    }
+
+    private function getSingleEntityFromCache(string $cachePrefix, $entityFunction, Request $request, array $additionalTopLevelProperties = []) {
+      $cacheData = $this->cache->getItem($cachePrefix);
+      $cacheDateUpdate = $this->cache->getItem($cachePrefix . '-date-update');
+      $cacheCount = $this->cache->getItem($cachePrefix . '-count');
+
+      if (!$cacheData->isHit()) {
+        $entities = $entityFunction();
+        $data = $entities ? $this->getEntityJson([$entities]) : [];
+        $dateUpdate = $entities ? $this->getDateUpdateFromEntities([$entities]) : new DateTime();
+
+        $cacheData->set($data);
+        $cacheDateUpdate->set($dateUpdate);
+        $cacheCount->set($entities ? 1 : 0);
+
+        $this->cache->save($cacheData);
+        $this->cache->save($cacheDateUpdate);
+        $this->cache->save($cacheCount);
+      }
+      return $this->prepareResponseFromCache($cacheData->get(), $cacheCount->get(), $cacheDateUpdate->get(), $request, $additionalTopLevelProperties);
+    }
+
+    private function getFromCache(string $cachePrefix, $entityFunction, Request $request, array $additionalTopLevelProperties = []) {
+      $cacheData = $this->cache->getItem($cachePrefix);
+      $cacheDateUpdate = $this->cache->getItem($cachePrefix . '-date-update');
+      $cacheCount = $this->cache->getItem($cachePrefix . '-count');
+
+      if (!$cacheData->isHit()) {
+        $entities = $entityFunction();
+        $data = $this->getEntityJson($entities);
+        $dateUpdate = $this->getDateUpdateFromEntities($entities);
+
+        $cacheData->set($data);
+        $cacheDateUpdate->set($dateUpdate);
+        $cacheCount->set(count($entities));
+
+        $this->cache->save($cacheData);
+        $this->cache->save($cacheDateUpdate);
+        $this->cache->save($cacheCount);
+      }
+      return $this->prepareResponseFromCache($cacheData->get(), $cacheCount->get(), $cacheDateUpdate->get(), $request, $additionalTopLevelProperties);
+    }
+
+    private function getDateUpdateFromEntities(array $entities) {
+      return array_reduce($entities, function ($carry, TimestampableInterface $item) {
+        if (!$carry || ($item->getDateUpdate() > $carry)) {
+          return $item->getDateUpdate();
+        } else {
+          return $carry;
+        }
+      });
+   }
+
+    private function getEntityJson(array $entities) {
+      return array_map(function (NormalizableInterface $entity) {
+        return $entity->normalize();
+      }, $entities);
+    }
+
+    private function prepareResponseFromCache($data, $count, $dateUpdate, Request $request, array $additionalTopLevelProperties = [])
+    {
+      $response = new JsonResponse();
+      $response->headers->set('Access-Control-Allow-Origin', '*');
+      $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
+      $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+      $response->setPublic();
+      $response->setMaxAge($this->getParameter('short_cache'));
+
+      $response->setLastModified($dateUpdate);
+      if ($response->isNotModified($request)) {
+        return $response;
+      }
+
+      $locale = $request->query->get('_locale');
+
+      $content = $additionalTopLevelProperties;
+
+      $content['data'] = $data;
+      $content['total'] = $count;
+      $content['success'] = $count == 0 ? false : true;
+      $content['version_number'] = '2.0';
+      $content['last_updated'] = $dateUpdate ? $dateUpdate->format('c') : null;
+
+      $response->setData($content);
+
+      return $response;
     }
 
     private function prepareResponse(array $entities, Request $request, array $additionalTopLevelProperties = [])
     {
-        $response = new JsonResponse();
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
-        $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        $response->setPublic();
-        $response->setMaxAge($this->getParameter('short_cache'));
+      $response = new JsonResponse();
+      $response->headers->set('Access-Control-Allow-Origin', '*');
+      $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
+      $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+      $response->setPublic();
+      $response->setMaxAge($this->getParameter('short_cache'));
 
-        $dateUpdate = array_reduce($entities, function ($carry, TimestampableInterface $item) {
-            if (!$carry || ($item->getDateUpdate() > $carry)) {
-                return $item->getDateUpdate();
-            } else {
-                return $carry;
-            }
-        });
-
-        $response->setLastModified($dateUpdate);
-        if ($response->isNotModified($request)) {
-            return $response;
+      $dateUpdate = array_reduce($entities, function ($carry, TimestampableInterface $item) {
+        if (!$carry || ($item->getDateUpdate() > $carry)) {
+          return $item->getDateUpdate();
+        } else {
+          return $carry;
         }
+      });
 
-        $locale = $request->query->get('_locale');
-
-        $content = $additionalTopLevelProperties;
-
-        $content['data'] = array_map(function (NormalizableInterface $entity) {
-            return $entity->normalize();
-        }, $entities);
-
-        $content['total'] = count($content['data']);
-        $content['success'] = true;
-        $content['version_number'] = '2.0';
-        $content['last_updated'] = $dateUpdate ? $dateUpdate->format('c') : null;
-
-        $response->setData($content);
-
+      $response->setLastModified($dateUpdate);
+      if ($response->isNotModified($request)) {
         return $response;
+      }
+
+      $locale = $request->query->get('_locale');
+
+      $content = $additionalTopLevelProperties;
+
+      $content['data'] = array_map(function (NormalizableInterface $entity) {
+        return $entity->normalize();
+      }, $entities);
+
+      $content['total'] = count($content['data']);
+      $content['success'] = true;
+      $content['version_number'] = '2.0';
+      $content['last_updated'] = $dateUpdate ? $dateUpdate->format('c') : null;
+
+      $response->setData($content);
+
+      return $response;
     }
 
     private function prepareFailedResponse(string $msg)
     {
-        $response = new JsonResponse();
-        $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        $response->setPrivate();
+      $response = new JsonResponse();
+      $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+      $response->setPrivate();
 
-        $content = [ 'version_number' => '2.0' ];
-        $content['success'] = false;
-        $content['msg'] = $msg;
+      $content = [ 'version_number' => '2.0' ];
+      $content['success'] = false;
+      $content['msg'] = $msg;
 
-        $response->setData($content);
+      $response->setData($content);
 
-        return $response;
+      return $response;
     }
 
     /**
@@ -92,13 +186,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function typeAction(string $type_code, Request $request)
     {
-        $type = $this->entityManager->getRepository('AppBundle:Type')->findOneBy(['code' => $type_code]);
-
-        if (!$type) {
-            throw $this->createNotFoundException();
-        }
-
-        return $this->prepareResponse([$type], $request);
+      return $this->getSingleEntityFromCache("public-api-type-" . $type_code, function() use ($type_code) {
+        return $this->entityManager->getRepository('AppBundle:Type')->findOneBy(['code' => $type_code]);
+      }, $request);
     }
 
     /**
@@ -114,9 +204,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function typesAction(Request $request)
     {
-        $data = $this->entityManager->getRepository('AppBundle:Type')->findAll();
-
-        return $this->prepareResponse($data, $request);
+      return $this->getFromCache("public-api-types", function() {
+        return $this->entityManager->getRepository('AppBundle:Type')->findAll();
+      }, $request);
     }
 
     /**
@@ -132,13 +222,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function sideAction(string $side_code, Request $request)
     {
-        $side = $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
-
-        if (!$side) {
-            throw $this->createNotFoundException();
-        }
-
-        return $this->prepareResponse([$side], $request);
+      return $this->getSingleEntityFromCache("public-api-side-" . $side_code, function() use ($side_code) {
+        return $this->entityManager->getRepository('AppBundle:Side')->findOneBy(['code' => $side_code]);
+      }, $request);
     }
 
     /**
@@ -154,9 +240,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function sidesAction(Request $request)
     {
-        $data = $this->entityManager->getRepository('AppBundle:Side')->findAll();
-
-        return $this->prepareResponse($data, $request);
+      return $this->getFromCache("public-api-sides", function() {
+        return $this->entityManager->getRepository('AppBundle:Side')->findAll();
+      }, $request);
     }
 
     /**
@@ -172,13 +258,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function factionAction(string $faction_code, Request $request)
     {
-        $faction = $this->entityManager->getRepository('AppBundle:Faction')->findOneBy(['code' => $faction_code]);
-
-        if (!$faction) {
-            throw $this->createNotFoundException();
-        }
-
-        return $this->prepareResponse([$faction], $request);
+      return $this->getSingleEntityFromCache("public-api-faction-" . $faction_code, function() use ($faction_code) {
+        return $this->entityManager->getRepository('AppBundle:Faction')->findOneBy(['code' => $faction_code]);
+      }, $request);
     }
 
     /**
@@ -194,9 +276,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function factionsAction(Request $request)
     {
-        $data = $this->entityManager->getRepository('AppBundle:Faction')->findAll();
-
-        return $this->prepareResponse($data, $request);
+      return $this->getFromCache("public-api-factions", function() {
+        return $this->entityManager->getRepository('AppBundle:Faction')->findAll();
+      }, $request);
     }
 
     /**
@@ -212,13 +294,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function cycleAction(string $cycle_code, Request $request)
     {
-        $cycle = $this->entityManager->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
-
-        if (!$cycle) {
-            throw $this->createNotFoundException();
-        }
-
-        return $this->prepareResponse([$cycle], $request);
+      return $this->getSingleEntityFromCache("public-api-cycle-" . $cycle_code, function() use ($cycle_code) {
+        return $this->entityManager->getRepository('AppBundle:Cycle')->findOneBy(['code' => $cycle_code]);
+      }, $request);
     }
 
     /**
@@ -234,9 +312,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function cyclesAction(Request $request)
     {
-        $data = $this->entityManager->getRepository('AppBundle:Cycle')->findAll();
-
-        return $this->prepareResponse($data, $request);
+      return $this->getFromCache("public-api-cycles", function() {
+        return $this->entityManager->getRepository('AppBundle:Cycle')->findAll();
+      }, $request);
     }
 
     /**
@@ -252,13 +330,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function packAction(string $pack_code, Request $request)
     {
-        $pack = $this->entityManager->getRepository('AppBundle:Pack')->findOneBy(['code' => $pack_code]);
-
-        if (!$pack) {
-            throw $this->createNotFoundException();
-        }
-
-        return $this->prepareResponse([$pack], $request);
+      return $this->getSingleEntityFromCache("public-api-pack-" . $pack_code, function() use ($pack_code) {
+        return $this->entityManager->getRepository('AppBundle:Pack')->findOneBy(['code' => $pack_code]);
+      }, $request);
     }
 
     /**
@@ -272,11 +346,10 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      */
-    public function packsAction(Request $request)
-    {
-        $data = $this->entityManager->getRepository('AppBundle:Pack')->findAll();
-
-        return $this->prepareResponse($data, $request);
+    public function packsAction(Request $request) {
+      return $this->getFromCache("public-api-packs", function() {
+        return $this->entityManager->getRepository('AppBundle:Pack')->findAll();
+      }, $request);
     }
 
     /**
@@ -292,13 +365,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function cardAction(string $card_code, Request $request)
     {
-        $card = $this->entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
-
-        if (!$card) {
-            throw $this->createNotFoundException();
-        }
-
-        return $this->prepareResponse([$card], $request, ['imageUrlTemplate' => $request->getSchemeAndHttpHost() . '/card_image/large/{code}.jpg']);
+      return $this->getSingleEntityFromCache("public-api-card-" . $card_code, function() use ($card_code) {
+        return $this->entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
+      }, $request, ['imageUrlTemplate' => $request->getSchemeAndHttpHost() . '/card_image/large/{code}.jpg']);
     }
 
     /**
@@ -314,9 +383,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function cardsAction(Request $request)
     {
-        $data = $this->entityManager->getRepository('AppBundle:Card')->findAll();
-
-        return $this->prepareResponse($data, $request, ['imageUrlTemplate' => $request->getSchemeAndHttpHost() . '/card_image/large/{code}.jpg']);
+      return $this->getFromCache("public-api-cards", function() {
+        return $this->entityManager->getRepository('AppBundle:Card')->findAll();
+      }, $request, ['imageUrlTemplate' => $request->getSchemeAndHttpHost() . '/card_image/large/{code}.jpg']);
     }
 
     /**
@@ -330,11 +399,12 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function decklistAction(Decklist $decklist, Request $request)
+    public function decklistAction(int $decklist_id, Request $request)
     {
-        return $this->prepareResponse([$decklist], $request);
+      return $this->getSingleEntityFromCache("public-api-decklist-" . $decklist_id, function() use ($decklist_id) {
+        return $this->entityManager->getRepository('AppBundle:Decklist')->findOneBy(['id' => $decklist_id]);
+      }, $request);
     }
 
     /**
@@ -350,13 +420,14 @@ class PublicApi20Controller extends FOSRestController
      */
     public function decklistsByDateAction(string $date, Request $request, EntityManagerInterface $entityManager)
     {
+        // Not caching because this appears to be used only dozens of times per day.
         $date_from = new \DateTime($date);
         $date_to = clone($date_from);
         $date_to->modify('+1 day');
 
         $date_today = new \DateTime();
         if ($date_today < $date_from) {
-            return $this->prepareFailedResponse("Date is in the future");
+          return $this->prepareFailedResponse("Date is in the future");
         }
 
         $qb = $entityManager->createQueryBuilder()->select('d')->from('AppBundle:Decklist', 'd');
@@ -384,8 +455,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function deckAction(Deck $deck, Request $request)
     {
+        // Not currently caching because this is currently very rarely used.
         if (!$deck->getUser()->getShareDecks()) {
-            throw $this->createAccessDeniedException();
+          throw $this->createAccessDeniedException();
         }
 
         return $this->prepareResponse([$deck], $request);
@@ -404,9 +476,9 @@ class PublicApi20Controller extends FOSRestController
      */
     public function prebuiltsAction(Request $request)
     {
-        $data = $this->entityManager->getRepository('AppBundle:Prebuilt')->findAll();
-
-        return $this->prepareResponse($data, $request);
+      return $this->getFromCache("public-api-prebuilts", function() {
+        return $this->entityManager->getRepository('AppBundle:Prebuilt')->findAll();
+      }, $request);
     }
 
     /**
@@ -422,8 +494,8 @@ class PublicApi20Controller extends FOSRestController
      */
     public function mwlAction(Request $request)
     {
-        $data = $this->entityManager->getRepository('AppBundle:Mwl')->findAll();
-
-        return $this->prepareResponse($data, $request);
+      return $this->getFromCache("public-api-mwl", function() {
+        return $this->entityManager->getRepository('AppBundle:Mwl')->findAll();
+      }, $request);
     }
 }
