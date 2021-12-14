@@ -103,7 +103,8 @@
   }
   function add_string_sf(key, operator, values) {
     for (var j = 0; j < values.length; j++) {
-      values[j] = new RegExp(values[j], 'i');
+      // Do exact matches for packs
+      values[j] = key == 'pack_code' ? new RegExp('^(' + values[j] + ')$', 'i') : new RegExp(values[j], 'i');
     }
     switch (operator) {
     case ":":
