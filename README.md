@@ -2,7 +2,7 @@ This repository holds the source code of [NetrunnerDB](https://netrunnerdb.com).
 
 # This is not where the cards data is
 
-The data used by NetrunnerDB is at https://github.com/Alsciende/netrunner-cards-json. If you want to fix a mistake in some card data, or add the data of a new card, you can submit a PR [there](https://github.com/Alsciende/netrunner-cards-json/pulls). Also, that's where the localized data is.
+The data used by NetrunnerDB is at https://github.com/NetrunnerDB/netrunner-cards-json. If you want to fix a mistake in some card data, or add the data of a new card, you can submit a PR [there](https://github.com/Alsciende/netrunner-cards-json/pulls). Also, that's where the localized data is.
 
 # Installing a local copy of NetrunnerDB
 
@@ -16,7 +16,7 @@ The data used by NetrunnerDB is at https://github.com/Alsciende/netrunner-cards-
 - Go into the directory where your server will reside
 - Clone the repository (or your own fork)
 - This creates a directory named `netrunnerdb`
-- Also, clone the data repository (or your own fork) at https://github.com/zaroth/netrunner-cards-json
+- Also, clone the data repository (or your own fork) at https://github.com/NetrunnerDB/netrunner-cards-json
 - Go into it the directory `netrunnerdb`
 - Install Composer (see https://getcomposer.org/download/)
 - Install the vendor libs: `composer install`. You'll be asked to input your database connection parameter.
