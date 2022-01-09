@@ -18,6 +18,11 @@ class Deck implements NormalizableInterface, TimestampableInterface
     private $id;
 
     /**
+     * @var string|null
+     */
+    private $uuid;
+
+    /**
      * @var string
      */
     private $name;
@@ -141,6 +146,7 @@ class Deck implements NormalizableInterface, TimestampableInterface
 
         return [
             'id'            => $this->id,
+            'uuid'          => $this->uuid,
             'date_creation' => $this->dateCreation->format('c'),
             'date_update'   => $this->dateUpdate->format('c'),
             'name'          => $this->name,
@@ -157,6 +163,25 @@ class Deck implements NormalizableInterface, TimestampableInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param string $uuid
+     * @return $this
+     */
+    public function setUuid(string $uuid)
+    {
+        $this->uuid = $uuid;
+
+        return $this;
     }
 
     /**

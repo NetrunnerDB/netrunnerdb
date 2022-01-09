@@ -142,6 +142,11 @@ AppBundle\Entity\Decklist:
             generator:
                 strategy: AUTO
     fields:
+        uuid:
+            type: string
+            length: 36 
+            nullable: true
+            unique: true
         dateUpdate:
             type: datetime
             nullable: false
