@@ -5,14 +5,16 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Card;
 use AppBundle\Entity\Deck;
+use AppBundle\Entity\Deckchange;
 use AppBundle\Entity\Decklist;
 use AppBundle\Entity\Deckslot;
 use AppBundle\Entity\Mwl;
 use AppBundle\Entity\Pack;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Psr\Log\LoggerInterface;
-use AppBundle\Entity\Deckchange;
+use Ramsey\Uuid\Uuid;
 
 class DeckManager
 {
@@ -284,6 +286,12 @@ class DeckManager
             $deck->setMwl(null);
         }
 
+        // Note: We are doing the naive thing and just assuming we won't collide.
+		// If there is a collision, there will be an error returned to the user.
+		// Sorry, users!  v2 will be nicer to you!
+        if ($deck->getUuid() == null) {
+          $deck->setUuid(Uuid::uuid4()->toString());
+        }
         $deck->setName($name);
         $deck->setDescription($description);
         $deck->setUser($user);

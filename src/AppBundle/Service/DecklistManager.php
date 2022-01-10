@@ -7,6 +7,7 @@ use AppBundle\Entity\Deck;
 use AppBundle\Entity\Decklist;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
 
 class DecklistManager

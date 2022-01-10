@@ -3,35 +3,38 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Card;
+use AppBundle\Entity\Comment;
+use AppBundle\Entity\Deck;
+use AppBundle\Entity\Decklist;
+use AppBundle\Entity\Decklistslot;
 use AppBundle\Entity\Deckslot;
+use AppBundle\Entity\Legality;
 use AppBundle\Entity\Tournament;
+use AppBundle\Entity\User;
 use AppBundle\Service\ActivityHelper;
+use AppBundle\Service\CardsData;
 use AppBundle\Service\DecklistManager;
 use AppBundle\Service\Judge;
 use AppBundle\Service\ModerationHelper;
 use AppBundle\Service\RotationService;
 use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Entity\Deck;
-use AppBundle\Entity\Decklist;
-use AppBundle\Entity\Decklistslot;
-use AppBundle\Entity\Comment;
-use AppBundle\Entity\User;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use AppBundle\Entity\Legality;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use AppBundle\Service\CardsData;
 
 class SocialController extends Controller
 {
 
     /**
+     * This function is used to check if a deck can be published from the deck list page.
+     *
      * @param Deck $deck
      * @param EntityManagerInterface $entityManager
      * @param Judge                  $judge
@@ -131,6 +134,10 @@ class SocialController extends Controller
         $tournament = $entityManager->getRepository('AppBundle:Tournament')->find($tournament_id);
 
         $decklist = new Decklist();
+        // Note: We are doing the naive thing and just assuming we won't collide.
+		// If there is a collision, there will be an error returned to the user.
+		// Sorry, users!  v2 will be nicer to you!
+        $decklist->setUuid(Uuid::uuid4()->toString());
         $decklist->setName($name);
         $decklist->setPrettyname(preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($name)));
         $decklist->setRawdescription($rawdescription);
@@ -881,6 +888,12 @@ class SocialController extends Controller
             }
         }
 
+        // Note: We are doing the naive thing and just assuming we won't collide.
+		// If there is a collision, there will be an error returned to the user.
+		// Sorry, users!  v2 will be nicer to you!
+        if ($decklist->getUuid() == null) {
+            $decklist->setUuid(Uuid::uuid4()->toString());
+        }
         $decklist->setName($name);
         $decklist->setPrettyname(preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($name)));
         $decklist->setRawdescription($rawdescription);

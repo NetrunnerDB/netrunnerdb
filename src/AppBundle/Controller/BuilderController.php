@@ -2,25 +2,25 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Card;
+use AppBundle\Entity\Deck;
+use AppBundle\Entity\Deckchange;
 use AppBundle\Entity\Decklist;
+use AppBundle\Entity\Deckslot;
 use AppBundle\Entity\Mwl;
 use AppBundle\Entity\User;
+use AppBundle\Service\CardsData;
 use AppBundle\Service\DeckManager;
 use AppBundle\Service\Judge;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Entity\Deck;
-use AppBundle\Entity\Deckslot;
-use AppBundle\Entity\Card;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\Deckchange;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use AppBundle\Service\CardsData;
-use Psr\Log\LoggerInterface;
 
 class BuilderController extends Controller
 {
@@ -917,15 +917,7 @@ class BuilderController extends Controller
         );
     }
 
-    /**
-     * @param int                    $deck_id
-     * @param EntityManagerInterface $entityManager
-     * @param Judge                  $judge
-     * @return Response
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function viewAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge)
-    {
+    public function viewByIdAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge) {
         $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery("
             SELECT
@@ -956,7 +948,53 @@ class BuilderController extends Controller
         if (!count($rows)) {
             throw $this->createNotFoundException();
         }
-        $deck = $rows[0];
+        return $this->viewAction($rows[0], $entityManager, $judge);
+    }
+
+    public function viewByUuidAction(string $uuid, EntityManagerInterface $entityManager, Judge $judge) {
+        $dbh = $entityManager->getConnection();
+        $rows = $dbh->executeQuery("
+            SELECT
+              d.id,
+              d.name,
+              d.description,
+              m.code,
+              d.problem,
+              d.date_update,
+              s.name side_name,
+              c.code identity_code,
+              f.code faction_code,
+              CASE WHEN u.id=? THEN 1 ELSE 0 END is_owner
+            FROM deck d
+              LEFT JOIN mwl m  ON d.mwl_id=m.id
+              LEFT JOIN user u ON d.user_id=u.id
+              LEFT JOIN side s ON d.side_id=s.id
+              LEFT JOIN card c ON d.identity_id=c.id
+              LEFT JOIN faction f ON c.faction_id=f.id
+            WHERE d.uuid=?
+              AND (u.id=? OR u.share_decks=1)
+               ", [
+            $this->getUser() ? $this->getUser()->getId() : null,
+            $uuid,
+            $this->getUser() ? $this->getUser()->getId() : null,
+        ])->fetchAll();
+
+        if (!count($rows)) {
+            throw $this->createNotFoundException();
+        }
+        return $this->viewAction($rows[0], $entityManager, $judge);
+    }
+
+    /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @param Judge                  $judge
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function viewAction(array $deck, EntityManagerInterface $entityManager, Judge $judge)
+    {
+        $dbh = $entityManager->getConnection();
 
         $deck['side_name'] = mb_strtolower($deck['side_name']);
 
@@ -967,7 +1005,7 @@ class BuilderController extends Controller
             FROM deckslot s
               JOIN card c ON s.card_id=c.id
             WHERE s.deck_id=?", [
-            $deck_id,
+            $deck['id'],
         ])->fetchAll();
 
         $cards = [];
@@ -989,7 +1027,7 @@ class BuilderController extends Controller
               AND d.moderation_status IN (0,1)
             ORDER BY d.date_creation ASC",
             [
-                $deck_id,
+                $deck['id'],
             ]
 
         )->fetchAll();
@@ -1007,7 +1045,7 @@ class BuilderController extends Controller
               AND d.moderation_status IN (0,1)
             ORDER BY d.date_creation ASC",
             [
-                $deck_id,
+                $deck['id'],
             ]
 
         )->fetchAll();

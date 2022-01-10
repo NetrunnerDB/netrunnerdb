@@ -61,7 +61,7 @@ class PrivateApi20Controller extends FOSRestController
     }
 
     /**
-     * Get one deck
+     * Get one deck by ID
      *
      * @ApiDoc(
      *  section="Deck",
@@ -72,7 +72,7 @@ class PrivateApi20Controller extends FOSRestController
      *  }
      * )
      */
-    public function loadDeckAction(int $deck_id, Request $request, EntityManagerInterface $entityManager)
+    public function loadDeckByIdAction(int $deck_id, Request $request, EntityManagerInterface $entityManager)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -81,16 +81,51 @@ class PrivateApi20Controller extends FOSRestController
             throw $this->createAccessDeniedException();
         }
 
-        $includeHistory = $request->query->has('include_history') && $request->query->get('include_history');
-
         /** @var Deck $deck */
         $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
 
+        return $this->loadDeck($deck, $request, $entityManager);
+    }
+
+    /**
+     * Get one deck by UUID
+     *
+     * @ApiDoc(
+     *  section="Deck",
+     *  resource=true,
+     *  description="Get one (private) deck of authenticated user",
+     *  parameters={
+     *    {"name"="include_history", "dataType"="boolean", "required"=false, "description"="truthy value (eg '1') to include the deck changes"},
+     *  }
+     * )
+     */
+    public function loadDeckByUuidAction(string $uuid, Request $request, EntityManagerInterface $entityManager)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        /** @var Deck $deck */
+        $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'uuid' => $uuid]);
+
+        return $this->loadDeck($deck, $request, $entityManager);
+    }
+
+    /**
+     * Get one deck
+     */
+    private function loadDeck(Deck $deck, Request $request, EntityManagerInterface $entityManager)
+    {
         if (!$deck) {
             throw $this->createNotFoundException();
         }
 
         $history = [];
+
+        $includeHistory = $request->query->has('include_history') && $request->query->get('include_history');
 
         if ($includeHistory) {
             $qb = $entityManager->createQueryBuilder();

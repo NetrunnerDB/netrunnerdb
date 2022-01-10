@@ -400,10 +400,29 @@ class PublicApi20Controller extends FOSRestController
      * )
      *
      */
-    public function decklistAction(int $decklist_id, Request $request)
+    public function decklistByIdAction(int $decklist_id, Request $request)
     {
       return $this->getSingleEntityFromCache("public-api-decklist-" . $decklist_id, function() use ($decklist_id) {
         return $this->entityManager->getRepository('AppBundle:Decklist')->findOneBy(['id' => $decklist_id]);
+      }, $request);
+    }
+
+    /**
+     * Get a decklist by UUID
+     *
+     * @ApiDoc(
+     *  section="Decklist",
+     *  resource=true,
+     *  description="Get one (published) decklist",
+     *  parameters={
+     *  },
+     * )
+     *
+     */
+    public function decklistByUuidAction(string $uuid, Request $request)
+    {
+      return $this->getSingleEntityFromCache("public-api-decklist-" . $uuid, function() use ($uuid) {
+        return $this->entityManager->getRepository('AppBundle:Decklist')->findOneBy(['uuid' => $uuid]);
       }, $request);
     }
 
@@ -453,7 +472,30 @@ class PublicApi20Controller extends FOSRestController
      *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function deckAction(Deck $deck, Request $request)
+    public function deckByIdAction(Deck $deck, Request $request)
+    {
+        // Not currently caching because this is currently very rarely used.
+        if (!$deck->getUser()->getShareDecks()) {
+          throw $this->createAccessDeniedException();
+        }
+
+        return $this->prepareResponse([$deck], $request);
+    }
+
+    /**
+     * Get a deck by UUID
+     *
+     * @ApiDoc(
+     *  section="Deck",
+     *  resource=true,
+     *  description="Get one (private, shared) deck",
+     *  parameters={
+     *  },
+     * )
+     *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"uuid": "uuid"}})
+     */
+    public function deckByUuidAction(Deck $deck, Request $request)
     {
         // Not currently caching because this is currently very rarely used.
         if (!$deck->getUser()->getShareDecks()) {

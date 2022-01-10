@@ -48,11 +48,21 @@ deck_view:
     path: /{_locale}/deck/view/{deck_id}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:view
+        _controller: AppBundle:Builder:viewById
         _locale: en
     requirements:
         _locale: \w\w
         deck_id: \d+
+
+deck_view_by_uuid:
+    path: /{_locale}/deck/view/{uuid}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:viewByUuid
+        _locale: en
+    requirements:
+        _locale: \w\w
+        uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 deck_duplicate:
     path: /{_locale}/deck/duplicate/{deck_id}
@@ -624,9 +634,17 @@ api_public_decklist:
     path: /api/2.0/public/decklist/{decklist_id}
     methods: [GET]
     defaults:
-        _controller: AppBundle:PublicApi20:decklist
+        _controller: AppBundle:PublicApi20:decklistById
     requirements:
         decklist_id: "\\d+"
+
+api_public_decklist_by_uuid:
+    path: /api/2.0/public/decklist/{uuid}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:decklistByUuid
+    requirements:
+        uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 api_public_decklists_by_date:
     path: /api/2.0/public/decklists/by_date/{date}
@@ -640,9 +658,17 @@ api_public_deck:
     path: /api/2.0/public/deck/{deck_id}
     methods: [GET]
     defaults:
-        _controller: AppBundle:PublicApi20:deck
+        _controller: AppBundle:PublicApi20:deckById
     requirements:
         deck_id: "\\d+"
+
+api_public_deck_by_uuid:
+    path: /api/2.0/public/deck/{uuid}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:deckByUuid
+    requirements:
+        uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 api_public_prebuilts:
     path: /api/2.0/public/prebuilts
@@ -662,13 +688,21 @@ api_private_decks:
     defaults:
         _controller: AppBundle:PrivateApi20:decks
 
-api_private_deck_load:
+api_private_deck_load_by_id:
     path: /api/2.0/private/deck/{deck_id}
     methods: [GET]
     defaults:
-        _controller: AppBundle:PrivateApi20:loadDeck
+        _controller: AppBundle:PrivateApi20:loadDeckById
     requirements:
         deck_id: "\\d+"
+
+api_private_deck_load_by_uuid:
+    path: /api/2.0/private/deck/{uuid}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PrivateApi20:loadDeckByUuid
+    requirements:
+        uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 api_private_deck_save:
     path: /api/2.0/private/deck/save
