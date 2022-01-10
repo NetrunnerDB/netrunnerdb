@@ -33,14 +33,28 @@ class SetDecksUuidCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-		$sql = "UPDATE deck "
-			. "SET uuid = LOWER(CONCAT("
-			. "HEX(RANDOM_BYTES(4)), '-', "
-			. "HEX(RANDOM_BYTES(2)), '-4', "
-			. "SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3), '-', "
-			. "CONCAT(HEX(FLOOR(ASCII(RANDOM_BYTES(1)) / 64)+8), SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3)), "
-			. "'-', HEX(RANDOM_BYTES(6))))"
-			. " WHERE uuid IS NULL";
+        // Construct a v4 UUID in SQL according to https://www.ietf.org/rfc/rfc4122.txt
+        $sql = "UPDATE deck "
+            . "SET uuid = "
+            . "LOWER(CONCAT("
+            // start with random bits
+            . "HEX(RANDOM_BYTES(4)), '-', "
+            . "HEX(RANDOM_BYTES(2)), '-"
+            // v4 has 0100 as the version indicator in bits 6 and 7 of the time_hi_and_version field, so always a 4 in hex.
+            . "4', "
+            // padded out by random bits.
+            . "SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3), '-', "
+            . "CONCAT("
+            // The spec says: Set bits 6 and 7 of the clock_seq_hi_and_reserved value to 10.
+            // which means this next hex value is always one of 8,9,a,or b, which this next bit does in an ugly way.
+            . "HEX(FLOOR(ASCII(RANDOM_BYTES(1)) / 64)+8), "
+            // padded out by random bits.
+            . "SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3)), "
+            // Close it out with more random bits.
+            . "'-', HEX(RANDOM_BYTES(6))"
+            . "))" // LOWER(CONCAT(
+            // Only for decks missing a UUID already.
+            . " WHERE uuid IS NULL";
 
         $this->entityManager->getConnection()->executeQuery($sql);
 
