@@ -1,8 +1,29 @@
 {% extends '/layout.html.twig' %}
 
-{% block body %}
-
+{% block head %}
+<style>
+  /* Hide unmatched identities */
+  .hidden-format, .hidden-misc {
+    display: none;
+  }
+  /* Overwrite Bootstrap to prevent hidden identities messing up borders */
+  .panel-heading + .list-group .identity.list-group-item:first-child {
+    border-top-width: 1px;
+  }
+  #panel-title-filter {
+    border-bottom: none;
+  }
+  /* Vertically align format options*/
+  #format-options {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+</style>
 <script src="{{ asset('/js/initbuild.js') }}"></script>
+{% endblock %}
+
+{% block body %}
 
 <div class="container">
 
@@ -14,19 +35,19 @@
   <div class="panel-heading"><b>Choose your identity</b> <span>(🔄  rotated card, 🚫  banned in standard)</span></div>
   <!-- ID filter -->
   <div class="panel-heading">
-    <div style="display: flex;">
-      <div style="flex-grow: 1;">
-        <div id="format-filter">Format |
-          <a href="#" id="ids-startup" value="startup">Startup</a> |
-          <a href="#" id="ids-standard" value="standard">Standard</a> |
-          <a href="#" id="ids-standard" value="eternal">Eternal</a> |
-          <a href="#" id="ids-draft" value="draft">Draft</a> |
-          <a href="#" id="ids-other" value="other">Other</a> |
-          <a href="#" id="ids-all" value="all">All</a>
+    <div style="display: flex; flex-wrap: wrap;">
+      <div style="flex-grow: 1;" id="format-options">
+        <div>Format |
+          <a href="#" class="option-format" value="startup">Startup</a> |
+          <a href="#" class="option-format" value="standard">Standard</a> |
+          <a href="#" class="option-format" value="eternal">Eternal</a> |
+          <a href="#" class="option-format" value="draft">Draft</a> |
+          <a href="#" class="option-format" value="other">Other</a> |
+          <a href="#" class="option-format" value="all">All</a>
         </div>
       </div>
-      <div>
-        <select class="form-control" name="faction_filter" id="faction_filter">
+      <div style="flex-grow: 1;">
+        <select class="form-control" name="faction-filter" id="faction-filter">
           <option value="all">All factions</option>
           {% for faction in factions %}
           <option value="{{ faction.code }}">
@@ -37,19 +58,26 @@
       </div>
     </div>
   </div>
-  <div class="panel-heading">
+  <div class="panel-heading" id="panel-title-filter">
     <input type="text" class="form-control input-sm" id="title-filter" placeholder="Filter by name" tabindex="1">
   </div>
   <!-- List group -->
   <div class="list-group">
     {% for identity in identities %}
+    {% set banned = identity.code in banned_cards|keys %}
+    {# Spark Agency's most recent pack was system core 2019, which has rotated
+       Currently IDs are checked for rotation by checking their most recent pack
+       Sparks is hardcoded here to not be rotated
+       TODO - Make the check if ANY packs its in are standard legal #}
+    {% set rotated = identity.pack.cycle.rotated and identity.code != '25105' %}
     <a href="{{ path('deck_initbuild', {card_code:identity.code}) }}"
-       class="identity list-group-item faction-{{ identity.faction.code }} pack-{{ identity.pack.code }} {% if identity.pack.cycle.rotated %}rotated{% endif %} {% if identity.code in banned_cards|keys %}banned{% endif %}"
+       class="identity list-group-item faction-{{ identity.faction.code }} pack-{{ identity.pack.code }} {% if rotated %}rotated{% endif %} {% if banned %}banned{% endif %}"
        data-code="{{ identity.code }}">
       <span class="icon icon-{{ identity.faction.code }} {{ identity.faction.code }}"></span>
-      <span class="name">{{ identity.title(app.request.locale) }}</span> <span class="small">({{ identity.pack.name }})</span>
-      {% if identity.pack.cycle.rotated %}<span>🔄</span>{% endif %}
-      {% if identity.code in banned_cards|keys %}<span>🚫</span>{% endif %}
+      <span class="name">{{ identity.title(app.request.locale) }}</span>
+      <span class="small">({{ identity.pack.name }})</span>
+      {% if rotated %}<span>🔄</span>{% endif %}
+      {% if banned %}<span>🚫</span>{% endif %}
     </a>
     {% endfor %}
   </div>
