@@ -52,6 +52,12 @@ class BuilderController extends Controller
             "title"   => "ASC",
         ]);
 
+        $factions = $entityManager->getRepository('AppBundle:Faction')->findBy([
+            "side" => $side,
+        ], [
+            "name" => "ASC",
+        ]);
+
         $identities = $cardsData->select_only_latest_cards($identities);
         $banned_cards = array();
         foreach ($identities as $id) {
@@ -67,7 +73,8 @@ class BuilderController extends Controller
             [
                 'pagetitle'  => "New deck",
                 "identities" => $identities,
-                "banned_cards"   => $banned_cards
+                "banned_cards"   => $banned_cards,
+                "factions" => $factions
             ],
 
             $response
