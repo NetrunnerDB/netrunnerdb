@@ -358,7 +358,8 @@ class SocialController extends Controller
             "SELECT
                m.code,
                m.name,
-               l.is_legal
+               l.is_legal,
+               m.active
              FROM legality l
                LEFT JOIN mwl m ON l.mwl_id=m.id
              WHERE l.decklist_id=?

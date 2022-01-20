@@ -118,20 +118,51 @@ NRDB.user.params.decklist_id = Decklist.id;
 
 <!-- Legality -->
 <table class="table table-condensed" id="table-mwl">
-<thead>
-<tr><th colspan="1"><span class="glyphicon glyphicon-bell"></span> Legality</th></tr>
-</thead>
-<tbody>
-{% for legality in legalities %}
-<tr>
-    <td>
-      {% if legality.is_legal %}<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
-      {% else %}<span class="glyphicon glyphicon-thumbs-down" style="color:red"></span>{% endif %}
-      <a href="#" class="change_mwl" data-code="{{ legality.code }}">{{ legality.name }}</a>
-    </td>
-</tr>
-{% endfor %}
-</tbody>
+  <thead>
+    <tr><th colspan="1"><span class="glyphicon glyphicon-bell"></span> Legality</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>
+      {# This makes two assumptions:
+       # 1) That there will be at least 2 legalities (should hold true indefinitely)
+       # 2) That if the first list isn't active, the second list is (probably holds)
+       #}
+      {% set is_current = legalities[0].active %}
+      {% if legalities[0].is_legal %}
+        <span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
+      {% else %}
+        <span class="glyphicon glyphicon-thumbs-down" style="color:red"></span>
+      {% endif %}
+      <a href="#" class="change_mwl" data-code="{{ legalities[0].code }}">
+        {{ legalities[0].name }} {% if is_current %}(active){% else %}(latest){% endif %}
+      </a>
+    </td></tr>
+    {% if not is_current %}
+      <tr><td>
+        {% if legalities[1].is_legal %}
+          <span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
+        {% else %}
+          <span class="glyphicon glyphicon-thumbs-down" style="color:red"></span>
+        {% endif %}
+        <a href="#" class="change_mwl" data-code="{{ legalities[1].code }}">{{ legalities[1].name }} (active)</a>
+      </td></tr>
+    {% endif %}
+    <tr id="open-lists"><td>
+      <a href="#">Show more</a>
+    </td></tr>
+    {% for legality in legalities|slice(is_current ? 1 : 2) %}
+    <tr class="other-list" style="display: none;"><td>
+      <a href="#" class="change_mwl" data-code="{{ legality.code }}">
+        {% if legality.is_legal %}<span class="glyphicon glyphicon-thumbs-up" style="color:green"></span>
+        {% else %}<span class="glyphicon glyphicon-thumbs-down" style="color:red"></span>{% endif %}
+        {{ legality.name }}
+      </a>
+    </td></tr>
+    {% endfor %}
+    <tr id="close-lists" style="display: none;"><td>
+      <a href="#">Show less</a>
+    </td></tr>
+  </tbody>
 </table>
 
 <!-- Rotation -->
