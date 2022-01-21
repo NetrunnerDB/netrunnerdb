@@ -222,16 +222,25 @@ deck_export_text_by_uuid:
     requirements:
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-# XXX
 deck_copy:
     path: /{_locale}/deck/copy/{decklist_id}
     methods: [POST]
     defaults:
-        _controller: AppBundle:Builder:copy
+        _controller: AppBundle:Builder:copyById
         _locale: en
     requirements:
         _locale: \w\w
         decklist_id: \d+
+
+deck_copy_by_uuid:
+    path: /{_locale}/deck/copy/{decklist_uuid}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Builder:copyByUuid
+        _locale: en
+    requirements:
+        _locale: \w\w
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 # XXX
 decklist_export_octgn:

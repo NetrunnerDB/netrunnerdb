@@ -1190,7 +1190,25 @@ class BuilderController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function copyAction(Decklist $decklist)
+    public function copyByIdAction(Decklist $decklist)
+    {
+        return $this->copy($decklist);
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
+     */
+    public function copyByUuidAction(Decklist $decklist)
+    {
+        return $this->copy($decklist);
+    }
+
+    private function copy(Decklist $decklist)
     {
         $content = [];
         foreach ($decklist->getSlots() as $slot) {
@@ -1390,7 +1408,7 @@ class BuilderController extends Controller
      */
     public function autosaveByIdAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
     {
-		return $this->autosave($deck, $request, $entityManager);
+        return $this->autosave($deck, $request, $entityManager);
     }
 
     /**
@@ -1405,10 +1423,10 @@ class BuilderController extends Controller
      */
     public function autosaveByUuidAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
     {
-		return $this->autosave($deck, $request, $entityManager);
+        return $this->autosave($deck, $request, $entityManager);
     }
 
-	private function autosave(Deck $deck, Request $request, EntityManagerInterface $entityManager) {
+    private function autosave(Deck $deck, Request $request, EntityManagerInterface $entityManager) {
         $user = $this->getUser();
 
         if ($user->getId() != $deck->getUser()->getId()) {
@@ -1431,5 +1449,5 @@ class BuilderController extends Controller
         }
 
         return new Response('');
-	}
+    }
 }
