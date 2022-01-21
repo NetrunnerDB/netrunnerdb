@@ -326,6 +326,18 @@ $(function () {
         }
     }, 'a');
 
+    $('#open-lists a').on("click", function(event) {
+      $('#open-lists').hide();
+      $('#close-lists, .other-list').show();
+      event.preventDefault();
+    });
+
+    $('#close-lists a').on("click", function(event) {
+      $('#open-lists').show();
+      $('#close-lists, .other-list').hide();
+      event.preventDefault();
+    });
+
 });
 
 function copy_decklist() {
