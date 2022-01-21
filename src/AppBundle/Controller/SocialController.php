@@ -72,8 +72,8 @@ class SocialController extends Controller
                               ]);
         foreach ($old_decklists as $decklist) {
             if (json_encode($decklist->getContent()) == $new_content) {
-                $url = $this->generateUrl('decklist_detail', [
-                    'decklist_id'   => $decklist->getId(),
+                $url = $this->generateUrl('decklist_detail_by_uuid', [
+                    'decklist_uuid' => $decklist->getUuid(),
                     'decklist_name' => $decklist->getPrettyName(),
                 ]);
                 $response->setData([
@@ -133,8 +133,8 @@ class SocialController extends Controller
                               ]);
         foreach ($old_decklists as $decklist) {
             if (json_encode($decklist->getContent()) == $new_content) {
-                $url = $this->generateUrl('decklist_detail', [
-                    'decklist_id'   => $decklist->getId(),
+                $url = $this->generateUrl('decklist_detail_by_uuid', [
+                    'decklist_uuid' => $decklist->getUuid(),
                     'decklist_name' => $decklist->getPrettyName(),
                 ]);
                 $response->setData([
@@ -251,9 +251,9 @@ class SocialController extends Controller
 
         return $this->redirect(
             $this->generateUrl(
-                'decklist_detail',
+                'decklist_detail_by_uuid',
                 [
-                    'decklist_id'   => $decklist->getId(),
+                    'decklist_uuid' => $decklist->getUuid(),
                     'decklist_name' => $decklist->getPrettyname(),
                 ]
             )
@@ -638,7 +638,7 @@ class SocialController extends Controller
             $email_data = [
                 'username'      => $user->getUsername(),
                 'decklist_name' => $decklist->getName(),
-                'url'           => $this->generateUrl('decklist_detail', ['decklist_id' => $decklist->getId(), 'decklist_name' => $decklist->getPrettyname()], UrlGeneratorInterface::ABSOLUTE_URL) . '#' . $comment->getId(),
+                'url'           => $this->generateUrl('decklist_detail_by_uuid', ['decklist_uuid' => $decklist->getUuid(), 'decklist_name' => $decklist->getPrettyname()], UrlGeneratorInterface::ABSOLUTE_URL) . '#' . $comment->getId(),
                 'comment'       => $comment_html,
                 'profile'       => $this->generateUrl('user_profile', [], UrlGeneratorInterface::ABSOLUTE_URL),
             ];
@@ -652,8 +652,8 @@ class SocialController extends Controller
             }
         }
 
-        return $this->redirect($this->generateUrl('decklist_detail', [
-            'decklist_id'   => $decklist_id,
+        return $this->redirect($this->generateUrl('decklist_detail_by_uuid', [
+            'decklist_uuid' => $decklist_uuid,
             'decklist_name' => $decklist->getPrettyname(),
         ]));
     }
@@ -1058,7 +1058,7 @@ class SocialController extends Controller
      */
     public function deleteByIdAction(Decklist $decklist, EntityManagerInterface $entityManager)
     {
-		return $this->delete($decklist, $entityManager);
+        return $this->delete($decklist, $entityManager);
     }
 
     /**
@@ -1072,7 +1072,7 @@ class SocialController extends Controller
      */
     public function deleteByUuidAction(Decklist $decklist, EntityManagerInterface $entityManager)
     {
-		return $this->delete($decklist, $entityManager);
+        return $this->delete($decklist, $entityManager);
     }
 
     private function delete(Decklist $decklist, EntityManagerInterface $entityManager)
@@ -1455,7 +1455,7 @@ class SocialController extends Controller
      */
     public function moderateByIdAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
     {
-		return $this->moderate($decklist, $status, $modflag_id, $entityManager, $moderationHelper);
+        return $this->moderate($decklist, $status, $modflag_id, $entityManager, $moderationHelper);
     }
 
     /**
@@ -1472,7 +1472,7 @@ class SocialController extends Controller
      */
     public function moderateByUuidAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
     {
-		return $this->moderate($decklist, $status, $modflag_id, $entityManager, $moderationHelper);
+        return $this->moderate($decklist, $status, $modflag_id, $entityManager, $moderationHelper);
     }
 
     private function moderate(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
