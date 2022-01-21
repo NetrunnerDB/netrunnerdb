@@ -196,8 +196,8 @@ class SocialController extends Controller
 
         $decklist = new Decklist();
         // Note: We are doing the naive thing and just assuming we won't collide.
-		// If there is a collision, there will be an error returned to the user.
-		// Sorry, users!  v2 will be nicer to you!
+        // If there is a collision, there will be an error returned to the user.
+        // Sorry, users!  v2 will be nicer to you!
         $decklist->setUuid(Uuid::uuid4()->toString());
         $decklist->setName($name);
         $decklist->setPrettyname(preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($name)));
@@ -260,21 +260,9 @@ class SocialController extends Controller
         );
     }
 
-    /**
-     * @param int                    $decklist_id
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function viewAction(int $decklist_id, EntityManagerInterface $entityManager)
-    {
-        $response = new Response();
-        $response->setPublic();
-        $response->setMaxAge($this->getParameter('short_cache'));
-
-        $dbh = $entityManager->getConnection();
-        $rows = $dbh->executeQuery(
-            "SELECT
+    private function getViewQueryBase() {
+        return 
+            ["SELECT
                d.id,
                d.date_update,
                d.name,
@@ -304,19 +292,58 @@ class SocialController extends Controller
                JOIN card c ON d.identity_id=c.id
                JOIN faction f ON d.faction_id=f.id
                LEFT JOIN tournament t ON d.tournament_id=t.id
-             WHERE d.id=?
-               AND d.moderation_status IN (0,1,2)
-               ",
-            [
-                $decklist_id,
-            ]
+             WHERE ",
+             "AND d.moderation_status IN (0,1,2)"];
+    }
+
+    /**
+     * @param int                    $decklist_id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function viewByIdAction(int $decklist_id, EntityManagerInterface $entityManager)
+    {
+        $dbh = $entityManager->getConnection();
+        $viewQueryBase = $this->getViewQueryBase();
+        $rows = $dbh->executeQuery(
+            $viewQueryBase[0] . " d.id = ?" . $viewQueryBase[1], [$decklist_id]
         )->fetchAll();
+
+        return $this->view($rows, $entityManager);
+    }
+
+    /**
+     * @param string                    $decklist_uuid
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function viewByUuidAction(string $decklist_uuid, EntityManagerInterface $entityManager)
+    {
+        $dbh = $entityManager->getConnection();
+        $viewQueryBase = $this->getViewQueryBase();
+        $rows = $dbh->executeQuery(
+            $viewQueryBase[0] . " d.uuid = ?" . $viewQueryBase[1], [$decklist_uuid]
+        )->fetchAll();
+
+        return $this->view($rows, $entityManager);
+    }
+
+    private function view(array $rows, EntityManagerInterface $entityManager)
+    {
+        $response = new Response();
+        $response->setPublic();
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         if (empty($rows)) {
             throw $this->createNotFoundException();
         }
 
+        $dbh = $entityManager->getConnection();
+
         $decklist = $rows[0];
+        $decklist_id = $decklist['id'];
 
         $comments = $dbh->executeQuery(
             "SELECT
@@ -704,7 +731,25 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function textExportAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
+    public function textExportByIdAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
+    {
+        return $this->textExport($decklist, $judge, $cardsData);
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @param Judge $judge
+     * @param CardsData $cardsData
+     * @return Response
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
+     */
+    public function textExportByUuidAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
+    {
+        return $this->textExport($decklist, $judge, $cardsData);
+    }
+
+    private function textExport(Decklist $decklist, Judge $judge, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -840,7 +885,23 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function octgnExportAction(Decklist $decklist)
+    public function octgnExportByIdAction(Decklist $decklist)
+    {
+        return $this->octgnExport($decklist);
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @return Response
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
+     */
+    public function octgnExportByUuidAction(Decklist $decklist)
+    {
+        return $this->octgnExport($decklist);
+    }
+
+    private function octgnExport(Decklist $decklist)
     {
         $response = new Response();
         $response->setPublic();
@@ -872,23 +933,12 @@ class SocialController extends Controller
             return new Response('no identity found');
         }
 
-        return $this->octgnExport("$name.o8d", $identity, $rd, $decklist->getRawdescription(), $response);
-    }
+        $filename = "$name.o8d";
 
-    /**
-     * @param string   $filename
-     * @param array   $identity
-     * @param array    $rd
-     * @param string   $description
-     * @param Response $response
-     * @return Response
-     */
-    public function octgnExport(string $filename, array $identity, array $rd, string $description, Response $response)
-    {
         $content = $this->renderView('/octgn.xml.twig', [
             "identity"    => $identity,
             "rd"          => $rd,
-            "description" => strip_tags($description),
+            "description" => strip_tags($decklist->getRawdescription()),
         ]);
 
         $response->headers->set('Content-Type', 'application/octgn');
@@ -911,7 +961,29 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function editAction(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
+    public function editByIdAction(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
+    {
+        return $this->edit($decklist, $request, $entityManager, $textProcessor, $moderationHelper);
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param TextProcessor          $textProcessor
+     * @param ModerationHelper       $moderationHelper
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
+     */
+    public function editByUuidAction(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
+    {
+        return $this->edit($decklist, $request, $entityManager, $textProcessor, $moderationHelper);
+    }
+
+    private function edit(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
     {
         $user = $this->getUser();
 
@@ -951,8 +1023,8 @@ class SocialController extends Controller
         }
 
         // Note: We are doing the naive thing and just assuming we won't collide.
-		// If there is a collision, there will be an error returned to the user.
-		// Sorry, users!  v2 will be nicer to you!
+        // If there is a collision, there will be an error returned to the user.
+        // Sorry, users!  v2 will be nicer to you!
         if ($decklist->getUuid() == null) {
             $decklist->setUuid(Uuid::uuid4()->toString());
         }
@@ -969,8 +1041,8 @@ class SocialController extends Controller
 
         $entityManager->flush();
 
-        return $this->redirect($this->generateUrl('decklist_detail', [
-            'decklist_id'   => $decklist->getId(),
+        return $this->redirect($this->generateUrl('decklist_detail_by_uuid', [
+            'decklist_uuid'   => $decklist->getUuid(),
             'decklist_name' => $decklist->getPrettyname(),
         ]));
     }
@@ -984,7 +1056,26 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function deleteAction(Decklist $decklist, EntityManagerInterface $entityManager)
+    public function deleteByIdAction(Decklist $decklist, EntityManagerInterface $entityManager)
+    {
+		return $this->delete($decklist, $entityManager);
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @param EntityManagerInterface $entityManager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
+     */
+    public function deleteByUuidAction(Decklist $decklist, EntityManagerInterface $entityManager)
+    {
+		return $this->delete($decklist, $entityManager);
+    }
+
+    private function delete(Decklist $decklist, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
@@ -1362,7 +1453,29 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function moderateAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
+    public function moderateByIdAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
+    {
+		return $this->moderate($decklist, $status, $modflag_id, $entityManager, $moderationHelper);
+    }
+
+    /**
+     * @param Decklist $decklist
+     * @param int                    $status
+     * @param int|null               $modflag_id
+     * @param EntityManagerInterface $entityManager
+     * @param ModerationHelper       $moderationHelper
+     * @return JsonResponse
+     *
+     * @IsGranted("ROLE_MODERATOR")
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
+     */
+    public function moderateByUuidAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
+    {
+		return $this->moderate($decklist, $status, $modflag_id, $entityManager, $moderationHelper);
+    }
+
+    private function moderate(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
     {
         $response = new Response();
         $response->setPrivate();

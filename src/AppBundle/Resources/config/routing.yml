@@ -242,23 +242,37 @@ deck_copy_by_uuid:
         _locale: \w\w
         decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-# XXX
 decklist_export_octgn:
     path: /decklist/export/octgn/{decklist_id}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:octgnExport
+        _controller: AppBundle:Social:octgnExportById
     requirements:
         decklist_id: \d+
 
-# XXX
+decklist_export_octgn_by_uuid:
+    path: /decklist/export/octgn/{decklist_uuid}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:octgnExportByUuid
+    requirements:
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
 decklist_export_text:
     path: /decklist/export/text/{decklist_id}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:textExport
+        _controller: AppBundle:Social:textExportById
     requirements:
         decklist_id: \d+
+
+decklist_export_text_by_uuid:
+    path: /decklist/export/text/{decklist_uuid}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:textExportByUuid
+    requirements:
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 decklist_new:
     path: /{_locale}/deck/publish
@@ -291,28 +305,47 @@ decklists_list:
         _locale: \w\w
         page: \d+
 
-# XXX
 decklist_detail:
     path: /{_locale}/decklist/{decklist_id}/{decklist_name}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:view
+        _controller: AppBundle:Social:viewById
         _locale: en
         decklist_name: null
     requirements:
         _locale: \w\w
         decklist_id: \d+
 
-# XXX
+decklist_detail_by_uuid:
+    path: /{_locale}/decklist/{decklist_uuid}/{decklist_name}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:viewByUuid
+        _locale: en
+        decklist_name: null
+    requirements:
+        _locale: \w\w
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
 decklist_detail_no_name:
     path: /{_locale}/decklist/{decklist_id}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:view
+        _controller: AppBundle:Social:viewById
         _locale: en
     requirements:
         _locale: \w\w
         decklist_id: \d+
+
+decklist_detail_no_name_by_uuid:
+    path: /{_locale}/decklist/{decklist_uuid}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:viewByUuid
+        _locale: en
+    requirements:
+        _locale: \w\w
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 decklist_favorite:
     path: /user/favorite
@@ -338,23 +371,37 @@ decklist_comment_hide:
     defaults:
         _controller: AppBundle:Social:hidecomment
 
-# XXX
 decklist_edit:
     path: /decklist/edit/{decklist_id}
     methods: [POST]
     defaults:
-        _controller: AppBundle:Social:edit
+        _controller: AppBundle:Social:editById
     requirements:
         decklist_id: \d+
 
-# XXX
+decklist_edit:
+    path: /decklist/edit/{decklist_uuid}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:editByUuid
+    requirements:
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
 decklist_delete:
     path: /decklist/delete/{decklist_id}
     methods: [POST]
     defaults:
-        _controller: AppBundle:Social:delete
+        _controller: AppBundle:Social:deleteById
     requirements:
         decklist_id: \d+
+
+decklist_delete:
+    path: /decklist/delete/{decklist_uuid}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:deleteByUuid
+    requirements:
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 decklists_diff:
     path: /{_locale}/decklists/diff/{decklist1_id}/{decklist2_id}
@@ -870,15 +917,24 @@ cards_sets:
     requirements:
         _locale: \w\w
 
-# XXX
 decklist_moderate:
     path: /decklist/moderate/{decklist_id}/{status}/{modflag_id}
     methods: [POST]
     defaults:
-        _controller: AppBundle:Social:moderate
+        _controller: AppBundle:Social:moderateById
         modflag_id: null
     requirements:
         decklist_id: \d+
+        status: \d
+
+decklist_moderate:
+    path: /decklist/moderate/{decklist_uuid}/{status}/{modflag_id}
+    methods: [POST]
+    defaults:
+        _controller: AppBundle:Social:moderateByUuid
+        modflag_id: null
+    requirements:
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
         status: \d
 
 modflags_get:
