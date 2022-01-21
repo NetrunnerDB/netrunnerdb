@@ -409,9 +409,37 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
+     */
+    public function textExportByUuidAction(Deck $deck, Judge $judge, CardsData $cardsData)
+    {
+        return $this->textExport($deck, $judge, $cardsData);
+    }
+
+    /**
+     * @param Deck $deck
+     * @param Judge $judge
+     * @param CardsData $cardsData
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function textexportAction(Deck $deck, Judge $judge, CardsData $cardsData)
+    public function textExportByIdAction(Deck $deck, Judge $judge, CardsData $cardsData)
+    {
+        return $this->textExport($deck, $judge, $cardsData);
+    }
+
+    /**
+     * @param Deck $deck
+     * @param Judge $judge
+     * @param CardsData $cardsData
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function textExport(Deck $deck, Judge $judge, CardsData $cardsData)
     {
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
@@ -549,9 +577,31 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
+     */
+    public function octgnExportByUuidAction(Deck $deck)
+    {
+        return $this->octgnExport($deck);
+    }
+
+    /**
+     * @param Deck $deck
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function octgnexportAction(Deck $deck)
+    public function octgnExportByIdAction(Deck $deck)
+    {
+        return $this->octgnExport($deck);
+    }
+
+    /**
+     * @param Deck $deck
+     * @return Response
+     */
+    public function octgnExport(Deck $deck)
     {
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
@@ -583,24 +633,14 @@ class BuilderController extends Controller
             return new Response('no identity found');
         }
 
-        return $this->octgnexport("$name.o8d", $identity, $rd, $deck->getDescription());
-    }
+        $filename = "$name.o8d";
 
-    /**
-     * @param string $filename
-     * @param array $identity
-     * @param array  $rd
-     * @param string $description
-     * @return Response
-     */
-    public function octgnexport(string $filename, array $identity, array $rd, string $description)
-    {
         $content = $this->renderView(
             '/octgn.xml.twig',
             [
                 "identity"    => $identity,
                 "rd"          => $rd,
-                "description" => strip_tags($description),
+                "description" => strip_tags($deck->getDescription()),
             ]
         );
 
@@ -735,18 +775,8 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    /**
-     * @param int                    $deck_id
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     * @throws \Doctrine\DBAL\DBALException
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     */
-    public function editAction(int $deck_id, EntityManagerInterface $entityManager)
-    {
-        $dbh = $entityManager->getConnection();
-        $rows = $dbh->executeQuery("
+    private function editQueryBase() {
+        return "
             SELECT
               d.id,
               d.name,
@@ -762,10 +792,13 @@ class BuilderController extends Controller
               LEFT JOIN mwl m ON d.mwl_id=m.id
               LEFT JOIN user u ON d.user_id=u.id
               LEFT JOIN side s ON d.side_id=s.id
-            WHERE d.id=?
-              ", [
-            $deck_id,
-        ])->fetchAll();
+        ";
+    }
+
+    private function edit(EntityManagerInterface $entityManager, array $queryWithArgs)
+    {
+        $dbh = $entityManager->getConnection();
+        $rows = $dbh->executeQuery($queryWithArgs[0], $queryWithArgs[1])->fetchAll();
 
         $deck = $rows[0];
 
@@ -782,7 +815,7 @@ class BuilderController extends Controller
             FROM deckslot s
               JOIN card c ON s.card_id=c.id
             WHERE s.deck_id=?", [
-            $deck_id,
+            $deck['id'],
         ])->fetchAll();
 
         $cards = [];
@@ -799,7 +832,7 @@ class BuilderController extends Controller
               c.saved
             FROM deckchange c
             WHERE c.deck_id=? AND c.saved=1
-            ORDER BY date_creation DESC", [$deck_id])->fetchAll();
+            ORDER BY date_creation DESC", [$deck['id']])->fetchAll();
 
         // recreating the versions with the variation info, starting from $preversion
         $preversion = $cards;
@@ -840,7 +873,7 @@ class BuilderController extends Controller
               c.saved
             FROM deckchange c
             WHERE c.deck_id=? AND c.saved=0
-            ORDER BY date_creation ASC", [$deck_id])->fetchAll();
+            ORDER BY date_creation ASC", [$deck['id']])->fetchAll();
 
         // recreating the snapshots with the variation info, starting from $postversion
         $postversion = $cards;
@@ -886,7 +919,7 @@ class BuilderController extends Controller
              ORDER BY d.date_creation ASC",
 
             [
-                $deck_id,
+                $deck['id'],
             ]
 
         )->fetchAll();
@@ -905,7 +938,7 @@ class BuilderController extends Controller
              ORDER BY d.date_creation ASC",
 
             [
-                $deck_id,
+                $deck['id'],
             ]
 
         )->fetchAll();
@@ -922,6 +955,32 @@ class BuilderController extends Controller
                 'list_mwl'            => $list_mwl,
             ]
         );
+    }
+
+    /**
+     * @param string                    $deck_uuid
+     * @param EntityManagerInterface    $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function editByUuidAction(string $deck_uuid, EntityManagerInterface $entityManager)
+    {
+        return $this->edit($entityManager, [$this->editQueryBase() . " WHERE d.uuid = ?", [$deck_uuid]]);
+    }
+
+    /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function editByIdAction(int $deck_id, EntityManagerInterface $entityManager)
+    {
+        return $this->edit($entityManager, [$this->editQueryBase() . " WHERE d.id= ?", [$deck_id]]);
     }
 
     public function viewByIdAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge) {
@@ -1156,9 +1215,46 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
+     */
+    public function duplicateByUuidAction(Deck $deck)
+    {
+        if ($this->getUser()->getId() != $deck->getUser()->getId()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $content = [];
+        foreach ($deck->getSlots() as $slot) {
+            $content[$slot->getCard()->getCode()] = $slot->getQuantity();
+        }
+        $description = strlen($deck->getDescription()) > 0 ? ("Original deck notes:\n\n" . $deck->getDescription()) : '';
+
+        $mwl = $deck->getMwl();
+        if ($mwl instanceof Mwl) {
+            $mwl = $mwl->getCode();
+        }
+
+        return $this->forward(
+            'AppBundle:Builder:save',
+            [
+                'name'        => $deck->getName() . ' (copy)',
+                'content'     => json_encode($content),
+                'description' => $description,
+                'deck_id'     => $deck->getParent() ? $deck->getParent()->getId() : null,
+                'mwl_code'    => $mwl,
+            ]
+        );
+    }
+
+    /**
+     * @param Deck $deck
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function duplicateAction(Deck $deck)
+    public function duplicateByIdAction(Deck $deck)
     {
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
@@ -1292,8 +1388,27 @@ class BuilderController extends Controller
      *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function autosaveAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
+    public function autosaveByIdAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
     {
+		return $this->autosave($deck, $request, $entityManager);
+    }
+
+    /**
+     * @param Deck $deck
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
+     */
+    public function autosaveByUuidAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
+    {
+		return $this->autosave($deck, $request, $entityManager);
+    }
+
+	private function autosave(Deck $deck, Request $request, EntityManagerInterface $entityManager) {
         $user = $this->getUser();
 
         if ($user->getId() != $deck->getUser()->getId()) {
@@ -1304,8 +1419,7 @@ class BuilderController extends Controller
         if (count($diff) != 2) {
             throw new BadRequestHttpException("Wrong content " . $diff);
         }
-
-        if (count($diff[0]) || count($diff[1])) {
+        if (count((array) $diff[0]) || count((array) $diff[1])) {
             $change = new Deckchange();
             $change->setDeck($deck);
             $change->setVariation(json_encode($diff));
@@ -1317,5 +1431,5 @@ class BuilderController extends Controller
         }
 
         return new Response('');
-    }
+	}
 }

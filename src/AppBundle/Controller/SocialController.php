@@ -42,9 +42,70 @@ class SocialController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
+     */
+    public function publishByUuidAction(Deck $deck, EntityManagerInterface $entityManager, Judge $judge)
+    {
+        $response = new JsonResponse();
+
+        if ($this->getUser()->getId() != $deck->getUser()->getId()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $analyse = $judge->analyse($deck->getSlots()->toArray());
+
+        if (isset($analyse['problem'])) {
+            $response->setData([
+                'allowed' => false,
+                'message' => $judge->problem($analyse),
+            ]);
+
+            return $response;
+        }
+
+        $new_content = json_encode($deck->getContent());
+        $new_signature = md5($new_content);
+        $old_decklists = $entityManager
+                              ->getRepository('AppBundle:Decklist')
+                              ->findBy([
+                                  'signature' => $new_signature,
+                              ]);
+        foreach ($old_decklists as $decklist) {
+            if (json_encode($decklist->getContent()) == $new_content) {
+                $url = $this->generateUrl('decklist_detail', [
+                    'decklist_id'   => $decklist->getId(),
+                    'decklist_name' => $decklist->getPrettyName(),
+                ]);
+                $response->setData([
+                    'allowed' => true,
+                    'message' => 'This deck is <a href="' . $url . '">already published</a>. Are you sure you want to publish a duplicate?',
+                ]);
+
+                return $response;
+            }
+        }
+
+        $response->setData([
+            'allowed' => true,
+            'message' => '',
+        ]);
+
+        return $response;
+    }
+
+    /**
+     * This function is used to check if a deck can be published from the deck list page.
+     *
+     * @param Deck $deck
+     * @param EntityManagerInterface $entityManager
+     * @param Judge                  $judge
+     * @return JsonResponse
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
      */
-    public function publishAction(Deck $deck, EntityManagerInterface $entityManager, Judge $judge)
+    public function publishByIdAction(Deck $deck, EntityManagerInterface $entityManager, Judge $judge)
     {
         $response = new JsonResponse();
 
@@ -643,7 +704,7 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function textexportAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
+    public function textExportAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -779,7 +840,7 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
      */
-    public function octgnexportAction(Decklist $decklist)
+    public function octgnExportAction(Decklist $decklist)
     {
         $response = new Response();
         $response->setPublic();
@@ -811,7 +872,7 @@ class SocialController extends Controller
             return new Response('no identity found');
         }
 
-        return $this->octgnexport("$name.o8d", $identity, $rd, $decklist->getRawdescription(), $response);
+        return $this->octgnExport("$name.o8d", $identity, $rd, $decklist->getRawdescription(), $response);
     }
 
     /**
@@ -822,7 +883,7 @@ class SocialController extends Controller
      * @param Response $response
      * @return Response
      */
-    public function octgnexport(string $filename, array $identity, array $rd, string $description, Response $response)
+    public function octgnExport(string $filename, array $identity, array $rd, string $description, Response $response)
     {
         $content = $this->renderView('/octgn.xml.twig', [
             "identity"    => $identity,
