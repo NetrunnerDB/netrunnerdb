@@ -65,14 +65,14 @@ deck_view:
         deck_id: \d+
 
 deck_view_by_uuid:
-    path: /{_locale}/deck/view/{uuid}
+    path: /{_locale}/deck/view/{deck_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:Builder:viewByUuid
         _locale: en
     requirements:
         _locale: \w\w
-        uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 deck_duplicate:
     path: /{_locale}/deck/duplicate/{deck_id}
@@ -755,7 +755,7 @@ api_public_decklist:
         decklist_id: "\\d+"
 
 api_public_decklist_by_uuid:
-    path: /api/2.0/public/decklist/{uuid}
+    path: /api/2.0/public/decklist/{decklist_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:PublicApi20:decklistByUuid
@@ -779,7 +779,7 @@ api_public_deck:
         deck_id: "\\d+"
 
 api_public_deck_by_uuid:
-    path: /api/2.0/public/deck/{uuid}
+    path: /api/2.0/public/deck/{deck_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:PublicApi20:deckByUuid
@@ -813,7 +813,7 @@ api_private_deck_load_by_id:
         deck_id: "\\d+"
 
 api_private_deck_load_by_uuid:
-    path: /api/2.0/private/deck/{uuid}
+    path: /api/2.0/private/deck/{deck_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:PrivateApi20:loadDeckByUuid
