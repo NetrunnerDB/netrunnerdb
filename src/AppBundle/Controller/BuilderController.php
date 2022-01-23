@@ -722,8 +722,8 @@ class BuilderController extends Controller
      */
     public function deleteAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $deck_id = filter_var($request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
-        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
+        $deck_uuid = $request->get('deck_uuid');
+        $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['uuid' => $request->get('deck_uuid')]);
         if (!$deck instanceof Deck) {
             return $this->redirect($this->generateUrl('decks_list'));
         }
@@ -1036,7 +1036,7 @@ class BuilderController extends Controller
             throw $this->createNotFoundException();
         }
 
-		$deck = $rows[0];
+        $deck = $rows[0];
 
         $deck['side_name'] = mb_strtolower($deck['side_name']);
 
@@ -1211,44 +1211,7 @@ class BuilderController extends Controller
      *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
-    public function duplicateByUuidAction(Deck $deck)
-    {
-        if ($this->getUser()->getId() != $deck->getUser()->getId()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $content = [];
-        foreach ($deck->getSlots() as $slot) {
-            $content[$slot->getCard()->getCode()] = $slot->getQuantity();
-        }
-        $description = strlen($deck->getDescription()) > 0 ? ("Original deck notes:\n\n" . $deck->getDescription()) : '';
-
-        $mwl = $deck->getMwl();
-        if ($mwl instanceof Mwl) {
-            $mwl = $mwl->getCode();
-        }
-
-        return $this->forward(
-            'AppBundle:Builder:save',
-            [
-                'name'        => $deck->getName() . ' (copy)',
-                'content'     => json_encode($content),
-                'description' => $description,
-                'deck_id'     => $deck->getParent() ? $deck->getParent()->getId() : null,
-                'mwl_code'    => $mwl,
-            ]
-        );
-    }
-
-    /**
-     * @param Deck $deck
-     * @return Response
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
-     */
-    public function duplicateByIdAction(Deck $deck)
+    public function duplicateAction(Deck $deck)
     {
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();

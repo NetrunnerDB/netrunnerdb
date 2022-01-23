@@ -167,9 +167,8 @@ class SocialController extends Controller
      */
     public function newAction(Request $request, EntityManagerInterface $entityManager, DecklistManager $decklistManager, Judge $judge, TextProcessor $textProcessor, RotationService $rotationService)
     {
-        $deck_id = filter_var($request->request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         /** @var Deck $deck */
-        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
+        $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['uuid' => $request->request->get('deck_uuid')]);
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
@@ -264,6 +263,7 @@ class SocialController extends Controller
         return 
             ["SELECT
                d.id,
+               d.uuid,
                d.date_update,
                d.name,
                d.prettyname,

@@ -45,10 +45,10 @@ function initialize_publish_deck_form_typeahead() {
 
 }
 
-function show_publish_deck_form(deck_id, deck_name, deck_description) {
+function show_publish_deck_form(deck_uuid, deck_name, deck_description) {
   $('#publish-form-warning').remove();
   $('#btn-publish-submit').text("Checking...").prop('disabled', true);
-  $.ajax(Routing.generate('deck_publish', {deck_id:deck_id}), {
+  $.ajax(Routing.generate('deck_publish_by_uuid', {deck_uuid:deck_uuid}), {
     success: function( response ) {
       var type = response.allowed ? 'warning' : 'danger';
       if(response.message) {
@@ -65,7 +65,7 @@ function show_publish_deck_form(deck_id, deck_name, deck_description) {
       $('#publish-decklist-form').prepend('<div id="publish-form-alert" class="alert alert-danger">'+jqXHR.responseText+'</div>');
     }
   });
-  $('#publish-deck-id').val(deck_id);
+  $('#publish-deck-uuid').val(deck_uuid);
   $('#publish-decklist-name').val(deck_name);
   $('#publish-decklist-description').val(deck_description);
   $('#publishModal').modal('show');
