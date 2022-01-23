@@ -34,16 +34,6 @@ deck_save:
     requirements:
         _locale: \w\w
 
-deck_edit:
-    path: /{_locale}/deck/edit/{deck_id}
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Builder:editById
-        _locale: en
-    requirements:
-        _locale: \w\w
-        deck_id: \d+
-
 deck_edit_by_uuid:
     path: /{_locale}/deck/edit/{deck_uuid}
     methods: [GET]
@@ -53,16 +43,6 @@ deck_edit_by_uuid:
     requirements:
         _locale: \w\w
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
-
-deck_view:
-    path: /{_locale}/deck/view/{deck_id}
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Builder:viewById
-        _locale: en
-    requirements:
-        _locale: \w\w
-        deck_id: \d+
 
 deck_view_by_uuid:
     path: /{_locale}/deck/view/{deck_uuid}
@@ -93,14 +73,6 @@ decks_list:
     requirements:
         _locale: \w\w
 
-deck_publish:
-    path: /deck/can_publish/{deck_id}
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Social:publishById
-    requirements:
-        deck_id: \d+
-
 deck_publish_by_uuid:
     path: /deck/can_publish/{deck_uuid}
     methods: [GET]
@@ -108,12 +80,6 @@ deck_publish_by_uuid:
         _controller: AppBundle:Social:publishByUuid
     requirements:
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
-
-deck_autosave:
-    path: /deck/autosave/{deck_id}
-    methods: [POST]
-    defaults:
-        _controller: AppBundle:Builder:autosaveById
 
 deck_autosave_by_uuid:
     path: /deck/autosave/{deck_uuid}
@@ -180,14 +146,6 @@ decks_upload_all:
     defaults:
         _controller: AppBundle:Builder:uploadall
 
-deck_export_octgn:
-    path: /deck/export/octgn/{deck_id}
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Builder:octgnExportById
-    requirements:
-        deck_id: \d+
-
 deck_export_octgn_by_uuid:
     path: /deck/export/octgn/{deck_uuid}
     methods: [GET]
@@ -196,14 +154,6 @@ deck_export_octgn_by_uuid:
     requirements:
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-deck_export_text:
-    path: /deck/export/text/{deck_id}
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Builder:textExportById
-    requirements:
-        deck_id: \d+
-
 deck_export_text_by_uuid:
     path: /deck/export/text/{deck_uuid}
     methods: [GET]
@@ -211,16 +161,6 @@ deck_export_text_by_uuid:
         _controller: AppBundle:Builder:textExportByUuid
     requirements:
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
-
-deck_copy:
-    path: /{_locale}/deck/copy/{decklist_id}
-    methods: [POST]
-    defaults:
-        _controller: AppBundle:Builder:copyById
-        _locale: en
-    requirements:
-        _locale: \w\w
-        decklist_id: \d+
 
 deck_copy_by_uuid:
     path: /{_locale}/deck/copy/{decklist_uuid}

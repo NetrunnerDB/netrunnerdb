@@ -200,13 +200,13 @@ function filter_decks() {
   var buttons = $('#tag_toggles button.active');
   var list_id = [];
   buttons.each(function (index, button) {
-    list_id = list_id.concat($(button).data('deck_id').split(/\s+/));
+    list_id = list_id.concat($(button).data('deck_uuid').split(/\s+/));
   });
   list_id = list_id.filter(function (itm,i,a) { return i==a.indexOf(itm); });
   $('#decks a.deck-list-group-item').each(function (index, elt) {
     $(elt).removeClass('selected');
-    var id = $(elt).attr('id').replace('deck_', '');
-    if(list_id.length && list_id.indexOf(id) === -1) $(elt).hide();
+    var uuid = $(elt).attr('id').replace('deck_', '');
+    if(list_id.length && list_id.indexOf(uuid) === -1) $(elt).hide();
     else $(elt).show();
   });
 }
@@ -267,39 +267,36 @@ function do_action_sort(event) {
   return false;
 }
 
-function sort_list(type)
-{
+function sort_list(type) {
   var container = $('#decks');
-    var current_sort = container.data('sort-type');
-    var current_order = container.data('sort-order');
-    var order = current_order || 1;
-    if(current_sort && current_sort == type) {
-        order = -order;
-    }
-    container.data('sort-type', type);
-    container.data('sort-order', order);
-    var sorted_list_id = Decks.sort(function (a, b) {
+  var current_sort = container.data('sort-type');
+  var current_order = container.data('sort-order');
+  var order = current_order || 1;
+  if (current_sort && current_sort == type) {
+    order = -order;
+  }
+  container.data('sort-type', type);
+  container.data('sort-order', order);
+  var sorted_list_id = Decks.sort(function (a, b) {
     return order * a[type].localeCompare(b[type]);
   }).map(function (deck) {
-    return deck.id;
+    return deck.uuid;
   });
   var deck_elt = $('#deck_'+sorted_list_id.shift());
 
   container.prepend(deck_elt);
-  sorted_list_id.forEach(function (deck_id) {
-    deck_elt = $('#deck_'+deck_id).insertAfter(deck_elt);
+  sorted_list_id.forEach(function (deck_uuid) {
+    deck_elt = $('#deck_'+deck_uuid).insertAfter(deck_elt);
   });
-
 }
 
 
-function update_tag_toggles()
-{
-  // tags is an object where key is tag and value is array of deck ids
+function update_tag_toggles() {
+  // tags is an object where key is tag and value is array of deck uuids
   var tag_dict = Decks.reduce(function (p, c) {
     c.tags.forEach(function (t) {
       if(!p[t]) p[t] = [];
-      p[t].push(c.id);
+      p[t].push(c.uuid);
     });
     return p;
   }, {});
@@ -309,7 +306,7 @@ function update_tag_toggles()
   }
   var container = $('#tag_toggles').empty();
   tags.sort().forEach(function (tag) {
-    $('<button type="button" class="btn btn-default btn-xs" data-toggle="button">'+tag+'</button>').data('deck_id', tag_dict[tag].join(' ')).appendTo(container);
+    $('<button type="button" class="btn btn-default btn-xs" data-toggle="button">'+tag+'</button>').data('deck_uuid', tag_dict[tag].join(' ')).appendTo(container);
   });
 
 }
@@ -431,8 +428,8 @@ function confirm_delete(deck) {
   $('#deleteModal').modal('show');
 }
 
-function confirm_delete_all(ids) {
-  $('#delete-deck-list-id').val(ids.join('-'));
+function confirm_delete_all(uuids) {
+  $('#delete-deck-list-uuid').val(uuids.join(','));
   $('#deleteListModal').modal('show');
 }
 
@@ -442,11 +439,11 @@ function hide_deck() {
 }
 
 function show_deck() {
-  var deck_id = $(LastClickedDeck).data('id');
-  var deck = _.find(Decks, function (deck) { return deck.id === deck_id });
+  var deck_uuid = $(LastClickedDeck).data('uuid');
+  var deck = _.find(Decks, function (deck) { return deck.uuid === deck_uuid });
   if(!deck) return;
 
-  var container = $('#deck_'+deck.id);
+  var container = $('#deck_'+deck.uuid);
   $('#deck').appendTo(container);
   $('#deck').show();
 

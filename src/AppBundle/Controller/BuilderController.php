@@ -423,21 +423,6 @@ class BuilderController extends Controller
      * @return Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
-     */
-    public function textExportByIdAction(Deck $deck, Judge $judge, CardsData $cardsData)
-    {
-        return $this->textExport($deck, $judge, $cardsData);
-    }
-
-    /**
-     * @param Deck $deck
-     * @param Judge $judge
-     * @param CardsData $cardsData
-     * @return Response
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
     public function textExport(Deck $deck, Judge $judge, CardsData $cardsData)
     {
@@ -580,19 +565,6 @@ class BuilderController extends Controller
      * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
     public function octgnExportByUuidAction(Deck $deck)
-    {
-        return $this->octgnExport($deck);
-    }
-
-    /**
-     * @param Deck $deck
-     * @return Response
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
-     */
-    public function octgnExportByIdAction(Deck $deck)
     {
         return $this->octgnExport($deck);
     }
@@ -751,11 +723,11 @@ class BuilderController extends Controller
      */
     public function deleteListAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $list_id = explode('-', $request->get('ids'));
+        $list_uuid = explode(',', $request->get('uuids'));
 
-        foreach ($list_id as $id) {
+        foreach ($list_uuid as $uuid) {
             /** @var Deck $deck */
-            $deck = $entityManager->getRepository('AppBundle:Deck')->find($id);
+            $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(["uuid" => $uuid]);
             if (!$deck) {
                 continue;
             }
@@ -770,7 +742,7 @@ class BuilderController extends Controller
         }
         $entityManager->flush();
 
-        $this->addFlash('notice', "DeckManager deleted.");
+        $this->addFlash('notice', "Decks deleted.");
 
         return $this->redirect($this->generateUrl('decks_list'));
     }
@@ -971,23 +943,6 @@ class BuilderController extends Controller
     }
 
     /**
-     * @param int                    $deck_id
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     * @throws \Doctrine\DBAL\DBALException
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     */
-    public function editByIdAction(int $deck_id, EntityManagerInterface $entityManager)
-    {
-        return $this->edit($entityManager, [$this->editQueryBase() . " WHERE d.id= ?", [$deck_id]]);
-    }
-
-    public function viewByIdAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge) {
-        return $this->viewAction(["d.id = ?", $deck_id], $entityManager, $judge);
-    }
-
-    /**
      * @param string                 $deck_uuid
      * @param EntityManagerInterface $entityManager
      * @param Judge                  $judge
@@ -1164,19 +1119,6 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
-     */
-    public function copyByIdAction(Decklist $decklist)
-    {
-        return $this->copy($decklist);
-    }
-
-    /**
-     * @param Decklist $decklist
-     * @return Response
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
     public function copyByUuidAction(Decklist $decklist)
@@ -1333,21 +1275,6 @@ class BuilderController extends Controller
         $this->addFlash('notice', "DeckManager imported.");
 
         return $this->redirect($this->generateUrl('decks_list'));
-    }
-
-    /**
-     * @param Deck $deck
-     * @param Request                $request
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
-     */
-    public function autosaveByIdAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
-    {
-        return $this->autosave($deck, $request, $entityManager);
     }
 
     /**
