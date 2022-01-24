@@ -28,10 +28,13 @@ $(document).on('data.app', function() {
 
   // Selects a decklist with its checkbox
   $('a.deck-list-group-item :checkbox').change(function(event) {
-    if(this.checked)
-      select_deck($(`#deck_${$(this).val()}`));
-    else
-      deselect_deck($(`#deck_${$(this).val()}`));
+    let deck = $(`#deck_${$(this).val()}`);
+    if(this.checked) {
+      LastClickedDeck = deck;
+      select_deck(deck);
+    } else {
+      deselect_deck(deck);
+    }
   });
   // Ensures the checkbox isn't blocked by the decklist-expanding event
   $('a.deck-list-group-item :checkbox').on('click', function(event) {
