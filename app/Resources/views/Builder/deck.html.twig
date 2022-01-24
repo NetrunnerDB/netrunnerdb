@@ -243,7 +243,7 @@ var Filters = {},
       {% if published_decklists|length %}
       {% for decklist in published_decklists %}
         <tr>
-          <td class="decklist-name"><a href="{{ path('decklist_detail_by_uuid', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+          <td class="decklist-name"><a href="{{ path('decklist_view', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
           <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
           <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
           <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>

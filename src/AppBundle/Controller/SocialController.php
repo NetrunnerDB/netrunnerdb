@@ -72,7 +72,7 @@ class SocialController extends Controller
                               ]);
         foreach ($old_decklists as $decklist) {
             if (json_encode($decklist->getContent()) == $new_content) {
-                $url = $this->generateUrl('decklist_detail_by_uuid', [
+                $url = $this->generateUrl('decklist_view', [
                     'decklist_uuid' => $decklist->getUuid(),
                     'decklist_name' => $decklist->getPrettyName(),
                 ]);
@@ -189,7 +189,7 @@ class SocialController extends Controller
 
         return $this->redirect(
             $this->generateUrl(
-                'decklist_detail_by_uuid',
+                'decklist_view',
                 [
                     'decklist_uuid' => $decklist->getUuid(),
                     'decklist_name' => $decklist->getPrettyname(),
@@ -246,7 +246,7 @@ class SocialController extends Controller
       $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
       if ($decklist) {
         return $this->redirect(
-            $this->generateUrl('decklist_detail_by_uuid', ['decklist_uuid' => $decklist->getUuid()]),
+            $this->generateUrl('decklist_view', ['decklist_uuid' => $decklist->getUuid()]),
             301);
       } else {
         throw $this->createNotFoundException();
@@ -575,7 +575,7 @@ class SocialController extends Controller
             $email_data = [
                 'username'      => $user->getUsername(),
                 'decklist_name' => $decklist->getName(),
-                'url'           => $this->generateUrl('decklist_detail_by_uuid', ['decklist_uuid' => $decklist->getUuid(), 'decklist_name' => $decklist->getPrettyname()], UrlGeneratorInterface::ABSOLUTE_URL) . '#' . $comment->getId(),
+                'url'           => $this->generateUrl('decklist_view', ['decklist_uuid' => $decklist->getUuid(), 'decklist_name' => $decklist->getPrettyname()], UrlGeneratorInterface::ABSOLUTE_URL) . '#' . $comment->getId(),
                 'comment'       => $comment_html,
                 'profile'       => $this->generateUrl('user_profile', [], UrlGeneratorInterface::ABSOLUTE_URL),
             ];
@@ -589,7 +589,7 @@ class SocialController extends Controller
             }
         }
 
-        return $this->redirect($this->generateUrl('decklist_detail_by_uuid', [
+        return $this->redirect($this->generateUrl('decklist_view', [
             'decklist_uuid' => $decklist_uuid,
             'decklist_name' => $decklist->getPrettyname(),
         ]));
@@ -937,7 +937,7 @@ class SocialController extends Controller
 
         $entityManager->flush();
 
-        return $this->redirect($this->generateUrl('decklist_detail_by_uuid', [
+        return $this->redirect($this->generateUrl('decklist_view', [
             'decklist_uuid'   => $decklist->getUuid(),
             'decklist_name' => $decklist->getPrettyname(),
         ]));

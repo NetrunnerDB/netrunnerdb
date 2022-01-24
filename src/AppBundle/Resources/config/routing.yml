@@ -239,7 +239,7 @@ legacy_decklist:
         _locale: \w\w
         decklist_id: "\\d+"
 
-decklist_detail_by_uuid:
+decklist_view:
     path: /{_locale}/decklist/{decklist_uuid}/{decklist_name}
     methods: [GET]
     defaults:

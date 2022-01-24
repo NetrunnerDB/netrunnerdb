@@ -49,7 +49,7 @@ NRDB.user.params.decklist_id = Decklist.id;
                 </a>
             </div>
             {% if duplicate %}
-            | <small>Duplicate of <a href="{{ path('decklist_detail_by_uuid', { 'decklist_uuid': duplicate.uuid, 'decklist_name': duplicate.prettyname|e('url') }) }}">{{ duplicate.name }}</a></small>
+            | <small>Duplicate of <a href="{{ path('decklist_view', { 'decklist_uuid': duplicate.uuid, 'decklist_name': duplicate.prettyname|e('url') }) }}">{{ duplicate.name }}</a></small>
             {% endif %}
         </div>
     </div>
@@ -258,7 +258,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 {% if precedent_decklists|length %}
 {% for decklist in precedent_decklists %}
 <tr>
-  <td class="decklist-name"><a href="{{ path('decklist_detail_by_uuid', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+  <td class="decklist-name"><a href="{{ path('decklist_view', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
   <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
   <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
   <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
@@ -279,7 +279,7 @@ NRDB.user.params.decklist_id = Decklist.id;
 {% if successor_decklists|length %}
 {% for decklist in successor_decklists %}
 <tr>
-  <td class="decklist-name"><a href="{{ path('decklist_detail_by_uuid', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+  <td class="decklist-name"><a href="{{ path('decklist_view', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
   <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
   <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
   <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>

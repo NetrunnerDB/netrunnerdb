@@ -109,7 +109,7 @@ class ModerationHelper
         $name = "/Emails/decklist-moderation-$status.html.twig";
 
         $url = $this->router->generate(
-            'decklist_detail_by_uuid',
+            'decklist_view',
             [
                 'decklist_uuid' => $decklist->getUuid(),
                 'decklist_name' => $decklist->getPrettyname(),
