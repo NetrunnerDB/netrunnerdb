@@ -9,7 +9,7 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-md-12">
-            <form action="{% if decklist %}{{ path('decklist_edit_by_uuid', {decklist_uuid:decklist.uuid}) }}{% else %}{{ path('decklist_new') }}{% endif %}" method="POST" enctype="application/x-www-form-urlencoded" id="publish-decklist-form">
+            <form action="{% if decklist %}{{ path('decklist_edit', {decklist_uuid:decklist.uuid}) }}{% else %}{{ path('decklist_new') }}{% endif %}" method="POST" enctype="application/x-www-form-urlencoded" id="publish-decklist-form">
               <input type="hidden" name="decklist_uuid" id="publish-decklist-uuid" value="{% if decklist %}{{ decklist.uuid }}{% endif %}">
               <input type="hidden" name="deck_uuid" id="publish-deck-uuid">
               <div class="form-group">

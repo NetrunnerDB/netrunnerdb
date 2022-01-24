@@ -48,7 +48,7 @@ function initialize_publish_deck_form_typeahead() {
 function show_publish_deck_form(deck_uuid, deck_name, deck_description) {
   $('#publish-form-warning').remove();
   $('#btn-publish-submit').text("Checking...").prop('disabled', true);
-  $.ajax(Routing.generate('deck_publish_by_uuid', {deck_uuid:deck_uuid}), {
+  $.ajax(Routing.generate('deck_publish', {deck_uuid:deck_uuid}), {
     success: function( response ) {
       var type = response.allowed ? 'warning' : 'danger';
       if(response.message) {

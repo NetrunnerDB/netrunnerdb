@@ -44,7 +44,7 @@ class SocialController extends Controller
      *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
-    public function publishByUuidAction(Deck $deck, EntityManagerInterface $entityManager, Judge $judge)
+    public function publishAction(Deck $deck, EntityManagerInterface $entityManager, Judge $judge)
     {
         $response = new JsonResponse();
 
@@ -668,12 +668,7 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
-    public function textExportByUuidAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
-    {
-        return $this->textExport($decklist, $judge, $cardsData);
-    }
-
-    private function textExport(Decklist $decklist, Judge $judge, CardsData $cardsData)
+    public function textExportAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -809,12 +804,7 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
-    public function octgnExportByUuidAction(Decklist $decklist)
-    {
-        return $this->octgnExport($decklist);
-    }
-
-    private function octgnExport(Decklist $decklist)
+    public function octgnExportAction(Decklist $decklist)
     {
         $response = new Response();
         $response->setPublic();
@@ -874,12 +864,7 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
-    public function editByUuidAction(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
-    {
-        return $this->edit($decklist, $request, $entityManager, $textProcessor, $moderationHelper);
-    }
-
-    private function edit(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
+    public function editAction(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
     {
         $user = $this->getUser();
 
@@ -952,12 +937,7 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
-    public function deleteByUuidAction(Decklist $decklist, EntityManagerInterface $entityManager)
-    {
-        return $this->delete($decklist, $entityManager);
-    }
-
-    private function delete(Decklist $decklist, EntityManagerInterface $entityManager)
+    public function deleteAction(Decklist $decklist, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
@@ -1337,12 +1317,7 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
-    public function moderateByUuidAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
-    {
-        return $this->moderate($decklist, $status, $modflag_id, $entityManager, $moderationHelper);
-    }
-
-    private function moderate(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
+    public function moderateAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
     {
         $response = new Response();
         $response->setPrivate();

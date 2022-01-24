@@ -262,10 +262,10 @@ function do_action_decklist(event) {
         return;
     switch(action_id) {
         case 'btn-download-text':
-            location.href = Routing.generate('decklist_export_text_by_uuid', {decklist_uuid: Decklist.uuid});
+            location.href = Routing.generate('decklist_text_export', {decklist_uuid: Decklist.uuid});
             break;
         case 'btn-download-octgn':
-            location.href = Routing.generate('decklist_export_octgn_by_uuid', {decklist_uuid: Decklist.uuid});
+            location.href = Routing.generate('decklist_octgn_export', {decklist_uuid: Decklist.uuid});
             break;
     }
 }
