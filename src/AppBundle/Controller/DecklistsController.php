@@ -299,10 +299,6 @@ class DecklistsController extends Controller
      */
     public function diffAction(string $decklist1_uuid, string $decklist2_uuid, EntityManagerInterface $entityManager, DiffService $diffService)
     {
-#        if ($decklist1_id > $decklist2_id) {
-#            // TODO(plural): Update decklists_diff to take deck UUIDs
-#            return $this->redirect($this->generateUrl('decklists_diff', ['decklist1_id' => $decklist2_id, 'decklist2_id' => $decklist1_id]));
-#        }
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('short_cache'));
