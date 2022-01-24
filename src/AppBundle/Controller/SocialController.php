@@ -524,10 +524,10 @@ class SocialController extends Controller
     {
         $user = $this->getUser();
 
-        $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
+        $decklist_uuid = $request->get('uuid');
 
         /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist_uuid]);
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
@@ -540,11 +540,10 @@ class SocialController extends Controller
                FROM decklist d
                JOIN favorite f ON f.decklist_id=d.id
                WHERE f.user_id=?
-               AND d.id=?", [
+               AND d.uuid=?", [
             $user->getId(),
-            $decklist_id,
-        ])
-                           ->fetch(\PDO::FETCH_NUM)[0];
+            $decklist_uuid,
+        ])->fetch(\PDO::FETCH_NUM)[0];
 
         if ($is_favorite) {
             $decklist->setNbfavorites($decklist->getNbfavorites() - 1);
@@ -696,10 +695,10 @@ class SocialController extends Controller
     {
         $user = $this->getUser();
 
-        $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
+        $decklist_uuid = $request->get('uuid');
 
         /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist_uuid]);
 
         if ($decklist->getUser()->getId() != $user->getId()) {
             $query = $entityManager
@@ -707,9 +706,9 @@ class SocialController extends Controller
                         ->select('d')
                         ->from(Decklist::class, 'd')
                         ->innerJoin('d.votes', 'u')
-                        ->where('d.id = :decklist_id')
+                        ->where('d.uuid = :decklist_uuid')
                         ->andWhere('u.id = :user_id')
-                        ->setParameter('decklist_id', $decklist_id)
+                        ->setParameter('decklist_uuid', $decklist_uuid)
                         ->setParameter('user_id', $user->getId())
                         ->getQuery();
 

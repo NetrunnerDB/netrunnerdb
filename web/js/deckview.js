@@ -30,10 +30,10 @@ function do_action_deck(event) {
   if(!action_id || !SelectedDeck) return;
   switch(action_id) {
     case 'btn-edit': location.href=Routing.generate('deck_edit_by_uuid', {deck_uuid:SelectedDeck.uuid}); break;
-    case 'btn-publish': show_publish_deck_form(SelectedDeck.id, SelectedDeck.name, SelectedDeck.description); break;
+    case 'btn-publish': show_publish_deck_form(SelectedDeck.uuid, SelectedDeck.name, SelectedDeck.description); break;
     case 'btn-delete': confirm_delete(); break;
-    case 'btn-download-text': location.href=Routing.generate('deck_export_text', {deck_id:SelectedDeck.id}); break;
-    case 'btn-download-octgn': location.href=Routing.generate('deck_export_octgn', {deck_id:SelectedDeck.id}); break;
+    case 'btn-download-text': location.href=Routing.generate('deck_export_text_by_uuid', {deck_uuid:SelectedDeck.uuid}); break;
+    case 'btn-download-octgn': location.href=Routing.generate('deck_export_octgn_by_uuid', {deck_uuid:SelectedDeck.uuid}); break;
     case 'btn-print': window.print(); break;
     case 'btn-sort-type': DisplaySort = 'type'; DisplaySortSecondary = null; switch_to_web_view(); break;
     case 'btn-sort-number': DisplaySort = 'number'; DisplaySortSecondary = null; switch_to_web_view(); break;
@@ -69,7 +69,7 @@ $(function() {
 
 function confirm_delete() {
   $('#delete-deck-name').text(SelectedDeck.name);
-  $('#delete-deck-id').val(SelectedDeck.id);
+  $('#delete-deck-uuid').val(SelectedDeck.uuid);
   $('#deleteModal').modal('show');
 }
 

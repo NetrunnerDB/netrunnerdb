@@ -354,23 +354,16 @@ function copy_decklist() {
 }
 
 function compare_submit() {
-    var url = $('#decklist2_url').val();
-    var id = null;
-    if(url.match(/^\d+$/)) {
-        id = parseInt(url, 10);
-    } else if(url.match(/decklist\/(\d+)\//)) {
-        id = parseInt(RegExp.$1, 10);
+    var input = $('#decklist2_url').val();
+    var uuid = null;
+    var match = input.match('/decklist/(.*?)(/.*)*$')
+    if (match) {
+        uuid = match[1];
+    } else if (input.match('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')) {
+        uuid = input;
     }
-    if(id) {
-        var id1, id2;
-        if(Decklist.id < id) {
-            id1 = Decklist.id;
-            id2 = id;
-        } else {
-            id1 = id;
-            id2 = Decklist.id;
-        }
-        location.href = Routing.generate('decklists_diff', {decklist1_id: id1, decklist2_id: id2});
+    if (uuid) {
+        location.href = Routing.generate('decklists_diff', {decklist1_uuid: Decklist.uuid, decklist2_uuid: uuid});
     }
 }
 
@@ -436,7 +429,7 @@ function delete_form() {
 function send_like() {
     var obj = $(this);
     $.post(Routing.generate('decklist_like'), {
-        id: Decklist.id
+        uuid: Decklist.uuid
     }, function (data, textStatus, jqXHR) {
         obj.find('.num').text(data);
     });
@@ -445,7 +438,7 @@ function send_like() {
 function send_favorite() {
     var obj = $(this);
     $.post(Routing.generate('decklist_favorite'), {
-        id: Decklist.id
+        uuid: Decklist.uuid
     }, function (data, textStatus, jqXHR) {
         obj.find('.num').text(data);
         var title = obj.data('original-tooltip');
