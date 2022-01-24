@@ -236,12 +236,30 @@ class SocialController extends Controller
     }
 
     /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function legacyViewAction(int $decklist_id, EntityManagerInterface $entityManager) {
+      // TODO(plural): Only redirect if $decklist_id is < configured $max_visible_decklist_id
+      $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+      if ($decklist) {
+        return $this->redirect(
+            $this->generateUrl('decklist_detail_by_uuid', ['decklist_uuid' => $decklist->getUuid()]),
+            301);
+      } else {
+        throw $this->createNotFoundException();
+      }
+    }
+
+    /**
      * @param string                    $decklist_uuid
      * @param EntityManagerInterface $entityManager
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function viewByUuidAction(string $decklist_uuid, EntityManagerInterface $entityManager)
+    public function viewAction(string $decklist_uuid, EntityManagerInterface $entityManager)
     {
         $dbh = $entityManager->getConnection();
         $viewQueryBase = $this->getViewQueryBase();
@@ -249,11 +267,6 @@ class SocialController extends Controller
             $viewQueryBase[0] . " d.uuid = ?" . $viewQueryBase[1], [$decklist_uuid]
         )->fetchAll();
 
-        return $this->view($rows, $entityManager);
-    }
-
-    private function view(array $rows, EntityManagerInterface $entityManager)
-    {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('short_cache'));

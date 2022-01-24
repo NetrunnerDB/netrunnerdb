@@ -228,23 +228,24 @@ decklists_list:
         _locale: \w\w
         page: \d+
 
-decklist_detail_by_uuid:
-    path: /{_locale}/decklist/{decklist_uuid}/{decklist_name}
+legacy_decklist:
+    path: /{_locale}/decklist/{decklist_id}/{decklist_name}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:viewByUuid
+        _controller: AppBundle:Social:legacyView
         _locale: en
         decklist_name: null
     requirements:
         _locale: \w\w
-        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        decklist_id: "\\d+"
 
-decklist_detail_no_name_by_uuid:
-    path: /{_locale}/decklist/{decklist_uuid}
+decklist_detail_by_uuid:
+    path: /{_locale}/decklist/{decklist_uuid}/{decklist_name}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:viewByUuid
+        _controller: AppBundle:Social:view
         _locale: en
+        decklist_name: null
     requirements:
         _locale: \w\w
         decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'

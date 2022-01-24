@@ -917,7 +917,6 @@ class BuilderController extends Controller
     /**
      * @param int                    $deck_id
      * @param EntityManagerInterface $entityManager
-     * @param Judge                  $judge
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
