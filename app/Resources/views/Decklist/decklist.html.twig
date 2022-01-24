@@ -119,7 +119,11 @@ NRDB.user.params.decklist_id = Decklist.id;
 <!-- Legality -->
 <table class="table table-condensed" id="table-mwl">
   <thead>
-    <tr><th colspan="1"><span class="glyphicon glyphicon-bell"></span> Legality</th></tr>
+    <tr>
+      <th colspan="1">
+        <span class="glyphicon glyphicon-bell"></span> Legality
+        <span id="open-lists" style="padding-left: 20px"><a href="#">(show more)</a></span></th>
+    </tr>
   </thead>
   <tbody>
     <tr><td>
@@ -147,9 +151,6 @@ NRDB.user.params.decklist_id = Decklist.id;
         <a href="#" class="change_mwl" data-code="{{ legalities[1].code }}">{{ legalities[1].name }} (active)</a>
       </td></tr>
     {% endif %}
-    <tr id="open-lists"><td>
-      <a href="#">Show more</a>
-    </td></tr>
     {% for legality in legalities|slice(is_current ? 1 : 2) %}
     <tr class="other-list" style="display: none;"><td>
       <a href="#" class="change_mwl" data-code="{{ legality.code }}">
@@ -159,9 +160,6 @@ NRDB.user.params.decklist_id = Decklist.id;
       </a>
     </td></tr>
     {% endfor %}
-    <tr id="close-lists" style="display: none;"><td>
-      <a href="#">Show less</a>
-    </td></tr>
   </tbody>
 </table>
 

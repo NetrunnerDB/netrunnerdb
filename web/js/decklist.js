@@ -327,17 +327,15 @@ $(function () {
     }, 'a');
 
     $('#open-lists a').on("click", function(event) {
-      $('#open-lists').hide();
-      $('#close-lists, .other-list').show();
+      if ($('#open-lists a').text() == '(show more)') {
+         $('#open-lists a').text('(show less)'); 
+         $('.other-list').show();
+      } else {
+         $('#open-lists a').text('(show more)'); 
+         $('.other-list').hide();
+      }
       event.preventDefault();
     });
-
-    $('#close-lists a').on("click", function(event) {
-      $('#open-lists').show();
-      $('#close-lists, .other-list').hide();
-      event.preventDefault();
-    });
-
 });
 
 function copy_decklist() {
