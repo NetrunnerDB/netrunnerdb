@@ -411,20 +411,7 @@ class BuilderController extends Controller
      *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
-    public function textExportByUuidAction(Deck $deck, Judge $judge, CardsData $cardsData)
-    {
-        return $this->textExport($deck, $judge, $cardsData);
-    }
-
-    /**
-     * @param Deck $deck
-     * @param Judge $judge
-     * @param CardsData $cardsData
-     * @return Response
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     */
-    public function textExport(Deck $deck, Judge $judge, CardsData $cardsData)
+    public function textExportAction(Deck $deck, Judge $judge, CardsData $cardsData)
     {
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
@@ -564,16 +551,7 @@ class BuilderController extends Controller
      *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
-    public function octgnExportByUuidAction(Deck $deck)
-    {
-        return $this->octgnExport($deck);
-    }
-
-    /**
-     * @param Deck $deck
-     * @return Response
-     */
-    public function octgnExport(Deck $deck)
+    public function octgnExportAction(Deck $deck)
     {
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
@@ -747,10 +725,21 @@ class BuilderController extends Controller
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
-    private function editQueryBase() {
-        return "
+    /**
+     * @param string                    $deck_uuid
+     * @param EntityManagerInterface    $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     */
+    public function editAction(string $deck_uuid, EntityManagerInterface $entityManager)
+    {
+        $dbh = $entityManager->getConnection();
+        $rows = $dbh->executeQuery("
             SELECT
               d.id,
+              d.uuid,
               d.name,
               m.code mwl_code,
               DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
@@ -764,14 +753,8 @@ class BuilderController extends Controller
               LEFT JOIN mwl m ON d.mwl_id=m.id
               LEFT JOIN user u ON d.user_id=u.id
               LEFT JOIN side s ON d.side_id=s.id
-        ";
-    }
-
-    private function edit(EntityManagerInterface $entityManager, array $queryWithArgs)
-    {
-        $dbh = $entityManager->getConnection();
-        $rows = $dbh->executeQuery($queryWithArgs[0], $queryWithArgs[1])->fetchAll();
-
+            WHERE
+              d.uuid = ?", [$deck_uuid])->fetchAll();
         $deck = $rows[0];
 
         if ($this->getUser()->getId() != $deck['user_id']) {
@@ -932,16 +915,22 @@ class BuilderController extends Controller
     }
 
     /**
-     * @param string                    $deck_uuid
-     * @param EntityManagerInterface    $entityManager
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @param Judge                  $judge
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function editByUuidAction(string $deck_uuid, EntityManagerInterface $entityManager)
-    {
-        return $this->edit($entityManager, [$this->editQueryBase() . " WHERE d.uuid = ?", [$deck_uuid]]);
+    public function legacyViewAction(int $deck_id, EntityManagerInterface $entityManager) {
+      // TODO(plural): Only redirect if $deck_id is < configured $max_visible_deck_id
+      $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
+      if ($deck) {
+        return $this->redirect(
+            $this->generateUrl('deck_view', ['deck_uuid' => $deck->getUuid()]),
+            301);
+      } else {
+        throw $this->createNotFoundException();
+      }
     }
 
     /**
@@ -951,12 +940,9 @@ class BuilderController extends Controller
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function viewByUuidAction(string $deck_uuid, EntityManagerInterface $entityManager, Judge $judge) {
-        return $this->viewAction(["d.uuid = ?", $deck_uuid], $entityManager, $judge);
-    }
-
-    private function getViewQueryBase() {
-        return "
+    public function viewAction(string $deck_uuid, EntityManagerInterface $entityManager, Judge $judge) {
+        $dbh = $entityManager->getConnection();
+        $rows = $dbh->executeQuery("
             SELECT
               d.id,
               d.uuid,
@@ -975,18 +961,11 @@ class BuilderController extends Controller
               LEFT JOIN side s ON d.side_id=s.id
               LEFT JOIN card c ON d.identity_id=c.id
               LEFT JOIN faction f ON c.faction_id=f.id
-            WHERE (u.id=? OR u.share_decks=1) AND ";
-    }
-
-    public function viewAction(array $query_elements, EntityManagerInterface $entityManager, Judge $judge)
-    {
-        $dbh = $entityManager->getConnection();
-        $rows = $dbh->executeQuery(
-            $this->getViewQueryBase() . $query_elements[0],
+            WHERE (u.id=? OR u.share_decks=1) AND d.uuid = ?",
             [
                 $this->getUser() ? $this->getUser()->getId() : null,
                 $this->getUser() ? $this->getUser()->getId() : null,
-                $query_elements[1],
+                $deck_uuid,
             ]
         )->fetchAll();
 
@@ -1126,12 +1105,7 @@ class BuilderController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
-    public function copyByUuidAction(Decklist $decklist)
-    {
-        return $this->copy($decklist);
-    }
-
-    private function copy(Decklist $decklist)
+    public function copyAction(Decklist $decklist)
     {
         $content = [];
         foreach ($decklist->getSlots() as $slot) {
@@ -1292,12 +1266,8 @@ class BuilderController extends Controller
      *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
-    public function autosaveByUuidAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
+    public function autosaveAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
     {
-        return $this->autosave($deck, $request, $entityManager);
-    }
-
-    private function autosave(Deck $deck, Request $request, EntityManagerInterface $entityManager) {
         $user = $this->getUser();
 
         if ($user->getId() != $deck->getUser()->getId()) {

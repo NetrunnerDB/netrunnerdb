@@ -220,13 +220,13 @@ function do_action_deck(event) {
   var action_id = $(this).attr('id');
   if(!action_id) return;
   switch(action_id) {
-    case 'btn-view': location.href=Routing.generate('deck_view_by_uuid', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
-    case 'btn-edit': location.href=Routing.generate('deck_edit_by_uuid', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
+    case 'btn-view': location.href=Routing.generate('deck_view', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
+    case 'btn-edit': location.href=Routing.generate('deck_edit', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
     case 'btn-publish': show_publish_deck_form(deck.uuid, deck.name, deck.description); break;
     case 'btn-duplicate': location.href=Routing.generate('deck_duplicate', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
     case 'btn-delete': confirm_delete(deck); break;
-    case 'btn-download-text': location.href=Routing.generate('deck_export_text_by_uuid', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
-    case 'btn-download-octgn': location.href=Routing.generate('deck_export_octgn_by_uuid', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
+    case 'btn-download-text': location.href=Routing.generate('deck_export_text', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
+    case 'btn-download-octgn': location.href=Routing.generate('deck_export_octgn', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
     case 'btn-export-bbcode': export_bbcode(deck); break;
     case 'btn-export-markdown': export_markdown(deck); break;
     case 'btn-export-plaintext': export_plaintext(deck); break;
@@ -459,8 +459,8 @@ function show_deck() {
     NRDB.data.cards.updateById(slot.card_code, {indeck:parseInt(slot.qty,10)});
   }
   $('#deck-name').text(deck.name);
-  $('#btn-view').attr('href', Routing.generate('deck_view_by_uuid', {deck_uuid:deck.uuid,_locale:NRDB.locale}));
-  $('#btn-edit').attr('href', Routing.generate('deck_edit_by_uuid', {deck_uuid:deck.uuid,_locale:NRDB.locale}));
+  $('#btn-view').attr('href', Routing.generate('deck_view', {deck_uuid:deck.uuid,_locale:NRDB.locale}));
+  $('#btn-edit').attr('href', Routing.generate('deck_edit', {deck_uuid:deck.uuid,_locale:NRDB.locale}));
 
   var mwl_code = deck.mwl_code, mwl_record = mwl_code && NRDB.data.mwl.findById(mwl_code);
   if(mwl_record) {

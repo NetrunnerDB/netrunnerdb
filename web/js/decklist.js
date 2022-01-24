@@ -341,7 +341,7 @@ $(function () {
 });
 
 function copy_decklist() {
-    $.ajax(Routing.generate('deck_copy_by_uuid', {decklist_uuid: Decklist.uuid}), {
+    $.ajax(Routing.generate('deck_copy', {decklist_uuid: Decklist.uuid}), {
         type: 'POST',
         success: function (data, textStatus, jqXHR) {
             alert("Decklist copied");

@@ -94,67 +94,6 @@ class SocialController extends Controller
     }
 
     /**
-     * This function is used to check if a deck can be published from the deck list page.
-     *
-     * @param Deck $deck
-     * @param EntityManagerInterface $entityManager
-     * @param Judge                  $judge
-     * @return JsonResponse
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
-     */
-    public function publishByIdAction(Deck $deck, EntityManagerInterface $entityManager, Judge $judge)
-    {
-        $response = new JsonResponse();
-
-        if ($this->getUser()->getId() != $deck->getUser()->getId()) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $analyse = $judge->analyse($deck->getSlots()->toArray());
-
-        if (isset($analyse['problem'])) {
-            $response->setData([
-                'allowed' => false,
-                'message' => $judge->problem($analyse),
-            ]);
-
-            return $response;
-        }
-
-        $new_content = json_encode($deck->getContent());
-        $new_signature = md5($new_content);
-        $old_decklists = $entityManager
-                              ->getRepository('AppBundle:Decklist')
-                              ->findBy([
-                                  'signature' => $new_signature,
-                              ]);
-        foreach ($old_decklists as $decklist) {
-            if (json_encode($decklist->getContent()) == $new_content) {
-                $url = $this->generateUrl('decklist_detail_by_uuid', [
-                    'decklist_uuid' => $decklist->getUuid(),
-                    'decklist_name' => $decklist->getPrettyName(),
-                ]);
-                $response->setData([
-                    'allowed' => true,
-                    'message' => 'This deck is <a href="' . $url . '">already published</a>. Are you sure you want to publish a duplicate?',
-                ]);
-
-                return $response;
-            }
-        }
-
-        $response->setData([
-            'allowed' => true,
-            'message' => '',
-        ]);
-
-        return $response;
-    }
-
-    /**
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @param DecklistManager        $decklistManager
@@ -294,23 +233,6 @@ class SocialController extends Controller
                LEFT JOIN tournament t ON d.tournament_id=t.id
              WHERE ",
              "AND d.moderation_status IN (0,1,2)"];
-    }
-
-    /**
-     * @param int                    $decklist_id
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function viewByIdAction(int $decklist_id, EntityManagerInterface $entityManager)
-    {
-        $dbh = $entityManager->getConnection();
-        $viewQueryBase = $this->getViewQueryBase();
-        $rows = $dbh->executeQuery(
-            $viewQueryBase[0] . " d.id = ?" . $viewQueryBase[1], [$decklist_id]
-        )->fetchAll();
-
-        return $this->view($rows, $entityManager);
     }
 
     /**
@@ -731,19 +653,6 @@ class SocialController extends Controller
      * @param CardsData $cardsData
      * @return Response
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
-     */
-    public function textExportByIdAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
-    {
-        return $this->textExport($decklist, $judge, $cardsData);
-    }
-
-    /**
-     * @param Decklist $decklist
-     * @param Judge $judge
-     * @param CardsData $cardsData
-     * @return Response
-     *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
     public function textExportByUuidAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
@@ -885,17 +794,6 @@ class SocialController extends Controller
      * @param Decklist $decklist
      * @return Response
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
-     */
-    public function octgnExportByIdAction(Decklist $decklist)
-    {
-        return $this->octgnExport($decklist);
-    }
-
-    /**
-     * @param Decklist $decklist
-     * @return Response
-     *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
     public function octgnExportByUuidAction(Decklist $decklist)
@@ -1030,20 +928,6 @@ class SocialController extends Controller
             'decklist_uuid'   => $decklist->getUuid(),
             'decklist_name' => $decklist->getPrettyname(),
         ]));
-    }
-
-    /**
-     * @param Decklist $decklist
-     * @param EntityManagerInterface $entityManager
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
-     */
-    public function deleteByIdAction(Decklist $decklist, EntityManagerInterface $entityManager)
-    {
-        return $this->delete($decklist, $entityManager);
     }
 
     /**

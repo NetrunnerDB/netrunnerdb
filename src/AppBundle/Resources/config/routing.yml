@@ -34,21 +34,31 @@ deck_save:
     requirements:
         _locale: \w\w
 
-deck_edit_by_uuid:
+deck_edit:
     path: /{_locale}/deck/edit/{deck_uuid}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:editByUuid
+        _controller: AppBundle:Builder:edit
         _locale: en
     requirements:
         _locale: \w\w
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-deck_view_by_uuid:
+deck_view_legacy:
+    path: /{_locale}/deck/view/{deck_id}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:legacyView
+        _locale: en
+    requirements:
+        _locale: \w\w
+        deck_id: "\\d+"
+
+deck_view:
     path: /{_locale}/deck/view/{deck_uuid}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:viewByUuid
+        _controller: AppBundle:Builder:view
         _locale: en
     requirements:
         _locale: \w\w
@@ -81,11 +91,11 @@ deck_publish_by_uuid:
     requirements:
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-deck_autosave_by_uuid:
+deck_autosave:
     path: /deck/autosave/{deck_uuid}
     methods: [POST]
     defaults:
-        _controller: AppBundle:Builder:autosaveByUuid
+        _controller: AppBundle:Builder:autosave
     requirements:
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
@@ -146,27 +156,27 @@ decks_upload_all:
     defaults:
         _controller: AppBundle:Builder:uploadall
 
-deck_export_octgn_by_uuid:
+deck_export_octgn:
     path: /deck/export/octgn/{deck_uuid}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:octgnExportByUuid
+        _controller: AppBundle:Builder:octgnExport
     requirements:
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-deck_export_text_by_uuid:
+deck_export_text:
     path: /deck/export/text/{deck_uuid}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:textExportByUuid
+        _controller: AppBundle:Builder:textExport
     requirements:
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-deck_copy_by_uuid:
+deck_copy:
     path: /{_locale}/deck/copy/{decklist_uuid}
     methods: [POST]
     defaults:
-        _controller: AppBundle:Builder:copyByUuid
+        _controller: AppBundle:Builder:copy
         _locale: en
     requirements:
         _locale: \w\w
