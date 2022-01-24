@@ -198,9 +198,34 @@ class SocialController extends Controller
         );
     }
 
-    private function getViewQueryBase() {
-        return 
-            ["SELECT
+    /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function legacyViewAction(int $decklist_id, EntityManagerInterface $entityManager) {
+      $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+      if ($decklist) {
+        return $this->redirect(
+            $this->generateUrl('decklist_view', ['decklist_uuid' => $decklist->getUuid()]),
+            301);
+      } else {
+        throw $this->createNotFoundException();
+      }
+    }
+
+    /**
+     * @param string                    $decklist_uuid
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function viewAction(string $decklist_uuid, EntityManagerInterface $entityManager)
+    {
+        $dbh = $entityManager->getConnection();
+        $rows = $dbh->executeQuery(
+            "SELECT
                d.id,
                d.uuid,
                d.date_update,
@@ -231,39 +256,10 @@ class SocialController extends Controller
                JOIN card c ON d.identity_id=c.id
                JOIN faction f ON d.faction_id=f.id
                LEFT JOIN tournament t ON d.tournament_id=t.id
-             WHERE ",
-             "AND d.moderation_status IN (0,1,2)"];
-    }
-
-    /**
-     * @param int                    $deck_id
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function legacyViewAction(int $decklist_id, EntityManagerInterface $entityManager) {
-      $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-      if ($decklist) {
-        return $this->redirect(
-            $this->generateUrl('decklist_view', ['decklist_uuid' => $decklist->getUuid()]),
-            301);
-      } else {
-        throw $this->createNotFoundException();
-      }
-    }
-
-    /**
-     * @param string                    $decklist_uuid
-     * @param EntityManagerInterface $entityManager
-     * @return Response
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function viewAction(string $decklist_uuid, EntityManagerInterface $entityManager)
-    {
-        $dbh = $entityManager->getConnection();
-        $viewQueryBase = $this->getViewQueryBase();
-        $rows = $dbh->executeQuery(
-            $viewQueryBase[0] . " d.uuid = ?" . $viewQueryBase[1], [$decklist_uuid]
+             WHERE
+                d.uuid = ?
+                AND d.moderation_status IN (0,1,2)",
+            [$decklist_uuid]
         )->fetchAll();
 
         $response = new Response();
