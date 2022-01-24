@@ -242,7 +242,6 @@ class SocialController extends Controller
      * @throws \Doctrine\DBAL\DBALException
      */
     public function legacyViewAction(int $decklist_id, EntityManagerInterface $entityManager) {
-      // TODO(plural): Only redirect if $decklist_id is < configured $max_visible_decklist_id
       $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
       if ($decklist) {
         return $this->redirect(

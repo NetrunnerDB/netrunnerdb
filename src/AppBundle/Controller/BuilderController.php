@@ -921,7 +921,6 @@ class BuilderController extends Controller
      * @throws \Doctrine\DBAL\DBALException
      */
     public function legacyViewAction(int $deck_id, EntityManagerInterface $entityManager) {
-      // TODO(plural): Only redirect if $deck_id is < configured $max_visible_deck_id
       $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
       if ($deck) {
         return $this->redirect(
