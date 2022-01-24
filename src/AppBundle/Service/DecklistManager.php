@@ -36,6 +36,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -95,6 +96,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -148,6 +150,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -199,6 +202,7 @@ class DecklistManager
         $rows = $dbh->executeQuery("
             SELECT SQL_CALC_FOUND_ROWS
               d.id,
+              d.uuid,
               d.name,
               d.prettyname,
               d.date_creation,
@@ -248,6 +252,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -298,6 +303,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -349,6 +355,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -399,6 +406,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -453,6 +461,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -508,6 +517,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -559,6 +569,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -608,6 +619,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,
@@ -794,6 +806,7 @@ class DecklistManager
         $rows = $dbh->executeQuery(
             "SELECT SQL_CALC_FOUND_ROWS
                 d.id,
+                d.uuid,
                 d.name,
                 d.prettyname,
                 d.date_creation,

@@ -386,6 +386,7 @@ class SocialController extends Controller
         $precedent_decklists = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname,
                d.nbvotes,
@@ -403,6 +404,7 @@ class SocialController extends Controller
         $successor_decklists = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname,
                d.nbvotes,
@@ -420,6 +422,7 @@ class SocialController extends Controller
         $duplicate = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname
              FROM decklist d
@@ -574,8 +577,8 @@ class SocialController extends Controller
     {
         $user = $this->getUser();
 
-        $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist_uuid = $request->get('uuid');
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist_uuid]);
         if (!$decklist instanceof Decklist) {
             throw $this->createNotFoundException();
         }
@@ -959,23 +962,6 @@ class SocialController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
-     */
-    public function editByIdAction(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
-    {
-        return $this->edit($decklist, $request, $entityManager, $textProcessor, $moderationHelper);
-    }
-
-    /**
-     * @param Decklist $decklist
-     * @param Request                $request
-     * @param EntityManagerInterface $entityManager
-     * @param TextProcessor          $textProcessor
-     * @param ModerationHelper       $moderationHelper
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
     public function editByUuidAction(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
@@ -1260,6 +1246,7 @@ class SocialController extends Controller
                c.text,
                c.date_creation,
                d.id decklist_id,
+               d.uuid decklist_uuid,
                d.name decklist_name,
                d.prettyname decklist_prettyname
                from comment c
@@ -1339,6 +1326,7 @@ class SocialController extends Controller
                c.text,
                c.date_creation,
                d.id decklist_id,
+               d.uuid decklist_uuid,
                d.name decklist_name,
                d.prettyname decklist_prettyname,
                u.id user_id,
@@ -1439,23 +1427,6 @@ class SocialController extends Controller
             'items_by_day' => $items_by_day,
             'max'          => $days,
         ], $response);
-    }
-
-    /**
-     * @param Decklist $decklist
-     * @param int                    $status
-     * @param int|null               $modflag_id
-     * @param EntityManagerInterface $entityManager
-     * @param ModerationHelper       $moderationHelper
-     * @return JsonResponse
-     *
-     * @IsGranted("ROLE_MODERATOR")
-     *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
-     */
-    public function moderateByIdAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
-    {
-        return $this->moderate($decklist, $status, $modflag_id, $entityManager, $moderationHelper);
     }
 
     /**

@@ -880,6 +880,7 @@ class BuilderController extends Controller
         $published_decklists = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname,
                d.nbvotes,
@@ -899,6 +900,7 @@ class BuilderController extends Controller
         $parent_decklists = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname,
                d.nbvotes,
@@ -957,6 +959,7 @@ class BuilderController extends Controller
         return "
             SELECT
               d.id,
+              d.uuid,
               d.name,
               d.description,
               m.code,
@@ -1014,6 +1017,7 @@ class BuilderController extends Controller
         $published_decklists = $dbh->executeQuery("
             SELECT
               d.id,
+              d.uuid,
               d.name,
               d.prettyname,
               d.nbvotes,
@@ -1032,6 +1036,7 @@ class BuilderController extends Controller
         $parent_decklists = $dbh->executeQuery("
             SELECT
               d.id,
+              d.uuid,
               d.name,
               d.prettyname,
               d.nbvotes,

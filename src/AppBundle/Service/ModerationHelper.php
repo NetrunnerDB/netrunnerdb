@@ -75,7 +75,7 @@ class ModerationHelper
             }
             $decklist->setModflag($modflag);
         } else {
-            if ($status != Decklist::MODERATION_PUBLISHED && $status != Decklist::MODERATION_RESTORED) {
+            if ($status != Decklist::MODERATION_DELETED && $status != Decklist::MODERATION_PUBLISHED && $status != Decklist::MODERATION_RESTORED) {
                 throw new \RuntimeException("modflag_id required");
             }
         }
@@ -109,9 +109,9 @@ class ModerationHelper
         $name = "/Emails/decklist-moderation-$status.html.twig";
 
         $url = $this->router->generate(
-            'decklist_detail',
+            'decklist_detail_by_uuid',
             [
-                'decklist_id'   => $decklist->getId(),
+                'decklist_uuid' => $decklist->getUuid(),
                 'decklist_name' => $decklist->getPrettyname(),
             ],
             UrlGeneratorInterface::ABSOLUTE_URL

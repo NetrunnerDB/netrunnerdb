@@ -291,26 +291,26 @@ class DecklistsController extends Controller
     }
 
     /**
-     * @param int                    $decklist1_id
-     * @param int                    $decklist2_id
+     * @param string                    $decklist1_uuid
+     * @param string                    $decklist2_uuid
      * @param EntityManagerInterface $entityManager
      * @param DiffService            $diffService
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function diffAction(int $decklist1_id, int $decklist2_id, EntityManagerInterface $entityManager, DiffService $diffService)
+    public function diffAction(string $decklist1_uuid, string $decklist2_uuid, EntityManagerInterface $entityManager, DiffService $diffService)
     {
-        if ($decklist1_id > $decklist2_id) {
-            // TODO(plural): Update decklists_diff to take deck UUIDs
-            return $this->redirect($this->generateUrl('decklists_diff', ['decklist1_id' => $decklist2_id, 'decklist2_id' => $decklist1_id]));
-        }
+#        if ($decklist1_id > $decklist2_id) {
+#            // TODO(plural): Update decklists_diff to take deck UUIDs
+#            return $this->redirect($this->generateUrl('decklists_diff', ['decklist1_id' => $decklist2_id, 'decklist2_id' => $decklist1_id]));
+#        }
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('short_cache'));
 
         /** @var Decklist $d1 */
-        $d1 = $entityManager->getRepository('AppBundle:Decklist')->find($decklist1_id);
+        $d1 = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist1_uuid]);
         /** @var Decklist $d2 */
-        $d2 = $entityManager->getRepository('AppBundle:Decklist')->find($decklist2_id);
+        $d2 = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist2_uuid]);
 
         if (!$d1 || !$d2) {
             throw $this->createNotFoundException();
@@ -356,7 +356,6 @@ class DecklistsController extends Controller
             }
         }
 
-
         return $this->render(
             '/Diff/decklistsDiff.html.twig',
             [
@@ -364,6 +363,7 @@ class DecklistsController extends Controller
                     'faction_code' => $d1->getFaction()->getCode(),
                     'name'         => $d1->getName(),
                     'id'           => $d1->getId(),
+                    'uuid'         => $d1->getUuid(),
                     'prettyname'   => $d1->getPrettyname(),
                     'content'      => $content1,
                 ],
@@ -371,6 +371,7 @@ class DecklistsController extends Controller
                     'faction_code' => $d2->getFaction()->getCode(),
                     'name'         => $d2->getName(),
                     'id'           => $d2->getId(),
+                    'uuid'         => $d2->getUuid(),
                     'prettyname'   => $d2->getPrettyname(),
                     'content'      => $content2,
                 ],

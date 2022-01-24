@@ -1,4 +1,4 @@
-<a href="{{ path('decklist_detail', { 'decklist_id': item.comment.decklist.id, 'decklist_name': item.comment.decklist.prettyname|e('url') }) }}#comment-{{ item.comment.id }}" class="list-group-item{% if item.unchecked %} list-group-item-warning{% endif %}">
+<a href="{{ path('decklist_detail_by_uuid', { 'decklist_uuid': item.comment.decklist.uuid, 'decklist_name': item.comment.decklist.prettyname|e('url') }) }}#comment-{{ item.comment.id }}" class="list-group-item{% if item.unchecked %} list-group-item-warning{% endif %}">
   <span class="glyphicon glyphicon-comment" style="margin-right:1em"></span>
   {% if item.comment.author.id != app.user.id %}
     <span class="username {{ item.comment.author.faction }}">{{ item.comment.author.username }}</span>

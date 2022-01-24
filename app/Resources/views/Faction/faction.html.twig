@@ -42,7 +42,7 @@
         <span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}
         <span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}
       </small>
-      <a class="decklist-name" href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a>
+      <a class="decklist-name" href="{{ path('decklist_detail_by_uuid', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a>
     </h4>
     <h5>
       <time class="pull-right" datetime="{{ decklist.dateCreation|date('c') }}">{{ decklist.dateCreation|date('j M Y') }}</time>
