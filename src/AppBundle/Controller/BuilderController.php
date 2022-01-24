@@ -125,6 +125,7 @@ class BuilderController extends Controller
                     "description" => "",
                     "tags"        => $card->getFaction()->getCode(),
                     "id"          => "",
+                    "uuid"        => "",
                     "history"     => [],
                     "unsaved"     => 0,
                     "mwl_code"    => $active_mwl ? $active_mwl->getCode() : null,
