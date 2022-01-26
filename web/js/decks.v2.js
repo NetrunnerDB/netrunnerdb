@@ -3,6 +3,8 @@ $(document).on('data.app', function() {
   $('#btn-group-selection').on('click', 'button[id],a[id]', do_action_selection);
   $('#btn-group-sort').on('click', 'button[id],a[id]', do_action_sort);
   $('#decks_upload_all').on('click', decks_upload_all);
+  $('#select_all').on('click', select_all_visible);
+  $('#deselect_all').on('click', deselect_all);
 
   $('#menu-sort').on({
     change: function(event) {
@@ -24,36 +26,72 @@ $(document).on('data.app', function() {
   });
   update_tag_toggles();
 
-  $('body').on('click', 'a.deck-list-group-item', function (event) {
+  // Selects a decklist with its checkbox
+  $('a.deck-list-group-item :checkbox').change(function(event) {
+    let deck = $(`#deck_${$(this).val()}`);
+    if(this.checked) {
+      LastClickedDeck = deck;
+      select_deck(deck);
+    } else {
+      deselect_deck(deck);
+    }
+  });
+  // Ensures the checkbox isn't blocked by the decklist-expanding event
+  $('a.deck-list-group-item :checkbox').on('click', function(event) {
+    event.stopPropagation();
+  });
+
+  // Expands a decklist by clicking anywhere else on it
+  $('a.deck-list-group-item').on('click', function(event) {
     LastClickedDeck = this;
-    if(!event.shiftKey) {
-      $('#decks a.deck-list-group-item.selected').removeClass('selected');
-      $(this).addClass('selected');
-    } else {
-      $(this).toggleClass('selected');
-    }
-    if($(this).hasClass('selected')) {
-      if(!event.shiftKey) {
-        show_deck();
-      }
-    } else {
-      hide_deck();
-    }
-    return false;
+    show_deck();
   });
-  $('#decks').on('click', '#close_deck', function (event) {
+  // Close a deck by clicking on its exit button while its expanded
+  $('a.deck-list-group-item').on('click', '#close_deck', function (event) {
     hide_deck();
+    event.stopPropagation();
   });
+  // Expand/close a decklist with the keyboard
   $('.decks').keydown(function (event) {
-    if(event.which == 27) {
+    if(event.which == 27) { // Escape
       hide_deck();
-      }
-    if(event.which == 13) {
+    }
+    if(event.which == 13) { // Enter
       show_deck();
-      }
+    }
     return false;
+  });
+
+  // On load, reset all decklists with checked checkboxes as selected
+  $('a.deck-list-group-item :checkbox').each(function(i, e) {
+    if($(this).is(':checked'))
+      select_deck($(`#deck_${$(this).val()}`));
   });
 });
+
+function select_deck(obj) {
+  obj.addClass('selected');
+  obj.find(':checkbox').prop('checked', true);
+}
+
+function deselect_deck(obj) {
+  obj.removeClass('selected');
+  obj.find(':checkbox').prop('checked', false);
+}
+
+function select_all_visible() {
+  $('a.deck-list-group-item').each(function (i, e) {
+    if($(this).is(":visible")) {
+      select_deck($(this));
+    }
+  });
+}
+
+function deselect_all() {
+  $('a.deck-list-group-item').each(function (i, e) {
+    deselect_deck($(this));
+  });
+}
 
 function decks_upload_all() {
   $('#archiveModal').modal('show');
@@ -204,7 +242,7 @@ function filter_decks() {
   });
   list_id = list_id.filter(function (itm,i,a) { return i==a.indexOf(itm); });
   $('#decks a.deck-list-group-item').each(function (index, elt) {
-    $(elt).removeClass('selected');
+    deselect_deck($(elt));
     var uuid = $(elt).attr('id').replace('deck_', '');
     if(list_id.length && list_id.indexOf(uuid) === -1) $(elt).hide();
     else $(elt).show();
@@ -236,7 +274,6 @@ function do_action_deck(event) {
 }
 
 function do_action_selection(event) {
-  event.stopPropagation();
   var action_id = $(this).attr('id');
   var uuids = [];
   $('#decks a.deck-list-group-item.selected').each(function (index, elt) { uuids.push($(elt).data('uuid')); });
@@ -249,7 +286,7 @@ function do_action_selection(event) {
     case 'btn-tag-remove-all': tag_clear(uuids); break;
     case 'btn-delete-selected': confirm_delete_all(uuids); break;
   }
-  return false;
+  return;
 }
 
 function do_action_sort(event) {
