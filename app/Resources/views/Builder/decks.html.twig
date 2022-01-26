@@ -47,19 +47,8 @@ var Identity = null,
 
 <div class="row" style="margin-bottom:10px">
 <div class="col-md-12">
-  <div class="btn-group" id="btn-group-sort">
-    <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown">
-      <span class="glyphicon glyphicon-sort"></span> Sort List <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
-      <li><a href="#" id="btn-sort-update">By date of last update</a></li>
-      <li><a href="#" id="btn-sort-creation">By date of creation</a></li>
-      <li><a href="#" id="btn-sort-faction">By faction</a></li>
-      <li><a href="#" id="btn-sort-identity">By identity</a></li>
-      <li><a href="#" id="btn-sort-lastpack">By last datapack</a></li>
-      <li><a href="#" id="btn-sort-name">By deck name</a></li>
-    </ul>
-  </div>
+<a role="button" class="btn btn-default btn-sm" href="{{ path('decks_download_all') }}">Download all decks</a>
+<button role="button" class="btn btn-default btn-sm" id="decks_upload_all">Upload all decks</button>
 </div>
 </div>
 
@@ -88,8 +77,19 @@ var Identity = null,
 
 <div class="row" style="margin-bottom:10px">
 <div class="col-md-12">
-<a role="button" class="btn btn-default btn-sm" href="{{ path('decks_download_all') }}">Download all decks</a>
-<button role="button" class="btn btn-default btn-sm" id="decks_upload_all">Upload all decks</button>
+  <div class="btn-group" id="btn-group-sort">
+    <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown">
+      <span class="glyphicon glyphicon-sort"></span> Sort List <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#" id="btn-sort-update">By date of last update</a></li>
+      <li><a href="#" id="btn-sort-creation">By date of creation</a></li>
+      <li><a href="#" id="btn-sort-faction">By faction</a></li>
+      <li><a href="#" id="btn-sort-identity">By identity</a></li>
+      <li><a href="#" id="btn-sort-lastpack">By last datapack</a></li>
+      <li><a href="#" id="btn-sort-name">By deck name</a></li>
+    </ul>
+  </div>
 </div>
 </div>
 
