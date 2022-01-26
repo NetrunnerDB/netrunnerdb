@@ -274,7 +274,6 @@ function do_action_deck(event) {
 }
 
 function do_action_selection(event) {
-  event.stopPropagation();
   var action_id = $(this).attr('id');
   var uuids = [];
   $('#decks a.deck-list-group-item.selected').each(function (index, elt) { uuids.push($(elt).data('uuid')); });
@@ -287,7 +286,7 @@ function do_action_selection(event) {
     case 'btn-tag-remove-all': tag_clear(uuids); break;
     case 'btn-delete-selected': confirm_delete_all(uuids); break;
   }
-  return false;
+  return;
 }
 
 function do_action_sort(event) {
