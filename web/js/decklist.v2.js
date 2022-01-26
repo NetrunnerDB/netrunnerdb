@@ -67,7 +67,7 @@ function setup_moderation(moderation_status, moderation_reason, is_moderator) {
 
 function setup_comment_form() {
 
-    var form = $('<form method="POST" action="' + Routing.generate('decklist_comment') + '"><input type="hidden" name="id" value="' + Decklist.id + '"><div class="form-group">'
+    var form = $('<form method="POST" action="' + Routing.generate('decklist_comment') + '"><input type="hidden" name="uuid" value="' + Decklist.uuid + '"><div class="form-group">'
             + '<textarea id="comment-form-text" class="form-control" maxlength="10000" rows="4" name="comment" placeholder="Enter your comment in Markdown format. Type # to enter a card name. Type $ to enter a symbol. Type @ to enter a user name."></textarea>'
             + '</div><div class="well text-muted" id="comment-form-preview"><small>Preview. Look <a href="http://daringfireball.net/projects/markdown/dingus">here</a> for a Markdown syntax reference.</small></div>'
             + '<div class="form-group small"><span class="help-block">By submitting content, you agree to the <a href="'+Routing.generate('cards_about')+'#code-of-conduct">Code of Conduct</a> of the website.</span></div>'
@@ -262,10 +262,10 @@ function do_action_decklist(event) {
         return;
     switch(action_id) {
         case 'btn-download-text':
-            location.href = Routing.generate('decklist_export_text', {decklist_id: Decklist.id});
+            location.href = Routing.generate('decklist_text_export', {decklist_uuid: Decklist.uuid});
             break;
         case 'btn-download-octgn':
-            location.href = Routing.generate('decklist_export_octgn', {decklist_id: Decklist.id});
+            location.href = Routing.generate('decklist_octgn_export', {decklist_uuid: Decklist.uuid});
             break;
     }
 }
@@ -339,7 +339,7 @@ $(function () {
 });
 
 function copy_decklist() {
-    $.ajax(Routing.generate('deck_copy', {decklist_id: Decklist.id}), {
+    $.ajax(Routing.generate('deck_copy', {decklist_uuid: Decklist.uuid}), {
         type: 'POST',
         success: function (data, textStatus, jqXHR) {
             alert("Decklist copied");
@@ -352,23 +352,16 @@ function copy_decklist() {
 }
 
 function compare_submit() {
-    var url = $('#decklist2_url').val();
-    var id = null;
-    if(url.match(/^\d+$/)) {
-        id = parseInt(url, 10);
-    } else if(url.match(/decklist\/(\d+)\//)) {
-        id = parseInt(RegExp.$1, 10);
+    var input = $('#decklist2_url').val();
+    var uuid = null;
+    var match = input.match('/decklist/(.*?)(/.*)*$')
+    if (match) {
+        uuid = match[1];
+    } else if (input.match('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')) {
+        uuid = input;
     }
-    if(id) {
-        var id1, id2;
-        if(Decklist.id < id) {
-            id1 = Decklist.id;
-            id2 = id;
-        } else {
-            id1 = id;
-            id2 = Decklist.id;
-        }
-        location.href = Routing.generate('decklists_diff', {decklist1_id: id1, decklist2_id: id2});
+    if (uuid) {
+        location.href = Routing.generate('decklists_diff', {decklist1_uuid: Decklist.uuid, decklist2_uuid: uuid});
     }
 }
 
@@ -434,7 +427,7 @@ function delete_form() {
 function send_like() {
     var obj = $(this);
     $.post(Routing.generate('decklist_like'), {
-        id: Decklist.id
+        uuid: Decklist.uuid
     }, function (data, textStatus, jqXHR) {
         obj.find('.num').text(data);
     });
@@ -443,7 +436,7 @@ function send_like() {
 function send_favorite() {
     var obj = $(this);
     $.post(Routing.generate('decklist_favorite'), {
-        id: Decklist.id
+        uuid: Decklist.uuid
     }, function (data, textStatus, jqXHR) {
         obj.find('.num').text(data);
         var title = obj.data('original-tooltip');
@@ -532,7 +525,7 @@ function show_modflag_modal(data) {
 
 function change_moderation_status(status, modflag_id) {
     var url = Routing.generate('decklist_moderate', {
-        decklist_id: Decklist.id,
+        decklist_uuid: Decklist.uuid,
         status: status,
         modflag_id: modflag_id
     });

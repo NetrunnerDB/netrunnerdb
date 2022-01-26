@@ -28,6 +28,11 @@ class IndexController extends Controller
         $rows = $dbh->executeQuery("SELECT decklist FROM highlight WHERE id=?", [1])->fetchAll();
         $decklist = count($rows) ? json_decode($rows[0]['decklist']) : null;
 
+        // TODO(plural): Remove this lookup once the DOTW contains UUID by default.
+        if ($decklist != null) {
+            $decklist_object = $entityManager->getRepository('AppBundle:Decklist')->find($decklist->{'id'});
+            $decklist->{'uuid'} = $decklist_object->getUuid();
+        }
         // recent decklists
         $decklists_recent = $decklistManager->recent(0, 10, false)['decklists'];
 

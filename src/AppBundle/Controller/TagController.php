@@ -20,9 +20,9 @@ class TagController extends Controller
      */
     public function addAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $list_id = $request->get('ids');
-        if (!is_array($list_id)) {
-            $list_id = explode(' ', $list_id);
+        $list_uuid = $request->get('uuids');
+        if (!is_array($list_uuid)) {
+            $list_uuid = explode(' ', $list_uuid);
         }
         $list_tag = $request->get('tags');
         if (!is_array($list_tag)) {
@@ -35,9 +35,9 @@ class TagController extends Controller
 
         $response = ["success" => true];
 
-        foreach ($list_id as $id) {
+        foreach ($list_uuid as $uuid) {
             /** @var Deck $deck */
-            $deck = $entityManager->getRepository('AppBundle:Deck')->find($id);
+            $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(["uuid" => $uuid]);
             if (!$deck) {
                 continue;
             }
@@ -47,7 +47,7 @@ class TagController extends Controller
             $tags = array_values(array_filter(array_unique(array_merge(explode(' ', $deck->getTags()), $list_tag)), function ($tag) {
                 return $tag != "";
             }));
-            $response['tags'][$deck->getId()] = $tags;
+            $response['tags'][$deck->getUuid()] = $tags;
             $deck->setTags(implode(' ', $tags));
         }
         $entityManager->flush();
@@ -64,14 +64,14 @@ class TagController extends Controller
      */
     public function removeAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $list_id = $request->get('ids');
+        $list_uuid = $request->get('uuids');
         $list_tag = $request->get('tags');
 
         $response = ["success" => true];
 
-        foreach ($list_id as $id) {
+        foreach ($list_uuid as $uuid) {
             /** @var Deck $deck */
-            $deck = $entityManager->getRepository('AppBundle:Deck')->find($id);
+            $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(["uuid" => $uuid]);
             if (!$deck) {
                 continue;
             }
@@ -79,7 +79,7 @@ class TagController extends Controller
                 continue;
             }
             $tags = array_values(array_diff(explode(' ', $deck->getTags()), $list_tag));
-            $response['tags'][$deck->getId()] = $tags;
+            $response['tags'][$deck->getUuid()] = $tags;
             $deck->setTags(implode(' ', $tags));
         }
         $entityManager->flush();
@@ -96,20 +96,20 @@ class TagController extends Controller
      */
     public function clearAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $list_id = $request->get('ids');
+        $list_uuid = $request->get('uuids');
 
         $response = ["success" => true];
 
-        foreach ($list_id as $id) {
+        foreach ($list_uuid as $uuid) {
             /** @var Deck $deck */
-            $deck = $entityManager->getRepository('AppBundle:Deck')->find($id);
+            $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(["uuid" => $uuid]);
             if (!$deck) {
                 continue;
             }
             if ($this->getUser()->getId() != $deck->getUser()->getId()) {
                 continue;
             }
-            $response['tags'][$deck->getId()] = [];
+            $response['tags'][$deck->getUuid()] = [];
             $deck->setTags('');
         }
         $entityManager->flush();

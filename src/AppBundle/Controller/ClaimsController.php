@@ -70,6 +70,7 @@ class ClaimsController extends AbstractOauthController
         $entityManager->flush();
 
         $jsend = $this->getJsendResponse('success', ['claim' => $claim]);
+        // TODO(plural): Update claims code with necro to send UUID
         $url = $this->generateUrl('app_claims_get', ['decklist_id' => $decklist_id, 'id' => $claim->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return $this->createJsonResponse($jsend, 201, ['Location' => $url]);

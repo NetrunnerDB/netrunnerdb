@@ -42,7 +42,7 @@ class SocialController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
     public function publishAction(Deck $deck, EntityManagerInterface $entityManager, Judge $judge)
     {
@@ -72,8 +72,8 @@ class SocialController extends Controller
                               ]);
         foreach ($old_decklists as $decklist) {
             if (json_encode($decklist->getContent()) == $new_content) {
-                $url = $this->generateUrl('decklist_detail', [
-                    'decklist_id'   => $decklist->getId(),
+                $url = $this->generateUrl('decklist_view', [
+                    'decklist_uuid' => $decklist->getUuid(),
                     'decklist_name' => $decklist->getPrettyName(),
                 ]);
                 $response->setData([
@@ -106,9 +106,8 @@ class SocialController extends Controller
      */
     public function newAction(Request $request, EntityManagerInterface $entityManager, DecklistManager $decklistManager, Judge $judge, TextProcessor $textProcessor, RotationService $rotationService)
     {
-        $deck_id = filter_var($request->request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
         /** @var Deck $deck */
-        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
+        $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['uuid' => $request->request->get('deck_uuid')]);
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
         }
@@ -135,8 +134,8 @@ class SocialController extends Controller
 
         $decklist = new Decklist();
         // Note: We are doing the naive thing and just assuming we won't collide.
-		// If there is a collision, there will be an error returned to the user.
-		// Sorry, users!  v2 will be nicer to you!
+        // If there is a collision, there will be an error returned to the user.
+        // Sorry, users!  v2 will be nicer to you!
         $decklist->setUuid(Uuid::uuid4()->toString());
         $decklist->setName($name);
         $decklist->setPrettyname(preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($name)));
@@ -190,9 +189,9 @@ class SocialController extends Controller
 
         return $this->redirect(
             $this->generateUrl(
-                'decklist_detail',
+                'decklist_view',
                 [
-                    'decklist_id'   => $decklist->getId(),
+                    'decklist_uuid' => $decklist->getUuid(),
                     'decklist_name' => $decklist->getPrettyname(),
                 ]
             )
@@ -200,21 +199,35 @@ class SocialController extends Controller
     }
 
     /**
-     * @param int                    $decklist_id
+     * @param int                    $deck_id
      * @param EntityManagerInterface $entityManager
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function viewAction(int $decklist_id, EntityManagerInterface $entityManager)
-    {
-        $response = new Response();
-        $response->setPublic();
-        $response->setMaxAge($this->getParameter('short_cache'));
+    public function legacyViewAction(int $decklist_id, EntityManagerInterface $entityManager) {
+      $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+      if ($decklist) {
+        return $this->redirect(
+            $this->generateUrl('decklist_view', ['decklist_uuid' => $decklist->getUuid()]),
+            301);
+      } else {
+        throw $this->createNotFoundException();
+      }
+    }
 
+    /**
+     * @param string                    $decklist_uuid
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function viewAction(string $decklist_uuid, EntityManagerInterface $entityManager)
+    {
         $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.date_update,
                d.name,
                d.prettyname,
@@ -243,19 +256,24 @@ class SocialController extends Controller
                JOIN card c ON d.identity_id=c.id
                JOIN faction f ON d.faction_id=f.id
                LEFT JOIN tournament t ON d.tournament_id=t.id
-             WHERE d.id=?
-               AND d.moderation_status IN (0,1,2)
-               ",
-            [
-                $decklist_id,
-            ]
+             WHERE
+                d.uuid = ?
+                AND d.moderation_status IN (0,1,2)",
+            [$decklist_uuid]
         )->fetchAll();
+
+        $response = new Response();
+        $response->setPublic();
+        $response->setMaxAge($this->getParameter('short_cache'));
 
         if (empty($rows)) {
             throw $this->createNotFoundException();
         }
 
+        $dbh = $entityManager->getConnection();
+
         $decklist = $rows[0];
+        $decklist_id = $decklist['id'];
 
         $comments = $dbh->executeQuery(
             "SELECT
@@ -298,6 +316,7 @@ class SocialController extends Controller
         $precedent_decklists = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname,
                d.nbvotes,
@@ -315,6 +334,7 @@ class SocialController extends Controller
         $successor_decklists = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname,
                d.nbvotes,
@@ -332,6 +352,7 @@ class SocialController extends Controller
         $duplicate = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname
              FROM decklist d
@@ -433,10 +454,10 @@ class SocialController extends Controller
     {
         $user = $this->getUser();
 
-        $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
+        $decklist_uuid = $request->get('uuid');
 
         /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist_uuid]);
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
@@ -449,11 +470,10 @@ class SocialController extends Controller
                FROM decklist d
                JOIN favorite f ON f.decklist_id=d.id
                WHERE f.user_id=?
-               AND d.id=?", [
+               AND d.uuid=?", [
             $user->getId(),
-            $decklist_id,
-        ])
-                           ->fetch(\PDO::FETCH_NUM)[0];
+            $decklist_uuid,
+        ])->fetch(\PDO::FETCH_NUM)[0];
 
         if ($is_favorite) {
             $decklist->setNbfavorites($decklist->getNbfavorites() - 1);
@@ -486,8 +506,8 @@ class SocialController extends Controller
     {
         $user = $this->getUser();
 
-        $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist_uuid = $request->get('uuid');
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist_uuid]);
         if (!$decklist instanceof Decklist) {
             throw $this->createNotFoundException();
         }
@@ -550,7 +570,7 @@ class SocialController extends Controller
             $email_data = [
                 'username'      => $user->getUsername(),
                 'decklist_name' => $decklist->getName(),
-                'url'           => $this->generateUrl('decklist_detail', ['decklist_id' => $decklist->getId(), 'decklist_name' => $decklist->getPrettyname()], UrlGeneratorInterface::ABSOLUTE_URL) . '#' . $comment->getId(),
+                'url'           => $this->generateUrl('decklist_view', ['decklist_uuid' => $decklist->getUuid(), 'decklist_name' => $decklist->getPrettyname()], UrlGeneratorInterface::ABSOLUTE_URL) . '#' . $comment->getId(),
                 'comment'       => $comment_html,
                 'profile'       => $this->generateUrl('user_profile', [], UrlGeneratorInterface::ABSOLUTE_URL),
             ];
@@ -564,8 +584,8 @@ class SocialController extends Controller
             }
         }
 
-        return $this->redirect($this->generateUrl('decklist_detail', [
-            'decklist_id'   => $decklist_id,
+        return $this->redirect($this->generateUrl('decklist_view', [
+            'decklist_uuid' => $decklist_uuid,
             'decklist_name' => $decklist->getPrettyname(),
         ]));
     }
@@ -605,10 +625,10 @@ class SocialController extends Controller
     {
         $user = $this->getUser();
 
-        $decklist_id = filter_var($request->get('id'), FILTER_SANITIZE_NUMBER_INT);
+        $decklist_uuid = $request->get('uuid');
 
         /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist_uuid]);
 
         if ($decklist->getUser()->getId() != $user->getId()) {
             $query = $entityManager
@@ -616,9 +636,9 @@ class SocialController extends Controller
                         ->select('d')
                         ->from(Decklist::class, 'd')
                         ->innerJoin('d.votes', 'u')
-                        ->where('d.id = :decklist_id')
+                        ->where('d.uuid = :decklist_uuid')
                         ->andWhere('u.id = :user_id')
-                        ->setParameter('decklist_id', $decklist_id)
+                        ->setParameter('decklist_uuid', $decklist_uuid)
                         ->setParameter('user_id', $user->getId())
                         ->getQuery();
 
@@ -641,9 +661,9 @@ class SocialController extends Controller
      * @param CardsData $cardsData
      * @return Response
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
-    public function textexportAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
+    public function textExportAction(Decklist $decklist, Judge $judge, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -777,9 +797,9 @@ class SocialController extends Controller
      * @param Decklist $decklist
      * @return Response
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
-    public function octgnexportAction(Decklist $decklist)
+    public function octgnExportAction(Decklist $decklist)
     {
         $response = new Response();
         $response->setPublic();
@@ -811,23 +831,12 @@ class SocialController extends Controller
             return new Response('no identity found');
         }
 
-        return $this->octgnexport("$name.o8d", $identity, $rd, $decklist->getRawdescription(), $response);
-    }
+        $filename = "$name.o8d";
 
-    /**
-     * @param string   $filename
-     * @param array   $identity
-     * @param array    $rd
-     * @param string   $description
-     * @param Response $response
-     * @return Response
-     */
-    public function octgnexport(string $filename, array $identity, array $rd, string $description, Response $response)
-    {
         $content = $this->renderView('/octgn.xml.twig', [
             "identity"    => $identity,
             "rd"          => $rd,
-            "description" => strip_tags($description),
+            "description" => strip_tags($decklist->getRawdescription()),
         ]);
 
         $response->headers->set('Content-Type', 'application/octgn');
@@ -848,7 +857,7 @@ class SocialController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
     public function editAction(Decklist $decklist, Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor, ModerationHelper $moderationHelper)
     {
@@ -890,8 +899,8 @@ class SocialController extends Controller
         }
 
         // Note: We are doing the naive thing and just assuming we won't collide.
-		// If there is a collision, there will be an error returned to the user.
-		// Sorry, users!  v2 will be nicer to you!
+        // If there is a collision, there will be an error returned to the user.
+        // Sorry, users!  v2 will be nicer to you!
         if ($decklist->getUuid() == null) {
             $decklist->setUuid(Uuid::uuid4()->toString());
         }
@@ -908,8 +917,8 @@ class SocialController extends Controller
 
         $entityManager->flush();
 
-        return $this->redirect($this->generateUrl('decklist_detail', [
-            'decklist_id'   => $decklist->getId(),
+        return $this->redirect($this->generateUrl('decklist_view', [
+            'decklist_uuid'   => $decklist->getUuid(),
             'decklist_name' => $decklist->getPrettyname(),
         ]));
     }
@@ -921,7 +930,7 @@ class SocialController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
     public function deleteAction(Decklist $decklist, EntityManagerInterface $entityManager)
     {
@@ -1108,6 +1117,7 @@ class SocialController extends Controller
                c.text,
                c.date_creation,
                d.id decklist_id,
+               d.uuid decklist_uuid,
                d.name decklist_name,
                d.prettyname decklist_prettyname
                from comment c
@@ -1187,6 +1197,7 @@ class SocialController extends Controller
                c.text,
                c.date_creation,
                d.id decklist_id,
+               d.uuid decklist_uuid,
                d.name decklist_name,
                d.prettyname decklist_prettyname,
                u.id user_id,
@@ -1299,7 +1310,7 @@ class SocialController extends Controller
      *
      * @IsGranted("ROLE_MODERATOR")
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
     public function moderateAction(Decklist $decklist, int $status, int $modflag_id = null, EntityManagerInterface $entityManager, ModerationHelper $moderationHelper)
     {

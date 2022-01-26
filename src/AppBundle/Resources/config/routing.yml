@@ -35,44 +35,44 @@ deck_save:
         _locale: \w\w
 
 deck_edit:
-    path: /{_locale}/deck/edit/{deck_id}
+    path: /{_locale}/deck/edit/{deck_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:Builder:edit
         _locale: en
     requirements:
         _locale: \w\w
-        deck_id: \d+
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-deck_view:
+deck_view_legacy:
     path: /{_locale}/deck/view/{deck_id}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:viewById
+        _controller: AppBundle:Builder:legacyView
         _locale: en
     requirements:
         _locale: \w\w
-        deck_id: \d+
+        deck_id: "\\d+"
 
-deck_view_by_uuid:
-    path: /{_locale}/deck/view/{uuid}
+deck_view:
+    path: /{_locale}/deck/view/{deck_uuid}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:viewByUuid
+        _controller: AppBundle:Builder:view
         _locale: en
     requirements:
         _locale: \w\w
-        uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 deck_duplicate:
-    path: /{_locale}/deck/duplicate/{deck_id}
+    path: /{_locale}/deck/duplicate/{deck_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:Builder:duplicate
         _locale: en
     requirements:
         _locale: \w\w
-        deck_id: \d+
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 decks_list:
     path: /{_locale}/decks
@@ -84,17 +84,20 @@ decks_list:
         _locale: \w\w
 
 deck_publish:
-    path: /deck/can_publish/{deck_id}
+    path: /deck/can_publish/{deck_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:Social:publish
-        deck_id: \d+
+    requirements:
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 deck_autosave:
-    path: /deck/autosave/{deck_id}
+    path: /deck/autosave/{deck_uuid}
     methods: [POST]
     defaults:
         _controller: AppBundle:Builder:autosave
+    requirements:
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 deck_delete:
     path: /{_locale}/deck/delete
@@ -154,46 +157,46 @@ decks_upload_all:
         _controller: AppBundle:Builder:uploadall
 
 deck_export_octgn:
-    path: /deck/export/octgn/{deck_id}
+    path: /deck/export/octgn/{deck_uuid}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:octgnexport
+        _controller: AppBundle:Builder:octgnExport
     requirements:
-        deck_id: \d+
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 deck_export_text:
-    path: /deck/export/text/{deck_id}
+    path: /deck/export/text/{deck_uuid}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:textexport
+        _controller: AppBundle:Builder:textExport
     requirements:
-        deck_id: \d+
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 deck_copy:
-    path: /{_locale}/deck/copy/{decklist_id}
+    path: /{_locale}/deck/copy/{decklist_uuid}
     methods: [POST]
     defaults:
         _controller: AppBundle:Builder:copy
         _locale: en
     requirements:
         _locale: \w\w
-        decklist_id: \d+
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-decklist_export_octgn:
-    path: /decklist/export/octgn/{decklist_id}
+decklist_octgn_export:
+    path: /decklist/export/octgn/{decklist_uuid}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:octgnexport
+        _controller: AppBundle:Social:octgnExport
     requirements:
-        decklist_id: \d+
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-decklist_export_text:
-    path: /decklist/export/text/{decklist_id}
+decklist_text_export:
+    path: /decklist/export/text/{decklist_uuid}
     methods: [GET]
     defaults:
-        _controller: AppBundle:Social:textexport
+        _controller: AppBundle:Social:textExport
     requirements:
-        decklist_id: \d+
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 decklist_new:
     path: /{_locale}/deck/publish
@@ -203,7 +206,6 @@ decklist_new:
         _locale: en
     requirements:
         _locale: \w\w
-
 
 decklists_searchform:
     path: /{_locale}/decklists/search
@@ -226,8 +228,19 @@ decklists_list:
         _locale: \w\w
         page: \d+
 
-decklist_detail:
+legacy_decklist:
     path: /{_locale}/decklist/{decklist_id}/{decklist_name}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Social:legacyView
+        _locale: en
+        decklist_name: null
+    requirements:
+        _locale: \w\w
+        decklist_id: "\\d+"
+
+decklist_view:
+    path: /{_locale}/decklist/{decklist_uuid}/{decklist_name}
     methods: [GET]
     defaults:
         _controller: AppBundle:Social:view
@@ -235,17 +248,7 @@ decklist_detail:
         decklist_name: null
     requirements:
         _locale: \w\w
-        decklist_id: \d+
-
-decklist_detail_no_name:
-    path: /{_locale}/decklist/{decklist_id}
-    methods: [GET]
-    defaults:
-        _controller: AppBundle:Social:view
-        _locale: en
-    requirements:
-        _locale: \w\w
-        decklist_id: \d+
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 decklist_favorite:
     path: /user/favorite
@@ -272,31 +275,31 @@ decklist_comment_hide:
         _controller: AppBundle:Social:hidecomment
 
 decklist_edit:
-    path: /decklist/edit/{decklist_id}
+    path: /decklist/edit/{decklist_uuid}
     methods: [POST]
     defaults:
         _controller: AppBundle:Social:edit
     requirements:
-        decklist_id: \d+
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 decklist_delete:
-    path: /decklist/delete/{decklist_id}
+    path: /decklist/delete/{decklist_uuid}
     methods: [POST]
     defaults:
         _controller: AppBundle:Social:delete
     requirements:
-        decklist_id: \d+
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 decklists_diff:
-    path: /{_locale}/decklists/diff/{decklist1_id}/{decklist2_id}
+    path: /{_locale}/decklists/diff/{decklist1_uuid}/{decklist2_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:Decklists:diff
         _locale: en
     requirements:
         _locale: \w\w
-        decklist1_id: \d+
-        decklist2_id: \d+
+        decklist1_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        decklist2_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 prebuilt_view:
     path: /{_locale}/prebuilt/{prebuilt_code}
@@ -639,7 +642,7 @@ api_public_decklist:
         decklist_id: "\\d+"
 
 api_public_decklist_by_uuid:
-    path: /api/2.0/public/decklist/{uuid}
+    path: /api/2.0/public/decklist/{decklist_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:PublicApi20:decklistByUuid
@@ -663,7 +666,7 @@ api_public_deck:
         deck_id: "\\d+"
 
 api_public_deck_by_uuid:
-    path: /api/2.0/public/deck/{uuid}
+    path: /api/2.0/public/deck/{deck_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:PublicApi20:deckByUuid
@@ -697,7 +700,7 @@ api_private_deck_load_by_id:
         deck_id: "\\d+"
 
 api_private_deck_load_by_uuid:
-    path: /api/2.0/private/deck/{uuid}
+    path: /api/2.0/private/deck/{deck_uuid}
     methods: [GET]
     defaults:
         _controller: AppBundle:PrivateApi20:loadDeckByUuid
@@ -802,13 +805,13 @@ cards_sets:
         _locale: \w\w
 
 decklist_moderate:
-    path: /decklist/moderate/{decklist_id}/{status}/{modflag_id}
+    path: /decklist/moderate/{decklist_uuid}/{status}/{modflag_id}
     methods: [POST]
     defaults:
         _controller: AppBundle:Social:moderate
         modflag_id: null
     requirements:
-        decklist_id: \d+
+        decklist_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
         status: \d
 
 modflags_get:

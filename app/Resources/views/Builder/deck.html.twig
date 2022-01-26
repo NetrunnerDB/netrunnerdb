@@ -8,7 +8,7 @@
 <script src="{{ asset('/js/nrdb.smart_filter.js') }}"></script>
 <script src="{{ asset('/js/nrdb.suggestions.js') }}"></script>
 <script src="{{ asset('/js/nrdb.diff.js') }}"></script>
-<script src="{{ asset('/js/deck.js') }}"></script>
+<script src="{{ asset('/js/deck.v2.js') }}"></script>
 <script type="text/javascript">
 
 var Filters = {},
@@ -25,7 +25,7 @@ var Filters = {},
         MWL_global_penalty = false,
   Deck = {{ deck.slots|json_encode|raw }},
   Side = {{ deck.side_name|json_encode|raw }},
-  Deck_id = {{ deck.id|json_encode|raw }},
+  Deck_uuid = {{ deck.uuid|json_encode|raw }},
   History = {{ deck.history|json_encode|raw }},
   Url_FactionImage = '{{  asset('/images/factions/16px/xxx.png') }}',
   Url_TypeImage = '{{ asset('/images/types/xxx.png') }}',
@@ -243,7 +243,7 @@ var Filters = {},
       {% if published_decklists|length %}
       {% for decklist in published_decklists %}
         <tr>
-          <td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+          <td class="decklist-name"><a href="{{ path('decklist_view', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
           <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
           <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
           <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>

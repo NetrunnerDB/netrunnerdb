@@ -3,8 +3,8 @@
 {% block head %}
 <script src="{{ asset('/js/nrdb.card_modal.js') }}"></script>
 <script src="{{ asset('/js/nrdb.diff.js') }}"></script>
-<script src="{{ asset('/js/publish_deck_form.js') }}"></script>
-<script src="{{ asset('/js/decks.js') }}"></script>
+<script src="{{ asset('/js/publish_deck_form.v2.js') }}"></script>
+<script src="{{ asset('/js/decks.v2.js') }}"></script>
 <script type="text/javascript">
 var Identity = null,
   LastClickedDeck = null,
@@ -103,7 +103,7 @@ var Identity = null,
 <div class="col-md-12">
 <div class="list-group" id="decks" data-sort-type="date_update" data-sort-order="1">
 {% for deck in decks %}
-<a href="#" class="list-group-item deck-list-group-item" id="deck_{{ deck.id }}" data-id="{{ deck.id }}" data-problem="{{ deck.problem }}" data-faction="{{ deck.faction_code }}">
+  <a href="#" class="list-group-item deck-list-group-item" id="deck_{{ deck.uuid }}" data-id="{{ deck.id }}" data-uuid="{{ deck.uuid }}" data-problem="{{ deck.problem }}" data-faction="{{ deck.faction_code }}">
     <div class="deck-list-identity-image hidden-xs" title="{{ deck.identity_title }}" style="background-image:url({{ asset('/card_image/small/'~deck.identity_code~'.jpg') }})"></div>
     <h4 class="decklist-name">{{ deck.name }}{% if deck.message %} <span class="glyphicon glyphicon-exclamation-sign text-danger" title="{{ deck.message }}"></span>{% endif %}</h4>
     <div>
@@ -245,7 +245,7 @@ var Identity = null,
         <div class="row">
           <div class="col-md-12">
             <form action="{{ path('deck_delete') }}" method="POST" enctype="application/x-www-form-urlencoded" id="delete-deck-form">
-              <input type="hidden" name="deck_id" id="delete-deck-id" value="">
+              <input type="hidden" name="deck_uuid" id="delete-deck-uuid" value="">
               <p>
               Are you sure that you want to delete the deck <b id="delete-deck-name"></b>?
               </p>
@@ -274,7 +274,7 @@ var Identity = null,
         <div class="row">
           <div class="col-md-12">
             <form action="{{ path('deck_delete_list') }}" method="POST" enctype="application/x-www-form-urlencoded" id="delete-deck-list-form">
-              <input type="hidden" name="ids" id="delete-deck-list-id" value="">
+              <input type="hidden" name="uuids" id="delete-deck-list-uuid" value="">
               <p>
               Are you sure that you want to delete all the decks selected?
               </p>
@@ -412,7 +412,7 @@ var Identity = null,
               <input class="form-control" type="text" name="tags" id="tag_add_tags" placeholder="a-tag another">
             </div>
             <div class="pull-right">
-              <input type="hidden" name="ids" id="tag_add_ids">
+              <input type="hidden" name="uuids" id="tag_add_uuids">
               <button type="submit" class="btn btn-success" onclick="$('#tagAddModal').modal('hide');tag_add_process(event)">Add</button>
               <button type="button" class="btn btn-default" onclick="$('#tagAddModal').modal('hide')">Cancel</button>
             </div>
@@ -442,7 +442,7 @@ var Identity = null,
               <input class="form-control" type="text" name="tags" id="tag_remove_tags" placeholder="a-tag another">
             </div>
             <div class="pull-right">
-              <input type="hidden" name="ids" id="tag_remove_ids">
+              <input type="hidden" name="uuids" id="tag_remove_uuids">
               <button type="submit" class="btn btn-success" onclick="$('#tagRemoveModal').modal('hide');tag_remove_process(event)">Remove</button>
               <button type="button" class="btn btn-default" onclick="$('#tagRemoveModal').modal('hide')">Cancel</button>
             </div>
@@ -471,7 +471,7 @@ var Identity = null,
               <label>Are you sure you want to clear all tags from the selected decks?</label>
             </div>
             <div class="pull-right">
-              <input type="hidden" name="ids" id="tag_clear_ids">
+              <input type="hidden" name="uuids" id="tag_clear_uuids">
               <button type="submit" class="btn btn-success" onclick="$('#tagClearModal').modal('hide');tag_clear_process(event)">Yes, clear</button>
               <button type="button" class="btn btn-default" onclick="$('#tagClearModal').modal('hide')">Cancel</button>
             </div>

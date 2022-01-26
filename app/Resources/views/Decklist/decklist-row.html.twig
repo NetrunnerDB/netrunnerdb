@@ -1,6 +1,6 @@
 <div style="border-top: 1px solid #ddd;margin-bottom: 10px;padding-top: 10px;">
   <div class="visible-xs-block">
-    <a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a>
+    <a href="{{ path('decklist_view', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a>
   </div>
   <div class="media" style="margin-top:0">
     <div class="media-left">
@@ -9,7 +9,7 @@
     <div class="media-body">
       <div class="row h4 hidden-xs">
         <div class="col-sm-9">
-          <a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a>
+          <a href="{{ path('decklist_view', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a>
         </div>
         <div class="col-sm-3 small social">
           <span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}

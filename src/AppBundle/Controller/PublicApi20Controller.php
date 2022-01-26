@@ -419,10 +419,10 @@ class PublicApi20Controller extends FOSRestController
      * )
      *
      */
-    public function decklistByUuidAction(string $uuid, Request $request)
+    public function decklistByUuidAction(string $decklist_uuid, Request $request)
     {
-      return $this->getSingleEntityFromCache("public-api-decklist-" . $uuid, function() use ($uuid) {
-        return $this->entityManager->getRepository('AppBundle:Decklist')->findOneBy(['uuid' => $uuid]);
+      return $this->getSingleEntityFromCache("public-api-decklist-" . $decklist_uuid, function() use ($decklist_uuid) {
+        return $this->entityManager->getRepository('AppBundle:Decklist')->findOneBy(['uuid' => $decklist_uuid]);
       }, $request);
     }
 
@@ -493,7 +493,7 @@ class PublicApi20Controller extends FOSRestController
      *  },
      * )
      *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"uuid": "uuid"}})
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
     public function deckByUuidAction(Deck $deck, Request $request)
     {
