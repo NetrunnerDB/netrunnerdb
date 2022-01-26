@@ -1156,6 +1156,7 @@ class BuilderController extends Controller
                 'description' => $description,
                 'deck_id'     => $deck->getParent() ? $deck->getParent()->getId() : null,
                 'mwl_code'    => $mwl,
+                'tags'        => $deck->getTags(),
             ]
         );
     }
