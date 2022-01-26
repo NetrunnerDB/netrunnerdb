@@ -45,6 +45,7 @@ class DeckManager
         $decks = $dbh->executeQuery("
             SELECT
               d.id,
+              d.uuid,
               d.name,
               DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
               DATE_FORMAT(d.date_update, '%Y-%m-%dT%TZ') date_update,
@@ -287,8 +288,8 @@ class DeckManager
         }
 
         // Note: We are doing the naive thing and just assuming we won't collide.
-		// If there is a collision, there will be an error returned to the user.
-		// Sorry, users!  v2 will be nicer to you!
+        // If there is a collision, there will be an error returned to the user.
+        // Sorry, users!  v2 will be nicer to you!
         if ($deck->getUuid() == null) {
           $deck->setUuid(Uuid::uuid4()->toString());
         }

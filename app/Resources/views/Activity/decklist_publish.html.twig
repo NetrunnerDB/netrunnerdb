@@ -1,4 +1,4 @@
-<a href="{{ path('decklist_detail', { 'decklist_id': item.decklist.id, 'decklist_name': item.decklist.prettyname|e('url') }) }}" class="list-group-item{% if item.unchecked %} list-group-item-warning{% endif %}">
+<a href="{{ path('decklist_view', { 'decklist_uuid': item.decklist.uuid, 'decklist_name': item.decklist.prettyname|e('url') }) }}" class="list-group-item{% if item.unchecked %} list-group-item-warning{% endif %}">
   <span class="glyphicon glyphicon-list-alt" style="margin-right:1em"></span>
   {% if item.decklist.user.id != app.user.id %}
   <span class="username {{ item.decklist.user.faction }}">{{ item.decklist.user.username }}</span>

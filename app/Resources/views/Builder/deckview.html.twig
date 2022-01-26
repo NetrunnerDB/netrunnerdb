@@ -5,8 +5,8 @@
 <script src="{{ asset('/js/nrdb.deck_gallery.js') }}"></script>
 <script src="{{ asset('/js/nrdb.draw_simulator.js') }}"></script>
 <script src="{{ asset('/js/nrdb.card_modal.js') }}"></script>
-<script src="{{ asset('/js/publish_deck_form.js') }}"></script>
-<script src="{{ asset('/js/deckview.js') }}"></script>
+<script src="{{ asset('/js/publish_deck_form.v2.js') }}"></script>
+<script src="{{ asset('/js/deckview.v2.js') }}"></script>
 <script type="text/javascript">
 
 var Identity = null,
@@ -170,7 +170,7 @@ var Identity = null,
   {% if published_decklists|length %}
   {% for decklist in published_decklists %}
     <tr>
-      <td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+      <td class="decklist-name"><a href="{{ path('decklist_view', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
       <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
       <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
       <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
@@ -191,7 +191,7 @@ var Identity = null,
       {% if parent_decklists|length %}
         {% for decklist in parent_decklists %}
             <tr>
-                <td class="decklist-name"><a href="{{ path('decklist_detail', { 'decklist_id': decklist.id, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
+                <td class="decklist-name"><a href="{{ path('decklist_view', { 'decklist_uuid': decklist.uuid, 'decklist_name': decklist.prettyname|e('url') }) }}">{{ decklist.name }}</a></td>
                 <td class="social"><span class="glyphicon glyphicon-heart social-icon-like"></span> {{ decklist.nbvotes }}</td>
                 <td class="social"><span class="glyphicon glyphicon-star social-icon-favorite"></span> {{ decklist.nbfavorites }}</td>
                 <td class="social"><span class="glyphicon glyphicon-comment social-icon-comment"></span> {{ decklist.nbcomments }}</td>
@@ -272,7 +272,7 @@ var Identity = null,
         <div class="row">
           <div class="col-md-12">
             <form action="{{ path('deck_delete') }}" method="POST" enctype="application/x-www-form-urlencoded" id="delete-deck-form">
-              <input type="hidden" name="deck_id" id="delete-deck-id" value="">
+              <input type="hidden" name="deck_uuid" id="delete-deck-uuid" value="">
               <p>
               Are you sure that you want to delete the deck <b id="delete-deck-name"></b>?
               </p>

@@ -460,7 +460,7 @@ $(function() {
 });
 function autosave_interval() {
   if(Autosave_running) return;
-  if(Autosave_timer < 0 && Deck_id) Autosave_timer = Autosave_period;
+  if(Autosave_timer < 0 && Deck_uuid) Autosave_timer = Autosave_period;
   if(Autosave_timer === 0) {
     deck_autosave();
   }
@@ -513,7 +513,7 @@ function load_snapshot(event) {
 }
 function deck_autosave() {
   // check if deck has been modified since last autosave
-  if(!Deck_changed_since_last_autosave || !Deck_id) return;
+  if(!Deck_changed_since_last_autosave || !Deck_uuid) return;
   // compute diff between last snapshot and current deck
   var last_snapshot = Snapshots[Snapshots.length-1].content;
   var current_deck = get_deck_content();
@@ -525,7 +525,7 @@ function deck_autosave() {
   // send diff to autosave
   $('#tab-header-history').html("Autosave...");
   Autosave_running = true;
-  $.ajax(Routing.generate('deck_autosave', {deck_id:Deck_id}), {
+  $.ajax(Routing.generate('deck_autosave', {deck_uuid:Deck_uuid}), {
     data: {diff:diff},
     type: 'POST',
     success: function(data, textStatus, jqXHR) {

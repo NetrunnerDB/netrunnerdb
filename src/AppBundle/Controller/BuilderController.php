@@ -125,6 +125,7 @@ class BuilderController extends Controller
                     "description" => "",
                     "tags"        => $card->getFaction()->getCode(),
                     "id"          => "",
+                    "uuid"        => "",
                     "history"     => [],
                     "unsaved"     => 0,
                     "mwl_code"    => $active_mwl ? $active_mwl->getCode() : null,
@@ -409,9 +410,9 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
-    public function textexportAction(Deck $deck, Judge $judge, CardsData $cardsData)
+    public function textExportAction(Deck $deck, Judge $judge, CardsData $cardsData)
     {
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
@@ -549,9 +550,9 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
-    public function octgnexportAction(Deck $deck)
+    public function octgnExportAction(Deck $deck)
     {
         if ($this->getUser()->getId() != $deck->getUser()->getId()) {
             throw $this->createAccessDeniedException();
@@ -583,24 +584,14 @@ class BuilderController extends Controller
             return new Response('no identity found');
         }
 
-        return $this->octgnexport("$name.o8d", $identity, $rd, $deck->getDescription());
-    }
+        $filename = "$name.o8d";
 
-    /**
-     * @param string $filename
-     * @param array $identity
-     * @param array  $rd
-     * @param string $description
-     * @return Response
-     */
-    public function octgnexport(string $filename, array $identity, array $rd, string $description)
-    {
         $content = $this->renderView(
             '/octgn.xml.twig',
             [
                 "identity"    => $identity,
                 "rd"          => $rd,
-                "description" => strip_tags($description),
+                "description" => strip_tags($deck->getDescription()),
             ]
         );
 
@@ -682,8 +673,8 @@ class BuilderController extends Controller
      */
     public function deleteAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $deck_id = filter_var($request->get('deck_id'), FILTER_SANITIZE_NUMBER_INT);
-        $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
+        $deck_uuid = $request->get('deck_uuid');
+        $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['uuid' => $request->get('deck_uuid')]);
         if (!$deck instanceof Deck) {
             return $this->redirect($this->generateUrl('decks_list'));
         }
@@ -711,11 +702,11 @@ class BuilderController extends Controller
      */
     public function deleteListAction(Request $request, EntityManagerInterface $entityManager)
     {
-        $list_id = explode('-', $request->get('ids'));
+        $list_uuid = explode(',', $request->get('uuids'));
 
-        foreach ($list_id as $id) {
+        foreach ($list_uuid as $uuid) {
             /** @var Deck $deck */
-            $deck = $entityManager->getRepository('AppBundle:Deck')->find($id);
+            $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(["uuid" => $uuid]);
             if (!$deck) {
                 continue;
             }
@@ -730,25 +721,26 @@ class BuilderController extends Controller
         }
         $entityManager->flush();
 
-        $this->addFlash('notice', "DeckManager deleted.");
+        $this->addFlash('notice', "Decks deleted.");
 
         return $this->redirect($this->generateUrl('decks_list'));
     }
 
     /**
-     * @param int                    $deck_id
-     * @param EntityManagerInterface $entityManager
+     * @param string                    $deck_uuid
+     * @param EntityManagerInterface    $entityManager
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function editAction(int $deck_id, EntityManagerInterface $entityManager)
+    public function editAction(string $deck_uuid, EntityManagerInterface $entityManager)
     {
         $dbh = $entityManager->getConnection();
         $rows = $dbh->executeQuery("
             SELECT
               d.id,
+              d.uuid,
               d.name,
               m.code mwl_code,
               DATE_FORMAT(d.date_creation, '%Y-%m-%dT%TZ') date_creation,
@@ -762,11 +754,8 @@ class BuilderController extends Controller
               LEFT JOIN mwl m ON d.mwl_id=m.id
               LEFT JOIN user u ON d.user_id=u.id
               LEFT JOIN side s ON d.side_id=s.id
-            WHERE d.id=?
-              ", [
-            $deck_id,
-        ])->fetchAll();
-
+            WHERE
+              d.uuid = ?", [$deck_uuid])->fetchAll();
         $deck = $rows[0];
 
         if ($this->getUser()->getId() != $deck['user_id']) {
@@ -782,7 +771,7 @@ class BuilderController extends Controller
             FROM deckslot s
               JOIN card c ON s.card_id=c.id
             WHERE s.deck_id=?", [
-            $deck_id,
+            $deck['id'],
         ])->fetchAll();
 
         $cards = [];
@@ -799,7 +788,7 @@ class BuilderController extends Controller
               c.saved
             FROM deckchange c
             WHERE c.deck_id=? AND c.saved=1
-            ORDER BY date_creation DESC", [$deck_id])->fetchAll();
+            ORDER BY date_creation DESC", [$deck['id']])->fetchAll();
 
         // recreating the versions with the variation info, starting from $preversion
         $preversion = $cards;
@@ -840,7 +829,7 @@ class BuilderController extends Controller
               c.saved
             FROM deckchange c
             WHERE c.deck_id=? AND c.saved=0
-            ORDER BY date_creation ASC", [$deck_id])->fetchAll();
+            ORDER BY date_creation ASC", [$deck['id']])->fetchAll();
 
         // recreating the snapshots with the variation info, starting from $postversion
         $postversion = $cards;
@@ -875,6 +864,7 @@ class BuilderController extends Controller
         $published_decklists = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname,
                d.nbvotes,
@@ -886,7 +876,7 @@ class BuilderController extends Controller
              ORDER BY d.date_creation ASC",
 
             [
-                $deck_id,
+                $deck['id'],
             ]
 
         )->fetchAll();
@@ -894,6 +884,7 @@ class BuilderController extends Controller
         $parent_decklists = $dbh->executeQuery(
             "SELECT
                d.id,
+               d.uuid,
                d.name,
                d.prettyname,
                d.nbvotes,
@@ -905,7 +896,7 @@ class BuilderController extends Controller
              ORDER BY d.date_creation ASC",
 
             [
-                $deck_id,
+                $deck['id'],
             ]
 
         )->fetchAll();
@@ -924,84 +915,64 @@ class BuilderController extends Controller
         );
     }
 
-    public function viewByIdAction(int $deck_id, EntityManagerInterface $entityManager, Judge $judge) {
-        $dbh = $entityManager->getConnection();
-        $rows = $dbh->executeQuery("
-            SELECT
-              d.id,
-              d.name,
-              d.description,
-              m.code,
-              d.problem,
-              d.date_update,
-              s.name side_name,
-              c.code identity_code,
-              f.code faction_code,
-              CASE WHEN u.id=? THEN 1 ELSE 0 END is_owner
-            FROM deck d
-              LEFT JOIN mwl m  ON d.mwl_id=m.id
-              LEFT JOIN user u ON d.user_id=u.id
-              LEFT JOIN side s ON d.side_id=s.id
-              LEFT JOIN card c ON d.identity_id=c.id
-              LEFT JOIN faction f ON c.faction_id=f.id
-            WHERE d.id=?
-              AND (u.id=? OR u.share_decks=1)
-               ", [
-            $this->getUser() ? $this->getUser()->getId() : null,
-            $deck_id,
-            $this->getUser() ? $this->getUser()->getId() : null,
-        ])->fetchAll();
-
-        if (!count($rows)) {
-            throw $this->createNotFoundException();
-        }
-        return $this->viewAction($rows[0], $entityManager, $judge);
-    }
-
-    public function viewByUuidAction(string $uuid, EntityManagerInterface $entityManager, Judge $judge) {
-        $dbh = $entityManager->getConnection();
-        $rows = $dbh->executeQuery("
-            SELECT
-              d.id,
-              d.name,
-              d.description,
-              m.code,
-              d.problem,
-              d.date_update,
-              s.name side_name,
-              c.code identity_code,
-              f.code faction_code,
-              CASE WHEN u.id=? THEN 1 ELSE 0 END is_owner
-            FROM deck d
-              LEFT JOIN mwl m  ON d.mwl_id=m.id
-              LEFT JOIN user u ON d.user_id=u.id
-              LEFT JOIN side s ON d.side_id=s.id
-              LEFT JOIN card c ON d.identity_id=c.id
-              LEFT JOIN faction f ON c.faction_id=f.id
-            WHERE d.uuid=?
-              AND (u.id=? OR u.share_decks=1)
-               ", [
-            $this->getUser() ? $this->getUser()->getId() : null,
-            $uuid,
-            $this->getUser() ? $this->getUser()->getId() : null,
-        ])->fetchAll();
-
-        if (!count($rows)) {
-            throw $this->createNotFoundException();
-        }
-        return $this->viewAction($rows[0], $entityManager, $judge);
+    /**
+     * @param int                    $deck_id
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function legacyViewAction(int $deck_id, EntityManagerInterface $entityManager) {
+      $deck = $entityManager->getRepository('AppBundle:Deck')->find($deck_id);
+      if ($deck) {
+        return $this->redirect(
+            $this->generateUrl('deck_view', ['deck_uuid' => $deck->getUuid()]),
+            301);
+      } else {
+        throw $this->createNotFoundException();
+      }
     }
 
     /**
-     * @param int                    $deck_id
+     * @param string                 $deck_uuid
      * @param EntityManagerInterface $entityManager
      * @param Judge                  $judge
      * @return Response
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function viewAction(array $deck, EntityManagerInterface $entityManager, Judge $judge)
-    {
+    public function viewAction(string $deck_uuid, EntityManagerInterface $entityManager, Judge $judge) {
         $dbh = $entityManager->getConnection();
+        $rows = $dbh->executeQuery("
+            SELECT
+              d.id,
+              d.uuid,
+              d.name,
+              d.description,
+              m.code,
+              d.problem,
+              d.date_update,
+              s.name side_name,
+              c.code identity_code,
+              f.code faction_code,
+              CASE WHEN u.id=? THEN 1 ELSE 0 END is_owner
+            FROM deck d
+              LEFT JOIN mwl m  ON d.mwl_id=m.id
+              LEFT JOIN user u ON d.user_id=u.id
+              LEFT JOIN side s ON d.side_id=s.id
+              LEFT JOIN card c ON d.identity_id=c.id
+              LEFT JOIN faction f ON c.faction_id=f.id
+            WHERE (u.id=? OR u.share_decks=1) AND d.uuid = ?",
+            [
+                $this->getUser() ? $this->getUser()->getId() : null,
+                $this->getUser() ? $this->getUser()->getId() : null,
+                $deck_uuid,
+            ]
+        )->fetchAll();
+
+        if (!count($rows)) {
+            throw $this->createNotFoundException();
+        }
+
+        $deck = $rows[0];
 
         $deck['side_name'] = mb_strtolower($deck['side_name']);
 
@@ -1024,6 +995,7 @@ class BuilderController extends Controller
         $published_decklists = $dbh->executeQuery("
             SELECT
               d.id,
+              d.uuid,
               d.name,
               d.prettyname,
               d.nbvotes,
@@ -1042,6 +1014,7 @@ class BuilderController extends Controller
         $parent_decklists = $dbh->executeQuery("
             SELECT
               d.id,
+              d.uuid,
               d.name,
               d.prettyname,
               d.nbvotes,
@@ -1129,7 +1102,7 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"id" = "decklist_id"})
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
     public function copyAction(Decklist $decklist)
     {
@@ -1156,7 +1129,7 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
     public function duplicateAction(Deck $deck)
     {
@@ -1290,7 +1263,7 @@ class BuilderController extends Controller
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      *
-     * @ParamConverter("deck", class="AppBundle:Deck", options={"id" = "deck_id"})
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
     public function autosaveAction(Deck $deck, Request $request, EntityManagerInterface $entityManager)
     {
@@ -1304,8 +1277,7 @@ class BuilderController extends Controller
         if (count($diff) != 2) {
             throw new BadRequestHttpException("Wrong content " . $diff);
         }
-
-        if (count($diff[0]) || count($diff[1])) {
+        if (count((array) $diff[0]) || count((array) $diff[1])) {
             $change = new Deckchange();
             $change->setDeck($deck);
             $change->setVariation(json_encode($diff));

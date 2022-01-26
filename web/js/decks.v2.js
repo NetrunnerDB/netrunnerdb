@@ -97,13 +97,13 @@ function decks_upload_all() {
   $('#archiveModal').modal('show');
 }
 
-function do_diff(ids) {
-  if(ids.length < 2) return;
+function do_diff(uuids) {
+  if(uuids.length < 2) return;
 
   var contents = [];
   var names = [];
-  for(var decknum=0; decknum<ids.length; decknum++) {
-    var deck = _.find(Decks, function (adeck) { return adeck.id == ids[decknum] });
+  for(var decknum=0; decknum<uuids.length; decknum++) {
+    var deck = _.find(Decks, function (adeck) { return adeck.uuid == uuids[decknum] });
     var hash = {};
     for(var slotnum=0; slotnum<deck.cards.length; slotnum++) {
       var slot = deck.cards[slotnum];
@@ -143,14 +143,14 @@ function do_diff(ids) {
   $('#diffModal').modal('show');
 }
 
-function do_diff_collection(ids) {
-  if(ids.length < 2) return;
+function do_diff_collection(uuids) {
+  if(uuids.length < 2) return;
   var decks; decks = [];
 
   var ensembles; ensembles = [];
   var lengths; lengths = [];
-  for(var decknum=0; decknum<ids.length; decknum++) {
-    var deck = _.find(Decks, function (adeck) { return adeck.id == ids[decknum] });
+  for(var decknum=0; decknum<uuids.length; decknum++) {
+    var deck = _.find(Decks, function (adeck) { return adeck.uuid == uuids[decknum] });
     decks.push(deck);
     var cards = [];
     for(var slotnum=0; slotnum<deck.cards.length; slotnum++) {
@@ -238,13 +238,13 @@ function filter_decks() {
   var buttons = $('#tag_toggles button.active');
   var list_id = [];
   buttons.each(function (index, button) {
-    list_id = list_id.concat($(button).data('deck_id').split(/\s+/));
+    list_id = list_id.concat($(button).data('deck_uuid').split(/\s+/));
   });
   list_id = list_id.filter(function (itm,i,a) { return i==a.indexOf(itm); });
   $('#decks a.deck-list-group-item').each(function (index, elt) {
     deselect_deck($(elt));
-    var id = $(elt).attr('id').replace('deck_', '');
-    if(list_id.length && list_id.indexOf(id) === -1) $(elt).hide();
+    var uuid = $(elt).attr('id').replace('deck_', '');
+    if(list_id.length && list_id.indexOf(uuid) === -1) $(elt).hide();
     else $(elt).show();
   });
 }
@@ -252,19 +252,19 @@ function filter_decks() {
 function do_action_deck(event) {
   event.stopPropagation();
   if(event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return;
-  var deck_id = $(this).closest('.deck-list-group-item').data('id');
-  var deck = SelectedDeck = _.find(Decks, function (deck) { return deck.id == deck_id });
+  var deck_uuid = $(this).closest('.deck-list-group-item').data('uuid');
+  var deck = SelectedDeck = _.find(Decks, function (deck) { return deck.uuid == deck_uuid });
   if(!deck) return;
   var action_id = $(this).attr('id');
   if(!action_id) return;
   switch(action_id) {
-    case 'btn-view': location.href=Routing.generate('deck_view', {deck_id:deck.id,_locale:NRDB.locale}); break;
-    case 'btn-edit': location.href=Routing.generate('deck_edit', {deck_id:deck.id,_locale:NRDB.locale}); break;
-    case 'btn-publish': show_publish_deck_form(deck.id, deck.name, deck.description); break;
-    case 'btn-duplicate': location.href=Routing.generate('deck_duplicate', {deck_id:deck.id,_locale:NRDB.locale}); break;
+    case 'btn-view': location.href=Routing.generate('deck_view', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
+    case 'btn-edit': location.href=Routing.generate('deck_edit', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
+    case 'btn-publish': show_publish_deck_form(deck.uuid, deck.name, deck.description); break;
+    case 'btn-duplicate': location.href=Routing.generate('deck_duplicate', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
     case 'btn-delete': confirm_delete(deck); break;
-    case 'btn-download-text': location.href=Routing.generate('deck_export_text', {deck_id:deck.id,_locale:NRDB.locale}); break;
-    case 'btn-download-octgn': location.href=Routing.generate('deck_export_octgn', {deck_id:deck.id,_locale:NRDB.locale}); break;
+    case 'btn-download-text': location.href=Routing.generate('deck_export_text', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
+    case 'btn-download-octgn': location.href=Routing.generate('deck_export_octgn', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
     case 'btn-export-bbcode': export_bbcode(deck); break;
     case 'btn-export-markdown': export_markdown(deck); break;
     case 'btn-export-plaintext': export_plaintext(deck); break;
@@ -276,18 +276,16 @@ function do_action_deck(event) {
 function do_action_selection(event) {
   event.stopPropagation();
   var action_id = $(this).attr('id');
-  var ids = [];
-  $('#decks a.deck-list-group-item.selected').each(function (index, elt) { ids.push($(elt).data('id')); });
-  if(!action_id || !ids.length) return;
+  var uuids = [];
+  $('#decks a.deck-list-group-item.selected').each(function (index, elt) { uuids.push($(elt).data('uuid')); });
+  if(!action_id || !uuids.length) return;
   switch(action_id) {
-    case 'btn-compare': do_diff(ids); break;
-    case 'btn-compare-collection': do_diff_collection(ids); break;
-    case 'btn-tag-add': tag_add(ids); break;
-    case 'btn-tag-remove-one': tag_remove(ids); break;
-    case 'btn-tag-remove-all': tag_clear(ids); break;
-    case 'btn-delete-selected': confirm_delete_all(ids); break;
-    case 'btn-download-text': download_text_selection(ids); break;
-    case 'btn-download-octgn': download_octgn_selection(ids); break;
+    case 'btn-compare': do_diff(uuids); break;
+    case 'btn-compare-collection': do_diff_collection(uuids); break;
+    case 'btn-tag-add': tag_add(uuids); break;
+    case 'btn-tag-remove-one': tag_remove(uuids); break;
+    case 'btn-tag-remove-all': tag_clear(uuids); break;
+    case 'btn-delete-selected': confirm_delete_all(uuids); break;
   }
   return false;
 }
@@ -307,50 +305,36 @@ function do_action_sort(event) {
   return false;
 }
 
-function download_text_selection(ids)
-{
-  window.location = Routing.generate('deck_export_text_list', { ids: ids });
-}
-
-function download_octgn_selection(ids)
-{
-  window.location = Routing.generate('deck_export_octgn_list', { ids: ids });
-}
-
-function sort_list(type)
-{
+function sort_list(type) {
   var container = $('#decks');
-    var current_sort = container.data('sort-type');
-    var current_order = container.data('sort-order');
-    var order = current_order || 1;
-    if(current_sort && current_sort == type) {
-        order = -order;
-    }
-    container.data('sort-type', type);
-    container.data('sort-order', order);
-    var sorted_list_id = Decks.sort(function (a, b) {
+  var current_sort = container.data('sort-type');
+  var current_order = container.data('sort-order');
+  var order = current_order || 1;
+  if (current_sort && current_sort == type) {
+    order = -order;
+  }
+  container.data('sort-type', type);
+  container.data('sort-order', order);
+  var sorted_list_id = Decks.sort(function (a, b) {
     return order * a[type].localeCompare(b[type]);
   }).map(function (deck) {
-    return deck.id;
+    return deck.uuid;
   });
   var deck_elt = $('#deck_'+sorted_list_id.shift());
 
   container.prepend(deck_elt);
-  sorted_list_id.forEach(function (deck_id) {
-    deck_elt = $('#deck_'+deck_id).insertAfter(deck_elt);
+  sorted_list_id.forEach(function (deck_uuid) {
+    deck_elt = $('#deck_'+deck_uuid).insertAfter(deck_elt);
   });
-
 }
 
 
-function update_tag_toggles()
-{
-
-  // tags is an object where key is tag and value is array of deck ids
+function update_tag_toggles() {
+  // tags is an object where key is tag and value is array of deck uuids
   var tag_dict = Decks.reduce(function (p, c) {
     c.tags.forEach(function (t) {
       if(!p[t]) p[t] = [];
-      p[t].push(c.id);
+      p[t].push(c.uuid);
     });
     return p;
   }, {});
@@ -360,21 +344,21 @@ function update_tag_toggles()
   }
   var container = $('#tag_toggles').empty();
   tags.sort().forEach(function (tag) {
-    $('<button type="button" class="btn btn-default btn-xs" data-toggle="button">'+tag+'</button>').data('deck_id', tag_dict[tag].join(' ')).appendTo(container);
+    $('<button type="button" class="btn btn-default btn-xs" data-toggle="button">'+tag+'</button>').data('deck_uuid', tag_dict[tag].join(' ')).appendTo(container);
   });
 
 }
 
-function set_tags(id, tags)
+function set_tags(uuid, tags)
 {
-  var elt = $('#deck_'+id);
+  var elt = $('#deck_'+uuid);
   var div = elt.find('.deck-list-tags').empty();
   tags.forEach(function (tag) {
     div.append($('<span class="label label-default tag-'+tag+'">'+tag+'</span>'));
   });
 
   for(var i=0; i<Decks.length; i++) {
-    if(Decks[i].id == id) {
+    if(Decks[i].uuid == uuid) {
       Decks[i].tags = tags;
       break;
     }
@@ -383,19 +367,20 @@ function set_tags(id, tags)
   update_tag_toggles();
 }
 
-function tag_add(ids) {
-    $('#tag_add_ids').val(ids);
+function tag_add(uuids) {
+  $('#tag_add_uuids').val(uuids);
   $('#tagAddModal').modal('show');
     setTimeout(function() { $('#tag_add_tags').focus(); }, 500);
 }
+
 function tag_add_process(event) {
     event.preventDefault();
-    var ids = $('#tag_add_ids').val().split(/,/);
+    var uuids = $('#tag_add_uuids').val().split(/,/);
     var tags = $('#tag_add_tags').val().split(/\s+/);
-    if(!ids.length || !tags.length) return;
+    if(!uuids.length || !tags.length) return;
   $.ajax(Routing.generate('tag_add'), {
     type: 'POST',
-    data: { ids: ids, tags: tags },
+    data: { uuids: uuids, tags: tags },
     dataType: 'json',
     success: function(data, textStatus, jqXHR) {
       var response = jqXHR.responseJSON;
@@ -403,8 +388,8 @@ function tag_add_process(event) {
         alert('An error occured while updating the tags.');
         return;
       }
-      $.each(response.tags, function (id, tags) {
-        set_tags(id, tags);
+      $.each(response.tags, function (uuid, tags) {
+        set_tags(uuid, tags);
       });
     },
     error: function(jqXHR, textStatus, errorThrown) {
@@ -414,19 +399,19 @@ function tag_add_process(event) {
   });
 }
 
-function tag_remove(ids) {
-    $('#tag_remove_ids').val(ids);
+function tag_remove(uuids) {
+  $('#tag_remove_uuids').val(uuids);
   $('#tagRemoveModal').modal('show');
     setTimeout(function() { $('#tag_remove_tags').focus(); }, 500);
 }
 function tag_remove_process(event) {
     event.preventDefault();
-    var ids = $('#tag_remove_ids').val().split(/,/);
+    var uuids = $('#tag_remove_uuids').val().split(/,/);
     var tags = $('#tag_remove_tags').val().split(/\s+/);
-    if(!ids.length || !tags.length) return;
+    if(!uuids.length || !tags.length) return;
   $.ajax(Routing.generate('tag_remove'), {
     type: 'POST',
-    data: { ids: ids, tags: tags },
+    data: { uuids: uuids, tags: tags },
     dataType: 'json',
     success: function(data, textStatus, jqXHR) {
       var response = jqXHR.responseJSON;
@@ -434,8 +419,8 @@ function tag_remove_process(event) {
         alert('An error occured while updating the tags.');
         return;
       }
-      $.each(response.tags, function (id, tags) {
-        set_tags(id, tags);
+      $.each(response.tags, function (uuid, tags) {
+        set_tags(uuid, tags);
       });
     },
     error: function(jqXHR, textStatus, errorThrown) {
@@ -445,17 +430,18 @@ function tag_remove_process(event) {
   });
 }
 
-function tag_clear(ids) {
-    $('#tag_clear_ids').val(ids);
+function tag_clear(uuids) {
+  $('#tag_clear_uuids').val(uuids);
   $('#tagClearModal').modal('show');
 }
+
 function tag_clear_process(event) {
     event.preventDefault();
-    var ids = $('#tag_clear_ids').val().split(/,/);
-    if(!ids.length) return;
+    var uuids = $('#tag_clear_uuids').val().split(/,/);
+    if(!uuids.length) return;
   $.ajax(Routing.generate('tag_clear'), {
     type: 'POST',
-    data: { ids: ids },
+    data: { uuids: uuids },
     dataType: 'json',
     success: function(data, textStatus, jqXHR) {
       var response = jqXHR.responseJSON;
@@ -463,8 +449,8 @@ function tag_clear_process(event) {
         alert('An error occured while updating the tags.');
         return;
       }
-      $.each(response.tags, function (id, tags) {
-        set_tags(id, tags);
+      $.each(response.tags, function (uuid, tags) {
+        set_tags(uuid, tags);
       });
     },
     error: function(jqXHR, textStatus, errorThrown) {
@@ -476,12 +462,12 @@ function tag_clear_process(event) {
 
 function confirm_delete(deck) {
   $('#delete-deck-name').text(deck.name);
-  $('#delete-deck-id').val(deck.id);
+  $('#delete-deck-uuid').val(deck.uuid);
   $('#deleteModal').modal('show');
 }
 
-function confirm_delete_all(ids) {
-  $('#delete-deck-list-id').val(ids.join('-'));
+function confirm_delete_all(uuids) {
+  $('#delete-deck-list-uuid').val(uuids.join(','));
   $('#deleteListModal').modal('show');
 }
 
@@ -491,11 +477,11 @@ function hide_deck() {
 }
 
 function show_deck() {
-  var deck_id = $(LastClickedDeck).data('id');
-  var deck = _.find(Decks, function (deck) { return deck.id === deck_id });
+  var deck_uuid = $(LastClickedDeck).data('uuid');
+  var deck = _.find(Decks, function (deck) { return deck.uuid === deck_uuid });
   if(!deck) return;
 
-  var container = $('#deck_'+deck.id);
+  var container = $('#deck_'+deck.uuid);
   $('#deck').appendTo(container);
   $('#deck').show();
 
@@ -511,8 +497,8 @@ function show_deck() {
     NRDB.data.cards.updateById(slot.card_code, {indeck:parseInt(slot.qty,10)});
   }
   $('#deck-name').text(deck.name);
-  $('#btn-view').attr('href', Routing.generate('deck_view', {deck_id:deck.id,_locale:NRDB.locale}));
-  $('#btn-edit').attr('href', Routing.generate('deck_edit', {deck_id:deck.id,_locale:NRDB.locale}));
+  $('#btn-view').attr('href', Routing.generate('deck_view', {deck_uuid:deck.uuid,_locale:NRDB.locale}));
+  $('#btn-edit').attr('href', Routing.generate('deck_edit', {deck_uuid:deck.uuid,_locale:NRDB.locale}));
 
   var mwl_code = deck.mwl_code, mwl_record = mwl_code && NRDB.data.mwl.findById(mwl_code);
   if(mwl_record) {
