@@ -837,10 +837,6 @@ rotation:
     defaults:
         _controller: AppBundle:Rotation:get
 
-claims:
-    resource: "@AppBundle/Controller/ClaimsController.php"
-    type:     annotation
-
 oauth:
     resource: "@AppBundle/Controller/OauthController.php"
     type:     annotation
