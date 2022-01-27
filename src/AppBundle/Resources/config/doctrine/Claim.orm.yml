@@ -1,6 +1,9 @@
 AppBundle\Entity\Claim:
     type: entity
     table: claim
+    uniqueConstraints:
+        usercard_index:
+            columns: [ decklist_id, client_id, name, rank ]
     id:
         id:
             type: integer
