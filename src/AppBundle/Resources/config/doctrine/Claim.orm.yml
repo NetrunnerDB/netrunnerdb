@@ -36,6 +36,7 @@ AppBundle\Entity\Claim:
             type: string
             length: '255'
         rank:
+            column: "`rank`"
             type: smallint
         participants:
             type: smallint
