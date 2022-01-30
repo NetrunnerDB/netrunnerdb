@@ -37,17 +37,17 @@ $(document).on('data.app', function() {
     }
   });
   // Ensures the checkbox isn't blocked by the decklist-expanding event
-  $('a.deck-list-group-item :checkbox').on('click', function(event) {
+  $('body').on('click', 'a.deck-list-group-item :checkbox', function (event) {
     event.stopPropagation();
   });
 
   // Expands a decklist by clicking anywhere else on it
-  $('a.deck-list-group-item').on('click', function(event) {
+  $('body').on('click', 'a.deck-list-group-item', function (event) {
     LastClickedDeck = this;
     show_deck();
   });
   // Close a deck by clicking on its exit button while its expanded
-  $('a.deck-list-group-item').on('click', '#close_deck', function (event) {
+  $('body').on('click', 'a.deck-list-group-item #close_deck', function (event) {
     hide_deck();
     event.stopPropagation();
   });
