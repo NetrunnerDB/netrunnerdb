@@ -15,6 +15,11 @@ var Identity = null,
   DisplaySort = 'type',
   DisplaySortSecondary = 'name';
 </script>
+<style>
+a.deck-list-group-item {
+  cursor: pointer;
+}
+</style>
 {% endblock %}
 
 {% block body %}
@@ -108,7 +113,7 @@ var Identity = null,
 <div class="col-md-12">
 <div class="list-group" id="decks" data-sort-type="date_update" data-sort-order="1">
 {% for deck in decks %}
-<a href="#" class="list-group-item deck-list-group-item" id="deck_{{ deck.uuid }}" data-id="{{ deck.id }}" data-uuid="{{ deck.uuid }}" data-problem="{{ deck.problem }}" data-faction="{{ deck.faction_code }}">
+<a class="list-group-item deck-list-group-item" id="deck_{{ deck.uuid }}" data-id="{{ deck.id }}" data-uuid="{{ deck.uuid }}" data-problem="{{ deck.problem }}" data-faction="{{ deck.faction_code }}">
   <div class="deck-list-identity-image hidden-xs" title="{{ deck.identity_title }}" style="background-image:url({{ asset('/card_image/small/'~deck.identity_code~'.jpg') }})"></div>
   <h4 class="decklist-name">
     <input type="checkbox" name="deck_select" value="{{ deck.uuid }}" style="margin-top: 0; transform: translateY(-1px)">
