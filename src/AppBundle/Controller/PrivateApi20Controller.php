@@ -3,21 +3,22 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Behavior\Entity\NormalizableInterface;
+use AppBundle\Entity\Deck;
 use AppBundle\Entity\Deckchange;
+use AppBundle\Entity\Decklist;
+use AppBundle\Entity\Decklistslot;
 use AppBundle\Entity\User;
 use AppBundle\Service\DeckManager;
 use AppBundle\Service\Judge;
 use AppBundle\Service\RotationService;
 use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\Request;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use FOS\RestBundle\Controller\FOSRestController;
-use AppBundle\Entity\Deck;
-use AppBundle\Entity\Decklist;
-use AppBundle\Entity\Decklistslot;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Ramsey\Uuid\Uuid;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class PrivateApi20Controller extends FOSRestController
 {
@@ -304,6 +305,10 @@ class PrivateApi20Controller extends FOSRestController
         $description = $textProcessor->markdown($rawdescription);
 
         $decklist = new Decklist();
+        // Note: We are doing the naive thing and just assuming we won't collide.
+        // If there is a collision, there will be an error returned to the user.
+        // Sorry, users!  v2 will be nicer to you!
+        $decklist->setUuid(Uuid::uuid4()->toString());
         $decklist->setName($name);
         $decklist->setPrettyname(preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($name)));
         $decklist->setRawdescription($rawdescription);
