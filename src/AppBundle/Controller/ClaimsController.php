@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * API Controller for Claims (decklist ranking in tournaments)
  *
  * @author cbertolini
- * @Route("/api/2.1/private/decklists/{decklist_id}/claims")
+ * @Route("/api/2.1/private/decklists/{decklist_id_or_uuid}/claims")
  */
 class ClaimsController extends AbstractOauthController
 {
@@ -49,15 +49,30 @@ class ClaimsController extends AbstractOauthController
      * @Route("")
      * @Method("POST")
      */
-    public function postAction(int $decklist_id, Request $request, EntityManagerInterface $entityManager)
+    public function postAction(string $decklist_id_or_uuid, Request $request, EntityManagerInterface $entityManager)
     {
         $client = $this->getOauthClient();
         if (!$client instanceof Client) {
             throw $this->createAccessDeniedException();
         }
 
+        $decklist_id = 0;
+        $decklist_uuid = "";
+        if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $decklist_id_or_uuid)) {
+            $decklist_uuid = $decklist_id_or_uuid;
+        } elseif (preg_match('/^\d+$/', $decklist_id_or_uuid)) {
+            $decklist_id = intval($decklist_id_or_uuid);
+        } else {
+            throw $this->createNotFoundException();
+        }
+
         /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = null;
+        if ($decklist_id > 0) {
+            $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        } else {
+            $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(['uuid' => $decklist_uuid]);
+        }
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
@@ -71,17 +86,17 @@ class ClaimsController extends AbstractOauthController
 
         $jsend = $this->getJsendResponse('success', ['claim' => $claim]);
         // TODO(plural): Update claims code with necro to send UUID
-        $url = $this->generateUrl('app_claims_get', ['decklist_id' => $decklist_id, 'id' => $claim->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $url = $this->generateUrl('app_claims_get', ['decklist_id_or_uuid' => $decklist_id_or_uuid, 'id' => $claim->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return $this->createJsonResponse($jsend, 201, ['Location' => $url]);
     }
 
     /**
-     * @param int $decklist_id
+     * @param string $decklist_id_or_uuid
      * @param int $id
      * @return Claim
      */
-    protected function retrieveClaim(int $decklist_id, int $id, EntityManagerInterface $entityManager)
+    protected function retrieveClaim(string $decklist_id_or_uuid, int $id, EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
         $client = $this->getOauthClient();
@@ -89,8 +104,23 @@ class ClaimsController extends AbstractOauthController
             throw $this->createAccessDeniedException();
         }
 
+        $decklist_id = 0;
+        $decklist_uuid = "";
+        if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $decklist_id_or_uuid)) {
+            $decklist_uuid = $decklist_id_or_uuid;
+        } elseif (preg_match('/^\d+$/', $decklist_id_or_uuid)) {
+            $decklist_id = intval($decklist_id_or_uuid);
+        } else {
+            throw $this->createNotFoundException();
+        }
+
         /** @var Decklist $decklist */
-        $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        $decklist = null;
+        if ($decklist_id > 0) {
+            $decklist = $entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
+        } else {
+            $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(['uuid' => $decklist_uuid]);
+        }
         if (!$decklist) {
             throw $this->createNotFoundException();
         }
@@ -118,9 +148,9 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("GET")
      */
-    public function getAction(int $decklist_id, $id, EntityManagerInterface $entityManager)
+    public function getAction(string $decklist_id_or_uuid, $id, EntityManagerInterface $entityManager)
     {
-        $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
+        $claim = $this->retrieveClaim($decklist_id_or_uuid, $id, $entityManager);
         $jsend = $this->getJsendResponse('success', ['claim' => $claim]);
         return $this->createJsonResponse($jsend);
     }
@@ -131,14 +161,14 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("PUT")
      */
-    public function putAction(int $decklist_id, int $id, Request $request, EntityManagerInterface $entityManager)
+    public function putAction(string $decklist_id_or_uuid, int $id, Request $request, EntityManagerInterface $entityManager)
     {
         $client = $this->getOauthClient();
         if (!$client instanceof Client) {
             throw $this->createAccessDeniedException();
         }
 
-        $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
+        $claim = $this->retrieveClaim($decklist_id_or_uuid, $id, $entityManager);
         /** @var Claim $updatingClaim */
         $updatingClaim = $this->deserializeClaim($request);
         $claim->setName($updatingClaim->getName());
@@ -159,14 +189,14 @@ class ClaimsController extends AbstractOauthController
      * @Route("/{id}")
      * @Method("DELETE")
      */
-    public function deleteAction(int $decklist_id, int $id, EntityManagerInterface $entityManager)
+    public function deleteAction(string $decklist_id_or_uuid, int $id, EntityManagerInterface $entityManager)
     {
         $client = $this->getOauthClient();
         if (!$client instanceof Client) {
             throw $this->createAccessDeniedException();
         }
 
-        $claim = $this->retrieveClaim($decklist_id, $id, $entityManager);
+        $claim = $this->retrieveClaim($decklist_id_or_uuid, $id, $entityManager);
 
         $entityManager->remove($claim);
         $entityManager->flush();
