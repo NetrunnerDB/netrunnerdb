@@ -24,7 +24,7 @@ class ActivityHelper
         $following = $user->getFollowing();
 
         // don't return any items if the user follows nobody
-        if(!count($following)) {
+        if(count($following) == 0) {
             return [];
         }
 
