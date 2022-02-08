@@ -21,9 +21,14 @@ class ActivityHelper
 
     public function getItems(User $user, int $max_items = 30, int $nb_days = 7)
     {
-        $items = [];
-
         $following = $user->getFollowing();
+
+        // don't return any items if the user follows nobody
+        if(count($following) == 0) {
+            return [];
+        }
+
+        $items = [];
         $last_activity_check = $user->getLastActivityCheck();
 
         // defining date limit
@@ -36,10 +41,8 @@ class ActivityHelper
         $qb->from('AppBundle:Decklist', 'd');
         $qb->where('d.dateCreation>:date');
         $qb->setParameter('date', $dateinf);
-        if (count($following)) {
-            $qb->andWhere('d.user in (:following)');
-            $qb->setParameter('following', $following);
-        }
+        $qb->andWhere('d.user in (:following)');
+        $qb->setParameter('following', $following);
         $qb->setFirstResult(0);
         $qb->setMaxResults($max_items);
 
@@ -60,10 +63,8 @@ class ActivityHelper
         $qb->from('AppBundle:Comment', 'c');
         $qb->where('c.dateCreation>:date');
         $qb->setParameter('date', $dateinf);
-        if (count($following)) {
-            $qb->andWhere('c.author in (:following)');
-            $qb->setParameter('following', $following);
-        }
+        $qb->andWhere('c.author in (:following)');
+        $qb->setParameter('following', $following);
         $qb->setFirstResult(0);
         $qb->setMaxResults($max_items);
 
@@ -84,10 +85,8 @@ class ActivityHelper
         $qb->from('AppBundle:Review', 'r');
         $qb->where('r.dateCreation>:date');
         $qb->setParameter('date', $dateinf);
-        if (count($following)) {
-            $qb->andWhere('r.user in (:following)');
-            $qb->setParameter('following', $following);
-        }
+        $qb->andWhere('r.user in (:following)');
+        $qb->setParameter('following', $following);
         $qb->setFirstResult(0);
         $qb->setMaxResults($max_items);
 
@@ -108,10 +107,8 @@ class ActivityHelper
         $qb->from('AppBundle:Reviewcomment', 'c');
         $qb->where('c.dateCreation>:date');
         $qb->setParameter('date', $dateinf);
-        if (count($following)) {
-            $qb->andWhere('c.author in (:following)');
-            $qb->setParameter('following', $following);
-        }
+        $qb->andWhere('c.author in (:following)');
+        $qb->setParameter('following', $following);
         $qb->setFirstResult(0);
         $qb->setMaxResults($max_items);
 
