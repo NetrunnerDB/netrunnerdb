@@ -22,7 +22,7 @@ class FormatsController extends Controller
             }
         }
 
-        $q = $entityManager->createQuery("SELECT c FROM AppBundle:Cycle c WHERE c.rotated = 0 AND c.code != 'draft' ORDER BY c.position DESC");
+        $q = $entityManager->createQuery("SELECT c FROM AppBundle:Cycle c WHERE c.rotated = 0 AND c.code != 'draft' AND c.code != 'napd' ORDER BY c.position DESC");
         $standard_cycles = $q->getResult();
 
         $standard_packs = array();
@@ -40,7 +40,7 @@ class FormatsController extends Controller
             . " FROM card"
             . " JOIN pack ON card.pack_id = pack.id"
             . " JOIN cycle ON pack.cycle_id = cycle.id"
-            . " WHERE cycle.rotated = 0 AND cycle.code != 'draft'"
+            . " WHERE cycle.rotated = 0 AND cycle.code != 'draft' AND cycle.code != 'napd'"
         )->fetch(\PDO::FETCH_ASSOC)['num_cards'];
         $num_startup_cards = $dbh->executeQuery(
             "SELECT COUNT(DISTINCT card.title) as num_cards"
