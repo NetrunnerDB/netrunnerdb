@@ -18,7 +18,7 @@ class SecurityController extends Controller
             '/Security/login.html.twig',
             [
                 'last_username' => $authenticationUtils->getLastUsername(),
-                'error'         => $authenticationUtils->getLastAuthenticationError(),
+                'error'         => ($authenticationUtils->getLastAuthenticationError() == null ? "" : "Invalid credentials."),
             ]
         );
     }
