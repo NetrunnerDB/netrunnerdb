@@ -7,6 +7,9 @@ services:
             $tempDir: '%kernel.project_dir%/var'
             $publicDir: '%kernel.project_dir%/web'
 
+    logout.redirect:
+        class: AppBundle\Controller\RedirectAfterLogout
+
     AppBundle\:
         resource: '../../src/AppBundle/*'
         exclude: '../../src/AppBundle/{Behavior,DataFixtures,DQL,Entity,Repository,Resources}'
