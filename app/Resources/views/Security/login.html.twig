@@ -20,7 +20,7 @@
     </p>
       <form id="login" class="vertical" action="{{ path('oauth_server_auth_login_check') }}" method="post">
           {% if(error) %}
-          <div class='form_error'>{{ error }}</div>
+          <div class="alert alert-danger">{{ error }}</div>
           {% endif %}
           <div class="form-group">
               <label for="username">NetrunnerDB Username</label>
