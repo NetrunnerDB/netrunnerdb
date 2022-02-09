@@ -622,7 +622,7 @@ class CardsData
                     }
                     $i++;
                     break;
-                case 'b': // ban list 
+                case 'b': // ban list
                     $mwl = null;
                     if ($condition[0] == "active") {
                         $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy(['active' => 1], ["dateStart" => "DESC"]);
@@ -896,6 +896,18 @@ class CardsData
                         if (count($keys)) {
                             array_push($factions, $keys[0]);
                         }
+                    } else if ($l[$j] == "neutral") {
+                        array_push($factions, "neutral-corp", "neutral-runner");
+                    } else if ($l[$j] == "weyland") {
+                        array_push($factions, "weyland-consortium");
+                    } else if ($l[$j] == "hb") {
+                        array_push($factions, "haas-bioroid");
+                    } else if ($l[$j] == "mini") {
+                        array_push($factions, "apex", "adam", "sunny-lebeau");
+                    } else if ($l[$j] == "nr") {
+                        array_push($factions, "neutral-runner");
+                    } else if ($l[$j] == "nc") {
+                        array_push($factions, "neutral-corp");
                     } else {
                         array_push($factions, $l[$j]);
                     }
