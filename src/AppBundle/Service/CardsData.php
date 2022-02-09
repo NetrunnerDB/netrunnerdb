@@ -38,8 +38,11 @@ class CardsData
 
         'mini'    => ['apex', 'adam', 'sunny-lebeau'],
         'p'       => 'apex',
+        'ap'       => 'apex',
         'd'       => 'adam',
+        'ad'       => 'adam',
         'u'       => 'sunny-lebeau',
+        'su'       => 'sunny-lebeau',
     ];
 
     /** @var EntityManagerInterface $entityManager */

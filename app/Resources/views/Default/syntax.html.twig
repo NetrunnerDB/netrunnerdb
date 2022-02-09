@@ -52,13 +52,14 @@
         </li>
         <li><b>Faction</b> <code>f</code> accepts full faction codes (e.g. nbn, haas-bioroid, weyland-consortium, sunny-lebeau, etc) or the following shortcuts:
           <ul>
-            <li>The first letter of each non-neutral faction (or the second letter for mini-factions)</li>
+            <li>The first letter of each non-neutral, non-mini factions</li>
+            <li>The second letter, or first two letters, of mini-factions (e.g. <code>p</code> or <code>ap</code> for Apex)
+            <li><code>mini</code> for all mini-factions</li>
             <li><code>nc</code> for <code>neutral-corp</code></li>
             <li><code>nr</code> for <code>neutral-runner</code></li>
             <li><code>-</code> or <code>neutral</code> for both neutral factions</li>
             <li><code>weyland</code> for <code>weyland-consortium</code></li>
             <li><code>hb</code> for <code>haas-bioroid</code></li>
-            <li><code>mini</code> for all mini-factions</li>
           </ul>
         </li>
         <li><b>Release Date</b> <code>r</code> is a special case using only the operators <code>&lt;</code> (inclusive) and <code>&gt;</code> (exclusive) and only understands the arguments <code>now</code> or a date YYYY-MM-DD</li>
