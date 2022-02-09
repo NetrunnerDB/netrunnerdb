@@ -47,6 +47,15 @@ NRDB.user.params.decklist_id = Decklist.id;
                 <a id="social-icon-comment" href="#comments" class="social-icon-comment" data-toggle="tooltip" data-placement="bottom" title="Comment">
                   <span class="glyphicon glyphicon-comment"></span> <span class="num">{{ decklist.nbcomments }}</span>
                 </a>
+                |
+                <input type="hidden" id="legacy_decklist_url" value="{{ app.request.getSchemeAndHttpHost() }}{{ path('legacy_decklist', { decklist_id: decklist.id }) }}" />
+                <a href=""
+                   onClick="navigator.clipboard.writeText($('#legacy_decklist_url').val()).then(function() {
+                       alert('Copied ' + $('#legacy_decklist_url').val());
+                   }, function() {
+                       alert('Copy to clipboard failed. Sorry!');
+                   });
+                   return false;">Copy Legacy URL for Jinteki.net</a>
             </div>
             {% if duplicate %}
             | <small>Duplicate of <a href="{{ path('decklist_view', { 'decklist_uuid': duplicate.uuid, 'decklist_name': duplicate.prettyname|e('url') }) }}">{{ duplicate.name }}</a></small>
