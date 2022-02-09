@@ -19,19 +19,27 @@ use Symfony\Component\Routing\RouterInterface;
 
 class CardsData
 {
-    public static $faction_letters = [
-        'haas-bioroid'       => 'h',
-        'weyland-consortium' => 'w',
-        'anarch'             => 'a',
-        'shaper'             => 's',
-        'criminal'           => 'c',
-        'jinteki'            => 'j',
-        'nbn'                => 'n',
-        'neutral-corp'       => '-',
-        'neutral-runner'     => '-',
-        'apex'               => 'p',
-        'adam'               => 'd',
-        'sunny-lebeau'       => 'u',
+    public static $faction_shortcuts = [
+        'neutral' => ['neutral-runner', 'neutral-corp'],
+        '-'       => ['neutral-runner', 'neutral-corp'],
+        'nc'      => 'neutral-corp',
+        'nr'      => 'neutral-runner',
+
+        'h'       => 'haas-bioroid',
+        'hb'      => 'haas-bioroid',
+        'j'       => 'jinteki',
+        'n'       => 'nbn',
+        'w'       => 'weyland-consortium',
+        'weyland' => 'weyland-consortium',
+
+        'a'       => 'anarch',
+        'c'       => 'criminal',
+        's'       => 'shaper',
+
+        'mini'    => ['apex', 'adam', 'sunny-lebeau'],
+        'p'       => 'apex',
+        'd'       => 'adam',
+        'u'       => 'sunny-lebeau',
     ];
 
     /** @var EntityManagerInterface $entityManager */
@@ -889,25 +897,13 @@ class CardsData
             }
             if ($l[0] == 'f') {
                 $factions = [];
-                for ($j = 1; $j < count($l); ++$j) {
-                    if (strlen($l[$j]) === 1) {
-                        // replace faction letter with full name
-                        $keys = array_keys(self::$faction_letters, $l[$j]);
-                        if (count($keys)) {
-                            array_push($factions, $keys[0]);
+                for ($j = 2; $j < count($l); ++$j) {
+                    if (array_key_exists($l[$j], self::$faction_shortcuts)) {
+                        if (is_array(self::$faction_shortcuts[$l[$j]])) {
+                            array_push($factions, ...self::$faction_shortcuts[$l[$j]]);
+                        } else {
+                            array_push($factions, self::$faction_shortcuts[$l[$j]]);
                         }
-                    } else if ($l[$j] == "neutral") {
-                        array_push($factions, "neutral-corp", "neutral-runner");
-                    } else if ($l[$j] == "weyland") {
-                        array_push($factions, "weyland-consortium");
-                    } else if ($l[$j] == "hb") {
-                        array_push($factions, "haas-bioroid");
-                    } else if ($l[$j] == "mini") {
-                        array_push($factions, "apex", "adam", "sunny-lebeau");
-                    } else if ($l[$j] == "nr") {
-                        array_push($factions, "neutral-runner");
-                    } else if ($l[$j] == "nc") {
-                        array_push($factions, "neutral-corp");
                     } else {
                         array_push($factions, $l[$j]);
                     }
