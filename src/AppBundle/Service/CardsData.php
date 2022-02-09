@@ -657,7 +657,7 @@ class CardsData
                             array_push($placeholders, "?$i");
                             $parameters[$i++] = $cycle;
                         }
-                        $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . "))";
+                        $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . ") and y.code != 'draft')";
                     }
                     $i++;
                     break;
