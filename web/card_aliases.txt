@@ -8,11 +8,11 @@ wtwb : Watch the World Burn
 baby : Symmetrical Visage
 butler : Jeeves Model Bioroids
 pancakes : Adjusted Chronotype
-cell phones : Underworld Contact
-cell phone man : Underworld Contact
-mister phones : Underworld Contact
-mr phones : Underworld Contact
-mr. phones : Underworld Contact
+cell phones : 02069
+cell phone man : 02069
+mister phones : 02069
+mr phones : 02069
+mr. phones : 02069
 andy : Andromeda: Dispossessed Ristie
 soccer mom : Sunny Lebeau: Security Specialist
 ctm : NBN: Controlling the Message
