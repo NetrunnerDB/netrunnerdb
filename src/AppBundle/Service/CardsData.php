@@ -60,8 +60,8 @@ class CardsData
   	/** @var Illustrators $illustrators */
   	private $illustrators;
 
-    /** @var Nicknames $illustrators */
-  	private $nicknames;
+    /** @var CardAliases $illustrators */
+  	private $cardAliases;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -76,12 +76,12 @@ class CardsData
         $this->packages = $packages;
 		    $this->illustrators = $illustrators;
 
-        $file = fopen("nicknames.txt", "r");
-        $this->nicknames = [];
+        $file = fopen("card_aliases.txt", "r");
+        $this->aliases = [];
         if ($file) {
             while (($line = fgets($file)) !== false) {
                 $data = explode(" : ", $line);
-                $this->nicknames[$data[0]] = trim($data[1]);
+                $this->aliases[$data[0]] = trim($data[1]);
             }
         }
         fclose($file);
@@ -925,11 +925,14 @@ class CardsData
                 $conditions[$i] = $factions;
             }
         }
+    }
 
+    public function unaliasCardNames(array &$conditions)
+    {
         $title = implode(" ", array_map(function($c) {return $c[0] == "" ? $c[2] : "";}, $conditions));
-        if (array_key_exists($title, $this->nicknames)) {
+        if (array_key_exists($title, $this->aliases)) {
             $conditions = array_filter($conditions, function($c) {return $c[0] != "";});
-            array_unshift($conditions, ["", ":", $this->nicknames[$title]]);
+            array_unshift($conditions, ["", ":", $this->aliases[$title]]);
         }
     }
 

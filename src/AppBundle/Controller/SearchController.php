@@ -418,6 +418,7 @@ class SearchController extends Controller
         $conditions = $cardsData->syntax($q);
 
         $cardsData->validateConditions($conditions);
+        $cardsData->unaliasCardNames($conditions);
 
         $card = null;
         $currentRotationCycles = [];
