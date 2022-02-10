@@ -497,7 +497,7 @@ class SearchController extends Controller
                     // Startup legality is currently hard-coded since the DB doesn't know anything about it.
                     $startupCycles = ['ashes' => true, 'system-gateway' => true, 'system-update-2021' => true];
                     $startup_legal = false;
-                    
+
                     $rotated_count = 0;
 
                     foreach ($cardVersions as $version) {
@@ -522,7 +522,7 @@ class SearchController extends Controller
                           $startup_legal = true;
                         }
                     }
-                    
+
                     // If any version of the card is not in a rotated cycle, the card is considered legal.
                     $all_versions_rotated = $rotated_count == count($cardinfo['versions']);
 
@@ -545,7 +545,7 @@ class SearchController extends Controller
 
             $first += 1;
 
-            // si on a des cartes on affiche une bande de navigation/pagination
+            // if we have maps we display a navigation/pagination band
             if (count($rows) && $card instanceof Card) {
                 if (count($rows) == 1) {
                     $pagination = $this->setnavigation($card, $locale, $entityManager);
@@ -560,7 +560,7 @@ class SearchController extends Controller
                 }
             }
 
-            // si on est en vue "short" on casse la liste par tri
+            // if we are in "short" view, we break the list by sorting
             if (count($cards) && $view == "short") {
                 $sortfields = [
                     'set'      => 'pack_name',
@@ -602,7 +602,7 @@ class SearchController extends Controller
             $card = $cards[0];
         }
 
-        // attention si $s="short", $cards est un tableau à 2 niveaux au lieu de 1 seul
+        // be careful if $s="short", $cards is an array with 2 levels instead of just 1
         return $this->render('/Search/display-' . $view . '.html.twig', [
             "view"            => $view,
             "sort"            => $sort,

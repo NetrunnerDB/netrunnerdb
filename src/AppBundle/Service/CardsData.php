@@ -57,21 +57,34 @@ class CardsData
     /** @var Packages $packages */
     private $packages;
 
-	/** @var Illustrators $illustrators */
-	private $illustrators;
+  	/** @var Illustrators $illustrators */
+  	private $illustrators;
+
+    /** @var Nicknames $illustrators */
+  	private $nicknames;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         RepositoryFactory $repositoryFactory,
         RouterInterface $router,
-		Packages $packages,
-		Illustrators $illustrators
+		    Packages $packages,
+		    Illustrators $illustrators
     ) {
         $this->entityManager = $entityManager;
         $this->packRepository = $repositoryFactory->getPackRepository();
         $this->router = $router;
         $this->packages = $packages;
-		$this->illustrators = $illustrators;
+		    $this->illustrators = $illustrators;
+
+        $file = fopen("nicknames.txt", "r");
+        $this->nicknames = [];
+        if ($file) {
+            while (($line = fgets($file)) !== false) {
+                $data = explode(" : ", $line);
+                $this->nicknames[$data[0]] = trim($data[1]);
+            }
+        }
+        fclose($file);
     }
 
     /**
@@ -242,9 +255,6 @@ class CardsData
                             $or[] = "(c.strippedTitle like ?$i)";
                             $parameters[$i++] = "$like%";
                         } else {
-                            if ($arg == 'Franklin') {
-                                $arg = 'Crick';
-                            } // easter egg
                             $or[] = "(c.title like ?$i)";
                             $parameters[$i++] = "%$arg%";
                         }
@@ -820,69 +830,69 @@ class CardsData
 
     public function syntax(string $query)
     {
-        // renvoie une liste de conditions (array)
-        // chaque condition est un tableau à n>1 éléments
-        // le premier est le type de condition (0 ou 1 caractère)
-        // les suivants sont les arguments, en OR
+        // returns a list of conditions (array)
+        // each condition is an array with n>1 elements
+        // the first is the type of condition (0 or 1 character)
+        // the rest are the arguments, in OR
 
         $query = preg_replace('/\s+/u', ' ', trim($query));
 
         $list = [];
         $cond = null;
-        // l'automate a 3 états :
-        // 1:recherche de type
-        // 2:recherche d'argument principal
-        // 3:recherche d'argument supplémentaire
-        // 4:erreur de parsing, on recherche la prochaine condition
-        // s'il tombe sur un argument alors qu'il est en recherche de type, alors le type est vide
-        $etat = 1;
+        // the automaton has 3 states:
+        // 1: determine the search type (if none is found before (2) the type is empty)
+        // 2: find the main argument
+        // 3: check for additional arguments
+        // 4: parsing error - we are looking for the next condition
+
+        $state = 1;
         while ($query != "") {
-            if ($etat == 1) {
-                if (isset($cond) && $etat != 4 && count($cond) > 2) {
+            if ($state == 1) {
+                if (isset($cond) && $state != 4 && count($cond) > 2) {
                     $list[] = $cond;
                 }
-                // on commence par rechercher un type de condition
+                // we start by looking for a type of condition
                 $match = [];
-                if (preg_match('/^(\p{L})([:<>!])(.*)/u', $query, $match)) { // jeton "condition:"
+                if (preg_match('/^(\p{L})([:<>!])(.*)/u', $query, $match)) { // token "condition:"
                     $cond = [mb_strtolower($match[1]), $match[2]];
                     $query = $match[3];
                 } else {
                     $cond = ["", ":"];
                 }
-                $etat = 2;
+                $state = 2;
             } else {
-                if (preg_match('/^"([^"]*)"(.*)/u', $query, $match) // jeton "texte libre entre guillements"
-                    || preg_match('/^([\p{L}\p{N}\-\&\.\!\'\;]+)(.*)/u', $query, $match) // jeton "texte autorisé sans guillements"
+                if (preg_match('/^"([^"]*)"(.*)/u', $query, $match) // token "free text between quotes"
+                    || preg_match('/^([\p{L}\p{N}\-\&\.\!\'\;]+)(.*)/u', $query, $match) // token "text allowed without quotes"
                 ) {
-                    if (($etat == 2 && isset($cond) && count($cond) == 2) || $etat == 3) {
+                    if (($state == 2 && isset($cond) && count($cond) == 2) || $state == 3) {
                         $cond[] = $match[1];
                         $query = $match[2];
-                        $etat = 2;
+                        $state = 2;
                     } else {
                         // erreur
                         $query = $match[2];
-                        $etat = 4;
+                        $state = 4;
                     }
-                } elseif (preg_match('/^\|(.*)/u', $query, $match)) { // jeton "|"
-                    if (($cond[1] == ':' || $cond[1] == '!') && (($etat == 2 && isset($cond) && count($cond) > 2) || $etat == 3)) {
+                } elseif (preg_match('/^\|(.*)/u', $query, $match)) { // token "|"
+                    if (($cond[1] == ':' || $cond[1] == '!') && (($state == 2 && isset($cond) && count($cond) > 2) || $state == 3)) {
                         $query = $match[1];
-                        $etat = 3;
+                        $state = 3;
                     } else {
                         // erreur
                         $query = $match[1];
-                        $etat = 4;
+                        $state = 4;
                     }
-                } elseif (preg_match('/^ (.*)/u', $query, $match)) { // jeton " "
+                } elseif (preg_match('/^ (.*)/u', $query, $match)) { // token " "
                     $query = $match[1];
-                    $etat = 1;
+                    $state = 1;
                 } else {
-                    // erreur
+                    // error
                     $query = substr($query, 1);
-                    $etat = 4;
+                    $state = 4;
                 }
             }
         }
-        if (isset($cond) && $etat != 4 && count($cond) > 2) {
+        if (isset($cond) && $state != 4 && count($cond) > 2) {
             $list[] = $cond;
         }
 
@@ -915,11 +925,17 @@ class CardsData
                 $conditions[$i] = $factions;
             }
         }
+
+        $title = implode(" ", array_map(function($c) {return $c[0] == "" ? $c[2] : "";}, $conditions));
+        if (array_key_exists($title, $this->nicknames)) {
+            $conditions = array_filter($conditions, function($c) {return $c[0] != "";});
+            array_unshift($conditions, ["", ":", $this->nicknames[$title]]);
+        }
     }
 
     public function buildQueryFromConditions(array $conditions)
     {
-        // reconstruction de la bonne chaine de recherche pour affichage
+        // rebuild the search string for display
         return implode(" ", array_map(
             function ($l) {
                 return ($l[0] ? $l[0] . $l[1] : "")
