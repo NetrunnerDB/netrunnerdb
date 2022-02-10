@@ -67,14 +67,14 @@ class CardsData
         EntityManagerInterface $entityManager,
         RepositoryFactory $repositoryFactory,
         RouterInterface $router,
-		    Packages $packages,
-		    Illustrators $illustrators
+        Packages $packages,
+        Illustrators $illustrators
     ) {
         $this->entityManager = $entityManager;
         $this->packRepository = $repositoryFactory->getPackRepository();
         $this->router = $router;
         $this->packages = $packages;
-		    $this->illustrators = $illustrators;
+        $this->illustrators = $illustrators;
 
         $file = fopen("card_aliases.txt", "r");
         $this->aliases = [];
