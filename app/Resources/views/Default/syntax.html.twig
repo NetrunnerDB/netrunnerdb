@@ -50,6 +50,13 @@
             <li><code>&gt;</code> &ndash; more than</li>
           </ul>
         </li>
+        <li><b>Title</b> - If you enter text with no criteria, it will attempt to match against card titles (e.g. <code>mca</code> will match MCA Austerity Policy and MCA Informant). The only exceptions are:
+          <ul>
+            <li>Two-or more letters in all capitals will attempt to match cards by acronym (e.g. <code>BLC</code> will match Blue Level Clearance and Black Level Clearance)</li>
+            <li>Writing the ID number of a card will match that card specifically (e.g. <code>20073</code> will match Green Level Clearance)</li>
+            <li>Some cards have aliases that will match them (e.g. <code>franklin</code> will match Crick)
+          </ul>
+        </li>
         <li><b>Faction</b> <code>f</code> accepts full faction codes (e.g. nbn, haas-bioroid, weyland-consortium, sunny-lebeau, etc) or the following shortcuts:
           <ul>
             <li>The first letter of each non-neutral, non-mini factions</li>
