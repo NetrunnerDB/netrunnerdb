@@ -929,7 +929,15 @@ class CardsData
 
     public function unaliasCardNames(array &$conditions)
     {
+        // Join all the conditions without criteria into a single string
         $title = implode(" ", array_map(function($c) {return $c[0] == "" ? $c[2] : "";}, $conditions));
+
+        // If it has no whitespace and is in all-caps it should be parsed as an acronym
+        if (ctype_upper($title))
+            return;
+
+        // If the title is an alias for a card, replace the conditions with that card's name
+        $title = strtolower($title);
         if (array_key_exists($title, $this->aliases)) {
             $conditions = array_filter($conditions, function($c) {return $c[0] != "";});
             array_unshift($conditions, ["", ":", $this->aliases[$title]]);
