@@ -109,6 +109,7 @@ prede : Haas-Bioroid: Precision Design
 face kick : Jailbreak
 facekick : Jailbreak
 qpm : Quantum Predictive Model
+kitty : Quantum Predictive Model 
 deezymeezy : DZMZ Optimizer
 deezy meezy : DZMZ Optimizer
 cbg : Commercial Bankers Group
