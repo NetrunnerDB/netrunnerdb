@@ -1,34 +1,3 @@
-# Acronyms
-aoycr : An Offer You Can't Refuse
-bbg : Breaker Bay Grid
-cbg : Commercial Bankers Group
-dbs : Daily Business Show
-ddm : Deep Data Mining
-eoi : Exchange of Information
-fao : Forged Activation Orders
-ftt : Find the Truth
-gfi : Global Food Initiative
-glc : Green Level Clearance
-hhn : Hard-Hitting News
-hpt : High-Profile Target
-hsj : High-Stakes Job
-lpl : Localized Product Line
-neh : Near-Earth Hub: Broadcast Center
-piot : Peace in Our Time
-qpm : Quantum Predictive Model
-rlc : Red Level Clearance
-rpc : Red Planet Couriers
-sft : Shipment from Tennin
-smc : Self-modifying Code
-sva : Salvaged Vanadis Armory
-tca : The Class Act
-tfp : The Future Perfect
-tpr : Timely Public Release
-ttw : The Turning Wheel
-vlc : Violet Level Clearance
-wnp : Wireless Net Pavilion
-wtwb : Watch the World Burn
-
 # Abbreviations
 andi : Andromeda: Dispossessed Ristie
 andy : Andromeda: Dispossessed Ristie

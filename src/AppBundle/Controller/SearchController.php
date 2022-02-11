@@ -422,16 +422,25 @@ class SearchController extends Controller
         $card = null;
         $currentRotationCycles = [];
 
-        // reconstruction of the correct search string for display
-        $q = $cardsData->buildQueryFromConditions($conditions);
         $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
 
-        // If there are no results, aggressively look for aliases
-        if (!$rows) {
-            $cardsData->unaliasCardNames($conditions);
-            $q = $cardsData->buildQueryFromConditions($conditions);
-            $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
+        // If there are no results, and no specific criteria were searched, try again but force acronyms
+        if (!$rows && !array_filter($conditions, function($c) {return $c[0] != "";})) {
+            $capsConditions = array_map(function($c) {return ["", ":", strtoupper($c[2])];}, $conditions);
+            $rows = $cardsData->get_search_rows($capsConditions, $sort, $locale);
+
+            // If there are still no results, try again but with aliases
+            if ($rows) {
+                $conditions = $capsConditions;
+            }
+            else {
+                $cardsData->unaliasCardNames($conditions);
+                $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
+            }
         }
+
+        // Reconstruct the correct search string for display
+        $q = $cardsData->buildQueryFromConditions($conditions);
 
         $rows = $cardsData->select_only_latest_cards($rows);
         if ($rows) {

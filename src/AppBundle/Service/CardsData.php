@@ -935,9 +935,8 @@ class CardsData
         $title = implode(" ", array_map(function($c) {return $c[0] == "" ? strtolower($c[2]) : "";}, $conditions));
 
         // If they are the substring of an alias for a card, replace the conditions with that card's name
-        $card = $this->cardAliases[current(preg_grep("/$title/", array_keys($this->cardAliases)))];
-        if ($card) {
-            $conditions = [["", ":", $card]];
+        if ($match = current(preg_grep("/$title/", array_keys($this->cardAliases)))) {
+            $conditions = [["", ":", $this->cardAliases[$match]]];
         }
     }
 
@@ -1145,19 +1144,31 @@ class CardsData
     public function getPrettyCardAliases()
     {
         // Construct mapping of cards to their aliases
-        $cardAliases = [];
-        foreach ($this->cardAliases as $alias => $card) {
-            // Translate card codes into their card's name
-            $code = preg_match('/^\d\d\d\d\d$/u', $card);
+        $cardAliases = []; // Normal card names get immediately added
+        $cardCodes = []; // Card codes are decoded at a later step
+        foreach ($this->cardAliases as $alias => $ref) {
+            $code = preg_match('/^\d\d\d\d\d$/u', $ref);
             if ($code) {
-                $card = $this->entityManager->getRepository(Card::class)->findBy(['code' => [$card]])[0]->getTitle();
+                if (!array_key_exists($ref, $cardCodes)) {
+                    $cardCodes[$ref] = [];
+                }
+                $cardCodes[$ref][] = $alias;
+            } else {
+                if (!array_key_exists($ref, $cardAliases)) {
+                    $cardAliases[$ref] = [];
+                }
+                $cardAliases[$ref][] = $alias;
             }
-            // Create an entry for the card if it doesn't yet exist
-            if (!array_key_exists($card, $cardAliases)) {
-                $cardAliases[$card] = [];
+        }
+
+        // Translate card codes into card titles and add to the array of aliases
+        $decodedCards = $this->entityManager->getRepository(Card::class)->findBy(['code' => array_keys($cardCodes)]);
+        foreach ($decodedCards as $card) {
+            $ref = $card->getTitle();
+            if (!array_key_exists($ref, $cardAliases)) {
+                $cardAliases[$ref] = [];
             }
-            // Add the alias to its card's entry
-            $cardAliases[$card][] = $alias;
+            array_push($cardAliases[$ref], ...$cardCodes[$card->getCode()]);
         }
 
         // Sort the cards, and each card's aliases
