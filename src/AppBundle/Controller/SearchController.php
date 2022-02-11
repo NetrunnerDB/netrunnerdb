@@ -328,6 +328,14 @@ class SearchController extends Controller
             }
         }
 
+        // If no criteria are provided, attempt to unalias the query
+        if (array_filter($conditions, function($c) {return $c[0] == "";})) {
+            $alias = $cardsData->getAliasOrNull($conditions);
+            if ($alias) {
+                $q = $alias;
+            }
+        }
+
         return $this->forward(
             'AppBundle:Search:display',
             [
@@ -418,7 +426,6 @@ class SearchController extends Controller
         $conditions = $cardsData->syntax($q);
 
         $cardsData->validateConditions($conditions);
-        $cardsData->unaliasCardNames($conditions);
 
         $card = null;
         $currentRotationCycles = [];

@@ -929,21 +929,21 @@ class CardsData
         }
     }
 
-    public function unaliasCardNames(array &$conditions)
+    public function getAliasOrNull(array $conditions)
     {
         // Join all the conditions without criteria into a single string
         $title = implode(" ", array_map(function($c) {return $c[0] == "" ? $c[2] : "";}, $conditions));
 
         // If it has no whitespace and is in all-caps it should be parsed as an acronym
         if (ctype_upper($title))
-            return;
+            return null;
 
-        // If the title is an alias for a card, replace the conditions with that card's name
+        // If the title is an alias for a card, return that card's name
         $title = strtolower($title);
         if (array_key_exists($title, $this->cardAliases)) {
-            $conditions = array_filter($conditions, function($c) {return $c[0] != "";});
-            array_unshift($conditions, ["", ":", $this->cardAliases[$title]]);
+            return $this->cardAliases[$title];
         }
+        return null;
     }
 
     public function buildQueryFromConditions(array $conditions)
