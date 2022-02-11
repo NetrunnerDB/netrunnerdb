@@ -1,129 +1,165 @@
-franklin : Crick
+# Acronyms
+aoycr : An Offer You Can't Refuse
+bbg : Breaker Bay Grid
+cbg : Commercial Bankers Group
+dbs : Daily Business Show
+ddm : Deep Data Mining
+eoi : Exchange of Information
+fao : Forged Activation Orders
+ftt : Find the Truth
+gfi : Global Food Initiative
+glc : Green Level Clearance
+hhn : Hard-Hitting News
+hpt : High-Profile Target
+hsj : High-Stakes Job
+lpl : Localized Product Line
+piot : Peace in Our Time
+qpm : Quantum Predictive Model
+rlc : Red Level Clearance
+rpc : Red Planet Couriers
+sft : Shipment from Tennin
+smc : Self-modifying Code
+sva : Salvaged Vanadis Armory
+tca : The Class Act
 tfp : The Future Perfect
-mca : MCA Austerity Policy
+tpr : Timely Public Release
+ttw : The Turning Wheel
+vlc : Violet Level Clearance
+wnp : Wireless Net Pavilion
+wtwb : Watch the World Burn
+
+# Abbreviations
+andi : Andromeda: Dispossessed Ristie
+andy : Andromeda: Dispossessed Ristie
+aot : Haas-Bioroid: Architects of Tomorrow
+babw : Weyland Consortium: Building a Better World
+b2l : Weyland Consortium: Built to Last
+btl : Weyland Consortium: Built to Last
+bwbi : Weyland Consortium: Because We Built It
+ctm : NBN: Controlling the Message
+eddie kim : Edward Kim: Humanity's Hammer
+eddie : Edward Kim: Humanity's Hammer
+eddy : Edward Kim: Humanity's Hammer
+eddy kim : Edward Kim: Humanity's Hammer
+etf : Haas-Bioroid: Engineering the Future
+gabe : Gabriel Santiago: Consummate Professional
+neh : Near-Earth Hub: Broadcast Center
+prede : Haas-Bioroid: Precision Design
+r+ : NBN: Reality Plus
+seidr labs : Seidr Laboratories: Destiny Defined
+blorch : Black Orchestra
+blorc : Black Orchestra
+clippy : Paperclip
+cujo : Cerberus "Cuj.0" H3
 mcaap : MCA Austerity Policy
 mca ap : MCA Austerity Policy
 emcap : MCA Austerity Policy
-wtwb : Watch the World Burn
+nanot : Na'Not'K
+nanotk : Na'Not'K
+notk : Na'Not'K
+j-how : Jackson Howard
+jhow : Jackson Howard
+midseasons : Midseason Replacements
+retrun : Retrieval Run
+hqi : HQ Interface
+teamspo : Team Sponsorship
+saccon : Sacrificial Construct
+mopus : Magnum Opus
+hart : Harmony AR Therapy
+proco : Professional Contacts
+procon : Professional Contacts
+doof : Diversion of Funds
+polop : Political Operative
+ppvp : Prepaid VoicePAD
+sscg : SanSan City Grid
+larla : Levy AR Lab Access
+recoco : Reconstruction Contract
+david : D4v1d
+
+# Misc
 baby : Symmetrical Visage
+bitcoin : TGTBT
+boxer girl : Leela Patel: Trained Pragmatist
 butler : Jeeves Model Bioroids
+catch me if you can : Gingerbread
+cowabunga : Surfer
+darude : Sand Storm
+david blaine : Street Magic
+deezy meezy : DZMZ Optimizer
+deezymeezy : DZMZ Optimizer
+desperadito : Pennyshaver
+face kick : Jailbreak
+facekick : Jailbreak
+folding at home : Data Folding
+franklin : Crick
+fugu : Puffer
+green ball : Rezeki
+green orb : Rezeki
+julybug : Urtica Cipher
+just in time : Compile
+kitty : Quantum Predictive Model
+knock knock : No One Home
+loan sharks : Dadiana Chacon
+mother brain : Ikawah Project
+nice moustache : Hernando Cortez
 pancakes : Adjusted Chronotype
+piggy bank : Bankroll
+pistol : Unregistered S&W '35
+pizza : Giordano Memorial Field
+pizza field : Giordano Memorial Field
+sauron : Hunter
+slimhack : Overclock
+soccer mom : Sunny Lebeau: Security Specialist
+sodium not potassium : Na'Not'K
+spooky town : Scarcity of Resources
+trash panda : Retrieval Run
+trashpanda : Retrieval Run
+twitch.tv : Daily Casts
+unlearn what you have learned : Reeducation
+unsure gamble : Falsified Credentials
+yoghurt : Economic Warfare
+yogurt : Economic Warfare
+
+# Mr Phones
 cell phones : 02069
 cell phone man : 02069
 mister phones : 02069
 mr phones : 02069
 mr. phones : 02069
-andy : Andromeda: Dispossessed Ristie
-soccer mom : Sunny Lebeau: Security Specialist
-ctm : NBN: Controlling the Message
-etf : Haas-Bioroid: Engineering the Future
+
+# Cars
+nice car : Sports Hopper
+sweet car : Advanced Concept Hopper
+
+# Jinteki IDs associated with plants
 potatoes : Jinteki: Potential Unleashed
 black tree : Jinteki: Personal Evolution
 white tree : Jinteki: Replicating Perfection
 red tree : Mti Mwekundu: Life Improved
 red black tree : Mti Mwekundu: Life Improved
-babw : Weyland Consortium: Building a Better World
-bwbi : Weyland Consortium: Because We Built It
-neh : Near-Earth Hub: Broadcast Center
-aot : Haas-Bioroid: Architects of Tomorrow
-clippy : Paperclip
-gfi : Global Food Initiative
-smc : Self-modifying Code
-green ball : Rezeki
-green orb : Rezeki
-ftt : Find the Truth
-hhn : Hard-Hitting News
-aoycr : An Offer You Can't Refuse
-bitcoin : TGTBT
-unsure gamble : Falsified Credentials
-j-how : Jackson Howard
-jhow : Jackson Howard
-pizza : Giordano Memorial Field
-pizza field : Giordano Memorial Field
-rpc : Red Planet Couriers
-piggy bank : Bankroll
-ttw : The Turning Wheel
-sauron : Hunter
-darude : Sand Storm
-piot : Peace in Our Time
-nice car : Sports Hopper
-sweet car : Advanced Concept Hopper
-folding at home : Data Folding
-pistol : Unregistered S&W '35
-catch me if you can : Gingerbread
-twitch.tv : Daily Casts
-hart : Harmony AR Therapy
-tca : The Class Act
-boxer girl : Leela Patel: Trained Pragmatist
-proco : Professional Contacts
-mother brain : Ikawah Project
-hpt : High-Profile Target
-yogurt : Economic Warfare
-yoghurt : Economic Warfare
-doof : Diversion of Funds
-fugu : Puffer
-knock knock : No One Home
-just in time : Compile
-mopus : Magnum Opus
-saccon : Sacrificial Construct
-unlearn what you have learned : Reeducation
-loan sharks : Dadiana Chacon
-sodium not potassium : Na'Not'K
-cowabunga : Surfer
-nice moustache : Hernando Cortez
-david blaine : Street Magic
-gabe : Gabriel Santiago: Consummate Professional
-hsj : High-Stakes Job
+
+# Edward Kim
 full metal hacktivist : Edward Kim: Humanity's Hammer
-eddie kim : Edward Kim: Humanity's Hammer
-eddie : Edward Kim: Humanity's Hammer
-eddy : Edward Kim: Humanity's Hammer
-eddy kim : Edward Kim: Humanity's Hammer
 captain hammer : Edward Kim: Humanity's Hammer
+
+# Hoshiko Shiro
 magical girl : Hoshiko Shiro: Untold Protagonist
 mahou shoujo : Hoshiko Shiro: Untold Protagonist
+
+# Hayley Kaplan
 honor student : Hayley Kaplan: Universal Scholar
 honour student : Hayley Kaplan: Universal Scholar
 ivy league : Hayley Kaplan: Universal Scholar
-hqi : HQ Interface
-lpl : Localized Product Line
-teamspo : Team Sponsorship
-ddm : Deep Data Mining
-wnp : Wireless Net Pavilion
-seidr labs : Seidr Laboratories: Destiny Defined
-polop : Political Operative
-ppvp : Prepaid VoicePAD
-sscg : SanSan City Grid
-glc : Green Level Clearance
-rlc : Red Level Clearance
-vlc : Violet Level Clearance
-dbs : Daily Business Show
-larla : Levy AR Lab Access
-recoco : Reconstruction Contract
-eoi : Exchange of Information
-david : D4v1d
-b2l : Weyland Consortium: Built to Last
-btl : Weyland Consortium: Built to Last
-r+ : NBN: Reality Plus
-prede : Haas-Bioroid: Precision Design
-face kick : Jailbreak
-facekick : Jailbreak
-qpm : Quantum Predictive Model
-kitty : Quantum Predictive Model 
-deezymeezy : DZMZ Optimizer
-deezy meezy : DZMZ Optimizer
-cbg : Commercial Bankers Group
-julybug : Urtica Cipher
-retrun : Retrieval Run
-trash panda : Retrieval Run
-trashpanda : Retrieval Run
-slimhack : Overclock
-desperadito : Pennyshaver
-fao : Forged Activation Orders
-bbg : Breaker Bay Grid
-blorch : Black Orchestra
-blorc : Black Orchestra
-tpr : Timely Public Release
-sva : Salvaged Vanadis Armory
-midseasons : Midseason Replacements
-sft : Shipment from Tennin
+
+# Bioroids
+alix talbot : Alix T4LB07
+alex talbot : Alix T4LB07
+talbot : Alix T4LB07
+bass chiriboga : Bass CH1R180G4
+chiriboga : Bass CH1R180G4
+calvin baley : Calvin B4L3Y
+baley : Calvin B4L3Y
+kuwinda kahiue : Kuwinda K4H1U3
+kahiue : Kuwinda K4H1U3
+malia zoloka : Malia Z0L0K4
+zoloka : Malia Z0L0K4
