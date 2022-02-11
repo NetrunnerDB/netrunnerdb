@@ -75,6 +75,12 @@ sscg : SanSan City Grid
 larla : Levy AR Lab Access
 recoco : Reconstruction Contract
 david : D4v1d
+khusuk : Khusyuk
+kusyuk : Khusyuk
+kusuk : Khusyuk
+khyusuk : Khusyuk
+khyusyuk : Khusyuk
+kyusuk : Khusyuk
 
 # Misc
 baby : Symmetrical Visage
