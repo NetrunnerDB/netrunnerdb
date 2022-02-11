@@ -77,11 +77,13 @@ class CardsData
         $this->illustrators = $illustrators;
 
         $file = fopen("card_aliases.txt", "r");
-        $this->aliases = [];
+        $this->cardAliases = [];
         if ($file) {
             while (($line = fgets($file)) !== false) {
-                $data = explode(" : ", $line);
-                $this->aliases[$data[0]] = trim($data[1]);
+                if ($line[0] != '#' && str_contains($line, " : ")) {
+                    $data = explode(" : ", $line);
+                    $this->cardAliases[$data[0]] = trim($data[1]);
+                }
             }
         }
         fclose($file);
@@ -938,9 +940,9 @@ class CardsData
 
         // If the title is an alias for a card, replace the conditions with that card's name
         $title = strtolower($title);
-        if (array_key_exists($title, $this->aliases)) {
+        if (array_key_exists($title, $this->cardAliases)) {
             $conditions = array_filter($conditions, function($c) {return $c[0] != "";});
-            array_unshift($conditions, ["", ":", $this->aliases[$title]]);
+            array_unshift($conditions, ["", ":", $this->cardAliases[$title]]);
         }
     }
 
@@ -1143,5 +1145,24 @@ class CardsData
         $rows = $query->getResult();
 
         return $rows;
+    }
+
+    public function getPrettyCardAliases()
+    {
+        // Construct mapping of cards to their aliases
+        $cardAliases = [];
+        foreach ($this->cardAliases as $alias => $card) {
+            if (!array_key_exists($card, $cardAliases))
+                $cardAliases[$card] = [];
+            $cardAliases[$card][] = $alias;
+        }
+
+        // Sort the cards, and each card's aliases
+        ksort($cardAliases);
+        foreach ($cardAliases as $card => &$aliases) {
+            sort($aliases);
+        }
+        
+        return $cardAliases;
     }
 }

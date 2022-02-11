@@ -104,5 +104,15 @@
     <li><code>x:&#34;the Corp loses 1 credit&#34;</code> returns Amina, Corporate &#34;Grant&#34;, and Lamprey</li>
     <li><code>d:corp z:current</code> returns all corp cards in the cycles valid for the latest rotation</li>
   </ul>
+
+  <h2>Card aliases</h2>
+
+  <p>The following are shortcuts you can use instead of cards' names. Note: if you write them in all capitals, they will instead be treated as acronyms.</p>
+
+  <ul>
+  {% for card, alias_list in aliases %}
+    <li>{{ card }} : {% for alias in alias_list %}<code>{{ alias }}</code> {% endfor %}</li>
+  {% endfor %}
+  </ul>
 </div>
 {% endblock %}
