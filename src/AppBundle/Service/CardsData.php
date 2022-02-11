@@ -929,21 +929,16 @@ class CardsData
         }
     }
 
-    public function getAliasOrNull(array $conditions)
+    public function unaliasCardNames(array &$conditions)
     {
         // Join all the conditions without criteria into a single string
-        $title = implode(" ", array_map(function($c) {return $c[0] == "" ? $c[2] : "";}, $conditions));
+        $title = implode(" ", array_map(function($c) {return $c[0] == "" ? strtolower($c[2]) : "";}, $conditions));
 
-        // If it has no whitespace and is in all-caps it should be parsed as an acronym
-        if (ctype_upper($title))
-            return null;
-
-        // If the title is an alias for a card, return that card's name
-        $title = strtolower($title);
-        if (array_key_exists($title, $this->cardAliases)) {
-            return $this->cardAliases[$title];
+        // If they are the substring of an alias for a card, replace the conditions with that card's name
+        $card = $this->cardAliases[current(preg_grep("/$title/", array_keys($this->cardAliases)))];
+        if ($card) {
+            $conditions = [["", ":", $card]];
         }
-        return null;
     }
 
     public function buildQueryFromConditions(array $conditions)

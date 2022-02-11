@@ -328,14 +328,6 @@ class SearchController extends Controller
             }
         }
 
-        // If no criteria are provided, attempt to unalias the query
-        if (array_filter($conditions, function($c) {return $c[0] == "";})) {
-            $alias = $cardsData->getAliasOrNull($conditions);
-            if ($alias) {
-                $q = $alias;
-            }
-        }
-
         return $this->forward(
             'AppBundle:Search:display',
             [
@@ -433,6 +425,14 @@ class SearchController extends Controller
         // reconstruction of the correct search string for display
         $q = $cardsData->buildQueryFromConditions($conditions);
         $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
+
+        // If there are no results, aggressively look for aliases
+        if (!$rows) {
+            $cardsData->unaliasCardNames($conditions);
+            $q = $cardsData->buildQueryFromConditions($conditions);
+            $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
+        }
+
         $rows = $cardsData->select_only_latest_cards($rows);
         if ($rows) {
             if (count($rows) == 1) {

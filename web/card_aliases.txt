@@ -39,8 +39,6 @@ btl : Weyland Consortium: Built to Last
 bwbi : Weyland Consortium: Because We Built It
 ctm : NBN: Controlling the Message
 eddie kim : Edward Kim: Humanity's Hammer
-eddie : Edward Kim: Humanity's Hammer
-eddy : Edward Kim: Humanity's Hammer
 eddy kim : Edward Kim: Humanity's Hammer
 etf : Haas-Bioroid: Engineering the Future
 gabe : Gabriel Santiago: Consummate Professional
@@ -54,9 +52,7 @@ cujo : Cerberus "Cuj.0" H3
 mcaap : MCA Austerity Policy
 mca ap : MCA Austerity Policy
 emcap : MCA Austerity Policy
-nanot : Na'Not'K
 nanotk : Na'Not'K
-notk : Na'Not'K
 j-how : Jackson Howard
 jhow : Jackson Howard
 midseasons : Midseason Replacements
@@ -66,7 +62,6 @@ teamspo : Team Sponsorship
 saccon : Sacrificial Construct
 mopus : Magnum Opus
 hart : Harmony AR Therapy
-proco : Professional Contacts
 procon : Professional Contacts
 doof : Diversion of Funds
 polop : Political Operative
@@ -75,16 +70,11 @@ sscg : SanSan City Grid
 larla : Levy AR Lab Access
 recoco : Reconstruction Contract
 david : D4v1d
-khusuk : Khusyuk
 kusyuk : Khusyuk
-kusuk : Khusyuk
-khyusuk : Khusyuk
-khyusyuk : Khusyuk
 kyusuk : Khusyuk
 free to play : F2P
 free to pay : F2P
 247 news cycle : 24/7 News Cycle
-247 : 24/7 News Cycle
 public trial : Public Trail
 spinny : Spin Doctor
 
@@ -117,7 +107,6 @@ nice moustache : Hernando Cortez
 pancakes : Adjusted Chronotype
 piggy bank : Bankroll
 pistol : Unregistered S&W '35
-pizza : Giordano Memorial Field
 pizza field : Giordano Memorial Field
 sauron : Hunter
 slimhack : Overclock
@@ -165,13 +154,7 @@ ivy league : Hayley Kaplan: Universal Scholar
 
 # Bioroids
 alix talbot : Alix T4LB07
-alex talbot : Alix T4LB07
-talbot : Alix T4LB07
 bass chiriboga : Bass CH1R180G4
-chiriboga : Bass CH1R180G4
 calvin baley : Calvin B4L3Y
-baley : Calvin B4L3Y
 kuwinda kahiue : Kuwinda K4H1U3
-kahiue : Kuwinda K4H1U3
 malia zoloka : Malia Z0L0K4
-zoloka : Malia Z0L0K4
