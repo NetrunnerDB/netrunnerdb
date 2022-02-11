@@ -81,6 +81,12 @@ kusuk : Khusyuk
 khyusuk : Khusyuk
 khyusyuk : Khusyuk
 kyusuk : Khusyuk
+free to play : F2P
+free to pay : F2P
+247 news cycle : 24/7 News Cycle
+247 : 24/7 News Cycle
+public trial : Public Trail
+spinny : Spin Doctor
 
 # Misc
 baby : Symmetrical Visage
