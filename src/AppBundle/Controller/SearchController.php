@@ -434,7 +434,7 @@ class SearchController extends Controller
         $q = $cardsData->buildQueryFromConditions($conditions);
         $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
         $rows = $cardsData->select_only_latest_cards($rows);
-        if ($q && $rows) {
+        if ($rows) {
             if (count($rows) == 1) {
                 $view = 'zoom';
             }
