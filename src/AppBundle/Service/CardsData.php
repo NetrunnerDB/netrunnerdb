@@ -1152,8 +1152,16 @@ class CardsData
         // Construct mapping of cards to their aliases
         $cardAliases = [];
         foreach ($this->cardAliases as $alias => $card) {
-            if (!array_key_exists($card, $cardAliases))
+            // Translate card codes into their card's name
+            $code = preg_match('/^\d\d\d\d\d$/u', $card);
+            if ($code) {
+                $card = $this->entityManager->getRepository(Card::class)->findBy(['code' => [$card]])[0]->getTitle();
+            }
+            // Create an entry for the card if it doesn't yet exist
+            if (!array_key_exists($card, $cardAliases)) {
                 $cardAliases[$card] = [];
+            }
+            // Add the alias to its card's entry
             $cardAliases[$card][] = $alias;
         }
 
@@ -1162,7 +1170,7 @@ class CardsData
         foreach ($cardAliases as $card => &$aliases) {
             sort($aliases);
         }
-        
+
         return $cardAliases;
     }
 }
