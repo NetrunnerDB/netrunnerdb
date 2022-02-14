@@ -241,6 +241,7 @@ class CardsData
             $operator = array_shift($condition);
             switch ($type) {
                 case '': // title or index
+                case '_':
                     $or = [];
                     foreach ($condition as $arg) {
                         $code = preg_match('/^\d\d\d\d\d$/u', $arg);
@@ -932,10 +933,10 @@ class CardsData
     public function unaliasCardNames(array &$conditions)
     {
         // Join all the conditions without criteria into a single string
-        $title = implode(" ", array_map(function($c) {return $c[0] == "" ? strtolower($c[2]) : "";}, $conditions));
+        $title = preg_replace("/[^A-Za-z0-9 ]/", "", implode(" ", array_map(function($c) {return $c[0] == "" ? strtolower($c[2]) : "";}, $conditions)));
 
         // If they are the substring of an alias for a card, replace the conditions with that card's name
-        if ($match = current(preg_grep("/$title/", array_keys($this->cardAliases)))) {
+        if ($match = current(preg_grep("/^$title/", array_keys($this->cardAliases)))) {
             $conditions = [["", ":", $this->cardAliases[$match]]];
         }
     }

@@ -15,7 +15,6 @@ prede : Haas-Bioroid: Precision Design
 r+ : NBN: Reality Plus
 seidr labs : Seidr Laboratories: Destiny Defined
 blorch : Black Orchestra
-blorc : Black Orchestra
 clippy : Paperclip
 cujo : Cerberus "Cuj.0" H3
 mcaap : MCA Austerity Policy
@@ -27,6 +26,7 @@ jhow : Jackson Howard
 midseasons : Midseason Replacements
 retrun : Retrieval Run
 hqi : HQ Interface
+rdi : R&D Interface
 teamspo : Team Sponsorship
 saccon : Sacrificial Construct
 mopus : Magnum Opus
@@ -46,6 +46,8 @@ free to pay : F2P
 247 news cycle : 24/7 News Cycle
 public trial : Public Trail
 spinny : Spin Doctor
+gotay : Government Takeover
+gotek : Government Takeover
 
 # Misc
 baby : Symmetrical Visage
@@ -84,7 +86,7 @@ sodium not potassium : Na'Not'K
 spooky town : Scarcity of Resources
 trash panda : Retrieval Run
 trashpanda : Retrieval Run
-twitch.tv : Daily Casts
+twitchtv : Daily Casts
 unlearn what you have learned : Reeducation
 unsure gamble : Falsified Credentials
 yoghurt : Economic Warfare
@@ -95,7 +97,6 @@ cell phones : 02069
 cell phone man : 02069
 mister phones : 02069
 mr phones : 02069
-mr. phones : 02069
 
 # Cars
 nice car : Sports Hopper
