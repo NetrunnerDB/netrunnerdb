@@ -240,25 +240,30 @@ class CardsData
             $type = array_shift($condition);
             $operator = array_shift($condition);
             switch ($type) {
-                case '': // title or index
-                case '_':
+                case '_': // title or index
                     $or = [];
                     foreach ($condition as $arg) {
                         $code = preg_match('/^\d\d\d\d\d$/u', $arg);
                         $acronym = preg_match('/^[A-Z]{2,}$/', $arg);
                         if ($code) {
-                            $or[] = "(c.code = ?$i)";
+                            $or[] = "(c.code " . ($operator == ":" ? "=" : "!=") . " ?$i)";
                             $parameters[$i++] = $arg;
                         } elseif ($acronym) {
-                            $or[] = "(BINARY(c.title) like ?$i)";
+                            $cond = [];
+                            $cond[] = "(BINARY(c.title) like ?$i)";
                             $parameters[$i++] = "%$arg%";
                             $like = implode('% ', str_split($arg));
-                            $or[] = "(REPLACE(c.title, '-', ' ') like ?$i)";
+                            $cond[] = "(REPLACE(c.title, '-', ' ') like ?$i)";
                             $parameters[$i++] = "$like%";
-                            $or[] = "(c.strippedTitle like ?$i)";
+                            $cond[] = "(c.strippedTitle like ?$i)";
                             $parameters[$i++] = "$like%";
+                            if ($operator == ":") {
+                                $or[] = implode ("or", $cond);
+                            } else {
+                                $or[] = "not (" . implode ("or", $cond) . ")";
+                            }
                         } else {
-                            $or[] = "(c.title like ?$i)";
+                            $or[] = "(c.title " . ($operator == ":" ? "like" : "not like") . " ?$i)";
                             $parameters[$i++] = "%$arg%";
                         }
                     }
@@ -856,11 +861,11 @@ class CardsData
                 }
                 // we start by looking for a type of condition
                 $match = [];
-                if (preg_match('/^(\p{L})([:<>!])(.*)/u', $query, $match)) { // token "condition:"
+                if (preg_match('/^(\p{L}|_)([:<>!])(.*)/u', $query, $match)) { // token "condition:"
                     $cond = [mb_strtolower($match[1]), $match[2]];
                     $query = $match[3];
                 } else {
-                    $cond = ["", ":"];
+                    $cond = ["_", ":"];
                 }
                 $state = 2;
             } else {
@@ -872,7 +877,7 @@ class CardsData
                         $query = $match[2];
                         $state = 2;
                     } else {
-                        // erreur
+                        // error
                         $query = $match[2];
                         $state = 4;
                     }
@@ -881,7 +886,7 @@ class CardsData
                         $query = $match[1];
                         $state = 3;
                     } else {
-                        // erreur
+                        // error
                         $query = $match[1];
                         $state = 4;
                     }
@@ -933,7 +938,11 @@ class CardsData
     public function unaliasCardNames(array &$conditions)
     {
         // Join all the conditions without criteria into a single string
-        $title = preg_replace("/[^A-Za-z0-9 ]/", "", implode(" ", array_map(function($c) {return $c[0] == "" ? strtolower($c[2]) : "";}, $conditions)));
+        $title = preg_replace("/[^A-Za-z0-9 ]/", "", implode(" ", array_map(function($c) {return $c[0] == "_" ? strtolower($c[2]) : "";}, $conditions)));
+
+        if (!$title) {
+            return;
+        }
 
         // If they are the substring of an alias for a card, replace the conditions with that card's name
         if ($match = current(preg_grep("/^$title/", array_keys($this->cardAliases)))) {
@@ -946,7 +955,7 @@ class CardsData
         // rebuild the search string for display
         return implode(" ", array_map(
             function ($l) {
-                return ($l[0] ? $l[0] . $l[1] : "")
+                return ($l[0] == "_" && $l[1] == ":" ? "" : $l[0] . $l[1])
                     . implode("|", array_map(
                         function ($s) {
                             return preg_match("/^[\p{L}\p{N}\-\&\.\!\'\;]+$/u", $s) ? $s : "\"$s\"";

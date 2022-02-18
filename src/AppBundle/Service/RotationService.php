@@ -83,7 +83,7 @@ class RotationService
         foreach ($decklist->getSlots() as $slot) {
             $cycles[$slot->getCard()->getPack()->getCycle()->getCode()] = 1;
         }
-        
+
         $usedCycles = array_keys($cycles);
         $rotatedCycles = array_map(function (Cycle $cycle) { return $cycle->getCode(); }, $rotation->getRotated()->toArray());
         return count(array_intersect($usedCycles, $rotatedCycles)) === 0;
