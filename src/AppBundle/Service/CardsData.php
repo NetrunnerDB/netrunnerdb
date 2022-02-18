@@ -863,7 +863,12 @@ class CardsData
                 $match = [];
                 if (preg_match('/^(\p{L}|_)([:<>!])(.*)/u', $query, $match)) { // token "condition:"
                     $cond = [mb_strtolower($match[1]), $match[2]];
-                    $query = $match[3];
+                    if ($cond[0] == "z" && $match[3] == "startup") {
+                        $cond[0] = "e";
+                        $query = "su21|sg|ur|df|urbp";
+                    } else {
+                        $query = $match[3];
+                    }
                 } else {
                     $cond = ["_", ":"];
                 }
