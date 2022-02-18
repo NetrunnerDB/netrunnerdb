@@ -1,5 +1,4 @@
 # Abbreviations
-andi : Andromeda: Dispossessed Ristie
 andy : Andromeda: Dispossessed Ristie
 aot : Haas-Bioroid: Architects of Tomorrow
 babw : Weyland Consortium: Building a Better World
@@ -24,6 +23,9 @@ nanotk : Na'Not'K
 j-how : Jackson Howard
 jhow : Jackson Howard
 midseasons : Midseason Replacements
+nisei mk 2 : Nisei MK II
+nisei mark 2 : Nisei MK II
+nisei mark ii : Nisei MK II
 retrun : Retrieval Run
 hqi : HQ Interface
 rdi : R&D Interface
