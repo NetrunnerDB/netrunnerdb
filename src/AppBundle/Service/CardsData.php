@@ -962,7 +962,7 @@ class CardsData
 
         // If they are the substring of an alias for a card, replace the conditions with that card's name
         if ($match = current(preg_grep("/^$title/", array_keys($this->cardAliases)))) {
-            $conditions = [["", ":", $this->cardAliases[$match]]];
+            $conditions = [["_", ":", $this->cardAliases[$match]]];
         }
     }
 
