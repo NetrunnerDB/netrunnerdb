@@ -668,25 +668,41 @@ class CardsData
                     $i++;
                     break;
                 case 'z': // rotation
-                    // Instantiate the service only when its needed.
-                    $rotationservice = new RotationService($this->entityManager);
-                    $rotation = null;
-                    if ($condition[0] == "current") {
-                        $rotation = $rotationservice->findCurrentRotation();
-                    } elseif ($condition[0] == "latest") {
-                        $rotation = $rotationservice->findLatestRotation();
-                    } else {
-                        $rotation = $rotationservice->findRotationByCode($condition[0]);
-                    }
-                    if ($rotation) {
-                        // Add the valid cycles for the requested rotation and add them to the WHERE clause for the query.
-                        $cycles = $rotation->normalize()["rotated"];
+                    if ($condition[0] == "startup") {
+                        // Add the valid cycles for startup and add them to the WHERE clause for the query.
+                        $cycles = ['ashes', 'system-gateway', 'system-update-2021'];
                         $placeholders = array();
                         foreach($cycles as $cycle) {
                             array_push($placeholders, "?$i");
                             $parameters[$i++] = $cycle;
                         }
-                        $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . ") and y.code != 'draft')";
+                        $cond = $operator == ":" ? "in" : "not in";
+                        $clauses[] = "(y.code $cond (" . implode(", ", $placeholders) . "))";
+                    } else {
+                        // Instantiate the service only when its needed.
+                        $rotationservice = new RotationService($this->entityManager);
+                        $rotation = null;
+                        if ($condition[0] == "current") {
+                            $rotation = $rotationservice->findCurrentRotation();
+                        } elseif ($condition[0] == "latest") {
+                            $rotation = $rotationservice->findLatestRotation();
+                        } else {
+                            $rotation = $rotationservice->findRotationByCode($condition[0]);
+                        }
+                        if ($rotation) {
+                            // Add the valid cycles for the requested rotation and add them to the WHERE clause for the query.
+                            $cycles = $rotation->normalize()["rotated"];
+                            $placeholders = array();
+                            foreach($cycles as $cycle) {
+                                array_push($placeholders, "?$i");
+                                $parameters[$i++] = $cycle;
+                            }
+                            if ($operator == ":") {
+                                $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . ") and y.code != 'draft')";
+                            } else {
+                                $clauses[] = "(y.code in (" . implode(", ", $placeholders) . "))";
+                            }
+                        }
                     }
                     $i++;
                     break;
@@ -863,12 +879,7 @@ class CardsData
                 $match = [];
                 if (preg_match('/^(\p{L}|_)([:<>!])(.*)/u', $query, $match)) { // token "condition:"
                     $cond = [mb_strtolower($match[1]), $match[2]];
-                    if ($cond[0] == "z" && $match[3] == "startup") {
-                        $cond[0] = "e";
-                        $query = "su21|sg|ur|df|urbp";
-                    } else {
-                        $query = $match[3];
-                    }
+                    $query = $match[3];
                 } else {
                     $cond = ["_", ":"];
                 }
