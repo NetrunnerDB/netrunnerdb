@@ -426,7 +426,7 @@ class SearchController extends Controller
 
         // If there are no results, and no specific criteria were searched, try again but force acronyms
         if (!$rows && !array_filter($conditions, function($c) {return $c[0] != "_";})) {
-            $capsConditions = array_map(function($c) {return ["_", ":", strtoupper($c[2])];}, $conditions);
+            $capsConditions = array_map(function($c) {return ["_", $c[1], strtoupper($c[2])];}, $conditions);
             $rows = $cardsData->get_search_rows($capsConditions, $sort, $locale);
 
             // If there are still no results, try again but with aliases
