@@ -20,6 +20,7 @@
         <li>a <b>disjunction</b> is several <b>words</b> or <b>expressions</b> separated by <code>|</code></li>
         <li>a <b>criteria</b> is a single letter:
           <ul>
+            <li><code>_</code> &ndash; title</li>
             <li><code>x</code> &ndash; text</li>
             <li><code>a</code> &ndash; flavor text</li>
             <li><code>e</code> &ndash; set</li>
@@ -50,9 +51,16 @@
             <li><code>&gt;</code> &ndash; more than</li>
           </ul>
         </li>
+        <li><b>Title</b> - If you enter text with no criteria, it will attempt to match against card titles (e.g. <code>mca</code> will match MCA Austerity Policy and MCA Informant). The only exceptions are:
+          <ul>
+            <li>Two-or more letters in all capitals will attempt to match cards by acronym (e.g. <code>BLC</code> will match Blue Level Clearance and Black Level Clearance)</li>
+            <li>Writing the ID number of a card will match that card specifically (e.g. <code>20073</code> will match Green Level Clearance)</li>
+            <li>Some cards have aliases that will match them (e.g. <code>clippy</code> will match Paperclip)
+          </ul>
+        </li>
         <li><b>Faction</b> <code>f</code> accepts full faction codes (e.g. nbn, haas-bioroid, weyland-consortium, sunny-lebeau, etc) or the following shortcuts:
           <ul>
-            <li>The first letter of each non-neutral, non-mini factions</li>
+            <li>The first letter of each non-neutral, non-mini faction</li>
             <li>The second letter, or first two letters, of mini-factions (e.g. <code>p</code> or <code>ap</code> for Apex)
             <li><code>mini</code> for all mini-factions</li>
             <li><code>nc</code> for <code>neutral-corp</code></li>
@@ -86,6 +94,9 @@
   <h2>Search examples</h2>
 
   <ul>
+    <li><code>test</code> or <code>_:test</code> searches for cards "test" in their title</li>
+    <li><code>BLC</code> searches for cards with the acronym "BLC"</li>
+    <li><code>_:a _!b</code> searches for cards with "a" in their title but not "b"</li>
     <li><code>t:asset</code> searches for all Assets</li>
     <li><code>t:asset s:ambush</code> searches for every Asset that has the subtype Ambush</li>
     <li><code>x:"make a run"</code> searches for all cards with the text "make a run"</li>
@@ -96,6 +107,16 @@
     <li><code>d:r|c</code> searches for all Runner and Corp cards</li>
     <li><code>x:&#34;the Corp loses 1 credit&#34;</code> returns Amina, Corporate &#34;Grant&#34;, and Lamprey</li>
     <li><code>d:corp z:current</code> returns all corp cards in the cycles valid for the latest rotation</li>
+  </ul>
+
+  <h2>Card aliases</h2>
+
+  <p>The following are shortcuts you can use instead of cards' names.</p>
+
+  <ul>
+  {% for card, alias_list in aliases %}
+    <li>{{ card }} : {% for alias in alias_list %}<code>{{ alias }}</code> {% endfor %}</li>
+  {% endfor %}
   </ul>
 </div>
 {% endblock %}

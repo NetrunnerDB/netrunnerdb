@@ -144,7 +144,7 @@ class DefaultController extends Controller
     /**
      * @return Response
      */
-    public function syntaxAction(EntityManagerInterface $entityManager)
+    public function syntaxAction(EntityManagerInterface $entityManager, CardsData $cardsData)
     {
         $response = new Response();
         $response->setPublic();
@@ -152,11 +152,13 @@ class DefaultController extends Controller
 
         $banlists = $entityManager->getRepository(Mwl::class)->findBy([], ['dateStart' => 'DESC']);
         $rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
+        $cardAliases = $cardsData->getPrettyCardAliases();
 
         return $this->render('/Default/syntax.html.twig', [
             "pagetitle" => "Search Syntax Reference",
             "banlists" => $banlists,
             "rotations" => $rotations,
+            "aliases" => $cardAliases,
         ], $response);
     }
 }

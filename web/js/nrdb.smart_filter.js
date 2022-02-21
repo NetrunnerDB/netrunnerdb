@@ -33,6 +33,7 @@
         add_string_sf('type_code', operator, values);
         break;
       case "":
+      case "_":
         add_string_sf('title', operator, values);
         break;
       case "x":

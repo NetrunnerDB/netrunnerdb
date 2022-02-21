@@ -57,21 +57,36 @@ class CardsData
     /** @var Packages $packages */
     private $packages;
 
-	/** @var Illustrators $illustrators */
-	private $illustrators;
+  	/** @var Illustrators $illustrators */
+  	private $illustrators;
+
+    /** @var CardAliases $illustrators */
+  	private $cardAliases;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         RepositoryFactory $repositoryFactory,
         RouterInterface $router,
-		Packages $packages,
-		Illustrators $illustrators
+        Packages $packages,
+        Illustrators $illustrators
     ) {
         $this->entityManager = $entityManager;
         $this->packRepository = $repositoryFactory->getPackRepository();
         $this->router = $router;
         $this->packages = $packages;
-		$this->illustrators = $illustrators;
+        $this->illustrators = $illustrators;
+
+        $file = fopen("card_aliases.txt", "r");
+        $this->cardAliases = [];
+        if ($file) {
+            while (($line = fgets($file)) !== false) {
+                if ($line[0] != '#' && str_contains($line, " : ")) {
+                    $data = explode(" : ", $line);
+                    $this->cardAliases[$data[0]] = trim($data[1]);
+                }
+            }
+        }
+        fclose($file);
     }
 
     /**
@@ -225,27 +240,30 @@ class CardsData
             $type = array_shift($condition);
             $operator = array_shift($condition);
             switch ($type) {
-                case '': // title or index
+                case '_': // title or index
                     $or = [];
                     foreach ($condition as $arg) {
                         $code = preg_match('/^\d\d\d\d\d$/u', $arg);
                         $acronym = preg_match('/^[A-Z]{2,}$/', $arg);
                         if ($code) {
-                            $or[] = "(c.code = ?$i)";
+                            $or[] = "(c.code " . ($operator == ":" ? "=" : "!=") . " ?$i)";
                             $parameters[$i++] = $arg;
                         } elseif ($acronym) {
-                            $or[] = "(BINARY(c.title) like ?$i)";
+                            $cond = [];
+                            $cond[] = "(BINARY(c.title) like ?$i)";
                             $parameters[$i++] = "%$arg%";
                             $like = implode('% ', str_split($arg));
-                            $or[] = "(REPLACE(c.title, '-', ' ') like ?$i)";
+                            $cond[] = "(REPLACE(c.title, '-', ' ') like ?$i)";
                             $parameters[$i++] = "$like%";
-                            $or[] = "(c.strippedTitle like ?$i)";
+                            $cond[] = "(c.strippedTitle like ?$i)";
                             $parameters[$i++] = "$like%";
+                            if ($operator == ":") {
+                                $or[] = implode ("or", $cond);
+                            } else {
+                                $or[] = "not (" . implode ("or", $cond) . ")";
+                            }
                         } else {
-                            if ($arg == 'Franklin') {
-                                $arg = 'Crick';
-                            } // easter egg
-                            $or[] = "(c.title like ?$i)";
+                            $or[] = "(c.title " . ($operator == ":" ? "like" : "not like") . " ?$i)";
                             $parameters[$i++] = "%$arg%";
                         }
                     }
@@ -650,25 +668,41 @@ class CardsData
                     $i++;
                     break;
                 case 'z': // rotation
-                    // Instantiate the service only when its needed.
-                    $rotationservice = new RotationService($this->entityManager);
-                    $rotation = null;
-                    if ($condition[0] == "current") {
-                        $rotation = $rotationservice->findCurrentRotation();
-                    } elseif ($condition[0] == "latest") {
-                        $rotation = $rotationservice->findLatestRotation();
-                    } else {
-                        $rotation = $rotationservice->findRotationByCode($condition[0]);
-                    }
-                    if ($rotation) {
-                        // Add the valid cycles for the requested rotation and add them to the WHERE clause for the query.
-                        $cycles = $rotation->normalize()["rotated"];
+                    if ($condition[0] == "startup") {
+                        // Add the valid cycles for startup and add them to the WHERE clause for the query.
+                        $cycles = ['ashes', 'system-gateway', 'system-update-2021'];
                         $placeholders = array();
                         foreach($cycles as $cycle) {
                             array_push($placeholders, "?$i");
                             $parameters[$i++] = $cycle;
                         }
-                        $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . ") and y.code != 'draft')";
+                        $cond = $operator == ":" ? "in" : "not in";
+                        $clauses[] = "(y.code $cond (" . implode(", ", $placeholders) . "))";
+                    } else {
+                        // Instantiate the service only when its needed.
+                        $rotationservice = new RotationService($this->entityManager);
+                        $rotation = null;
+                        if ($condition[0] == "current") {
+                            $rotation = $rotationservice->findCurrentRotation();
+                        } elseif ($condition[0] == "latest") {
+                            $rotation = $rotationservice->findLatestRotation();
+                        } else {
+                            $rotation = $rotationservice->findRotationByCode($condition[0]);
+                        }
+                        if ($rotation) {
+                            // Add the valid cycles for the requested rotation and add them to the WHERE clause for the query.
+                            $cycles = $rotation->normalize()["rotated"];
+                            $placeholders = array();
+                            foreach($cycles as $cycle) {
+                                array_push($placeholders, "?$i");
+                                $parameters[$i++] = $cycle;
+                            }
+                            if ($operator == ":") {
+                                $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . ") and y.code != 'draft')";
+                            } else {
+                                $clauses[] = "(y.code in (" . implode(", ", $placeholders) . "))";
+                            }
+                        }
                     }
                     $i++;
                     break;
@@ -820,69 +854,69 @@ class CardsData
 
     public function syntax(string $query)
     {
-        // renvoie une liste de conditions (array)
-        // chaque condition est un tableau à n>1 éléments
-        // le premier est le type de condition (0 ou 1 caractère)
-        // les suivants sont les arguments, en OR
+        // returns a list of conditions (array)
+        // each condition is an array with n>1 elements
+        // the first is the type of condition (0 or 1 character)
+        // the rest are the arguments, in OR
 
         $query = preg_replace('/\s+/u', ' ', trim($query));
 
         $list = [];
         $cond = null;
-        // l'automate a 3 états :
-        // 1:recherche de type
-        // 2:recherche d'argument principal
-        // 3:recherche d'argument supplémentaire
-        // 4:erreur de parsing, on recherche la prochaine condition
-        // s'il tombe sur un argument alors qu'il est en recherche de type, alors le type est vide
-        $etat = 1;
+        // the automaton has 3 states:
+        // 1: determine the search type (if none is found before (2) the type is empty)
+        // 2: find the main argument
+        // 3: check for additional arguments
+        // 4: parsing error - we are looking for the next condition
+
+        $state = 1;
         while ($query != "") {
-            if ($etat == 1) {
-                if (isset($cond) && $etat != 4 && count($cond) > 2) {
+            if ($state == 1) {
+                if (isset($cond) && $state != 4 && count($cond) > 2) {
                     $list[] = $cond;
                 }
-                // on commence par rechercher un type de condition
+                // we start by looking for a type of condition
                 $match = [];
-                if (preg_match('/^(\p{L})([:<>!])(.*)/u', $query, $match)) { // jeton "condition:"
+                if (preg_match('/^(\p{L}|_)([:<>!])(.*)/u', $query, $match)) { // token "condition:"
                     $cond = [mb_strtolower($match[1]), $match[2]];
                     $query = $match[3];
                 } else {
-                    $cond = ["", ":"];
+                    $cond = ["_", ":"];
                 }
-                $etat = 2;
+                $state = 2;
             } else {
-                if (preg_match('/^"([^"]*)"(.*)/u', $query, $match) // jeton "texte libre entre guillements"
-                    || preg_match('/^([\p{L}\p{N}\-\&\.\!\'\;]+)(.*)/u', $query, $match) // jeton "texte autorisé sans guillements"
+                if (preg_match('/^"([^"]*)"(.*)/u', $query, $match) // token "free text between quotes"
+                    || preg_match('/^([\p{L}\p{N}\-\&\.\!\'\;]+)(.*)/u', $query, $match) // token "text allowed without quotes"
                 ) {
-                    if (($etat == 2 && isset($cond) && count($cond) == 2) || $etat == 3) {
+                    if (($state == 2 && isset($cond) && count($cond) == 2) || $state == 3) {
                         $cond[] = $match[1];
                         $query = $match[2];
-                        $etat = 2;
+                        $state = 2;
                     } else {
-                        // erreur
+                        // error
                         $query = $match[2];
-                        $etat = 4;
+                        $state = 4;
                     }
-                } elseif (preg_match('/^\|(.*)/u', $query, $match)) { // jeton "|"
-                    if (($cond[1] == ':' || $cond[1] == '!') && (($etat == 2 && isset($cond) && count($cond) > 2) || $etat == 3)) {
+                } elseif (preg_match('/^\|(.*)/u', $query, $match)) { // token "|"
+                    if (($cond[1] == ':' || $cond[1] == '!') && (($state == 2 && isset($cond) && count($cond) > 2) || $state == 3)) {
                         $query = $match[1];
-                        $etat = 3;
+                        $state = 3;
                     } else {
-                        // erreur
+                        // error
                         $query = $match[1];
-                        $etat = 4;
+                        $state = 4;
                     }
-                } elseif (preg_match('/^ (.*)/u', $query, $match)) { // jeton " "
+                } elseif (preg_match('/^ (.*)/u', $query, $match)) { // token " "
                     $query = $match[1];
-                    $etat = 1;
+                    $state = 1;
                 } else {
-                    // erreur
+                    // error
                     $query = substr($query, 1);
-                    $etat = 4;
+                    $state = 4;
                 }
             }
         }
-        if (isset($cond) && $etat != 4 && count($cond) > 2) {
+        if (isset($cond) && $state != 4 && count($cond) > 2) {
             $list[] = $cond;
         }
 
@@ -917,12 +951,27 @@ class CardsData
         }
     }
 
+    public function unaliasCardNames(array &$conditions)
+    {
+        // Join all the conditions without criteria into a single string
+        $title = preg_replace("/[^A-Za-z0-9 ]/", "", implode(" ", array_map(function($c) {return $c[0] == "_" ? strtolower($c[2]) : "";}, $conditions)));
+
+        if (!$title) {
+            return;
+        }
+
+        // If they are the substring of an alias for a card, replace the conditions with that card's name
+        if ($match = current(preg_grep("/^$title/", array_keys($this->cardAliases)))) {
+            $conditions = [["_", ":", $this->cardAliases[$match]]];
+        }
+    }
+
     public function buildQueryFromConditions(array $conditions)
     {
-        // reconstruction de la bonne chaine de recherche pour affichage
+        // rebuild the search string for display
         return implode(" ", array_map(
             function ($l) {
-                return ($l[0] ? $l[0] . $l[1] : "")
+                return ($l[0] == "_" && $l[1] == ":" ? "" : $l[0] . $l[1])
                     . implode("|", array_map(
                         function ($s) {
                             return preg_match("/^[\p{L}\p{N}\-\&\.\!\'\;]+$/u", $s) ? $s : "\"$s\"";
@@ -1116,5 +1165,44 @@ class CardsData
         $rows = $query->getResult();
 
         return $rows;
+    }
+
+    public function getPrettyCardAliases()
+    {
+        // Construct mapping of cards to their aliases
+        $cardAliases = []; // Normal card names get immediately added
+        $cardCodes = []; // Card codes are decoded at a later step
+        foreach ($this->cardAliases as $alias => $ref) {
+            $code = preg_match('/^\d\d\d\d\d$/u', $ref);
+            if ($code) {
+                if (!array_key_exists($ref, $cardCodes)) {
+                    $cardCodes[$ref] = [];
+                }
+                $cardCodes[$ref][] = $alias;
+            } else {
+                if (!array_key_exists($ref, $cardAliases)) {
+                    $cardAliases[$ref] = [];
+                }
+                $cardAliases[$ref][] = $alias;
+            }
+        }
+
+        // Translate card codes into card titles and add to the array of aliases
+        $decodedCards = $this->entityManager->getRepository(Card::class)->findBy(['code' => array_keys($cardCodes)]);
+        foreach ($decodedCards as $card) {
+            $ref = $card->getTitle();
+            if (!array_key_exists($ref, $cardAliases)) {
+                $cardAliases[$ref] = [];
+            }
+            array_push($cardAliases[$ref], ...$cardCodes[$card->getCode()]);
+        }
+
+        // Sort the cards, and each card's aliases
+        ksort($cardAliases);
+        foreach ($cardAliases as $card => &$aliases) {
+            sort($aliases);
+        }
+
+        return $cardAliases;
     }
 }

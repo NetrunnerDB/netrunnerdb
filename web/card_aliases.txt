@@ -1,0 +1,132 @@
+# Abbreviations
+andy : Andromeda: Dispossessed Ristie
+aot : Haas-Bioroid: Architects of Tomorrow
+babw : Weyland Consortium: Building a Better World
+b2l : Weyland Consortium: Built to Last
+btl : Weyland Consortium: Built to Last
+bwbi : Weyland Consortium: Because We Built It
+ctm : NBN: Controlling the Message
+eddie kim : Edward Kim: Humanity's Hammer
+eddy kim : Edward Kim: Humanity's Hammer
+etf : Haas-Bioroid: Engineering the Future
+gabe : Gabriel Santiago: Consummate Professional
+prede : Haas-Bioroid: Precision Design
+r+ : NBN: Reality Plus
+seidr labs : Seidr Laboratories: Destiny Defined
+blorch : Black Orchestra
+clippy : Paperclip
+cujo : Cerberus "Cuj.0" H3
+mcaap : MCA Austerity Policy
+mca ap : MCA Austerity Policy
+emcap : MCA Austerity Policy
+nanotk : Na'Not'K
+j-how : Jackson Howard
+jhow : Jackson Howard
+midseasons : Midseason Replacements
+nisei mk 2 : Nisei MK II
+nisei mark 2 : Nisei MK II
+nisei mark ii : Nisei MK II
+retrun : Retrieval Run
+hqi : HQ Interface
+rdi : R&D Interface
+teamspo : Team Sponsorship
+saccon : Sacrificial Construct
+mopus : Magnum Opus
+hart : Harmony AR Therapy
+procon : Professional Contacts
+doof : Diversion of Funds
+polop : Political Operative
+ppvp : Prepaid VoicePAD
+sscg : SanSan City Grid
+larla : Levy AR Lab Access
+recoco : Reconstruction Contract
+david : D4v1d
+kusyuk : Khusyuk
+kyusuk : Khusyuk
+free to play : F2P
+free to pay : F2P
+247 news cycle : 24/7 News Cycle
+public trial : Public Trail
+spinny : Spin Doctor
+gotay : Government Takeover
+gotek : Government Takeover
+
+# Misc
+baby : Symmetrical Visage
+bitcoin : TGTBT
+boxer girl : Leela Patel: Trained Pragmatist
+butler : Jeeves Model Bioroids
+catch me if you can : Gingerbread
+cowabunga : Surfer
+darude : Sand Storm
+david blaine : Street Magic
+deezy meezy : DZMZ Optimizer
+deezymeezy : DZMZ Optimizer
+desperadito : Pennyshaver
+face kick : Jailbreak
+facekick : Jailbreak
+folding at home : Data Folding
+franklin : Crick
+fugu : Puffer
+green ball : Rezeki
+green orb : Rezeki
+julybug : Urtica Cipher
+just in time : Compile
+kitty : Quantum Predictive Model
+knock knock : No One Home
+loan sharks : Dadiana Chacon
+mother brain : Ikawah Project
+nice moustache : Hernando Cortez
+pancakes : Adjusted Chronotype
+piggy bank : Bankroll
+pistol : Unregistered S&W '35
+pizza field : Giordano Memorial Field
+sauron : Hunter
+slimhack : Overclock
+soccer mom : Sunny Lebeau: Security Specialist
+sodium not potassium : Na'Not'K
+spooky town : Scarcity of Resources
+trash panda : Retrieval Run
+trashpanda : Retrieval Run
+twitchtv : Daily Casts
+unlearn what you have learned : Reeducation
+unsure gamble : Falsified Credentials
+yoghurt : Economic Warfare
+yogurt : Economic Warfare
+
+# Mr Phones
+cell phones : 02069
+cell phone man : 02069
+mister phones : 02069
+mr phones : 02069
+
+# Cars
+nice car : Sports Hopper
+sweet car : Advanced Concept Hopper
+
+# Jinteki IDs associated with plants
+potatoes : Jinteki: Potential Unleashed
+black tree : Jinteki: Personal Evolution
+white tree : Jinteki: Replicating Perfection
+red tree : Mti Mwekundu: Life Improved
+red black tree : Mti Mwekundu: Life Improved
+
+# Edward Kim
+full metal hacktivist : Edward Kim: Humanity's Hammer
+captain hammer : Edward Kim: Humanity's Hammer
+
+# Hoshiko Shiro
+magical girl : Hoshiko Shiro: Untold Protagonist
+mahou shoujo : Hoshiko Shiro: Untold Protagonist
+
+# Hayley Kaplan
+honor student : Hayley Kaplan: Universal Scholar
+honour student : Hayley Kaplan: Universal Scholar
+ivy league : Hayley Kaplan: Universal Scholar
+
+# Bioroids
+alix talbot : Alix T4LB07
+bass chiriboga : Bass CH1R180G4
+calvin baley : Calvin B4L3Y
+kuwinda kahiue : Kuwinda K4H1U3
+malia zoloka : Malia Z0L0K4
