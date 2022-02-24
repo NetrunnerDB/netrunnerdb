@@ -169,6 +169,7 @@ class PrivateApi20Controller extends FOSRestController
      *  description="Save one (private) deck of authenticated user",
      *  parameters={
      *    {"name"="deck_id", "dataType"="integer", "required"=true, "description"="ID"},
+     *    {"name"="deck_uuid", "dataType"="string", "required"=true, "description"="UUID"},
      *    {"name"="name", "dataType"="string", "required"=true, "description"="Name"},
      *    {"name"="description", "dataType"="string", "required"=false, "description"="Description of the deck in Markdown"},
      *    {"name"="tags", "dataType"="string", "required"=true, "description"="Comma-separated list of tags"},
@@ -191,13 +192,20 @@ class PrivateApi20Controller extends FOSRestController
             return $this->prepareFailedResponse("Request body is not proper JSON [error code $last_error].");
         }
 
-        if (!key_exists('deck_id', $requestContent)) {
-            return $this->prepareFailedResponse("Missing deck_id parameter.");
+        if (!key_exists('deck_uuid', $requestContent) && !key_exists('deck_id', $requestContent)) {
+            return $this->prepareFailedResponse("Missing deck_uuid or deck_id parameter.");
         }
 
+        $deck_uuid = $requestContent['deck_uuid'];
         $deck_id = $requestContent['deck_id'];
 
-        if ($deck_id) {
+        if ($deck_uuid) {
+            $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'uuid' => $deck_uuid]);
+            if (!$deck) {
+                throw $this->createNotFoundException();
+            }
+            $deck_id = $deck->getId());
+        } else if ($deck_id) {
             $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
             if (!$deck) {
                 throw $this->createNotFoundException();
@@ -247,6 +255,7 @@ class PrivateApi20Controller extends FOSRestController
      *  description="Publish one (private) deck of authenticated user",
      *  parameters={
      *    {"name"="deck_id", "dataType"="integer", "required"=true, "description"="ID"},
+     *    {"name"="deck_uuid", "dataType"="string", "required"=true, "description"="UUID"},
      *    {"name"="name", "dataType"="string", "required"=false, "description"="Name. Taken from the deck is absent/empty"},
      *    {"name"="description", "dataType"="string", "required"=false, "description"="Description in Markdown. Taken from the deck if absent/empty"}
      *  },
@@ -268,12 +277,17 @@ class PrivateApi20Controller extends FOSRestController
             return $this->prepareFailedResponse("Request body is not proper JSON [error code $last_error].");
         }
 
-        if (!key_exists('deck_id', $requestContent)) {
-            return $this->prepareFailedResponse("Missing deck_id parameter.");
+        if (!key_exists('deck_uuid', $requestContent) && !key_exists('deck_id', $requestContent)) {
+            return $this->prepareFailedResponse("Missing deck_uuid or deck_id parameter.");
         }
 
+        $deck_uuid = $requestContent['deck_uuid'];
         $deck_id = $requestContent['deck_id'];
-        $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
+        if ($deck_uuid) {
+            $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'uuid' => $deck_uuid]);
+        } else if ($deck_id) {
+            $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
+        }
         if (!$deck instanceof Deck) {
             throw $this->createNotFoundException();
         }
