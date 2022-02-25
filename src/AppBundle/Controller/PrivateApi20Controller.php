@@ -204,7 +204,7 @@ class PrivateApi20Controller extends FOSRestController
             if (!$deck) {
                 throw $this->createNotFoundException();
             }
-            $deck_id = $deck->getId());
+            $deck_id = $deck->getId();
         } else if ($deck_id) {
             $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'id' => $deck_id]);
             if (!$deck) {
