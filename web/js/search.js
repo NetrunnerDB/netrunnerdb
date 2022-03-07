@@ -51,6 +51,7 @@ $(document).on('data.app', function() {
   startup_cycles['ashes'] = 1;
   startup_cycles['system-gateway'] = 1;
   startup_cycles['system-update-2021'] = 1;
+  startup_cycles['borealis'] = 1;
   var rotated_packs = Array();
   var startup_packs = Array();
   NRDB.data.packs.find().forEach(function(pack) {
