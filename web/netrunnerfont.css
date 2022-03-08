@@ -135,6 +135,9 @@
 .icon-system-update-2021:before {
   content: "\e92e";
 }
+.icon-borealis:before {
+  content: "\e931";
+}
 .icon-anarch:before {
   content: "\e91a";
 }
