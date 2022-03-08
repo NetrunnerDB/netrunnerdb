@@ -42,7 +42,7 @@ $(function() {
             let visible = true;
             // Startup
             if (format === 'startup') {
-                visible = ['df', 'urbp', 'ur', 'sg', 'su21'].some(p => $(this).hasClass('pack-' + p));
+                visible = ['df', 'urbp', 'ur', 'sg', 'su21', 'msbp'].some(p => $(this).hasClass('pack-' + p));
             }
             // Standard
             else if (format === 'standard') {

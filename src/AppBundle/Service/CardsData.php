@@ -670,7 +670,7 @@ class CardsData
                 case 'z': // rotation
                     if ($condition[0] == "startup") {
                         // Add the valid cycles for startup and add them to the WHERE clause for the query.
-                        $cycles = ['ashes', 'system-gateway', 'system-update-2021'];
+                        $cycles = ['ashes', 'system-gateway', 'system-update-2021', 'borealis'];
                         $placeholders = array();
                         foreach($cycles as $cycle) {
                             array_push($placeholders, "?$i");
