@@ -80,7 +80,7 @@ class CardsData
         $this->cardAliases = [];
         if ($file) {
             while (($line = fgets($file)) !== false) {
-                if ($line[0] != '#' && str_contains($line, " : ")) {
+                if ($line[0] != '#' && mb_strpos($line, " : ")) {
                     $data = explode(" : ", $line);
                     $this->cardAliases[$data[0]] = trim($data[1]);
                 }
