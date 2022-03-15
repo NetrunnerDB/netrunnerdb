@@ -512,7 +512,7 @@ class SearchController extends Controller
                     $all_versions_rotated = true;
 
                     // Startup legality is currently hard-coded since the DB doesn't know anything about it.
-                    $startupCycles = ['ashes' => true, 'system-gateway' => true, 'system-update-2021' => true];
+                    $startupCycles = ['ashes' => true, 'system-gateway' => true, 'system-update-2021' => true, 'borealis' => true];
                     $startup_legal = false;
 
                     $rotated_count = 0;

@@ -80,7 +80,7 @@ class CardsData
         $this->cardAliases = [];
         if ($file) {
             while (($line = fgets($file)) !== false) {
-                if ($line[0] != '#' && str_contains($line, " : ")) {
+                if ($line[0] != '#' && mb_strpos($line, " : ")) {
                     $data = explode(" : ", $line);
                     $this->cardAliases[$data[0]] = trim($data[1]);
                 }
@@ -670,7 +670,7 @@ class CardsData
                 case 'z': // rotation
                     if ($condition[0] == "startup") {
                         // Add the valid cycles for startup and add them to the WHERE clause for the query.
-                        $cycles = ['ashes', 'system-gateway', 'system-update-2021'];
+                        $cycles = ['ashes', 'system-gateway', 'system-update-2021', 'borealis'];
                         $placeholders = array();
                         foreach($cycles as $cycle) {
                             array_push($placeholders, "?$i");

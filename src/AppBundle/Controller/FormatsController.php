@@ -13,7 +13,7 @@ class FormatsController extends Controller
      */
     public function getAction(EntityManagerInterface $entityManager)
     {
-        $q = $entityManager->createQuery("SELECT c FROM AppBundle:Cycle c where c.code IN ('system-gateway', 'system-update-2021', 'ashes') ORDER BY c.position DESC");
+        $q = $entityManager->createQuery("SELECT c FROM AppBundle:Cycle c where c.code IN ('system-gateway', 'system-update-2021', 'ashes', 'borealis') ORDER BY c.position DESC");
         $startup_cycles = $q->getResult();
         $startup_packs = array();
         foreach ($startup_cycles as $cycle) {
@@ -47,7 +47,7 @@ class FormatsController extends Controller
             . " FROM card"
             . " JOIN pack ON card.pack_id = pack.id"
             . " JOIN cycle ON pack.cycle_id = cycle.id"
-            . " WHERE cycle.code IN ('system-gateway', 'system-update-2021', 'ashes')"
+            . " WHERE cycle.code IN ('system-gateway', 'system-update-2021', 'ashes', 'borealis')"
         )->fetch(\PDO::FETCH_ASSOC)['num_cards'];
 
 
@@ -55,10 +55,10 @@ class FormatsController extends Controller
         return $this->render('/Formats/formats.html.twig', [
             'pagetitle'          => "Play Formats",
             'startup_cycles'     => $startup_cycles,
-            'startup_packs'   => $startup_packs,
+            'startup_packs'      => $startup_packs,
             'num_startup_cards'  => $num_startup_cards,
             'standard_cycles'    => $standard_cycles,
-            'standard_packs'  => $standard_packs,
+            'standard_packs'     => $standard_packs,
             'standard_banlist'   => $standard_banlist,
             'num_standard_cards' => $num_standard_cards,
         ]);

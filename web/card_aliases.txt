@@ -11,7 +11,7 @@ eddy kim : Edward Kim: Humanity's Hammer
 etf : Haas-Bioroid: Engineering the Future
 gabe : Gabriel Santiago: Consummate Professional
 prede : Haas-Bioroid: Precision Design
-r+ : NBN: Reality Plus
+# r+ : NBN: Reality Plus
 seidr labs : Seidr Laboratories: Destiny Defined
 blorch : Black Orchestra
 clippy : Paperclip
@@ -98,7 +98,7 @@ yogurt : Economic Warfare
 cell phones : 02069
 cell phone man : 02069
 mister phones : 02069
-mr phones : 02069
+# mr phones : 02069
 
 # Cars
 nice car : Sports Hopper

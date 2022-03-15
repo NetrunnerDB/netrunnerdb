@@ -79,7 +79,7 @@
           {% endfor %}
           </ul>
         </li>
-        <li><b>Rotation</b> <code>z</code> will restrict results to cards legal for that rotation. Rotation has 2 different special options in addition to specific rotations: <code>current</code> or <code>latest</code>. These two only differ when there is a yet-to-be-active rotation. Rotation can also specify a specific rotation. Valid specific rotation options are:
+        <li><b>Rotation</b> <code>z</code> will restrict results to cards legal for that rotation. Rotation has 3 different special options in addition to specific rotations: <code>current</code>, <code>latest</code>, and <code>startup</code>. These two only differ when there is a yet-to-be-active rotation. Rotation can also specify a specific rotation. Valid specific rotation options are:
           <ul>
           {% set active_found = false %}
           {% set latest_found = false %}
@@ -100,13 +100,13 @@
     <li><code>t:asset</code> searches for all Assets</li>
     <li><code>t:asset s:ambush</code> searches for every Asset that has the subtype Ambush</li>
     <li><code>x:"make a run"</code> searches for all cards with the text "make a run"</li>
-    <li><code>t:asset|upgrade f:n</code> searches for all Assets and Upgrades from NBN</li>
-    <li><code>f:a|s n&lt;3</code> searches for all Anarch and Shaper cards with a faction cost less than 3</li>
+    <li><code>t:asset|upgrade f:n</code> searches for all NBN cards that are Assets or Upgrades</li>
+    <li><code>f:a|s n&lt;3</code> searches for all Anarch or Shaper cards with a faction cost less than 3</li>
     <li><code>t:ice s!barrier|sentry|"code gate"</code> searches for all ICE that are neither barrier, code gate nor sentry</li>
     <li><code>r&lt;2013-01-01</code> searches for all cards released up to Jan 1, 2013</li>
-    <li><code>d:r|c</code> searches for all Runner and Corp cards</li>
+    <li><code>d:r|c</code> searches for all Runner or Corp cards</li>
     <li><code>x:&#34;the Corp loses 1 credit&#34;</code> returns Amina, Corporate &#34;Grant&#34;, and Lamprey</li>
-    <li><code>d:corp z:current</code> returns all corp cards in the cycles valid for the latest rotation</li>
+    <li><code>d:corp z:current</code> returns all Corp cards in the cycles valid for the latest rotation</li>
   </ul>
 
   <h2>Card aliases</h2>

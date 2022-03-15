@@ -569,10 +569,6 @@ class ImportStdCommand extends ContainerAwareCommand
             $this->copyKeyToEntity($entity, $entityName, $data, $key, true);
         }
 
-        foreach ($optionalKeys as $key) {
-            $this->copyKeyToEntity($entity, $entityName, $data, $key, false);
-        }
-
         foreach ($foreignKeys as $key) {
             $foreignEntityShortName = ucfirst(str_replace('_code', '', $key));
 
@@ -599,6 +595,10 @@ class ImportStdCommand extends ContainerAwareCommand
                 $setter = 'set' . $foreignEntityShortName;
                 $entity->$setter($foreignEntity);
             }
+        }
+
+        foreach ($optionalKeys as $key) {
+            $this->copyKeyToEntity($entity, $entityName, $data, $key, false);
         }
 
         // special case for Card
