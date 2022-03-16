@@ -22,27 +22,27 @@ class CardsData
     public static $faction_shortcuts = [
         'neutral' => ['neutral-runner', 'neutral-corp'],
         '-'       => ['neutral-runner', 'neutral-corp'],
-        'nc'      => 'neutral-corp',
-        'nr'      => 'neutral-runner',
+        'nc'      => ['neutral-corp'],
+        'nr'      => ['neutral-runner'],
 
-        'h'       => 'haas-bioroid',
-        'hb'      => 'haas-bioroid',
-        'j'       => 'jinteki',
-        'n'       => 'nbn',
-        'w'       => 'weyland-consortium',
-        'weyland' => 'weyland-consortium',
+        'h'       => ['haas-bioroid'],
+        'hb'      => ['haas-bioroid'],
+        'j'       => ['jinteki'],
+        'n'       => ['nbn'],
+        'w'       => ['weyland-consortium'],
+        'weyland' => ['weyland-consortium'],
 
-        'a'       => 'anarch',
-        'c'       => 'criminal',
-        's'       => 'shaper',
+        'a'       => ['anarch'],
+        'c'       => ['criminal'],
+        's'       => ['shaper'],
 
         'mini'    => ['apex', 'adam', 'sunny-lebeau'],
-        'p'       => 'apex',
-        'ap'       => 'apex',
-        'd'       => 'adam',
-        'ad'       => 'adam',
-        'u'       => 'sunny-lebeau',
-        'su'       => 'sunny-lebeau',
+        'p'       => ['apex'],
+        'ap'      => ['apex'],
+        'd'       => ['adam'],
+        'ad'      => ['adam'],
+        'u'       => ['sunny-lebeau'],
+        'su'      => ['sunny-lebeau'],
     ];
 
     /** @var EntityManagerInterface $entityManager */
@@ -936,11 +936,7 @@ class CardsData
                 $factions = [];
                 for ($j = 2; $j < count($l); ++$j) {
                     if (array_key_exists($l[$j], self::$faction_shortcuts)) {
-                        if (is_array(self::$faction_shortcuts[$l[$j]])) {
-                            array_push($factions, ...self::$faction_shortcuts[$l[$j]]);
-                        } else {
-                            array_push($factions, self::$faction_shortcuts[$l[$j]]);
-                        }
+                        array_push($factions, ...self::$faction_shortcuts[$l[$j]]);
                     } else {
                         array_push($factions, $l[$j]);
                     }
