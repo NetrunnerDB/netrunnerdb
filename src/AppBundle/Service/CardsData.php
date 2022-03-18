@@ -267,7 +267,7 @@ class CardsData
                             $parameters[$i++] = "%$arg%";
                         }
                     }
-                    $clauses[] = implode(" or ", $or);
+                    $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
                 case 'x': // text
                     $or = [];
