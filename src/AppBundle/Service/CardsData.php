@@ -947,14 +947,31 @@ class CardsData
         }
     }
 
+    public function simplifyConditions(array &$conditions)
+    {
+        // Checks if the given conditions are valid
+        if (array_filter($conditions, function($c) {return $c[0] != "_" || $c[1] != ":";}))
+            return false;
+
+        // Combine all conditions into a single string
+        $s = preg_replace("/[^A-Za-z0-9 ]/", "", implode(" ", array_map(function($c) {return $c[2];}, $conditions)));
+
+        // Update the array if the combined conditions are non-empty
+        if (!$s)
+            return false;
+        $conditions = [["_", ":", strtolower($s)]];
+        return true;
+    }
+
+    // Assumes given conditions are simplified
     public function unaliasCardNames(array &$conditions)
     {
-        // Join all the conditions without criteria into a single string
-        $title = preg_replace("/[^A-Za-z0-9 ]/", "", implode(" ", array_map(function($c) {return $c[0] == "_" ? strtolower($c[2]) : "";}, $conditions)));
+        // Get the simplified conditions
+        $title = $conditions[0][2];
 
-        if (!$title) {
+        // Check the conditions are non-empty
+        if (!$title)
             return;
-        }
 
         // If they are the substring of an alias for a card, replace the conditions with that card's name
         if ($match = current(preg_grep("/^$title/", array_keys($this->cardAliases)))) {
