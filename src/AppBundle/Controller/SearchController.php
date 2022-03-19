@@ -434,8 +434,7 @@ class SearchController extends Controller
                 $conditions = $capsConditions;
             }
             // If there are still no results, try again but with aliases
-            else {
-                $cardsData->unaliasCardNames($conditions);
+            else if ($cardsData->unaliasCardNames($conditions)) {
                 $rows = $cardsData->get_search_rows($conditions, $sort, $locale);
             }
         }
