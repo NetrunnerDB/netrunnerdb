@@ -186,7 +186,7 @@ Promise.all([NRDB.data.promise]).then(function() {
     let rotatedCycles = rotations[e.target.value]['rotated_cycles'];
     _.sortBy(NRDB.data.cycles.find(), 'position').reverse().forEach(function (cycle) {
       var packs = _.sortBy(NRDB.data.packs.find({cycle_code:cycle.code}), 'position').reverse();
-      if (cycle.code !== 'draft' && !(cycle.code in rotatedCycles)) {    
+      if (cycle.code !== 'draft' && cycle.code !== 'roseville' && !(cycle.code in rotatedCycles)) {    
         packs.forEach(function (pack) {
           // Terminal Directive Campaign cards are irrelevant for rotation purposes.
           if (pack.code != 'tdc') {
