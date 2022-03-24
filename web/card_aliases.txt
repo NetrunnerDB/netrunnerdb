@@ -98,7 +98,7 @@ yogurt : Economic Warfare
 cell phones : 02069
 cell phone man : 02069
 mister phones : 02069
-# mr phones : 02069
+mr phones : 02069
 
 # Cars
 nice car : Sports Hopper
