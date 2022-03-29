@@ -79,13 +79,13 @@
           {% endfor %}
           </ul>
         </li>
-        <li><b>Rotation</b> <code>z</code> will restrict results to cards legal for that rotation. Rotation has 3 different special options in addition to specific rotations: <code>current</code>, <code>latest</code>, and <code>startup</code>. These two only differ when there is a yet-to-be-active rotation. Rotation can also specify a specific rotation. Valid specific rotation options are:
+        <li><b>Rotation</b> <code>z</code> will restrict results to cards legal for that rotation. Rotation has 3 different special options in addition to specific rotations: <code>current</code>, <code>latest</code>, and <code>startup</code>. <code>current</code> and <code>latest</code> only differ when there is a yet-to-be-active rotation. Rotation can also specify a specific rotation. Valid specific rotation options are:
           <ul>
           {% set active_found = false %}
           {% set latest_found = false %}
           {% set today = "now"|date("Y-m-d") %}
           {% for rotation in rotations %}
-            <li><code>{{ rotation.code }}</code>{% if (active_found == false) and (today >= rotation.getDateStart|date("Y-m-d")) %} (active){% set active_found = true %}{% endif %}{% if latest_found == false %} (latest){% set latest_found = true %}{% endif %}</li>
+            <li><code>{{ rotation.code }}</code>{% if (active_found == false) and (today >= rotation.getDateStart|date("Y-m-d")) %} (current){% set active_found = true %}{% endif %}{% if latest_found == false %} (latest){% set latest_found = true %}{% endif %}</li>
           {% endfor %}
           </ul>
         </li>
