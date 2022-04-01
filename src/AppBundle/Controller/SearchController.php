@@ -490,7 +490,7 @@ class SearchController extends Controller
                     $availability[$pack->getCode()] = false;
                     if (
                         // Draft and Terminal Directive Campaign
-                        $pack->getCode() != "draft" && $pack->getCode() != "tdc" &&
+                        $pack->getCode() != "draft" && $pack->getCode() != "tdc" && $pack->getCode() != "rv1" && $pack->getCode() != "rv2" &&
                         // Cards before release date
                         $pack->getDateRelease() && $pack->getDateRelease() <= new \DateTime()
                     ) {
@@ -527,7 +527,7 @@ class SearchController extends Controller
                             continue;
                         }
                         // Draft and terminal directive campaign cards are not legal in standard.
-                        if ($v['cycle_code'] == 'draft' || $v['pack_code'] == 'tdc') {
+                        if ($v['cycle_code'] == 'draft' || $v['pack_code'] == 'tdc' || $v['cycle_code'] == 'rv1' || $v['pack_code'] == 'rv2') {
                             $standard_legal = false;
                         }
                         // Count the card's occurence in the rotated cycle(s)

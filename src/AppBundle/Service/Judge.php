@@ -244,7 +244,7 @@ class Judge
                 continue;
             }
 
-            if ($qty > $card->getDeckLimit() && $identity->getPack()->getCode() != "draft") {
+            if ($qty > $card->getDeckLimit() && $identity->getPack()->getCode() != "draft" && $identity->getPack()->getCode() != "rv1" && $identity->getPack()->getCode() != "rv2") {
                 $problem = 'copies';
             }
 
@@ -289,7 +289,7 @@ class Judge
         }
 
         // agenda points rule, except for draft identities because Cube
-        if ($identity->getSide()->getCode() == "corp" && $identity->getPack()->getCode() != "draft") {
+        if ($identity->getSide()->getCode() == "corp" && $identity->getPack()->getCode() != "draft" && $identity->getPack()->getCode() != "rv1" && $identity->getPack()->getCode() != "rv2") {
             $minAgendaPoints = floor($deckSize / 5) * 2 + 2;
             if ($agendaPoints < $minAgendaPoints || $agendaPoints > $minAgendaPoints + 1) {
                 $problem = 'agendapoints';
