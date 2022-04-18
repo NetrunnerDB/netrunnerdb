@@ -47,6 +47,7 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     globals:
+        card_image_url: '%card_image_url%'
         texts: '@AppBundle\Service\TextProcessor'
         supported_locales: "%supported_locales%"
     form_themes:
