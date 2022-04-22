@@ -41,9 +41,9 @@
   &lt;script&gt;
     var NRDB = {};
   &lt;/script&gt;
-  &lt;script src="/js/nrdb.tip.js"&gt;&lt;/script&gt;
-  &lt;script src="/js/nrdb.data.js"&gt;&lt;/script&gt;
-  &lt;script src="/js/nrdb.format.js"&gt;&lt;/script&gt;
+  &lt;script src="{{ app.request.getSchemeAndHttpHost() }}/js/nrdb.tip.js"&gt;&lt;/script&gt;
+  &lt;script src="{{ app.request.getSchemeAndHttpHost() }}/js/nrdb.data.js"&gt;&lt;/script&gt;
+  &lt;script src="{{ app.request.getSchemeAndHttpHost() }}/js/nrdb.format.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript"&gt;$.noConflict();&lt;/script&gt;
 </pre>
 <li>add links pointing to NetrunnerDB pages, like <a href="https://netrunnerdb.com/en/card/01001">Noise: Hacker Extraordinaire</a> or <a href="https://netrunnerdb.com/en/card/01041">The Toolbox</a> or <a href="https://netrunnerdb.com/en/card/25086">Fetal AI</a></li>
