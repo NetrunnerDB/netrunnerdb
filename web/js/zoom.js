@@ -356,6 +356,6 @@ function show_mwl_history(event) {
     let entries = $.find('tr.card-mwl-inactive');
     entries.forEach(x => x.style.display = (x.style.display == 'table-row' ? 'none' : 'table-row'));
     let l = event.currentTarget;
-    l.text = l.text == '(show history)' ? '(show only latest)' : '(show history)';
+    l.text = l.text == '(show history)' ? '(hide history)' : '(show history)';
     return false;
 }
