@@ -562,23 +562,51 @@ ul.rulings-list blockquote {
 }
 
 /* Card legality indicators */
-.legality-banned:before {
-  content: "🚫";
+.legality-available:before,
+.legality-unavailable:before,
+.legality-legal:before,
+.legality-banned:before,
+.legality-restricted:before,
+.legality-1-inf:before,
+.legality-3-inf:before {
+  display: inline-block;
+  width: 80px;
+  margin-right: 2px;
+  margin-top: 1px;
+  border-radius: 12px;
+  padding: 2px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+.legality-available:before {
+  content: "LEGAL";
+  background-color: #577A57;
+}
+.legality-unavailable:before {
+  content: "NOT LEGAL";
+  background-color: #8F8F8F;
 }
 .legality-legal:before {
-  content: "✅";
+  content: "LEGAL";
+  background-color: #577A57;
 }
-.legality-rotated:before {
-  content: "🔄";
+.legality-banned:before {
+  content: "BANNED";
+  background-color: #b66;
 }
 .legality-restricted:before {
-  content: "🦄";
+  content: "RESTRICTED";
+  background-color: #8E80FF;
 }
 .legality-1-inf:before {
-  content: "1️⃣";
+  content: "1 INF.";
+  background-color: #558DEC;
 }
 .legality-3-inf:before {
-  content: "3️⃣";
+  content: "3 INF.";
+  background-color: #558DEC;
 }
 
 /*** screen reader fallback ***/
