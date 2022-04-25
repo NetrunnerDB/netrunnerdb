@@ -62,15 +62,15 @@ Promise.all([NRDB.data.promise]).then(function() {
   var update_filter = debounce(update_filtered, 250);
   $('#faction_code').on('click', 'label', update_filter);
   $('#type_code').on('click', 'label', update_filter);
-  
+
   var validPacks = new Array();
   validPacks['rotation_a'] = new Array();
   validPacks['rotation_b'] = new Array();
-  
+
   var cards = new Array();
   cards['rotation_a'] = new Array();
   cards['rotation_b'] = new Array();
-  
+
   var diffs = [];
   // Keep a set of all cards around for our sorter to use for attribute lookup.
   var allCards = new Array();
@@ -92,9 +92,9 @@ Promise.all([NRDB.data.promise]).then(function() {
     $('#type_code').children('.active').each(function() {
       types.push($(this).attr('data-code'));
     });
-  
+
     $('#diffs').children('div').each(function() {
-      let visible = (factions.includes($(this).attr('data-faction'))) && (types.includes($(this).attr('data-type'))); 
+      let visible = (factions.includes($(this).attr('data-faction'))) && (types.includes($(this).attr('data-type')));
       $(this).css('display', visible ? 'block' : 'none');
     });
   }
@@ -112,37 +112,37 @@ Promise.all([NRDB.data.promise]).then(function() {
           }
         });
     });
-  
+
     let a = Object.keys(cards['rotation_a']);
     let b = Object.keys(cards['rotation_b']);
-  
+
     // Sort by Side, Faction, type (identity forced first), title
     let sorter = function(a, b) {
       if (a.side.code < b.side.code) return -1;
       if (a.side.code > b.side.code) return 1;
-  
+
     let factionA = (a.faction.code == 'neutral-corp' || a.faction.code == 'neutral-runner') ? a.faction.code : 'z' + a.faction.code;
     let factionB = (b.faction.code == 'neutral-corp' || b.faction.code == 'neutral-runner') ? b.faction.code : 'z' + b.faction.code;
       if (factionA < factionB) return -1;
       if (factionA > factionB) return 1;
-  
+
     // sort identity first to match button layout
     let typeA = (a.type.code == 'identity') ? a.type.code : 'z' + a.type.code;
     let typeB = (b.type.code == 'identity') ? b.type.code : 'z' + b.type.code;
-    
+
     if (typeA < typeB) return -1;
       if (typeA > typeB) return 1;
-      
+
       if (a.title < b.title) return -1;
       if (a.title > b.title) return 1;
-  
+
       return 0;
     }
-  
+
     diffs = [];
-  
+
     $('#diffs').empty();
-  
+
     _.difference(a, b).forEach(title => {
       let card = allCards[title];
       card['diff'] = 'banned';
@@ -154,12 +154,12 @@ Promise.all([NRDB.data.promise]).then(function() {
       diffs.push(card);
     });
     diffs = diffs.sort(sorter);
-  
+
     diffs.forEach(card => {
       let visible = false;
       $('#diffs').append(
         $('<div style="display:' + (visible ? 'block' : 'none') + '" data-title="' + card.title.replaceAll('"', '') + '" data-faction="' + card.faction.code + '" data-type="' + card.type.code + '">' +
-            '<span class="icon icon-' + card.faction.code + ' influence-' + card.faction.code + '"></span>' + 
+            '<span class="icon icon-' + card.faction.code + ' influence-' + card.faction.code + '"></span>' +
             ' <img src="' + Url_TypeImage.replace('xxx', card.type.code) + '" style="height:12px" alt="'+card.type.code+'">' +
             ' <a href="' + Routing.generate('cards_zoom', {card_code:card.code}) + '">' + card.title + '</a> <span class="legality-' + card['diff'] + '"></span></div>')
       );

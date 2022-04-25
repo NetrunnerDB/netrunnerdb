@@ -12,7 +12,8 @@ function update_max_qty() {
     if(card.pack_code == 'core' || card.pack_code == 'core2' || card.pack_code == 'sc19') {
       max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
     }
-    if(Identity.pack_code == "draft") {
+    const draft_packs = ["draft"];
+    if(draft_packs.includes(Identity.pack_code)) {
       max_qty = 9;
     }
     NRDB.data.cards.updateById(card.code, {
@@ -697,7 +698,8 @@ function update_core_sets() {
   }).forEach(function(card) {
         var modifiedCard = get_mwl_modified_card(card);
     var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), modifiedCard.deck_limit);
-    if(Identity.pack_code == "draft") {
+    const draft_packs = ["draft"];
+    if(draft_packs.includes(Identity.pack_code)) {
       max_qty = 9;
     }
     NRDB.data.cards.updateById(card.code, {

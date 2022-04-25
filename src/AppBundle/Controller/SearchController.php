@@ -490,7 +490,7 @@ class SearchController extends Controller
                     $availability[$pack->getCode()] = false;
                     if (
                         // Draft and Terminal Directive Campaign
-                        $pack->getCode() != "draft" && $pack->getCode() != "tdc" &&
+                        $pack->getCode() != "draft" && $pack->getCode() != "tdc"
                         // Cards before release date
                         $pack->getDateRelease() && $pack->getDateRelease() <= new \DateTime()
                     ) {

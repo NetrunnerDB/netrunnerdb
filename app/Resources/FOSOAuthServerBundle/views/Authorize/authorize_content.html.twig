@@ -4,13 +4,13 @@
 </div>
 <div class="panel-body">
   <p>
-   The application <em>{{ client.name }}</em> would like to connect to your account, <em>{{ app.user.username }}</em>.
+   The application <strong><em>{{ client.name }}</em></strong> would like to connect to your account, <strong><em>{{ app.user.username }}</em></strong>.
   </p>
   <p>
-  If you want to authorize a different account than <em>{{ app.user.username }}</em>, please <a href="{{ path("fos_user_security_logout") }}?redirect_to={{ app.request.requesturi | url_encode }}">log out and log back in</a>.
+  If you want to authorize a different account than <strong><em>{{ app.user.username }}</em></strong>, please <a href="{{ path("fos_user_security_logout") }}?redirect_to={{ app.request.requesturi | url_encode }}">log out and log back in</a>.
   </p>
   <p>
-    If you agree, <em>{{ client.name }}</em> will be able to perform the following operations on your behalf:
+    If you agree, <strong><em>{{ client.name }}</em></strong> will be able to perform the following operations on your behalf:
   </p>
   <ul>
     <li>Read your decks saved on NetrunnerDB</li>

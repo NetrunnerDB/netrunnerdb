@@ -368,7 +368,7 @@ function update_deck(options) {
     var parts = Identity.title.split(/: /);
 
     $('#identity').html('<a href="' + Routing.generate('cards_zoom', { card_code: Identity.code }) + '" data-target="#cardModal" data-remote="false" class="card" data-toggle="modal" data-index="' + Identity.code + '">' + parts[0] + ' <small>' + parts[1] + '</small></a>' + get_card_legality_icons(Identity));
-    $('#img_identity').prop('src', '/card_image/medium/' + Identity.code + '.jpg');
+    $('#img_identity').prop('src', NRDB.card_image_url + '/medium/' + Identity.code + '.jpg');
     InfluenceLimit = Identity.influence_limit;
     if (InfluenceLimit == null || InfluenceLimit == 0)
         InfluenceLimit = Number.POSITIVE_INFINITY;
