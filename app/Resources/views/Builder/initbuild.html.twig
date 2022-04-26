@@ -76,7 +76,7 @@
       <span class="icon icon-{{ identity.faction.code }} {{ identity.faction.code }}"></span>
       <span class="name">{{ identity.title(app.request.locale) }}</span>
       <span class="small">({{ identity.pack.name }})</span>
-      <span style="margin-left: 4px;" class="legality-indicator {% if rotated %}legality-unavailable{% endif %} {% if banned %}legality-banned{% endif %}"></span>
+      <span style="margin-left: 4px;" class="legality-indicator {% if rotated %}legality-rotated{% endif %} {% if banned %}legality-banned{% endif %}"></span>
     </a>
     {% endfor %}
   </div>
