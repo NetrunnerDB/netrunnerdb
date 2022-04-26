@@ -566,15 +566,16 @@ ul.rulings-list blockquote {
 .legality-unavailable:before,
 .legality-legal:before,
 .legality-banned:before,
+.legality-rotated:before,
 .legality-restricted:before,
 .legality-1-inf:before,
 .legality-3-inf:before {
   display: inline-block;
-  width: 80px;
+  min-width: 80px;
   margin-right: 2px;
   margin-top: 1px;
   border-radius: 12px;
-  padding: 2px;
+  padding: 2px 8px;
   color: white;
   font-size: 12px;
   font-weight: bold;
@@ -595,6 +596,10 @@ ul.rulings-list blockquote {
 .legality-banned:before {
   content: "BANNED";
   background-color: #b66;
+}
+.legality-rotated:before {
+  content: "ROTATED";
+  background-color: #558DEC;
 }
 .legality-restricted:before {
   content: "RESTRICTED";

@@ -32,7 +32,7 @@
 <div class="col-sm-8">
 <div class="panel panel-default">
   <!-- Default panel contents -->
-  <div class="panel-heading"><b>Choose your identity</b> <span>(🔄  rotated card, 🚫  banned in standard)</span></div>
+  <div class="panel-heading"><b>Choose your identity</b></div>
   <!-- ID filter -->
   <div class="panel-heading">
     <div style="display: flex; flex-wrap: wrap;">
@@ -76,8 +76,7 @@
       <span class="icon icon-{{ identity.faction.code }} {{ identity.faction.code }}"></span>
       <span class="name">{{ identity.title(app.request.locale) }}</span>
       <span class="small">({{ identity.pack.name }})</span>
-      {% if rotated %}<span>🔄</span>{% endif %}
-      {% if banned %}<span>🚫</span>{% endif %}
+      <span style="margin-left: 4px;" class="legality-indicator {% if rotated %}legality-unavailable{% endif %} {% if banned %}legality-banned{% endif %}"></span>
     </a>
     {% endfor %}
   </div>

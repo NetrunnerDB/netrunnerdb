@@ -33,10 +33,13 @@ $(function() {
     // Update the ID list when the format is changed
     function updateFormat(format) {
         $('.identity').each(function(id, i) {
-            // All
+            // All (only show legality indicators on all)
             if (format === 'all') {
                 $(this).removeClass('hidden-format');
+                $(this).find('.legality-indicator').show ();
                 return;
+            } else {
+                $(this).find('.legality-indicator').hide ();
             }
             // Other formats
             let visible = true;
