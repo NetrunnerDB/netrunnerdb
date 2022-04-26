@@ -267,16 +267,16 @@ function get_card_legality_icons(card) {
 
     var result = [];
 
-    function add_icon(icon, description) {
-        result.push('<span title="' + description + '">' + icon + '</span>');
+    function add_icon(legality) {
+        result.push('<span class="legality-' + legality + '"></span>');
     }
 
     // Check MWL
     if (mwlCard.is_restricted) {
-        add_icon('🦄', 'Restricted card');
+        add_icon('restricted');
     } else if (mwlCard.deck_limit == 0) {
         // Prohibited or banned cards are identified by having a deck_limit of 0.
-        add_icon('🚫', 'Banned card');
+        add_icon('banned');
     }
 
     // Check if set has rotated
@@ -284,7 +284,7 @@ function get_card_legality_icons(card) {
         var rotated_cycles = _.map(NRDB.data.cycles.find( { "rotated": true } ), 'code');
         var cycle = card.pack.cycle_code;
         if (rotated_cycles.indexOf(cycle) !== -1) {
-            add_icon('🔄', 'Rotated card');
+            add_icon('rotated');
         }
     }
 

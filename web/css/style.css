@@ -572,8 +572,6 @@ ul.rulings-list blockquote {
 .legality-3-inf:before {
   display: inline-block;
   min-width: 80px;
-  margin-right: 2px;
-  margin-top: 1px;
   border-radius: 12px;
   padding: 2px 8px;
   color: white;

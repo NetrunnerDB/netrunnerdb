@@ -6,6 +6,11 @@
 
 {% include '/Default/navbar-factions.html.twig' %}
 
+<div class="page-header">
+  <div class="legality-rotated"> Rotated from Standard</div>
+  <div class="legality-banned"> Banned in Standard</div>
+</div>
+
 {% for result in results %}
 {% set faction = result.faction %}
 {% set decklists = result.decklists %}
@@ -14,10 +19,6 @@
     <span class="icon icon-{{ faction.code }}"></span>
     {{ faction.name }}
   </h1>
-</div>
-<div class="page-header">
-  <div class="legality-rotated"> Rotated from Standard</div>
-  <div class="legality-banned"> Banned in Standard</div>
 </div>
 <div class="row">
 <div class="col-md-12">
