@@ -621,20 +621,20 @@ ul.rulings-list blockquote {
 .legality-interactive:before {
   transition: min-width 0.5s, content 0.5s;
 }
-.legality-interactive:not(:hover):before {
+.legality-interactive:not(:hover):not(:active):before {
   content: "!";
   min-width: 1em;
 }
-.legality-legal.legality-interactive:not(:hover):before {
+.legality-legal.legality-interactive:not(:hover):not(:active):before {
   content: "/";
 }
-.legality-restricted.legality-interactive:not(:hover):before {
+.legality-restricted.legality-interactive:not(:hover):not(:active):before {
   content: "?";
 }
-.legality-1-inf.legality-interactive:not(:hover):before {
+.legality-1-inf.legality-interactive:not(:hover):not(:active):before {
   content: "1";
 }
-.legality-3-inf.legality-interactive:not(:hover):before {
+.legality-3-inf.legality-interactive:not(:hover):not(:active):before {
   content: "3";
 }
 
