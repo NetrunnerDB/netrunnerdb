@@ -142,11 +142,7 @@
                                 <span
                                   {% for mwl_info in card.mwl_info %}
                                     {% if mwl_info.active %}
-                                      {% if card.standard_legality != 'available' %}
-                                        class="legality-{{ card.standard_legality }}"
-                                      {% else %}
-                                        class="legality-{{ mwl_info.legality }}"
-                                      {% endif %}
+                                      class="legality-{{ mwl_info.legality }}"
                                     {% endif %}
                                   {% endfor %}> Standard Ban List<span>
                                   <a id="mwl-history" href="">(show history)</a>
@@ -154,11 +150,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="card-mwl-inactive" style="display:none">
-                            <td class="panel-body">
-                                <em><b>Note:</b> a card being legal under a ban list does not mean the card was in rotation while that ban list was active.</em>
-                            </td>
-                        </tr>
                         {% for mwl_info in card.mwl_info %}
                         <tr class="card-mwl-inactive" style="display:none">
                             <td class="legality-{{ mwl_info.legality }}">
