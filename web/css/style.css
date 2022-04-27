@@ -552,8 +552,11 @@ ul.rulings-list blockquote {
   padding: 5px 10px;
 }
 
-#restricted, #rotated {
+#restricted:not(:empty), #rotated:not(:empty), #limited:not(:empty) {
   color: red;
+  display: list-item;
+  list-style-type: disc;
+  list-style-position: inside;
 }
 
 .search-example {
