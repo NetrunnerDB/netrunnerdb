@@ -268,7 +268,7 @@ function get_card_legality_icons(card) {
     var result = [];
 
     function add_icon(legality) {
-        result.push('<span class="legality-' + legality + '"></span>');
+        result.push('<span class="legality-interactive legality-' + legality + '"></span>');
     }
 
     // Check MWL
@@ -471,7 +471,7 @@ function update_deck(options) {
             additional_info = '(<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ') ' + alert_number_of_sets + influence;
         }
 
-        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a>' + get_card_legality_icons(card) + additional_info + '</div>');
+        var item = $('<div>' + card.indeck + 'x <a href="' + Routing.generate('cards_zoom', { card_code: card.code }) + '" class="card" data-toggle="modal" data-remote="false" data-target="#cardModal" data-index="' + card.code + '">' + card.title + '</a>' + additional_info + get_card_legality_icons(card) + '</div>');
         item.appendTo($('#deck-content .deck-' + criteria));
 
         cabinet[criteria] |= 0;
