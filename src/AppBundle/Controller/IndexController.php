@@ -37,26 +37,28 @@ class IndexController extends Controller
         $decklists_recent = $decklistManager->recent(0, 10, false)['decklists'];
 
         // load site updates
-        $file = fopen('update_log.txt', 'r');
         $updates = [];
-        $update = null;
-        if ($file) {
-            while (($line = fgets($file)) !== false) {
-                $line = trim($line);
-                if (empty($line))
-                    continue;
-                if ($line[0] !== '-') {
-                    if ($update != null) {
-                        $updates[] = $update;
+        if (file_exists('update_log.txt')) {
+            $file = fopen('update_log.txt', 'r');
+            $update = null;
+            if ($file) {
+                while (($line = fgets($file)) !== false) {
+                    $line = trim($line);
+                    if (empty($line))
+                        continue;
+                    if ($line[0] !== '-') {
+                        if ($update != null) {
+                            $updates[] = $update;
+                        }
+                        $update = array('date' => $line, 'entries' => []);
+                    } else if ($update !== null) {
+                        $update['entries'][] = trim(substr($line, 1));
                     }
-                    $update = array('date' => $line, 'entries' => []);
-                } else if ($update !== null) {
-                    $update['entries'][] = trim(substr($line, 1));
                 }
+                $updates[] = $update;
             }
-            $updates[] = $update;
+            fclose($file);
         }
-        fclose($file);
 
         return $this->render(
 

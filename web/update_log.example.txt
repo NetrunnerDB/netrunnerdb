@@ -1,5 +1,6 @@
 Saturday, 28 June, 8128
 - This update is in the future.
+- To show updates on the home page, copy this file as "update_log.txt" and fill it with appropriate data in this format.
 
 Saturday, 1 January, 2000
 - Turn of the Millennium
