@@ -10,6 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class IndexController extends Controller
 {
+    // For caching the update log
+    var $update_log_timestamp;
+    var $updates;
+
     /**
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
@@ -36,8 +40,39 @@ class IndexController extends Controller
         // recent decklists
         $decklists_recent = $decklistManager->recent(0, 10, false)['decklists'];
 
-        return $this->render(
+        // load site updates
+        if (is_null($this->updates)) {
+            $this->updates = [];
+        }
+        $last_modified = null;
+        if (file_exists('update_log.txt')) {
+            $last_modified = filemtime('update_log.txt');
+        }
+        if (!is_null($last_modified) && $last_modified != $this->update_log_timestamp) {
+            $file = fopen('update_log.txt', 'r');
+            $update = null;
+            if ($file) {
+                while (($line = fgets($file)) !== false) {
+                    $line = trim($line);
+                    if (empty($line))
+                        continue;
+                    if ($line[0] !== '-') {
+                        if ($update != null) {
+                            $this->updates[] = $update;
+                        }
+                        $update = array('date' => $line, 'entries' => []);
+                    } else if ($update !== null) {
+                        $update['entries'][] = trim(substr($line, 1));
+                    }
+                }
+                if (!is_null($update)) {
+                    $this->updates[] = $update;
+                }
+            }
+            fclose($file);
+        }
 
+        return $this->render(
             'Default/index.html.twig',
             [
                 'pagetitle'       => "Android: Netrunner Cards and Deckbuilder",
@@ -45,10 +80,9 @@ class IndexController extends Controller
                 'decklists'       => $decklists_recent,
                 'decklist'        => $decklist,
                 'url'             => $request->getRequestUri(),
+                'updates'         => $this->updates,
             ],
-
             $response
-
         );
     }
 }

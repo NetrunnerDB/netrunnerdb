@@ -1,0 +1,25 @@
+{% if updates is not empty %}
+    <div id="update-log" class="container-fluid hidden-xs">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2">Updates <a href="">(show more)</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for update in updates %}
+                    <tr>
+                        <td class="date">{{ update.date }}</td>
+                        <td>
+                            <ul>
+                                {% for entry in update.entries %}
+                                    <li>{{ entry }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}

@@ -48,6 +48,10 @@ To update the deck of the week on the front page:
 
 where `decklist_id` is the numeric id of the deck you want to highlight.
 
+## Update log
+
+If you want to show site updates on the home page, copy `web/update_log.example.txt` to `web/update_log.txt` and copy the format with your own data. The update log shows dates, each with a list of updates. The update log should be kept fairly concise, with only information that is relevant to users of the website, not developers.
+
 ## Setup an admin account
 
 - register

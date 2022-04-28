@@ -1,0 +1,10 @@
+Saturday, 28 June, 8128
+- This update is in the future.
+- To show updates on the home page, copy this file as "update_log.txt" and fill it with appropriate data in this format.
+
+Saturday, 1 January, 2000
+- Turn of the Millennium
+- An example of an update with multiple entries was added.
+
+Thursday, 1 January, 1970
+- Time began.

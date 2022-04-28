@@ -48,4 +48,17 @@ $(function() {
     keyup : debounce(handle_input_change, 250)
   });
 
+  $('#update-log a').click(function (event) {
+    event.preventDefault();
+    let l = event.currentTarget;
+    if (l.text == '(show more)') {
+      l.text = '(show less)';
+      $('#update-log tbody').css("max-height", "400px");
+    } else {
+      l.text = '(show more)';
+      $('#update-log tbody').css("max-height", "");
+    }
+    return false;
+  });
+
 });
