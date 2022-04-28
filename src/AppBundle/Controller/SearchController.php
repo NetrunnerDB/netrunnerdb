@@ -475,7 +475,7 @@ class SearchController extends Controller
 
             $versions = null;
 
-            if ($view == "zoom") {
+            if ($view == "zoom" || $view == "rulings") {
                 // Other versions of a given card
                 $versions = $cardsData->get_versions();
             }
@@ -501,7 +501,6 @@ class SearchController extends Controller
 
                 if ($view == "zoom") {
                     $cardVersions = $versions[$card->getTitle()];
-
                     $rotationService = new RotationService($entityManager);
                     $currentRotation = $rotationService->findCurrentRotation();
                     foreach($currentRotation->getRotated()->toArray() as $cycle) {
@@ -551,7 +550,8 @@ class SearchController extends Controller
                     $cardinfo['standard_legality'] = $standard_legal;
                 }
                 if ($view == "rulings") {
-                    $cardinfo['rulings'] = $cardsData->get_rulings(array($card));
+                    $cardVersions = $versions[$card->getTitle()];
+                    $cardinfo['rulings'] = $cardsData->get_rulings(array($cardVersions));
                 }
                 $cards[] = $cardinfo;
             }
