@@ -159,6 +159,7 @@ footer{padding:50px 0;color:darkgray}
 .jumbotron{/*box-shadow:-1px 1px 4px*/border:1px solid silver;border-width:1px 0px}
 textarea{resize:vertical}
 tbody#decks{cursor:pointer}
+#deck-content{white-space:nowrap}
 #deck-content img{height:15px;vertical-align:text-bottom}
 .type,.faction{text-align:center}
 .nav-tabs{margin-bottom:15px}
@@ -551,8 +552,11 @@ ul.rulings-list blockquote {
   padding: 5px 10px;
 }
 
-#restricted, #rotated {
+#restricted:not(:empty), #rotated:not(:empty), #limited:not(:empty) {
   color: red;
+  display: list-item;
+  list-style-type: disc;
+  list-style-position: inside;
 }
 
 .search-example {
@@ -562,23 +566,79 @@ ul.rulings-list blockquote {
 }
 
 /* Card legality indicators */
-.legality-banned:before {
-  content: "🚫";
+.legality-available:before,
+.legality-unavailable:before,
+.legality-legal:before,
+.legality-banned:before,
+.legality-rotated:before,
+.legality-restricted:before,
+.legality-1-inf:before,
+.legality-3-inf:before {
+  display: inline-block;
+  min-width: 7.5em;
+  border-radius: 100px;
+  padding: 2px 8px;
+  color: white;
+  font-family: 'LatoWeb', sans-serif;
+  font-size: 0.75em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.legality-available:before {
+  content: "LEGAL";
+  background-color: #577A57;
+}
+.legality-unavailable:before {
+  content: "NOT LEGAL";
+  background-color: #8F8F8F;
 }
 .legality-legal:before {
-  content: "✅";
+  content: "LEGAL";
+  background-color: #577A57;
+}
+.legality-banned:before {
+  content: "BANNED";
+  background-color: #b66;
 }
 .legality-rotated:before {
-  content: "🔄";
+  content: "ROTATED";
+  background-color: #558DEC;
 }
 .legality-restricted:before {
-  content: "🦄";
+  content: "RESTRICTED";
+  background-color: #8E80FF;
 }
 .legality-1-inf:before {
-  content: "1️⃣";
+  content: "1 INF.";
+  background-color: #558DEC;
 }
 .legality-3-inf:before {
-  content: "3️⃣";
+  content: "3 INF.";
+  background-color: #558DEC;
+}
+
+.legality-interactive {
+  white-space:nowrap;
+}
+.legality-interactive:before {
+  transition: min-width 0.5s, content 0.5s;
+}
+.legality-interactive:not(:hover):not(:active):before {
+  content: "!";
+  min-width: 1em;
+}
+.legality-legal.legality-interactive:not(:hover):not(:active):before {
+  content: "/";
+}
+.legality-restricted.legality-interactive:not(:hover):not(:active):before {
+  content: "?";
+}
+.legality-1-inf.legality-interactive:not(:hover):not(:active):before {
+  content: "1";
+}
+.legality-3-inf.legality-interactive:not(:hover):not(:active):before {
+  content: "3";
 }
 
 /*** screen reader fallback ***/

@@ -736,7 +736,7 @@ class ImportStdCommand extends ContainerAwareCommand
             'minimum_deck_size',
         ];
 
-        if ($card->getPack()->getCode() !== 'draft' && $card->getPack()->getCode() !== 'rv1' && $card->getPack()->getCode() !== 'rv2') {
+        if ($card->getPack()->getCode() !== 'draft') {
             $mandatoryKeys[] = 'influence_limit';
         }
 

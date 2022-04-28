@@ -698,7 +698,7 @@ class CardsData
                                 $parameters[$i++] = $cycle;
                             }
                             if ($operator == ":") {
-                                $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . ") and y.code != 'draft' and y.code != 'roseville')";
+                                $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . ") and y.code != 'draft'";
                             } else {
                                 $clauses[] = "(y.code in (" . implode(", ", $placeholders) . "))";
                             }
@@ -815,7 +815,6 @@ class CardsData
         // setting the card strength to X if the strength is null and the card is ICE or Program - Icebreaker
         if ($cardinfo['strength'] === null &&
             ($cardinfo['type_code'] === 'ice' ||
-// TODO fix the X for Roseville
              strstr($cardinfo['subtype'], 'Icebreaker') !== false)) {
             $cardinfo['strength'] = 'X';
         }

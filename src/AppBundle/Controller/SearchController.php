@@ -490,7 +490,7 @@ class SearchController extends Controller
                     $availability[$pack->getCode()] = false;
                     if (
                         // Draft and Terminal Directive Campaign
-                        $pack->getCode() != "draft" && $pack->getCode() != "tdc" && $pack->getCode() != "rv1" && $pack->getCode() != "rv2" &&
+                        $pack->getCode() != "draft" && $pack->getCode() != "tdc" &&
                         // Cards before release date
                         $pack->getDateRelease() && $pack->getDateRelease() <= new \DateTime()
                     ) {
@@ -508,8 +508,7 @@ class SearchController extends Controller
                         $currentRotationCycles[$cycle->getCode()] = true;
                     }
                     $cardinfo['versions'] = [];
-                    $standard_legal = true;
-                    $all_versions_rotated = true;
+                    $standard_legal = "available";
 
                     // Startup legality is currently hard-coded since the DB doesn't know anything about it.
                     $startupCycles = ['ashes' => true, 'system-gateway' => true, 'system-update-2021' => true, 'borealis' => true];
@@ -522,13 +521,13 @@ class SearchController extends Controller
                         $cardinfo['versions'][] = $v;
                         // The 2 tutorial-only identity cards are invalid for startup and standard formats.
                         if ($v['code'] == '30077' || $v['code'] == '30076') {
-                            $standard_legal = false;
+                            $standard_legal = "unavailable";
                             $startup_legal = false;
                             continue;
                         }
                         // Draft and terminal directive campaign cards are not legal in standard.
-                        if ($v['cycle_code'] == 'draft' || $v['pack_code'] == 'tdc' || $v['cycle_code'] == 'rv1' || $v['pack_code'] == 'rv2') {
-                            $standard_legal = false;
+                        if ($v['cycle_code'] == 'draft' || $v['pack_code'] == 'tdc') {
+                            $standard_legal = "unavailable";
                         }
                         // Count the card's occurence in the rotated cycle(s)
                         if (array_key_exists($v['cycle_code'], $currentRotationCycles)) {
@@ -540,19 +539,16 @@ class SearchController extends Controller
                         }
                     }
 
-                    // If any version of the card is not in a rotated cycle, the card is considered legal.
-                    $all_versions_rotated = $rotated_count == count($cardinfo['versions']);
+                    // If all versions of the card are in rotated cycles, the card is not standard legal.
+                    if ($rotated_count == count($cardinfo['versions'])) {
+                      $standard_legal = "unavailable";
+                    }
 
                     $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
                     $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
-                    $cardinfo['startup_legality'] = $startup_legal ? 'legal' : 'banned';
-
-                    if ($standard_legal) {
-                        $cardinfo['standard_legality'] = $all_versions_rotated ? 'rotated' : 'legal';
-                    } else {
-                        $cardinfo['standard_legality'] = 'banned';
-                    }
+                    $cardinfo['startup_legality'] = $startup_legal ? 'available' : 'unavailable';
+                    $cardinfo['standard_legality'] = $standard_legal;
                 }
                 if ($view == "rulings") {
                     $cardinfo['rulings'] = $cardsData->get_rulings(array($card));

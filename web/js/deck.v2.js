@@ -12,7 +12,7 @@ function update_max_qty() {
     if(card.pack_code == 'core' || card.pack_code == 'core2' || card.pack_code == 'sc19') {
       max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
     }
-    const draft_packs = ["draft", "rv1", "rv2"];
+    const draft_packs = ["draft"];
     if(draft_packs.includes(Identity.pack_code)) {
       max_qty = 9;
     }
@@ -180,7 +180,6 @@ function create_collection_tab(initialPackSelection) {
   var rotated_cycles = Array();
   rotated_cycles['draft'] = 1;
   rotated_cycles['napd'] = 1;
-  rotated_cycles['roseville'] = 1;
   NRDB.data.cycles.find( { "rotated": true } ).forEach(function(cycle) { rotated_cycles[cycle.code] = 1; });
 
   var rotated_packs = Array();
@@ -699,7 +698,7 @@ function update_core_sets() {
   }).forEach(function(card) {
         var modifiedCard = get_mwl_modified_card(card);
     var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), modifiedCard.deck_limit);
-    const draft_packs = ["draft", "rv1", "rv2"];
+    const draft_packs = ["draft"];
     if(draft_packs.includes(Identity.pack_code)) {
       max_qty = 9;
     }

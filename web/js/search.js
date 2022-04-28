@@ -45,7 +45,6 @@ $(document).on('data.app', function() {
   let rotated_cycles = Array();
   rotated_cycles['draft'] = 1;
   rotated_cycles['napd'] = 1;
-  rotated_cycles['roseville'] = 1;
   NRDB.data.cycles.find( { "rotated": true } ).forEach(function(cycle) { rotated_cycles[cycle.code] = 1; });
 
   var startup_cycles = Array();
