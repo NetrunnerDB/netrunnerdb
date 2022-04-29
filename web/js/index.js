@@ -52,7 +52,7 @@ $(function() {
     event.preventDefault();
     let l = event.currentTarget;
     if (l.text == '(expand)') {
-      l.text = '(hide)';
+      l.text = '(shrink)';
       $('#update-log tbody').css("max-height", "400px");
     } else {
       l.text = '(expand)';
