@@ -668,6 +668,7 @@ class CardsData
                     $i++;
                     break;
                 case 'z': // rotation
+                    $condition[0] = strtolower($condition[0]);
                     if ($condition[0] == "startup") {
                         // Add the valid cycles for startup and add them to the WHERE clause for the query.
                         $cycles = ['ashes', 'system-gateway', 'system-update-2021', 'borealis'];
