@@ -51,11 +51,11 @@ $(function() {
   $('#update-log a').click(function (event) {
     event.preventDefault();
     let l = event.currentTarget;
-    if (l.text == '(show more)') {
-      l.text = '(show less)';
+    if (l.text == '(expand)') {
+      l.text = '(hide)';
       $('#update-log tbody').css("max-height", "400px");
     } else {
-      l.text = '(show more)';
+      l.text = '(expand)';
       $('#update-log tbody').css("max-height", "");
     }
     return false;
