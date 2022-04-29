@@ -551,7 +551,7 @@ class SearchController extends Controller
                 }
                 if ($view == "rulings") {
                     $cardVersions = $versions[$card->getTitle()];
-                    $cardinfo['rulings'] = $cardsData->get_rulings(array($cardVersions));
+                    $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
                 }
                 $cards[] = $cardinfo;
             }
