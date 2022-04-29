@@ -622,7 +622,10 @@ ul.rulings-list blockquote {
   white-space:nowrap;
 }
 .legality-interactive:before {
-  transition: min-width 0.5s, content 0.5s;
+  transition: min-width 0.5s;
+}
+.legality-interactive.legality-restricted:before {
+  transition: none; /* "RESTRICTED" is too long and makes the animation weird */
 }
 .legality-interactive:not(:hover):not(:active):before {
   content: "!";
