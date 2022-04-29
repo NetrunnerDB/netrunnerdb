@@ -698,7 +698,7 @@ class CardsData
                                 $parameters[$i++] = $cycle;
                             }
                             if ($operator == ":") {
-                                $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . ") and y.code != 'draft'";
+                                $clauses[] = "(y.code not in (" . implode(", ", $placeholders) . ") and y.code != 'draft')";
                             } else {
                                 $clauses[] = "(y.code in (" . implode(", ", $placeholders) . "))";
                             }
