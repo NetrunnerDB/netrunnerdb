@@ -89,6 +89,19 @@
           {% endfor %}
           </ul>
         </li>
+        <li><b>Set</b> <code>e</code> will match the set codes from each set:
+        <div class="container">
+        {% for col in packs|batch(packs|length / 2) %}
+          <div class="col-sm-6">
+            <ul>
+              {% for pack in col %}
+              <li><code>{{ pack.code }}</code> &ndash; {{ pack.name }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+        </div>
+        </li>
   </ul>
 
   <h2>Search examples</h2>
