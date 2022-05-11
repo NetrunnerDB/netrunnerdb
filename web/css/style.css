@@ -676,8 +676,7 @@ ul.rulings-list blockquote {
   transition: max-height 1s;
 }
 #update-log th {
-  padding-top: 7px;
-  padding-bottom: 5px;
+  padding: 7px 5px 5px 5px;
   border-bottom: 1px solid #eee;
   text-align: center;
 }

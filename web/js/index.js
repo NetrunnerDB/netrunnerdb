@@ -61,4 +61,8 @@ $(function() {
     return false;
   });
 
+  $('#close-updates').click(function () {
+    $('#update-log').hide();
+  });
+
 });

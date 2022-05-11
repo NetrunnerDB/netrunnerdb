@@ -152,12 +152,14 @@ class DefaultController extends Controller
 
         $banlists = $entityManager->getRepository(Mwl::class)->findBy([], ['dateStart' => 'DESC']);
         $rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
+        $packs = $entityManager->getRepository('AppBundle:Pack')->findBy([], ['dateRelease' => 'DESC']);
         $cardAliases = $cardsData->getPrettyCardAliases();
 
         return $this->render('/Default/syntax.html.twig', [
             "pagetitle" => "Search Syntax Reference",
             "banlists" => $banlists,
             "rotations" => $rotations,
+            "packs" => $packs,
             "aliases" => $cardAliases,
         ], $response);
     }
