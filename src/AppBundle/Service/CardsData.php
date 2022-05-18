@@ -144,7 +144,7 @@ class CardsData
         $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "DESC"]);
         $non_standard_packs = ['draft', 'napd'];
         $startup_cycles = ['system-gateway', 'system-update-2021', 'ashes', 'borealis'];
-        $non_eternal_cycles = ['draft', 'napd', 'tdc'];
+        $non_eternal_packs = ['draft', 'napd', 'tdc'];
         $cycles = [];
         foreach ($list_cycles as $cycle) {
             $packs = [];
@@ -166,7 +166,7 @@ class CardsData
                     "icon"      => $pack->getCycle()->getCode(),
                     "standard"  => !$pack->getCycle()->getRotated() && !in_array($pack->getCode(), $non_standard_packs),
                     "startup"   => in_array($pack->getCycle()->getCode(), $startup_cycles),
-                    "eternal"   => !in_array($pack->getCycle()->getCode(), $non_eternal_cycles),
+                    "eternal"   => !in_array($pack->getCode(), $non_eternal_packs),
                 ];
             }
 
@@ -185,7 +185,7 @@ class CardsData
                     "icon"   => $cycle->getCode(),
                     "standard" => !$cycle->getRotated(),
                     "startup"  => in_array($cycle->getCode(), $startup_cycles),
-                    "eternal"  => !in_array($cycle->getCode(), $non_eternal_cycles),
+                    "eternal"  => true,
                 ];
             }
         }
