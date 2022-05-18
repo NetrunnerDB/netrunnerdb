@@ -571,6 +571,7 @@ ul.rulings-list blockquote {
 .legality-legal:before,
 .legality-banned:before,
 .legality-rotated:before,
+.legality-added:before,
 .legality-restricted:before,
 .legality-1-inf:before,
 .legality-3-inf:before {
@@ -604,6 +605,10 @@ ul.rulings-list blockquote {
 .legality-rotated:before {
   content: "ROTATED";
   background-color: #558DEC;
+}
+.legality-added:before {
+  content: "ADDED";
+  background-color: #577A57;
 }
 .legality-restricted:before {
   content: "RESTRICTED";
@@ -654,6 +659,13 @@ ul.rulings-list blockquote {
   padding: 0;
   position: absolute;
   width: 1px;
+}
+
+/* Platform-dependent alignment */
+@media (min-width: 480px) {
+  .desktop-centered {
+    text-align: center !important;
+  }
 }
 
 /* Update log */

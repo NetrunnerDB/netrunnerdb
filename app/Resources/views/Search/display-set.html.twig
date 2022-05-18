@@ -11,9 +11,13 @@
                <th>Name</th>
                <th>Cards</th>
                <th>Release Date</th>
+               <th style="text-align: center">Standard</th>
+               <th style="text-align: center">Startup</th>
+               <th style="text-align: center">Eternal</th>
             </tr>
          </thead>
          {% for cycle in data %}
+         {% set standalone = cycle.packs is not defined %}
             <tr class="odd">
                <td data-th="Name">
                   <a href="{{ cycle.url }}" class="card" data-index="{{ cycle.code }}">
@@ -31,6 +35,9 @@
                <td data-th="Date">
                   {{ cycle.available }}
                </td>
+               <td class="desktop-centered" data-th="Standard">{% if cycle.standard %}✓{% endif %}</td>
+               <td class="desktop-centered" data-th="Startup">{% if cycle.startup %}✓{% endif %}</td>
+               <td class="desktop-centered" data-th="Eternal">{% if cycle.eternal %}✓{% endif %}</td>
             </tr>
             {% if cycle.packs is defined %}
                {% for pack in cycle.packs %}
@@ -51,6 +58,9 @@
                      <td data-th="Date">
                         {{ pack.available }}
                      </td>
+                     <td class="desktop-centered" data-th="Standard">{% if pack.standard %}✓{% endif %}</td>
+                     <td class="desktop-centered" data-th="Startup">{% if pack.startup %}✓{% endif %}</td>
+                     <td class="desktop-centered" data-th="Eternal">{% if pack.eternal %}✓{% endif %}</td>
                   </tr>
                {% endfor %}
             {% endif %}
