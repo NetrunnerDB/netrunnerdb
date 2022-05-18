@@ -142,6 +142,7 @@ class CardsData
     {
         /** @var Cycle[] $list_cycles */
         $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "DESC"]);
+        $startup_cycles = ['system-gateway', 'system-update-2021', 'ashes', 'borealis'];
         $cycles = [];
         foreach ($list_cycles as $cycle) {
             $packs = [];
@@ -161,6 +162,8 @@ class CardsData
                     "url"       => $this->router->generate('cards_list', ['pack_code' => $pack->getCode()], UrlGeneratorInterface::ABSOLUTE_URL),
                     "search"    => "e:" . $pack->getCode(),
                     "icon"      => $pack->getCycle()->getCode(),
+                    "standard"  => !$pack->getCycle()->getRotated(),
+                    "startup"   => in_array($pack->getCycle()->getCode(), $startup_cycles),
                 ];
             }
 
@@ -177,6 +180,8 @@ class CardsData
                     "search" => 'c:' . $cycle->getCode(),
                     "packs"  => $packs,
                     "icon"   => $cycle->getCode(),
+                    "standard" => !$cycle->getRotated(),
+                    "startup"  => in_array($pack->getCycle()->getCode(), $startup_cycles),
                 ];
             }
         }

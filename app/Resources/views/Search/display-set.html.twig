@@ -11,9 +11,12 @@
                <th>Name</th>
                <th>Cards</th>
                <th>Release Date</th>
+               <th style="text-align: center">Standard</th>
+               <th style="text-align: center">Startup</th>
             </tr>
          </thead>
          {% for cycle in data %}
+         {% set standalone = cycle.packs is not defined %}
             <tr class="odd">
                <td data-th="Name">
                   <a href="{{ cycle.url }}" class="card" data-index="{{ cycle.code }}">
@@ -30,6 +33,24 @@
                </td>
                <td data-th="Date">
                   {{ cycle.available }}
+               </td>
+               <td style="text-align: center">
+                 {% if standalone %}
+                   {% if cycle.standard and cycle.code != "draft" %}
+                     <span class="legality-legal">
+                   {% else %}
+                     <span class="legality-unavailable">
+                   {% endif %}
+                 {% endif %}
+               </td>
+               <td style="text-align: center">
+                 {% if standalone %}
+                   {% if cycle.startup %}
+                     <span class="legality-legal">
+                   {% else %}
+                     <span class="legality-unavailable">
+                   {% endif %}
+                 {% endif %}
                </td>
             </tr>
             {% if cycle.packs is defined %}
@@ -50,6 +71,20 @@
                      </td>
                      <td data-th="Date">
                         {{ pack.available }}
+                     </td>
+                     <td style="text-align: center">
+                       {% if pack.standard %}
+                         <span class="legality-legal">
+                       {% else %}
+                         <span class="legality-unavailable">
+                       {% endif %}
+                     </td>
+                     <td style="text-align: center">
+                       {% if pack.startup %}
+                         <span class="legality-legal">
+                       {% else %}
+                         <span class="legality-unavailable">
+                       {% endif %}
                      </td>
                   </tr>
                {% endfor %}
