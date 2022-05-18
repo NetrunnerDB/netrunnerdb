@@ -661,6 +661,13 @@ ul.rulings-list blockquote {
   width: 1px;
 }
 
+/* Platform-dependent alignment */
+@media (min-width: 480px) {
+  .desktop-centered {
+    text-align: center !important;
+  }
+}
+
 /* Update log */
 #update-log {
   margin-bottom: 20px;

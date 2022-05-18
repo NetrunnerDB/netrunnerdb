@@ -35,9 +35,9 @@
                <td data-th="Date">
                   {{ cycle.available }}
                </td>
-               <td style="text-align: center">{% if cycle.standard %}✓{% endif %}</td>
-               <td style="text-align: center">{% if cycle.startup %}✓{% endif %}</td>
-               <td style="text-align: center">{% if cycle.eternal %}✓{% endif %}</td>
+               <td class="desktop-centered" data-th="Standard">{% if cycle.standard %}✓{% endif %}</td>
+               <td class="desktop-centered" data-th="Startup">{% if cycle.startup %}✓{% endif %}</td>
+               <td class="desktop-centered" data-th="Eternal">{% if cycle.eternal %}✓{% endif %}</td>
             </tr>
             {% if cycle.packs is defined %}
                {% for pack in cycle.packs %}
@@ -58,9 +58,9 @@
                      <td data-th="Date">
                         {{ pack.available }}
                      </td>
-                     <td style="text-align: center">{% if pack.standard %}✓{% endif %}</td>
-                     <td style="text-align: center">{% if pack.startup %}✓{% endif %}</td>
-                     <td style="text-align: center">{% if cycle.eternal %}✓{% endif %}</td>
+                     <td class="desktop-centered" data-th="Standard">{% if pack.standard %}✓{% endif %}</td>
+                     <td class="desktop-centered" data-th="Startup">{% if pack.startup %}✓{% endif %}</td>
+                     <td class="desktop-centered" data-th="Eternal">{% if pack.eternal %}✓{% endif %}</td>
                   </tr>
                {% endfor %}
             {% endif %}
