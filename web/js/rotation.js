@@ -145,12 +145,12 @@ Promise.all([NRDB.data.promise]).then(function() {
 
     _.difference(a, b).forEach(title => {
       let card = allCards[title];
-      card['diff'] = 'banned';
+      card['diff'] = 'rotated';
       diffs.push(card);
     });
     _.difference(b, a).forEach(title => {
       let card = allCards[title];
-      card['diff'] = 'legal';
+      card['diff'] = 'added';
       diffs.push(card);
     });
     diffs = diffs.sort(sorter);
@@ -159,9 +159,10 @@ Promise.all([NRDB.data.promise]).then(function() {
       let visible = false;
       $('#diffs').append(
         $('<div style="display:' + (visible ? 'block' : 'none') + '" data-title="' + card.title.replaceAll('"', '') + '" data-faction="' + card.faction.code + '" data-type="' + card.type.code + '">' +
+            '<span class="legality-' + card['diff'] + '"></span> ' +
             '<span class="icon icon-' + card.faction.code + ' influence-' + card.faction.code + '"></span>' +
             ' <img src="' + Url_TypeImage.replace('xxx', card.type.code) + '" style="height:12px" alt="'+card.type.code+'">' +
-            ' <a href="' + Routing.generate('cards_zoom', {card_code:card.code}) + '">' + card.title + '</a> <span class="legality-' + card['diff'] + '"></span></div>')
+            ' <a href="' + Routing.generate('cards_zoom', {card_code:card.code}) + '">' + card.title + '</a></div>')
       );
     });
     update_filter();
@@ -186,7 +187,7 @@ Promise.all([NRDB.data.promise]).then(function() {
     let rotatedCycles = rotations[e.target.value]['rotated_cycles'];
     _.sortBy(NRDB.data.cycles.find(), 'position').reverse().forEach(function (cycle) {
       var packs = _.sortBy(NRDB.data.packs.find({cycle_code:cycle.code}), 'position').reverse();
-      if (cycle.code !== 'draft' && !(cycle.code in rotatedCycles)) {    
+      if (cycle.code !== 'draft' && !(cycle.code in rotatedCycles)) {
         packs.forEach(function (pack) {
           // Terminal Directive Campaign cards are irrelevant for rotation purposes.
           if (pack.code != 'tdc') {
