@@ -491,6 +491,27 @@ class CardsData
                     }
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
+                case 'l': // baselink
+                    $or = [];
+                    foreach ($condition as $arg) {
+                        switch ($operator) {
+                            case ':':
+                                $or[] = "(c.baseLink = ?$i)";
+                                break;
+                            case '!':
+                                $or[] = "(c.baseLink != ?$i)";
+                                break;
+                            case '<':
+                                $or[] = "(c.baseLink < ?$i)";
+                                break;
+                            case '>':
+                                $or[] = "(c.baseLink > ?$i)";
+                                break;
+                        }
+                        $parameters[$i++] = $arg;
+                    }
+                    $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
+                    break;
                 case 'm': // memoryunits
                     $or = [];
                     foreach ($condition as $arg) {

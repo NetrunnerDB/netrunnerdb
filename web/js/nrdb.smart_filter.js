@@ -51,6 +51,9 @@
       case "v":
         add_integer_sf('agenda_points', operator, values);
         break;
+      case "l":
+        add_integer_sf("base_link", operator, values);
+        break;
       case "n":
         add_integer_sf('faction_cost', operator, values);
         break;
