@@ -100,7 +100,7 @@ class PrivateApi20Controller extends FOSRestController
      *  }
      * )
      */
-    public function loadDeckByUuidAction(string $uuid, Request $request, EntityManagerInterface $entityManager)
+    public function loadDeckByUuidAction(string $deck_uuid, Request $request, EntityManagerInterface $entityManager)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -110,7 +110,7 @@ class PrivateApi20Controller extends FOSRestController
         }
 
         /** @var Deck $deck */
-        $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'uuid' => $uuid]);
+        $deck = $entityManager->getRepository('AppBundle:Deck')->findOneBy(['user' => $user, 'uuid' => $deck_uuid]);
 
         return $this->loadDeck($deck, $request, $entityManager);
     }
