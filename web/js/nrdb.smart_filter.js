@@ -20,18 +20,6 @@
       var values = condition;
 
       switch (type) {
-      case "e":
-        add_string_sf('pack_code', operator, values);
-        break;
-/*      case "c":
-        add_integer_sf('cyclenumber', operator, values);
-        break;
-      case "f":
-        add_string_sf('faction_letter', operator, values);
-        break;
-*/      case "t":
-        add_string_sf('type_code', operator, values);
-        break;
       case "":
       case "_":
         add_string_sf('title', operator, values);
@@ -42,17 +30,35 @@
       case "a":
         add_string_sf('flavor', operator, values);
         break;
+      case "e":
+        add_string_sf('pack_code', operator, values);
+        break;
+      // case "c":
+      //   add_integer_sf('cyclenumber', operator, values);
+      //   break;
+      case "t":
+        add_string_sf('type_code', operator, values);
+        break;
+      // case "f":
+      //   add_string_sf('faction_letter', operator, values);
+      //   break;
       case "s":
         add_string_sf('keywords', operator, values);
+        break;
+      case "i":
+        add_string_sf('illustrator', operator, values);
         break;
       case "o":
         add_integer_sf('cost', operator, values);
         break;
-      case "v":
-        add_integer_sf('agenda_points', operator, values);
+      case "g":
+        add_integer_sf('advancement_cost', operator, values);
         break;
       case "l":
         add_integer_sf("base_link", operator, values);
+        break;
+      case "m":
+        add_integer_sf("memory_cost", operator, values);
         break;
       case "n":
         add_integer_sf('faction_cost', operator, values);
@@ -60,17 +66,17 @@
       case "p":
         add_integer_sf('strength', operator, values);
         break;
-      case "g":
-        add_integer_sf('advancement_cost', operator, values);
+      case "v":
+        add_integer_sf('agenda_points', operator, values);
         break;
       case "h":
         add_integer_sf('trash_cost', operator, values);
         break;
-      case "y":
-        add_integer_sf('quantity', operator, values);
-        break;
       case "u":
         add_boolean_sf('uniqueness', operator, values);
+        break;
+      case "y":
+        add_integer_sf('quantity', operator, values);
         break;
       }
     }
