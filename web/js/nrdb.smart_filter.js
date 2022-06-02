@@ -19,6 +19,8 @@
       var operator = condition.shift();
       var values = condition;
 
+      /* NOTE: some parameters are missing (e.g. faction, cycle number) because
+       * they interact weird with the UI. */
       switch (type) {
       case "":
       case "_":
@@ -33,15 +35,9 @@
       case "e":
         add_string_sf('pack_code', operator, values);
         break;
-      // case "c":
-      //   add_integer_sf('cyclenumber', operator, values);
-      //   break;
       case "t":
         add_string_sf('type_code', operator, values);
         break;
-      // case "f":
-      //   add_string_sf('faction_letter', operator, values);
-      //   break;
       case "s":
         add_string_sf('keywords', operator, values);
         break;
