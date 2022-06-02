@@ -705,7 +705,7 @@ api_private_deck_load_by_uuid:
     defaults:
         _controller: AppBundle:PrivateApi20:loadDeckByUuid
     requirements:
-        uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 api_private_deck_save:
     path: /api/2.0/private/deck/save

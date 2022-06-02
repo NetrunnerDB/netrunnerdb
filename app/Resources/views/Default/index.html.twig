@@ -29,7 +29,6 @@ var Identity = null,
 {% block body %}
 
 <div class="container" id="index_page">
-{% include '/Default/update-log.html.twig' %}
   {% include '/Default/navbar-factions.html.twig' %}
   <div class="row">
     <div class="col-md-8">
@@ -39,6 +38,8 @@ var Identity = null,
       {% include '/Default/recent_decklists.html.twig' %}
     </div>
   </div>
+  {% include '/Default/update-log.html.twig' %}
 </div> <!-- .container -->
+
 
 {% endblock %}
