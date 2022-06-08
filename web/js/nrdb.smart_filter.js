@@ -17,7 +17,9 @@
       var condition = conditions[i];
       var type = condition.shift();
       var operator = condition.shift();
-      var values = condition;
+      var values = condition.map(v => {
+        return v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // Escape regex special characters
+      });
 
       /* NOTE: some parameters are missing (e.g. faction, cycle number) because
        * they interact weird with the UI. */
@@ -121,7 +123,7 @@
     case "!":
       SmartFilterQuery[key] = {
         '$nee': null,
-        '$eq' : new RegExp(values, 'i')
+        '$nin' : values
       };
       break;
     }
