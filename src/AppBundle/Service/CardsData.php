@@ -142,9 +142,10 @@ class CardsData
     {
         /** @var Cycle[] $list_cycles */
         $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "DESC"]);
-        $non_standard_packs = ['draft', 'napd'];
+        $non_standard_packs = ['draft', 'napd', 'ms'];
         $startup_cycles = ['system-gateway', 'system-update-2021', 'ashes', 'borealis'];
-        $non_eternal_packs = ['draft', 'napd', 'tdc'];
+        $non_startup_cycles = ['ms'];
+        $non_eternal_packs = ['draft', 'napd', 'tdc', 'ms'];
         $cycles = [];
         foreach ($list_cycles as $cycle) {
             $packs = [];
@@ -165,7 +166,7 @@ class CardsData
                     "search"    => "e:" . $pack->getCode(),
                     "icon"      => $pack->getCycle()->getCode(),
                     "standard"  => !$pack->getCycle()->getRotated() && !in_array($pack->getCode(), $non_standard_packs),
-                    "startup"   => in_array($pack->getCycle()->getCode(), $startup_cycles),
+                    "startup"   => in_array($pack->getCycle()->getCode(), $startup_cycles) && !in_array($pack->getCode(), $non_startup_cycles),
                     "eternal"   => !in_array($pack->getCode(), $non_eternal_packs),
                 ];
             }
