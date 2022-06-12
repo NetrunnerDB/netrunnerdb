@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install zip pdo_mysql
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --2.2 --filename=composer
 # Listen on port 8080 instead of 80 in order to allow local development against the private Oauth API.
 RUN sed -i "s/Listen 80/Listen 8080/" /etc/apache2/ports.conf
 COPY 000-default.conf /etc/apache2/sites-available
