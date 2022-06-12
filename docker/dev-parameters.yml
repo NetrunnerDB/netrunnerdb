@@ -42,4 +42,4 @@ parameters:
     oauth_test_client_secret: ~
     oauth_test_redirect_uri: ~
     images_path: ~
-    card_image_url: 'https://assets.netrunnerdb.com/v1/'
+    card_image_url: 'https://static.nrdbassets.com/v1'
