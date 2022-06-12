@@ -1,0 +1,48 @@
+# This file is a "template" of what your parameters.yml file should look like
+# Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
+# https://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
+parameters:
+    database_host: nrdb-dev-db
+    database_port: ~
+    database_name: nrdb-dev
+    database_user: nrdb-dev
+    database_password: passwd
+    # You should uncomment this if you want to use pdo_sqlite
+    #database_path: '%kernel.project_dir%/var/data/data.sqlite'
+
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: ~
+    mailer_password: ~
+
+    # Email Sender
+    email_sender_address: nrdb@example.com
+    email_sender_name: nrdb
+
+    # A secret key that's used to generate certain security-related tokens
+    secret: ThisTokenIsNotSoSecretChangeIt
+
+    locale:            en
+    secret:            ThisTokenIsNotSoSecretChangeIt
+    long_cache: 86400
+    short_cache: 600
+    assets_version: 1
+    locale_names:
+        en: English
+        de: Deutsch
+        fr: Français
+        es: Español
+        it: Italiano
+        pl: Polskie
+        kr: 한국어
+        jp: 日本語
+        zh: 中文
+    supported_locales:
+        - en
+    oauth_test_client_id: ~
+    oauth_test_client_secret: ~
+    oauth_test_redirect_uri: ~
+    images_path: ~
+    card_image_url: 'https://assets.netrunnerdb.com/v1/'
+#    slack_webhook_url: ~
+#    slack_webhook_channel: ~
