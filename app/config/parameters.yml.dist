@@ -23,7 +23,6 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
 
     locale:            en
-    secret:            ThisTokenIsNotSoSecretChangeIt
     long_cache: 86400
     short_cache: 600
     assets_version: 1
