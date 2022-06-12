@@ -183,6 +183,7 @@ function create_collection_tab(initialPackSelection) {
   NRDB.data.cycles.find( { "rotated": true } ).forEach(function(cycle) { rotated_cycles[cycle.code] = 1; });
 
   var rotated_packs = Array();
+  rotated_packs['ms'] = 1;
   NRDB.data.packs.find().forEach(function(pack) { if (rotated_cycles[pack.cycle.code]) { rotated_packs[pack.code] = 1; } });
 
   $('#collection_startup').on('click', function(event) {
