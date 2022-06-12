@@ -2,6 +2,8 @@ version: "2"
 
 services:
   nrdb-dev:
+    environment:
+      SYMFONY_ENV: dev
     container_name: nrdb-dev
     build: .
     depends_on:
