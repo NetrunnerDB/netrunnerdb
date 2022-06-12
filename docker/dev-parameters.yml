@@ -23,7 +23,6 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
 
     locale:            en
-    secret:            ThisTokenIsNotSoSecretChangeIt
     long_cache: 86400
     short_cache: 600
     assets_version: 1
@@ -44,5 +43,3 @@ parameters:
     oauth_test_redirect_uri: ~
     images_path: ~
     card_image_url: 'https://assets.netrunnerdb.com/v1/'
-#    slack_webhook_url: ~
-#    slack_webhook_channel: ~
