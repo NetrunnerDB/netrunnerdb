@@ -1,0 +1,3 @@
+# Ignore the symlinks out to the individual repos for the cards and source.
+netrunner-cards-json
+netrunnerdb

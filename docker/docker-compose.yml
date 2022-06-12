@@ -1,0 +1,57 @@
+version: "2"
+
+services:
+  nrdb-dev:
+    container_name: nrdb-dev
+    build: .
+    depends_on:
+      - nrdb-dev-db
+    ports:
+      - "8080:8080"
+    links:
+      - nrdb-dev-db
+    volumes:
+      # These folders and files will have links or copies made of them.
+      - ./netrunnerdb/bin:/var/www/html/nrdb-bin
+      - ./netrunnerdb/web:/var/www/html/nrdb-web
+      - ./dev-parameters.yml:/var/www/html/nrdb-app-config-parameters.yml
+      # Make a copy of app/config/ so we can link to the files in there from
+      # /var/www/html/nrdb/app/config to avoid a parameters.yml file being
+      # written to our repo there.
+      - ./netrunnerdb/app/config:/var/www/html/nrdb-app-config
+      # Link up the nrdb source code and card database.
+      - ./netrunnerdb:/var/www/html/nrdb
+      - ./netrunner-cards-json:/var/www/html/nrdb/cards
+      # redirect everything to app_dev.php rather than app.php
+      - ./.htaccess:/var/www/html/nrdb/web/.htaccess
+      # Make sure data created by the running application isn't written
+      # to the git repo.
+      - appdata_appcfg:/var/www/html/nrdb/app/config
+      - appdata_bin:/var/www/html/nrdb/bin
+      - appdata_var:/var/www/html/nrdb/var
+      - appdata_web:/var/www/html/nrdb/web
+      - appdata_vendor:/var/www/html/nrdb/vendor
+      # overwrite default app_dev.php with one that has the "does this
+      # look like a dev setup?" security check commented out.
+      - ./app_dev.php:/var/www/html/nrdb/web/app_dev.php
+
+  nrdb-dev-db:
+    container_name: nrdb-dev-db
+    image: "mysql:5"
+    restart: always
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: passwd
+      MYSQL_DATABASE: nrdb-dev
+      MYSQL_USER: nrdb-dev
+      MYSQL_PASSWORD: passwd
+
+volumes:
+  appdata_appcfg:
+  appdata_bin:
+  appdata_bundles:
+  appdata_var:
+  appdata_vendor:
+  appdata_web:
+  dbdata:

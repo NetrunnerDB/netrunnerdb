@@ -29,7 +29,7 @@
         "friendsofsymfony/oauth-server-bundle": "^1.5",
         "friendsofsymfony/rest-bundle": "^2.3",
         "friendsofsymfony/user-bundle": "^2.0",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^7",
         "incenteev/composer-parameter-handler": "^2.0",
         "jms/serializer-bundle": "^2.3",
         "michelf/php-markdown": "^1.8",
@@ -68,10 +68,7 @@
         ]
     },
     "config": {
-        "sort-packages": true,
-        "platform": {
-            "php": "7.1.12"
-        }
+        "sort-packages": true
     },
     "extra": {
         "symfony-app-dir": "app",

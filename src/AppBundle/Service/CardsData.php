@@ -539,16 +539,16 @@ class CardsData
                     foreach ($condition as $arg) {
                         switch ($operator) {
                             case ':':
-                                $or[] = "(c.factionCost = ?$i or c.influenceLimit =?$i)";
+                                $or[] = "((t.id != 9 AND COALESCE(c.factionCost, 0) = ?$i) or (t.id = 9 AND COALESCE(c.influenceLimit, 0) =?$i))";
                                 break;
                             case '!':
-                                $or[] = "(c.factionCost != ?$i or c.influenceLimit != ?$i)";
+                                $or[] = "((t.id != 9 AND COALESCE(c.factionCost, 0) != ?$i) or (t.id = 9 AND COALESCE(c.influenceLimit, 0) != ?$i))";
                                 break;
                             case '<':
-                                $or[] = "(c.factionCost < ?$i or c.influenceLimit < ?$i)";
+                                $or[] = "((t.id != 9 AND COALESCE(c.factionCost, 0) < ?$i) or (t.id = 9 AND COALESCE(c.influenceLimit, 0) < ?$i))";
                                 break;
                             case '>':
-                                $or[] = "(c.factionCost > ?$i or c.influenceLimit > ?$i)";
+                                $or[] = "((t.id != 9 AND COALESCE(c.factionCost, 0) > ?$i) or (t.id = 9 AND COALESCE(c.influenceLimit, 0) > ?$i))";
                                 break;
                         }
                         $parameters[$i++] = $arg;

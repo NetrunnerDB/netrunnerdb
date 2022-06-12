@@ -2,11 +2,11 @@
 # Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
 # https://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
-    database_host: 127.0.0.1
+    database_host: nrdb-dev-db
     database_port: ~
-    database_name: netrunnerdb
-    database_user: root
-    database_password: ~
+    database_name: nrdb-dev
+    database_user: nrdb-dev
+    database_password: passwd
     # You should uncomment this if you want to use pdo_sqlite
     #database_path: '%kernel.project_dir%/var/data/data.sqlite'
 
@@ -16,8 +16,8 @@ parameters:
     mailer_password: ~
 
     # Email Sender
-    email_sender_address: ~
-    email_sender_name: ~
+    email_sender_address: nrdb@example.com
+    email_sender_name: nrdb
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
@@ -43,5 +43,3 @@ parameters:
     oauth_test_redirect_uri: ~
     images_path: ~
     card_image_url: 'https://assets.netrunnerdb.com/v1/'
-    slack_webhook_url: ~
-    slack_webhook_channel: ~

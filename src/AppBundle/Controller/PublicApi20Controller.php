@@ -367,7 +367,7 @@ class PublicApi20Controller extends FOSRestController
     {
       return $this->getSingleEntityFromCache("public-api-card-" . $card_code, function() use ($card_code) {
         return $this->entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
-      }, $request, ['imageUrlTemplate' => $this->getParameter('card_image_url') . 'large/{code}.jpg']);
+      }, $request, ['imageUrlTemplate' => rtrim($this->getParameter('card_image_url'), '/') . '/large/{code}.jpg']);
     }
 
     /**
@@ -385,7 +385,7 @@ class PublicApi20Controller extends FOSRestController
     {
       return $this->getFromCache("public-api-cards", function() {
         return $this->entityManager->getRepository('AppBundle:Card')->findAll();
-      }, $request, ['imageUrlTemplate' => $this->getParameter('card_image_url') . 'large/{code}.jpg']);
+      }, $request, ['imageUrlTemplate' => rtrim($this->getParameter('card_image_url'), '/') . '/large/{code}.jpg']);
     }
 
     /**
