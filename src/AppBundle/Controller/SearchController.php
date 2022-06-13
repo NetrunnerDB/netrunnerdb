@@ -533,16 +533,19 @@ class SearchController extends Controller
                             ++$rotated_count;
                         }
                         // Any printing of this card in a valid Startup cycle means the card is Startup legal.
-                        if (array_key_exists($v['cycle_code'], $startupCycles)) {
+                        if (array_key_exists($v['cycle_code'], $startupCycles) && date("Y-m-d") >= $pack->getDateRelease()->format("Y-m-d")) {
                           $startup_legal = true;
                         }
                     }
 
-                    // If all versions of the card are in rotated cycles, the card is not standard legal.
-                    if ($rotated_count == count($cardinfo['versions'])) {
+                    // If all versions of the card are in rotated cycles or the card is not yet
+                    // officially released, the card is not standard legal.
+                    if ($rotated_count == count($cardinfo['versions']) ||
+                        $pack->getDateRelease()->format("Y-m-d") >= date("Y-m-d")) {
                       $standard_legal = "unavailable";
                     }
 
+                    $cardinfo['date_release'] = $pack->getDateRelease();
                     $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
                     $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
