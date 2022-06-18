@@ -541,6 +541,7 @@ class SearchController extends Controller
                     // If all versions of the card are in rotated cycles or the card is not yet
                     // officially released, the card is not standard legal.
                     if ($rotated_count == count($cardinfo['versions']) ||
+                        $pack->getDateRelease() == null ||
                         $pack->getDateRelease()->format("Y-m-d") >= date("Y-m-d")) {
                       $standard_legal = "unavailable";
                     }
