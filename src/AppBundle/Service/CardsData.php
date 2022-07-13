@@ -816,7 +816,7 @@ class CardsData
             "faction_cost_dots" => $card->getFactionCostDots(),
             "flavor"            => $card->getFlavor(),
             "illustrator"       => $card->getIllustrator(),
-            "illustrators"      => $this->illustrators->split($card->getIllustrator()),
+            "illustrators"      => explode(', ', $card->getIllustrator()),
             "influencelimit"    => $card->getInfluenceLimit(),
             "memoryunits"       => $card->getMemoryCost(),
             "minimumdecksize"   => $card->getMinimumDeckSize(),
