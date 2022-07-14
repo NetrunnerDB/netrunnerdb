@@ -290,7 +290,6 @@ class CardsData
                     $or = [];
                     // Apply text aliases
                     foreach ($textAliases as $alias => $replacement) {
-                        print ($alias . " " . $replacement . " - ");
                         foreach ($condition as $arg) {
                             if (str_contains($arg, $alias)) {
                                 array_push($condition, str_replace($alias, $replacement, $arg));
