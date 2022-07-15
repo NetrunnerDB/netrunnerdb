@@ -98,7 +98,7 @@ function decks_upload_all() {
 }
 
 function get_card_list_item_html(card, quantity) {
-  return '<li>'+quantity+'x '+card.title+' (<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ')</li>';
+  return '<li>' + quantity + 'x ' + card.title + ' (<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ')</li>';
 }
 
 function do_diff(uuids) {
