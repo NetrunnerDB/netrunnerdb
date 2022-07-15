@@ -241,6 +241,13 @@ class CardsData
            ->leftJoin('c.faction', 'f')
            ->leftJoin('c.side', 's');
 
+        // Text aliases
+        // Currently only for combining results for "brain damage" with results for "core damage" and vice versa
+        $textAliases = [
+            "brain d" => "core d",
+            "core d" => "brain d"
+        ];
+
         $qb2 = null;
         $qb3 = null;
         $clauses = [];
@@ -281,6 +288,15 @@ class CardsData
                     break;
                 case 'x': // text
                     $or = [];
+                    // Apply text aliases
+                    foreach ($textAliases as $alias => $replacement) {
+                        foreach ($condition as $arg) {
+                            if (strpos($arg, $alias) !== false) {
+                                array_push($condition, str_replace($alias, $replacement, $arg));
+                            }
+                        }
+                    }
+
                     foreach ($condition as $arg) {
                         switch ($operator) {
                             case ':':
@@ -816,7 +832,7 @@ class CardsData
             "faction_cost_dots" => $card->getFactionCostDots(),
             "flavor"            => $card->getFlavor(),
             "illustrator"       => $card->getIllustrator(),
-            "illustrators"      => $this->illustrators->split($card->getIllustrator()),
+            "illustrators"      => explode(', ', $card->getIllustrator()),
             "influencelimit"    => $card->getInfluenceLimit(),
             "memoryunits"       => $card->getMemoryCost(),
             "minimumdecksize"   => $card->getMinimumDeckSize(),

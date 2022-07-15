@@ -95,10 +95,12 @@
                 {% if card.illustrator %}
                     <div class="card-illustrator">
                         <small>
-                            Illustrated by
-                                {% for illustrator in card.illustrators %}
-                                    <a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'images','q':'i:"' ~ illustrator ~ '"'}) }}">{{ illustrator }}</a>
-                                {% endfor %}
+                            Illustrated by {{
+                                card.illustrators |
+                                map(i => "<a href=\"#{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'images','q':'i:"' ~ i ~ '"'}) }\">#{i}</a>") |
+                                join(', ') |
+                                raw
+                            }}
                             </a>
                         </small>
                     </div>
