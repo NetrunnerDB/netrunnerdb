@@ -128,7 +128,7 @@ function do_diff(uuids) {
   var item_data = $.map(intersect, function(qty, card_code) {
     var card = NRDB.data.cards.findById(card_code);
     if(card) return { card: card, qty: qty };
-  }).sort(function (a, b) { return a.title.localeCompare(b.title); });
+  }).sort(function (a, b) { return a.card.title.localeCompare(b.card.title); });
   $.each(item_data, function (index, item) {
     list.append(get_card_list_item_html(item.card, item.qty));
   });
@@ -139,7 +139,7 @@ function do_diff(uuids) {
     var item_data = $.map(listings[i], function(qty, card_code) {
       var card = NRDB.data.cards.findById(card_code);
       if(card) return { card: card, qty: qty };
-    }).sort(function (a, b) { return a.title.localeCompare(b.title); });
+    }).sort(function (a, b) { return a.card.title.localeCompare(b.card.title); });
     $.each(item_data, function (index, item) {
       list.append(get_card_list_item_html(item.card, item.qty));
     });
