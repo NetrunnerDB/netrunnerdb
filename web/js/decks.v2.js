@@ -97,6 +97,10 @@ function decks_upload_all() {
   $('#archiveModal').modal('show');
 }
 
+function get_card_list_item_html(card, quantity) {
+  return '<li>' + quantity + 'x ' + card.title + ' (<span class="small icon icon-' + card.pack.cycle.code + '"></span> ' + card.position + ')</li>';
+}
+
 function do_diff(uuids) {
   if(uuids.length < 2) return;
 
@@ -121,23 +125,23 @@ function do_diff(uuids) {
   container.empty();
   container.append("<h4>Cards in all decks</h4>");
   var list = $('<ul></ul>').appendTo(container);
-  var cards = $.map(intersect, function(qty, card_code) {
+  var item_data = $.map(intersect, function(qty, card_code) {
     var card = NRDB.data.cards.findById(card_code);
-    if(card) return { title: card.title, qty: qty };
-  }).sort(function (a, b) { return a.title.localeCompare(b.title); });
-  $.each(cards, function (index, card) {
-    list.append('<li>'+card.title+' x'+card.qty+'</li>');
+    if(card) return { card: card, qty: qty };
+  }).sort(function (a, b) { return a.card.title.localeCompare(b.card.title); });
+  $.each(item_data, function (index, item) {
+    list.append(get_card_list_item_html(item.card, item.qty));
   });
 
   for(var i=0; i<listings.length; i++) {
     container.append("<h4>Cards only in <b>"+names[i]+"</b></h4>");
     var list = $('<ul></ul>').appendTo(container);
-    var cards = $.map(listings[i], function(qty, card_code) {
+    var item_data = $.map(listings[i], function(qty, card_code) {
       var card = NRDB.data.cards.findById(card_code);
-      if(card) return { title: card.title, qty: qty };
-    }).sort(function (a, b) { return a.title.localeCompare(b.title); });
-    $.each(cards, function (index, card) {
-      list.append('<li>'+card.title+' x'+card.qty+'</li>');
+      if(card) return { card: card, qty: qty };
+    }).sort(function (a, b) { return a.card.title.localeCompare(b.card.title); });
+    $.each(item_data, function (index, item) {
+      list.append(get_card_list_item_html(item.card, item.qty));
     });
   }
   $('#diffModal').modal('show');
@@ -205,7 +209,7 @@ function do_diff_collection(uuids) {
   var list = $('<ul></ul>').appendTo(container);
   $.each(intersect, function (card_code, qty) {
     var card = NRDB.data.cards.findById(card_code);
-    if(card) list.append('<li>'+card.title+' x'+qty+'</li>');
+    if(card) list.append(get_card_list_item_html(card, qty));
   });
 
   for(var i=0; i<listings.length; i++) {
@@ -213,7 +217,7 @@ function do_diff_collection(uuids) {
     var list = $('<ul></ul>').appendTo(container);
     $.each(listings[i], function (card_code, qty) {
       var card = NRDB.data.cards.findById(card_code);
-      if(card) list.append('<li>'+card.title+' x'+qty+'</li>');
+      if(card) list.append(get_card_list_item_html(card, qty));
     });
   }
   $('#diffModal').modal('show');
