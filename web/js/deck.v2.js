@@ -183,7 +183,6 @@ function create_collection_tab(initialPackSelection) {
   NRDB.data.cycles.find( { "rotated": true } ).forEach(function(cycle) { rotated_cycles[cycle.code] = 1; });
 
   var rotated_packs = Array();
-  rotated_packs['ms'] = 1;
   NRDB.data.packs.find().forEach(function(pack) { if (rotated_cycles[pack.cycle.code]) { rotated_packs[pack.code] = 1; } });
 
   $('#collection_startup').on('click', function(event) {
@@ -199,6 +198,7 @@ function create_collection_tab(initialPackSelection) {
     startup_packs['sg'] = 1;
     startup_packs['su21'] = 1;
     startup_packs['msbp'] = 1;
+    startup_packs['ms'] = 1;
     event.preventDefault();
     $('#pack_code').find(':checkbox').each(function() {
       $(this).prop('checked', Boolean(startup_cycles[$(this).prop('name')] || startup_packs[$(this).prop('name')]));
