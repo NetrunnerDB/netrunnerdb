@@ -19,15 +19,16 @@ class HighlightCommand extends ContainerAwareCommand
         $this->entityManager = $entityManager;
     }
 
-    protected function saveHighlight(int $decklist_id = null)
+    protected function saveHighlight(string $decklist_uuid = null)
     {
         $dbh = $this->entityManager->getConnection();
 
-        if (null !== $decklist_id) {
+        if (null !== $decklist_uuid) {
             $rows = $dbh
                 ->executeQuery(
                     "SELECT
                        d.id,
+                       d.uuid,
                        d.date_update,
                        d.name,
                        d.prettyname,
@@ -51,15 +52,16 @@ class HighlightCommand extends ContainerAwareCommand
                        JOIN card c ON d.identity_id=c.id
                        JOIN faction f ON d.faction_id=f.id
                        JOIN mwl m ON d.mwl_id = m.id
-                     WHERE d.id=?
+                     WHERE d.uuid=?
                        ",
-                    [$decklist_id]
+                    [$decklist_uuid]
                 )->fetchAll();
         } else {
             $rows = $dbh
                 ->executeQuery(
                     "SELECT
                        d.id,
+                       d.uuid,
                        d.date_update,
                        d.name,
                        d.prettyname,
@@ -129,16 +131,16 @@ class HighlightCommand extends ContainerAwareCommand
             ->setName('app:highlight')
             ->setDescription('Save decklist of the week')
             ->addArgument(
-                'decklist_id',
+                'decklist_uuid',
                 InputArgument::OPTIONAL,
-                'Id for Decklist'
+                'UUID for Decklist'
             );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $decklist_id = $input->getArgument('decklist_id');
-        $result = $this->saveHighlight($decklist_id);
+        $decklist_uuid = $input->getArgument('decklist_uuid');
+        $result = $this->saveHighlight($decklist_uuid);
         $output->writeln(date('c') . " " . ($result ? "Success" : "Failure"));
     }
 }
