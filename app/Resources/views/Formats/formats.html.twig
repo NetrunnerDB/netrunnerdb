@@ -13,15 +13,15 @@
       <div class="col-sm-12">
         <h2>NISEI Supported Formats</h2>
         <p>Card Pools and links to deck searches legal in those formats.</p>
-		<p>See <a href="https://nisei.net/players/supported-formats/">NISEI's Supported Formats page</a> for more information.</p>
+        <p>See <a href="https://nisei.net/players/supported-formats/">NISEI's Supported Formats page</a> for more information.</p>
       </div>
     </div>
 
     <div class="row">
       <div class="col-sm-6">
         <h2>Startup Format</h2>
-		<h4>Current Ban List</h4>
-		<p>None</p>
+        <h4>Current Ban List</h4>
+        <p>None</p>
 
         <h4>Corp Decklists</h4>
         <ul>
@@ -43,16 +43,16 @@
         </ul>
         <h4>Legal Card Cycles - {{ num_startup_cards }} unique cards</h4>
         <ul>
-        {% for cycle in startup_cycles %}
+          {% for cycle in startup_cycles %}
           <li><a href="{{ path('cards_cycle', {cycle_code:cycle.code }) }}">{{ cycle.name }}</a></li>
-        {% endfor %}
+          {% endfor %}
         </ul>
       </div>
 
       <div class="col-sm-6">
         <h2>Standard Format</h2>
-		<h4>Current Ban List</h4>
-		<p><strong><a href="{{ path('banlists') }}#{{ standard_banlist.code }}">{{ standard_banlist.name }}</a></strong>, active as of <strong>{{ standard_banlist.dateStart|date("Y-m-d") }}</strong></p>
+        <h4>Current Ban List</h4>
+        <p><strong><a href="{{ path('banlists') }}#{{ standard_banlist.code }}">{{ standard_banlist.name }}</a></strong>, active as of <strong>{{ standard_banlist.dateStart|date("Y-m-d") }}</strong></p>
 
         <h4>Corp Decklists</h4>
         <ul>
@@ -76,9 +76,9 @@
 
         <h4>Legal Card Cycles - {{ num_standard_cards }} unique cards</h4>
         <ul>
-        {% for cycle in standard_cycles %}
+          {% for cycle in standard_cycles %}
           <li><a href="{{ path('cards_cycle', {cycle_code:cycle.code }) }}">{{ cycle.name }}</a></li>
-        {% endfor %}
+          {% endfor %}
         </ul>
       </div>
     </div>
