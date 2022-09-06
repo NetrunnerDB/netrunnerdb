@@ -94,16 +94,20 @@ r5.data.forEach(f => {
       $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'jinteki', 'packs': packs})}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>`);
       $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'nbn', 'packs': packs})}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>`);
       $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'weyland-consortium', 'packs': packs})}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>`);
-       
+
       $(`#${format.id}`).append(`<h4>Runner Decklists</h4>`);
       $(`#${format.id}`).append(`<ul id="${format.id}_runner_decklists"></ul>`);
       $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'runner', 'packs': packs})}">Any Runner</a></li>`);
       $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'anarch', 'packs': packs})}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>`);
       $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'criminal', 'packs': packs})}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>`);
       $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'shaper', 'packs': packs})}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>`);
-      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'adam', 'packs': packs})}"><span class="icon icon-adam influence-adam"></span> Adam</a></li>`);
-      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'apex', 'packs': packs})}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>`);
-      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'sunny-lebeau', 'packs': packs})}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>`);
+
+      // Even though there are mini-faction cards in other sets, the IDs are only in Data & Destiny.
+      if (legalCycleIds.has('data_and_destiny')) {
+        $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'adam', 'packs': packs})}"><span class="icon icon-adam influence-adam"></span> Adam</a></li>`);
+        $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'apex', 'packs': packs})}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>`);
+        $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'sunny-lebeau', 'packs': packs})}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>`);
+      }
             
      $(`#${format.id}`).append(`<h4>Legal Card Cycles - <a href="${Routing.generate('cards_find', {q: 'e:' + packs.join('|') } )}">${format.attributes.num_cards} Unique Cards</a></h4>`);
 
