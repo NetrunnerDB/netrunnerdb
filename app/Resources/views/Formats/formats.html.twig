@@ -23,111 +23,101 @@
 </div>
 <script>
 
-function getRestrictionById(restrictions, id) {
-  for (i = 0; i < restrictions.length; i++) {
-    if (restrictions[i].id == id) {
-      return restrictions[i];
-    }
-  }
-  return null;
+function makeIdMap(json) {
+  const out = new Map();
+  json.data.forEach(d => {
+    out.set(d.id, d);
+  });
+  return out;
 }
 
 async function buildFormatsView() {
-const desiredFormats = new Set(['eternal', 'standard', 'startup']);
+  const desiredFormats = new Set(['eternal', 'standard', 'startup']);
 
-//const [snapshotsResponse, restrictionsResponse] = await Promise.all(
-const [r1, r2, r3, r4, r5] = await Promise.all(
-  [
-    fetch('http://localhost:3000/api/v3/public/snapshots?filter[active]=true').then(data => data.json()),
-    fetch('http://localhost:3000/api/v3/public/restrictions').then(data => data.json()),
-    fetch('http://localhost:3000/api/v3/public/card_cycles?sort=-date_release').then(data => data.json()),
-    fetch('http://localhost:3000/api/v3/public/card_sets?sort=-date_release').then(data => data.json()),
-    fetch('http://localhost:3000/api/v3/public/formats').then(data => data.json()),
-  ]
-);
+  //const [snapshotsResponse, restrictionsResponse] = await Promise.all(
+  const [r1, r2, r3, r4, r5] = await Promise.all(
+    [
+      fetch('{{ v3_api_url }}/api/v3/public/snapshots?filter[active]=true').then(data => data.json()),
+      fetch('{{ v3_api_url }}/api/v3/public/restrictions').then(data => data.json()),
+      fetch('{{ v3_api_url }}/api/v3/public/card_cycles?sort=-date_release').then(data => data.json()),
+      fetch('{{ v3_api_url }}/api/v3/public/card_sets?sort=-date_release').then(data => data.json()),
+      fetch('{{ v3_api_url }}/api/v3/public/formats').then(data => data.json()),
+    ]
+  );
 
-const restrictions = r2.data;
-const cycles = r3.data;
-const cyclesById = new Map();
-cycles.forEach(c => {
-  cyclesById.set(c.id, c);
-});
-const sets = r4.data;
-const setsById = new Map();
-sets.forEach(s => {
-  setsById.set(s.id, s);
-});
-const formatsById = new Map();
-r5.data.forEach(f => {
-  formatsById.set(f.id, f);
-});
+  const restrictions = makeIdMap(r2);
+  const cycles = r3.data;
+  const cyclesById = makeIdMap(r3);
+  const sets = r4.data;
+  const setsById = makeIdMap(r4);
+  const formatsById = makeIdMap(r5);
 
-    const formats = r1.data.filter(snapshot => desiredFormats.has(snapshot.attributes.format_id)).sort((a, b) => (a.attributes.format_id < b.attributes.format_id) ? 1 : -1);
+  const formats = r1.data.filter(snapshot => desiredFormats.has(snapshot.attributes.format_id)).sort((a, b) => (a.attributes.format_id < b.attributes.format_id) ? 1 : -1);
 
-    formats.forEach(format => {
-      const legalCycleIds = new Set(format.attributes.card_cycle_ids);
-      const incompleteCycleIds = new Set();
-      // TODO(plural): Accommodate multiple sets from an incomplete cycle and sort them by descending release date.
-      const incompleteSetIds = new Set();
-      format.attributes.card_set_ids.forEach(s => {
-        if (!legalCycleIds.has(setsById.get(s).attributes.card_cycle_id)) {
-          incompleteCycleIds.add(setsById.get(s).attributes.card_cycle_id);
-          incompleteSetIds.add(s);
-        }
-      });
-
-      $('#formats').append(`<div class="col-sm-4" id="${format.id}"><h2>${formatsById.get(format.attributes.format_id).attributes.name} Format</h2></div>`);
-      $(`#${format.id}`).append(`<h4>Current Ban List</h4>`);
-      if (format.attributes.restriction_id) {
-        const r = getRestrictionById(restrictions, format.attributes.restriction_id);
-        $(`#${format.id}`).append(`<p><strong><a href="#">${format.attributes.restriction_id}</a></strong><br />active as of <strong>${r.attributes.date_start}</strong></p>`);
-      } else {
-        $(`#${format.id}`).append(`<p><strong>None<br />&nbsp;</p>`);
+  formats.forEach(format => {
+    const legalCycleIds = new Set(format.attributes.card_cycle_ids);
+    const incompleteCycleIds = new Set();
+    // TODO(plural): Accommodate multiple sets from an incomplete cycle and sort them by descending release date.
+    const incompleteSetIds = new Set();
+    format.attributes.card_set_ids.forEach(s => {
+      if (!legalCycleIds.has(setsById.get(s).attributes.card_cycle_id)) {
+        incompleteCycleIds.add(setsById.get(s).attributes.card_cycle_id);
+        incompleteSetIds.add(s);
       }
-
-      $(`#${format.id}`).append(`<h4>Corp Decklists</h4>`);
-      $(`#${format.id}`).append(`<ul id="${format.id}_corp_decklists"></ul>`);
-      // TODO(plural): Wire up current restriction in the decklist search after making a legacy code for that as well.
-      const packs = format.attributes.card_set_ids.map(s => setsById.get(s).attributes.legacy_code).sort();
-      $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'corp', 'packs': packs})}">Any Corp</a></li>`);
-      $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'haas-bioroid', 'packs': packs})}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>`);
-      $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'jinteki', 'packs': packs})}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>`);
-      $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'nbn', 'packs': packs})}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>`);
-      $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'weyland-consortium', 'packs': packs})}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>`);
-
-      $(`#${format.id}`).append(`<h4>Runner Decklists</h4>`);
-      $(`#${format.id}`).append(`<ul id="${format.id}_runner_decklists"></ul>`);
-      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'runner', 'packs': packs})}">Any Runner</a></li>`);
-      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'anarch', 'packs': packs})}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>`);
-      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'criminal', 'packs': packs})}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>`);
-      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'shaper', 'packs': packs})}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>`);
-
-      // Even though there are mini-faction cards in other sets, the IDs are only in Data & Destiny.
-      if (legalCycleIds.has('data_and_destiny')) {
-        $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'adam', 'packs': packs})}"><span class="icon icon-adam influence-adam"></span> Adam</a></li>`);
-        $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'apex', 'packs': packs})}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>`);
-        $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'sunny-lebeau', 'packs': packs})}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>`);
-      }
-            
-     $(`#${format.id}`).append(`<h4>Legal Card Cycles - <a href="${Routing.generate('cards_find', {q: 'e:' + packs.join('|') } )}">${format.attributes.num_cards} Unique Cards</a></h4>`);
-
-      $(`#${format.id}`).append(`<ul id="${format.id}_cycles"></ul>`);
-      cycles.forEach(cycle => {
-        if (legalCycleIds.has(cycle.id)) {
-          $(`#${format.id}_cycles`).append(`<li><a href="${Routing.generate('cards_cycle', {cycle_code: cycle.attributes.legacy_code})}">${cycle.attributes.name}</a></li>`);
-        } else if (incompleteCycleIds.has(cycle.id)) {
-          const incompleteListId = `${format.id}_cycles_${cycle.id}`;
-          if (!$(`#${incompleteListId}`).length) {
-            $(`#${format.id}_cycles`).append(`<li>${cycle.attributes.name}<ul id=${incompleteListId}></ul></li>`);
-          }
-          sets.forEach(set => {
-            if (set.attributes.card_cycle_id == cycle.id && incompleteSetIds.has(set.id)) {
-              $(`#${incompleteListId}`).append(`<li><a href="${Routing.generate('cards_list', {pack_code: set.attributes.legacy_code})}">${set.attributes.name}</a></li>`);
-            }
-          });
-        }
-      });
     });
+
+    $('#formats').append(`<div class="col-sm-4" id="${format.id}"><h2>${formatsById.get(format.attributes.format_id).attributes.name} Format</h2></div>`);
+    $(`#${format.id}`).append(`<h4>Current Ban List</h4>`);
+    if (format.attributes.restriction_id) {
+      const r = restrictions.get(format.attributes.restriction_id);
+      $(`#${format.id}`).append(`<p><strong><a href="#">${r.attributes.name}</a></strong><br />active as of <strong>${r.attributes.date_start}</strong></p>`);
+    } else {
+      $(`#${format.id}`).append(`<p><strong>None<br />&nbsp;</p>`);
+    }
+
+    $(`#${format.id}`).append(`<h4>Corp Decklists</h4>`);
+    $(`#${format.id}`).append(`<ul id="${format.id}_corp_decklists"></ul>`);
+    // TODO(plural): Wire up current restriction in the decklist search after making a legacy code for that as well.
+    const packs = format.attributes.card_set_ids.map(s => setsById.get(s).attributes.legacy_code).sort();
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'corp', 'packs': packs})}">Any Corp</a></li>`);
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'haas-bioroid', 'packs': packs})}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>`);
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'jinteki', 'packs': packs})}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>`);
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'nbn', 'packs': packs})}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>`);
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'weyland-consortium', 'packs': packs})}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>`);
+
+    $(`#${format.id}`).append(`<h4>Runner Decklists</h4>`);
+    $(`#${format.id}`).append(`<ul id="${format.id}_runner_decklists"></ul>`);
+    $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'runner', 'packs': packs})}">Any Runner</a></li>`);
+    $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'anarch', 'packs': packs})}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>`);
+    $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'criminal', 'packs': packs})}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>`);
+    $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'shaper', 'packs': packs})}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>`);
+
+    // Even though there are mini-faction cards in other sets, the IDs are only in Data & Destiny.
+    if (legalCycleIds.has('data_and_destiny')) {
+      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'adam', 'packs': packs})}"><span class="icon icon-adam influence-adam"></span> Adam</a></li>`);
+      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'apex', 'packs': packs})}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>`);
+      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'sunny-lebeau', 'packs': packs})}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>`);
+    }
+          
+    $(`#${format.id}`).append(`<h4>Legal Card Cycles - <a href="${Routing.generate('cards_find', {q: 'e:' + packs.join('|') } )}">${format.attributes.num_cards} Unique Cards</a></h4>`);
+
+    $(`#${format.id}`).append(`<ul id="${format.id}_cycles"></ul>`);
+    cycles.forEach(cycle => {
+      if (legalCycleIds.has(cycle.id)) {
+        $(`#${format.id}_cycles`).append(`<li><a href="${Routing.generate('cards_cycle', {cycle_code: cycle.attributes.legacy_code})}">${cycle.attributes.name}</a></li>`);
+      } else if (incompleteCycleIds.has(cycle.id)) {
+        const incompleteListId = `${format.id}_cycles_${cycle.id}`;
+        if (!$(`#${incompleteListId}`).length) {
+          $(`#${format.id}_cycles`).append(`<li>${cycle.attributes.name}<ul id=${incompleteListId}></ul></li>`);
+        }
+        sets.forEach(set => {
+          if (set.attributes.card_cycle_id == cycle.id && incompleteSetIds.has(set.id)) {
+            $(`#${incompleteListId}`).append(`<li><a href="${Routing.generate('cards_list', {pack_code: set.attributes.legacy_code})}">${set.attributes.name}</a></li>`);
+          }
+        });
+      }
+    });
+  });
 }
 buildFormatsView();
 </script>

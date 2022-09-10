@@ -42,4 +42,5 @@ parameters:
     oauth_test_client_secret: ~
     oauth_test_redirect_uri: ~
     images_path: ~
+    v3_api_url: 'http://localhost:3000'
     card_image_url: 'https://static.nrdbassets.com/v1'
