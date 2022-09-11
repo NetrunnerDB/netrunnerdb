@@ -22,6 +22,7 @@ done
 docker exec -it nrdb-dev bash -c "${CHOWN} /var/www/html/nrdb/web"
 docker exec -it nrdb-dev bash -c "if [ ! -d /var/www/html/nrdb/web/bundles ]; then mkdir /var/www/html/nrdb/web/bundles; fi"
 docker exec -it nrdb-dev bash -c "${CHOWN} /var/www/html/nrdb/web/bundles"
+docker exec -it nrdb-dev bash -c " ln -s /var/www/html/nrdb/vendor /var/www/html/vendor"
 
 docker exec -it nrdb-dev bash -c "cp /var/www/html/nrdb-bin/* /var/www/html/nrdb/bin/"
 docker exec -it nrdb-dev bash -c "${CHOWN} /var/www/html/nrdb/bin"
