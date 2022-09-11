@@ -22,7 +22,6 @@
   </div>
 </div>
 <script>
-
 function makeIdMap(json) {
   const out = new Map();
   json.data.forEach(d => {
@@ -34,7 +33,6 @@ function makeIdMap(json) {
 async function buildFormatsView() {
   const desiredFormats = new Set(['eternal', 'standard', 'startup']);
 
-  //const [snapshotsResponse, restrictionsResponse] = await Promise.all(
   const [r1, r2, r3, r4, r5] = await Promise.all(
     [
       fetch('{{ v3_api_url }}/api/v3/public/snapshots?filter[active]=true').then(data => data.json()),
@@ -46,14 +44,22 @@ async function buildFormatsView() {
   );
 
   const restrictions = makeIdMap(r2);
-  const cycles = r3.data;
   const cyclesById = makeIdMap(r3);
   const sets = r4.data;
   const setsById = makeIdMap(r4);
   const formatsById = makeIdMap(r5);
 
-  const formats = r1.data.filter(snapshot => desiredFormats.has(snapshot.attributes.format_id)).sort((a, b) => (a.attributes.format_id < b.attributes.format_id) ? 1 : -1);
+  // Support our supported formats in descending order by name.
+  const formats = r1.data
+      .filter(snapshot => desiredFormats.has(snapshot.attributes.format_id))
+      .sort((a, b) => (a.attributes.format_id < b.attributes.format_id) ? 1 : -1);
 
+  // Each Format is a column, with the following struction:
+  //   - Name
+  //   - Banlist (if any)
+  //   - Corp & Runner Decklist Search Links
+  //   - Legal Card Count
+  //   - Legal Cycles and Sets (if a cycle is incomplete)
   formats.forEach(format => {
     const legalCycleIds = new Set(format.attributes.card_cycle_ids);
     const incompleteCycleIds = new Set();
@@ -102,7 +108,7 @@ async function buildFormatsView() {
     $(`#${format.id}`).append(`<h4>Legal Card Cycles - <a href="${Routing.generate('cards_find', {q: 'e:' + packs.join('|') } )}">${format.attributes.num_cards} Unique Cards</a></h4>`);
 
     $(`#${format.id}`).append(`<ul id="${format.id}_cycles"></ul>`);
-    cycles.forEach(cycle => {
+    cyclesById.forEach((cycle, cycle_id) => {
       if (legalCycleIds.has(cycle.id)) {
         $(`#${format.id}_cycles`).append(`<li><a href="${Routing.generate('cards_cycle', {cycle_code: cycle.attributes.legacy_code})}">${cycle.attributes.name}</a></li>`);
       } else if (incompleteCycleIds.has(cycle.id)) {
