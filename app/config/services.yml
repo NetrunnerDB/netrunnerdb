@@ -20,6 +20,9 @@ services:
             - { name: doctrine.event_listener, entity: AppBundle\Entity\Decklist, event: postUpdate }
             - { name: doctrine.event_listener, entity: AppBundle\Entity\Decklist, event: postRemove }
 
+    AppBundle\Command\UserResetPasswordCommand:
+        arguments: ['@fos_user.util.user_manipulator']
+
     FOS\OAuthServerBundle\Entity\ClientManager:
         alias: 'fos_oauth_server.client_manager.default'
 
