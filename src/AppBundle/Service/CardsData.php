@@ -708,8 +708,8 @@ class CardsData
                         $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy(['code' => $condition[0]], ["dateStart" => "DESC"]);
                     }
                     if ($mwl) {
-                        // Exclude any cards banned by this ban list.
-                        $clauses[] = "(c.id NOT IN (SELECT mc.card_id FROM AppBundle:MwlCard mc WHERE mc.mwl_id = ?$i))";
+                        $cond = $operator == ":" ? "in" : "not in";
+                        $clauses[] = "(c.id $cond (SELECT mc.card_id FROM AppBundle:MwlCard mc WHERE mc.mwl_id = ?$i))";
                         $parameters[$i++] = $mwl->getId();
                     }
                     $i++;
