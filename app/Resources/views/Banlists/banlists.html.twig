@@ -3,87 +3,162 @@
 {% block title %}Ban Lists{% endblock %}
 
 {% block head %}
-
+<script src="{{ asset('/js/api.js') }}"></script>
 {% endblock %}
 
 {% block body %}
-<div class="container">
-
+<div class="container" id="banlists">
   <h1>{{ block('title') }}</h1>
+  <div>
+    <p>There are currently three official <a href="{{ path('formats') }}">formats</a> supported by NISEI: Startup, Standard, and Eternal. This page displays the ban lists for each.</p>
+    <h2>Explanation</h2>
+    <ul>
+      <li><b>Banned:</b> You cannot include any copies of a banned card in your deck.</li>
+      <li><b>Points:</b> Including any number of copies of a card with points in Eternal adds points to your deck. Eternal decks must have 7 points or fewer.</li>
+      <li><b>Restricted (deprecated):</b> You may include up to a full playset of only one restricted card.</li>
+      <li><b>Universal Influence (deprecated):</b> Cards with universal influence cost additional influence to include in a deck.</li>
+      <li><b>Identity Influence Reduction (deprecated):</b> These cards reduce your identity's influence limit by 1 for each copy (to a minimum of 1).</li>
+    </ul>
+    <p>See <a href="https://nisei.net/players/supported-formats/">NISEI's Supported Formats page</a> for more information.</p>
+  </div>
 
-  <h2>Startup Format</h2>
-  <div id="list">
-    <div class="row">
-      <div class="col-sm-12">
-        <p>No cards are currently banned in Startup.  Have a blast!</p>
-      </div>
+  <div role="tabpanel">
+    <!-- Nav tabs -->
+    <hr>
+    <ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom:20px">
+      <li role="presentation"><a href="#tab-pane-startup" role="tab" data-toggle="tab">Startup</a></li>
+      <li role="presentation" class="active"><a href="#tab-pane-standard" role="tab" data-toggle="tab">Standard</a></li>
+      <li role="presentation"><a href="#tab-pane-eternal" role="tab" data-toggle="tab">Eternal</a></li>
+    </ul>
+    <hr>
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane" id="tab-pane-startup"></div>
+      <div role="tabpanel" class="tab-pane active" id="tab-pane-standard"></div>
+      <div role="tabpanel" class="tab-pane" id="tab-pane-eternal"></div>
     </div>
   </div>
-  
-  <h2>Standard Format</h2>
-  <div id="list">
-    {% for banlist in banlists %}
-      <div class="row">
-        <div class="col-sm-12">
-          <h3><a name="{{ banlist.code }}"></a>{{ banlist.name }} {% if banlist.active %}(active){% endif %}</h3>
-          <p>{{ banlist.num_cards }} cards. Start Date {{ banlist.start_date|date("Y-m-d") }}</p>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-5">
-          <h3>Corp Cards</h3>
-          <ul>
-            {% for verdict in banlist.cards|keys|sort %}
-              <li><strong>{{ verdict }}</strong>
-                <ul>
-                  {% if verdict == 'Banned' and banlist.all_currents_banned %} 
-                    <li>All cards with <strong><a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'list','q':'s:current d:corp'}) }}">Current</a></strong> subtype.</li>
-                  {% endif %}
-                  {% for card in banlist.cards[verdict]|sort((a, b) => a.card.title <=> b.card.title) %}
-                    {% if card.card.side.code == 'corp' %}
-                      {% if banlist.all_currents_banned %}
-                        {% if "Current" not in card.card.keywords %} 
-                          <li><a href="{{ path('cards_zoom', {card_code:card.card.code}) }}">{{ card.card.title }}</a></li>
-                        {% endif %}
-                      {% else %}
-                        <li><a href="{{ path('cards_zoom', {card_code:card.card.code}) }}">{{ card.card.title }}</a></li>
-                      {% endif %}
-                    {% endif %}
-                  {% endfor %}
-                </ul>
-              </li> 
-            {% endfor %}
-          </ul>
-        </div>
-  
-        <div class="col-sm-7">
-          <h3>Runner Cards</h3>
-          <ul>
-            {% for verdict in banlist.cards|keys|sort %}
-              <li><strong>{{ verdict }}</strong>
-                <ul>
-                  {% if verdict == 'Banned' and banlist.all_currents_banned %} 
-                    <li>All cards with <strong><a href="{{ path('cards_find',{type:'find',_locale:app.request.locale,'view':'list','q':'s:current d:runner'}) }}">Current</a></strong> subtype.</li>
-                  {% endif %}
-                  {% for card in banlist.cards[verdict]|sort((a, b) => a.card.title <=> b.card.title) %}
-                    {% if card.card.side.code == 'runner' %}
-                      {% if banlist.all_currents_banned %}
-                        {% if "Current" not in card.card.keywords %} 
-                          <li><a href="{{ path('cards_zoom', {card_code:card.card.code}) }}">{{ card.card.title }}</a></li>
-                        {% endif %}
-                      {% else %}
-                        <li><a href="{{ path('cards_zoom', {card_code:card.card.code}) }}">{{ card.card.title }}</a></li>
-                      {% endif %}
-                    {% endif %}
-                  {% endfor %}
-                </ul>
-              </li> 
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
 </div>
+
+<script>
+// Creates a list of cards with the given header
+function generateList(header, cards, pre='') {
+  if (pre.length > 0) {
+    pre = `<li>${pre}</li>`;
+  }
+  return cards.reduce((text, card) => {
+    return text + `<li><a href="${cardToLink(card)}">${card.attributes.title}</a></li>`;
+  }, `<li><strong>${header}</strong><ul>${pre}`) + '</ul></li>';
+}
+
+// Generates the text for a single restriction
+function restrictionToText(cards, format, restriction) {
+  a = restriction.attributes;
+  code = restriction.id;
+  name = a.name;
+  active = code == format.attributes.active_restriction_id;
+  date_start = a.date_start;
+  count = a.size;
+
+  // Get the affected cards by restriction type
+  v = a.verdicts;
+  [corp, runner] = splitBySide (cards);
+  corpBanned = removeCardsWithSubtypes(getCardsById (corp, v.banned), a.banned_subtypes);
+  corpRestricted = getCardsById (corp, v.restricted);
+  corpUniversalFactionCost = getCardsByIdFromObj (corp, v.universal_faction_cost);
+  corpGlobalPenalty = getCardsByIdFromObj (corp, v.global_penalty);
+  corpPoints = getCardsByIdFromObj (corp, v.points);
+  runnerBanned = removeCardsWithSubtypes(getCardsById (runner, v.banned), a.banned_subtypes);
+  runnerRestricted = getCardsById (runner, v.restricted);
+  runnerUniversalFactionCost = getCardsByIdFromObj (runner, v.universal_faction_cost);
+  runnerGlobalPenalty = getCardsByIdFromObj (runner, v.global_penalty);
+  runnerPoints = getCardsByIdFromObj (runner, v.points);
+
+  // Generate corp restrictions
+  corpBody = '<div class="col-md-6"><h3>Corp Cards</h3><ul>';
+  if (corpBanned.length > 0) {
+    if (a.banned_subtypes.length > 0) { // NOTE: currently hardcoded to only be currents
+      link = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':'s:current d:corp'});
+      pre = `All cards with the <strong><a href="${link}">Current</a></strong> subtype.`;
+    }
+    corpBody += generateList('Banned', corpBanned, pre);
+  }
+  if (corpRestricted.length > 0) {corpBody += generateList('Restricted', corpRestricted);}
+  Object.keys(corpUniversalFactionCost).forEach(p => {corpBody += generateList(`+${p} Universal Influence`, corpUniversalFactionCost[p]);});
+  Object.keys(corpGlobalPenalty).forEach(p => {corpBody += generateList(`Identity Influence Reduction`, corpGlobalPenalty[p]);});
+  Object.keys(corpPoints).forEach(p => {corpBody += generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, corpPoints[p]);});
+  corpBody += '</ul></div>';
+
+  // Generate runner restrictions
+  runnerBody = '<div class="col-md-6"><h3>Runner Cards</h3><ul>';
+  if (runnerBanned.length > 0) {
+    if (a.banned_subtypes.length > 0) { // NOTE: currently hardcoded to only be currents
+      link = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':'s:current d:runner'});
+      pre = `All cards with the <strong><a href="${link}">Current</a></strong> subtype.`;
+    }
+    runnerBody += generateList('Banned', runnerBanned, pre);
+  }
+  if (runnerRestricted.length > 0) {runnerBody += generateList('Restricted', runnerRestricted);}
+  Object.keys(runnerUniversalFactionCost).forEach(p => {runnerBody += generateList(`+${p} Universal Influence`, runnerUniversalFactionCost[p]);});
+  Object.keys(runnerGlobalPenalty).forEach(p => {runnerBody += generateList(`Identity Influence Reduction`, runnerGlobalPenalty[p]);});
+  Object.keys(runnerPoints).forEach(p => {runnerBody += generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, runnerPoints[p]);});
+  runnerBody += '</ul></div>';
+
+  // Output
+  search = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`b!${code.replaceAll('_', '-')}`});
+  header = `<div class="panel-heading" style="position: relative;"><h3>${name}${active ? " <em>(active)</em>" : ""}</h3><button class="list-toggle button-tr">Hide</button></div>`;
+  subheader = `<div class="panel-heading"><a href=${search}>${count} cards</a>. Start Date: ${date_start}.</div>`;
+  body = `<div class="panel-body"><div class="container-fluid"><div class="row flex-fill">${corpBody + runnerBody}</div><div class="row"></div></div></div>`;
+  return `<div class="panel panel-default">${header + subheader + body}</div>`;
+}
+
+async function buildBanlistsView() {
+  // Add a temporary loading indicator
+  $('.tab-pane').append(
+    '<p class="temp-loading">Loading...</p>'
+  );
+
+  // Load data from API
+  const desiredFormats = ['startup', 'standard', 'eternal'];
+  const formats = await Promise.all(desiredFormats.map(f => fetch(`http://localhost:3000/api/v3/public/formats/${f}`).then(data => data.json()).then(json => json.data)))
+  const cards = await fetchCards();
+  const rData = await fetch('http://localhost:3000/api/v3/public/restrictions').then(data => data.json());
+  const restrictions = await Promise.all(formats.map(f =>
+    fetch(`http://localhost:3000/api/v3/public/snapshots?filter[format_id]=${f.id}`)
+      .then(data => data.json())
+      .then(json => json.data.sort((a,b) => a.attributes.date_start < b.attributes.date_start)
+                             .map(snapshot => snapshot.attributes.restriction_id)
+                             .map(id => getRestrictionById(rData.data, id))
+                             .filter(Boolean)) // Remove nulls
+  ));
+
+  // Remove the loading indicator
+  $('.temp-loading').remove();
+
+  // Add each format to the page
+  formats.forEach((format, i) => {
+    rs = restrictions[i].length == 0
+       ? `<p>No cards are currently banned in ${format.attributes.name}. Have a blast!</p>`
+       : restrictions[i].map(r => restrictionToText (cards, format, r)).join('');
+    $(`#tab-pane-${format.id}`).append(
+      `<div id="list"><div id="${format.id}" class="row"><div class="col-sm-12">${rs}</div></div></div>`
+    );
+  });
+
+  // Set up event handling
+  $('.list-toggle').on('click', function (event) {
+    if ($(this).html() == 'Hide') {
+      $(this).html('Show');
+      $(this).closest('.panel').children(':not(:first-child)').hide(250);
+    } else {
+      $(this).html('Hide');
+      $(this).closest('.panel').children().show(250);
+    }
+  });
+}
+
+// Create the banlists view on load
+buildBanlistsView();
+</script>
+
 {% endblock %}
