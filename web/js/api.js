@@ -1,7 +1,7 @@
 // Fetches all cards from the v2 API
 async function fetchCards() {
   data = [];
-  json = await fetch('http://localhost:3000/api/v3/public/cards').then(data => data.json());
+  json = await fetch(`${v3_api_url}/api/v3/public/cards`).then(data => data.json());
   data.push(...json.data);
   while ('next' in json.links) {
     json = await fetch(json.links.next).then(data => data.json());
