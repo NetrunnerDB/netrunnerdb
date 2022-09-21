@@ -47,6 +47,7 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     globals:
+        v3_api_url: '%v3_api_url%'
         card_image_url: '%card_image_url%'
         texts: '@AppBundle\Service\TextProcessor'
         supported_locales: "%supported_locales%"

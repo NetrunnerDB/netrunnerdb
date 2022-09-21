@@ -9,7 +9,7 @@
         if (card.keywords)
             type += '<span class="card-keywords">: ' + card.keywords + '</span>';
         if (card.type_code == "agenda")
-            type += ' &middot; <span class="card-prop">' + card.advancement_cost + '/' + card.agenda_points + '<span class="icon icon-agenda-points"></span></span>';
+            type += ' &middot; <span class="card-prop">' + (card.advancement_cost === null ? 'X' : card.advancement_cost) + '/' + card.agenda_points + '<span class="icon icon-agenda-points"></span></span>';
         if (card.type_code == "identity" && card.side_code == "corp")
             type += ' &middot; <span class="card-prop">' + card.minimum_deck_size + '/' + (card.influence_limit || '&infin;') + '</span>';
         if (card.type_code == "identity" && card.side_code == "runner")

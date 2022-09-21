@@ -57,11 +57,11 @@ class CardsData
     /** @var Packages $packages */
     private $packages;
 
-  	/** @var Illustrators $illustrators */
-  	private $illustrators;
+    /** @var Illustrators $illustrators */
+    private $illustrators;
 
     /** @var CardAliases $illustrators */
-  	private $cardAliases;
+    private $cardAliases;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -142,10 +142,10 @@ class CardsData
     {
         /** @var Cycle[] $list_cycles */
         $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "DESC"]);
-        $non_standard_packs = ['draft', 'napd', 'ms'];
+        $non_standard_packs = ['draft', 'napd'];
         $startup_cycles = ['system-gateway', 'system-update-2021', 'ashes', 'borealis'];
-        $non_startup_cycles = ['ms'];
-        $non_eternal_packs = ['draft', 'napd', 'tdc', 'ms'];
+        $non_startup_cycles = [];
+        $non_eternal_packs = ['draft', 'napd', 'tdc'];
         $cycles = [];
         foreach ($list_cycles as $cycle) {
             $packs = [];
@@ -490,21 +490,32 @@ class CardsData
                 case 'g': // advancementcost
                     $or = [];
                     foreach ($condition as $arg) {
-                        switch ($operator) {
-                            case ':':
-                                $or[] = "(c.advancementCost = ?$i)";
-                                break;
-                            case '!':
-                                $or[] = "(c.advancementCost != ?$i)";
-                                break;
-                            case '<':
-                                $or[] = "(c.advancementCost < ?$i)";
-                                break;
-                            case '>':
-                                $or[] = "(c.advancementCost > ?$i)";
-                                break;
+                        if (($arg === 'x') or ($arg === 'X')) {
+                            switch ($operator) {
+                                case ':':
+                                    $or[] = "(c.advancementCost is null and (t.code = 'agenda'))";
+                                    break;
+                                case '!':
+                                    $or[] = "(c.advancementCost is not null and (t.code = 'agenda'))";
+                                    break;
+                            }
+                        } else {
+                            switch ($operator) {
+                                case ':':
+                                    $or[] = "(c.advancementCost = ?$i)";
+                                    break;
+                                case '!':
+                                    $or[] = "(c.advancementCost != ?$i)";
+                                    break;
+                                case '<':
+                                    $or[] = "(c.advancementCost < ?$i)";
+                                    break;
+                                case '>':
+                                    $or[] = "(c.advancementCost > ?$i)";
+                                    break;
+                            }
+                            $parameters[$i++] = $arg;
                         }
-                        $parameters[$i++] = $arg;
                     }
                     $clauses[] = implode($operator == '!' ? " and " : " or ", $or);
                     break;
@@ -858,6 +869,10 @@ class CardsData
         // setting the card cost to X if the cost is null and the card is not of a costless type
         if ($cardinfo['cost'] === null && !in_array($cardinfo['type_code'], ['agenda', 'identity'])) {
             $cardinfo['cost'] = 'X';
+        }
+
+        if ($cardinfo['advancementcost'] === null && $cardinfo['type_code'] == 'agenda') {
+            $cardinfo['advancementcost'] = 'X';
         }
 
         // setting the card strength to X if the strength is null and the card is ICE or Program - Icebreaker

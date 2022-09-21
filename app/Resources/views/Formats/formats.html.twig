@@ -13,75 +13,118 @@
       <div class="col-sm-12">
         <h2>NISEI Supported Formats</h2>
         <p>Card Pools and links to deck searches legal in those formats.</p>
-		<p>See <a href="https://nisei.net/players/supported-formats/">NISEI's Supported Formats page</a> for more information.</p>
+        <p>See <a href="https://nisei.net/players/supported-formats/">NISEI's Supported Formats page</a> for more information.</p>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-sm-6">
-        <h2>Startup Format</h2>
-		<h4>Current Ban List</h4>
-		<p>None</p>
+    <div class="row" id="formats"></div>
 
-        <h4>Corp Decklists</h4>
-        <ul>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'corp', 'packs':startup_packs}) }}">Any Corp</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'haas-bioroid', 'packs':startup_packs}) }}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'jinteki', 'packs':startup_packs}) }}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'nbn', 'packs':startup_packs}) }}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'weyland-consortium', 'packs':startup_packs}) }}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>
-        </ul>
-        <h4>Runner Decklists</h4>
-        <ul>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'runner', 'packs':startup_packs}) }}">Any Runner</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'anarch', 'packs':startup_packs}) }}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'criminal', 'packs':startup_packs}) }}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'shaper', 'packs':startup_packs}) }}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'adam', 'packs':startup_packs}) }}"><span class="icon icon-adam influence-adam"></span> Adam</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'apex', 'packs':startup_packs}) }}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'sunny-lebeau', 'packs':startup_packs}) }}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>
-        </ul>
-        <h4>Legal Card Cycles - {{ num_startup_cards }} unique cards</h4>
-        <ul>
-        {% for cycle in startup_cycles %}
-          <li><a href="{{ path('cards_cycle', {cycle_code:cycle.code }) }}">{{ cycle.name }}</a></li>
-        {% endfor %}
-        </ul>
-      </div>
-
-      <div class="col-sm-6">
-        <h2>Standard Format</h2>
-		<h4>Current Ban List</h4>
-		<p><strong><a href="{{ path('banlists') }}#{{ standard_banlist.code }}">{{ standard_banlist.name }}</a></strong>, active as of <strong>{{ standard_banlist.dateStart|date("Y-m-d") }}</strong></p>
-
-        <h4>Corp Decklists</h4>
-        <ul>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'corp', 'packs':standard_packs}) }}">Any Corp</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'haas-bioroid', 'packs':standard_packs}) }}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'jinteki', 'packs':standard_packs}) }}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'nbn', 'packs':standard_packs}) }}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'weyland-consortium', 'packs':standard_packs}) }}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>
-        </ul>
-
-        <h4>Runner Decklists</h4>
-        <ul>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'runner', 'packs':standard_packs}) }}">Any Runner</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'anarch', 'packs':standard_packs}) }}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'criminal', 'packs':standard_packs}) }}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'shaper', 'packs':standard_packs}) }}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'adam', 'packs':standard_packs}) }}"><span class="icon icon-adam influence-adam"></span> Adam</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'apex', 'packs':standard_packs}) }}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>
-            <li><a href="{{ path('decklists_list', {type:'find', 'faction':'sunny-lebeau', 'packs':standard_packs}) }}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>
-        </ul>
-
-        <h4>Legal Card Cycles - {{ num_standard_cards }} unique cards</h4>
-        <ul>
-        {% for cycle in standard_cycles %}
-          <li><a href="{{ path('cards_cycle', {cycle_code:cycle.code }) }}">{{ cycle.name }}</a></li>
-        {% endfor %}
-        </ul>
-      </div>
-    </div>
   </div>
 </div>
+<script>
+function makeIdMap(json) {
+  const out = new Map();
+  json.data.forEach(d => {
+    out.set(d.id, d);
+  });
+  return out;
+}
+
+async function buildFormatsView() {
+  const desiredFormats = new Set(['eternal', 'standard', 'startup']);
+
+  const [r1, r2, r3, r4, r5] = await Promise.all(
+    [
+      fetch('{{ v3_api_url }}/api/v3/public/snapshots?filter[active]=true').then(data => data.json()),
+      fetch('{{ v3_api_url }}/api/v3/public/restrictions').then(data => data.json()),
+      fetch('{{ v3_api_url }}/api/v3/public/card_cycles?sort=-date_release').then(data => data.json()),
+      fetch('{{ v3_api_url }}/api/v3/public/card_sets?sort=-date_release').then(data => data.json()),
+      fetch('{{ v3_api_url }}/api/v3/public/formats').then(data => data.json()),
+    ]
+  );
+
+  const restrictions = makeIdMap(r2);
+  const cyclesById = makeIdMap(r3);
+  const sets = r4.data;
+  const setsById = makeIdMap(r4);
+  const formatsById = makeIdMap(r5);
+
+  // Support our supported formats in descending order by name.
+  const formats = r1.data
+      .filter(snapshot => desiredFormats.has(snapshot.attributes.format_id))
+      .sort((a, b) => (a.attributes.format_id < b.attributes.format_id) ? 1 : -1);
+
+  // Each Format is a column, with the following struction:
+  //   - Name
+  //   - Banlist (if any)
+  //   - Corp & Runner Decklist Search Links
+  //   - Legal Card Count
+  //   - Legal Cycles and Sets (if a cycle is incomplete)
+  formats.forEach(format => {
+    const legalCycleIds = new Set(format.attributes.card_cycle_ids);
+    const incompleteCycleIds = new Set();
+    // TODO(plural): Accommodate multiple sets from an incomplete cycle and sort them by descending release date.
+    const incompleteSetIds = new Set();
+    format.attributes.card_set_ids.forEach(s => {
+      if (!legalCycleIds.has(setsById.get(s).attributes.card_cycle_id)) {
+        incompleteCycleIds.add(setsById.get(s).attributes.card_cycle_id);
+        incompleteSetIds.add(s);
+      }
+    });
+
+    $('#formats').append(`<div class="col-sm-4" id="${format.id}"><h2>${formatsById.get(format.attributes.format_id).attributes.name} Format</h2></div>`);
+    $(`#${format.id}`).append(`<h4>Current Ban List</h4>`);
+    if (format.attributes.restriction_id) {
+      const r = restrictions.get(format.attributes.restriction_id);
+      $(`#${format.id}`).append(`<p><strong><a href="#">${r.attributes.name}</a></strong><br />active as of <strong>${r.attributes.date_start}</strong></p>`);
+    } else {
+      $(`#${format.id}`).append(`<p><strong>None<br />&nbsp;</p>`);
+    }
+
+    $(`#${format.id}`).append(`<h4>Corp Decklists</h4>`);
+    $(`#${format.id}`).append(`<ul id="${format.id}_corp_decklists"></ul>`);
+    // TODO(plural): Wire up current restriction in the decklist search after making a legacy code for that as well.
+    const packs = format.attributes.card_set_ids.map(s => setsById.get(s).attributes.legacy_code).sort();
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'corp', 'packs': packs})}">Any Corp</a></li>`);
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'h', 'packs': packs})}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>`);
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'j', 'packs': packs})}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>`);
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'n', 'packs': packs})}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>`);
+    $(`#${format.id}_corp_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'w', 'packs': packs})}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>`);
+
+    $(`#${format.id}`).append(`<h4>Runner Decklists</h4>`);
+    $(`#${format.id}`).append(`<ul id="${format.id}_runner_decklists"></ul>`);
+    $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'runner', 'packs': packs})}">Any Runner</a></li>`);
+    $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'a', 'packs': packs})}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>`);
+    $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'c', 'packs': packs})}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>`);
+    $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'s', 'packs': packs})}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>`);
+
+    // Even though there are mini-faction cards in other sets, the IDs are only in Data & Destiny.
+    if (legalCycleIds.has('data_and_destiny')) {
+      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'d', 'packs': packs})}"><span class="icon icon-adam influence-adam"></span> Adam</a></li>`);
+      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'p', 'packs': packs})}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>`);
+      $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'u', 'packs': packs})}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>`);
+    }
+          
+    $(`#${format.id}`).append(`<h4>Legal Card Cycles - <a href="${Routing.generate('cards_find', {q: 'e:' + packs.join('|') } )}">${format.attributes.num_cards} Unique Cards</a></h4>`);
+
+    $(`#${format.id}`).append(`<ul id="${format.id}_cycles"></ul>`);
+    cyclesById.forEach((cycle, cycle_id) => {
+      if (legalCycleIds.has(cycle.id)) {
+        $(`#${format.id}_cycles`).append(`<li><a href="${Routing.generate('cards_cycle', {cycle_code: cycle.attributes.legacy_code})}">${cycle.attributes.name}</a></li>`);
+      } else if (incompleteCycleIds.has(cycle.id)) {
+        const incompleteListId = `${format.id}_cycles_${cycle.id}`;
+        if (!$(`#${incompleteListId}`).length) {
+          $(`#${format.id}_cycles`).append(`<li>${cycle.attributes.name}<ul id=${incompleteListId}></ul></li>`);
+        }
+        sets.forEach(set => {
+          if (set.attributes.card_cycle_id == cycle.id && incompleteSetIds.has(set.id)) {
+            $(`#${incompleteListId}`).append(`<li><a href="${Routing.generate('cards_list', {pack_code: set.attributes.legacy_code})}">${set.attributes.name}</a></li>`);
+          }
+        });
+      }
+    });
+  });
+}
+buildFormatsView();
+</script>
 {% endblock %}
