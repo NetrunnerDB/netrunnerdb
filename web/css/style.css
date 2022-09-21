@@ -714,15 +714,6 @@ ul.rulings-list blockquote {
 
 
 
-/* Corner buttons */
-.button-tr {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-}
-
-
-
 /******** fix for twitter typehead + bootstrap input-group-btn ***********/
 
 .input-group .twitter-typeahead {

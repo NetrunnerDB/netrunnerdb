@@ -62,17 +62,17 @@ function restrictionToText(cards, format, restriction) {
 
   // Get the affected cards by restriction type
   v = a.verdicts;
-  [corp, runner] = splitBySide (cards);
-  corpBanned = removeCardsWithSubtypes(getCardsById (corp, v.banned), a.banned_subtypes);
+  [corp, runner] = splitBySide(cards);
+  corpBanned = removeCardsWithSubtypes(getCardsById(corp, v.banned), a.banned_subtypes);
   corpRestricted = getCardsById (corp, v.restricted);
-  corpUniversalFactionCost = getCardsByIdFromObj (corp, v.universal_faction_cost);
-  corpGlobalPenalty = getCardsByIdFromObj (corp, v.global_penalty);
-  corpPoints = getCardsByIdFromObj (corp, v.points);
-  runnerBanned = removeCardsWithSubtypes(getCardsById (runner, v.banned), a.banned_subtypes);
-  runnerRestricted = getCardsById (runner, v.restricted);
-  runnerUniversalFactionCost = getCardsByIdFromObj (runner, v.universal_faction_cost);
-  runnerGlobalPenalty = getCardsByIdFromObj (runner, v.global_penalty);
-  runnerPoints = getCardsByIdFromObj (runner, v.points);
+  corpUniversalFactionCost = getCardsByIdFromObj(corp, v.universal_faction_cost);
+  corpGlobalPenalty = getCardsByIdFromObj(corp, v.global_penalty);
+  corpPoints = getCardsByIdFromObj(corp, v.points);
+  runnerBanned = removeCardsWithSubtypes(getCardsById(runner, v.banned), a.banned_subtypes);
+  runnerRestricted = getCardsById(runner, v.restricted);
+  runnerUniversalFactionCost = getCardsByIdFromObj(runner, v.universal_faction_cost);
+  runnerGlobalPenalty = getCardsByIdFromObj(runner, v.global_penalty);
+  runnerPoints = getCardsByIdFromObj(runner, v.points);
 
   // Generate corp restrictions
   corpBody = '<div class="col-md-6"><h3>Corp Cards</h3><ul>';
@@ -106,7 +106,10 @@ function restrictionToText(cards, format, restriction) {
 
   // Output
   search = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`b!${code.replaceAll('_', '-')}`});
-  header = `<div class="panel-heading" style="position: relative;"><h3>${name}${active ? " <em>(active)</em>" : ""}</h3><button class="list-toggle button-tr">Hide</button></div>`;
+  header = `<div class="panel-heading" style="display: flex;">` +
+           `<h3 style="margin: 15px 0 10px 0">${name}${active ? " <em>(active)</em>" : ""}</h3>` +
+           `<button class="list-toggle btn btn-secondary" style="margin-left:auto; margin-top: auto; margin-bottom: auto;">Hide</button>` +
+           `</div>`;
   subheader = `<div class="panel-heading"><a href=${search}>${count} cards</a>. Start Date: ${date_start}.</div>`;
   body = `<div class="panel-body"><div class="container-fluid"><div class="row flex-fill">${corpBody + runnerBody}</div><div class="row"></div></div></div>`;
   return `<div class="panel panel-default">${header + subheader + body}</div>`;
@@ -120,11 +123,11 @@ async function buildBanlistsView() {
 
   // Load data from API
   const desiredFormats = ['startup', 'standard', 'eternal'];
-  const formats = await Promise.all(desiredFormats.map(f => fetch(`http://localhost:3000/api/v3/public/formats/${f}`).then(data => data.json()).then(json => json.data)))
+  const formats = await Promise.all(desiredFormats.map(f => fetch(`{{ v3_api_url }}/api/v3/public/formats/${f}`).then(data => data.json()).then(json => json.data)))
   const cards = await fetchCards();
-  const rData = await fetch('http://localhost:3000/api/v3/public/restrictions').then(data => data.json());
+  const rData = await fetch('{{ v3_api_url }}/api/v3/public/restrictions').then(data => data.json());
   const restrictions = await Promise.all(formats.map(f =>
-    fetch(`http://localhost:3000/api/v3/public/snapshots?filter[format_id]=${f.id}`)
+    fetch(`{{ v3_api_url }}/api/v3/public/snapshots?filter[format_id]=${f.id}`)
       .then(data => data.json())
       .then(json => json.data.sort((a,b) => a.attributes.date_start < b.attributes.date_start)
                              .map(snapshot => snapshot.attributes.restriction_id)
@@ -139,7 +142,8 @@ async function buildBanlistsView() {
   formats.forEach((format, i) => {
     rs = restrictions[i].length == 0
        ? `<p>No cards are currently banned in ${format.attributes.name}. Have a blast!</p>`
-       : restrictions[i].map(r => restrictionToText (cards, format, r)).join('');
+       : '<p><button id="show-all" class="btn btn-secondary">Show all</button><button id="hide-all" class="pull-right btn btn-secondary">Hide all</button></p>' +
+         restrictions[i].map(r => restrictionToText (cards, format, r)).join('');
     $(`#tab-pane-${format.id}`).append(
       `<div id="list"><div id="${format.id}" class="row"><div class="col-sm-12">${rs}</div></div></div>`
     );
@@ -154,6 +158,14 @@ async function buildBanlistsView() {
       $(this).html('Hide');
       $(this).closest('.panel').children().show(250);
     }
+  });
+  $('#show-all').on('click', function (event) {
+    $('.panel').children().show(250);
+    $('.list-toggle').html('Hide');
+  });
+  $('#hide-all').on('click', function (event) {
+    $('.panel').children(':not(:first-child)').hide(250);
+    $('.list-toggle').html('Show');
   });
 }
 
