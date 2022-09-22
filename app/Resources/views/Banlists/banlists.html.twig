@@ -119,7 +119,7 @@ async function buildBanlistsView() {
 
   // Load data from API
   const desiredFormats = ['startup', 'standard', 'eternal'];
-  const formats = await Promise.all(desiredFormats.map(f => fetch(`{{ v3_api_url }}/api/v3/public/formats/${f}`).then(data => data.json()).then(json => json.data)))
+  const formats = await Promise.all(desiredFormats.map(f => fetch(`{{ v3_api_url }}/api/v3/public/formats/${f}`).then(data => data.json()).then(json => json.data)));
   const cards = await fetchCards();
   const rData = await fetch('{{ v3_api_url }}/api/v3/public/restrictions').then(data => data.json());
   const restrictions = await Promise.all(formats.map(f =>
