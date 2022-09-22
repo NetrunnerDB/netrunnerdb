@@ -138,10 +138,10 @@ async function buildBanlistsView() {
   formats.forEach((format, i) => {
     rs = restrictions[i].length == 0
        ? `<p>No cards are currently banned in ${format.attributes.name}. Have a blast!</p>`
-       : '<p><button id="show-all" class="btn btn-secondary">Show all</button><button id="hide-all" class="pull-right btn btn-secondary">Hide all</button></p>' +
+       : '<p><button class="show-all btn btn-secondary">Show all</button><button class="hide-all pull-right btn btn-secondary">Hide all</button></p>' +
          restrictions[i].map(r => restrictionToText (cards, format, r)).join('');
     $(`#tab-pane-${format.id}`).append(
-      `<div id="list"><div id="${format.id}" class="row"><div class="col-sm-12">${rs}</div></div></div>`
+      `<div class="list"><div id="${format.id}" class="row"><div class="col-sm-12">${rs}</div></div></div>`
     );
   });
 
@@ -155,13 +155,15 @@ async function buildBanlistsView() {
       $(this).closest('.panel').children().show(250);
     }
   });
-  $('#show-all').on('click', function (event) {
-    $('.panel').children().show(250);
-    $('.list-toggle').html('Hide');
+  $('.show-all').on('click', function (event) {
+    let panels = $(this).closest('.list');
+    panels.find('.panel').children().show(250);
+    panels.find('.list-toggle').html('Hide');
   });
-  $('#hide-all').on('click', function (event) {
-    $('.panel').children(':not(:first-child)').hide(250);
-    $('.list-toggle').html('Show');
+  $('.hide-all').on('click', function (event) {
+    let panels = $(this).closest('.list');
+    panels.find('.panel').children(':not(:first-child)').hide(250);
+    panels.find('.list-toggle').html('Show');
   });
 }
 
