@@ -107,7 +107,7 @@ function restrictionToText(cards, format, restriction) {
            `<button class="list-toggle btn btn-secondary" style="margin-left:auto; margin-top: auto; margin-bottom: auto;">Hide</button>` +
            `</div>`;
   subheader = `<div class="panel-heading"><a href=${search}>${count} cards</a>. Start Date: ${date_start}.</div>`;
-  body = `<div class="panel-body"><div class="container-fluid"><div class="row flex-fill">${corpBody + runnerBody}</div><div class="row"></div></div></div>`;
+  body = `<div class="panel-body"><div class="container-fluid"><div class="row flex-fill">${corpBody + runnerBody}</div></div></div>`;
   return `<div class="panel panel-default">${header + subheader + body}</div>`;
 }
 
