@@ -54,6 +54,19 @@ function splitBySide(cards) {
 }
 
 // Generates a link to a card by creating a link to its most recent printing
-function cardToLink(card) {
+function cardToLatestPrintingLink(card) {
   return Routing.generate('cards_zoom', {card_code:card.attributes.latest_printing_id});
+}
+// Formats a card into an anchor tag
+function cardToLatestPrintingAnchor(printing) {
+  return `<a href="${printingToLink(printing)}">${printing.attributes.title}</a>`;
+}
+
+// Generates a link to a printing
+function printingToLink(printing) {
+  return Routing.generate('cards_zoom', {card_code:printing.id});
+}
+// Formats a printing into an anchor tag
+function printingToAnchor(printing) {
+  return `<a href="${printingToLink(printing)}">${printing.attributes.title}</a>`;
 }

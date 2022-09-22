@@ -43,7 +43,7 @@ function generateList(header, cards, pre='') {
     pre = `<li>${pre}</li>`;
   }
   return cards.reduce((text, card) => {
-    return text + `<li><a href="${cardToLink(card)}">${card.attributes.title}</a></li>`;
+    return text + `<li><a href="${cardToLatestPrintingLink(card)}">${card.attributes.title}</a></li>`;
   }, `<li><strong>${header}</strong><ul>${pre}`) + '</ul></li>';
 }
 

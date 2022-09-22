@@ -837,6 +837,12 @@ rotation:
     defaults:
         _controller: AppBundle:Rotation:get
 
+illustrators:
+    path: /{_locale}/illustrators
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Illustrators:get
+
 claims:
     resource: "@AppBundle/Controller/ClaimsController.php"
     type:     annotation
