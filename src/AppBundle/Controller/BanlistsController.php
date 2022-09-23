@@ -38,6 +38,8 @@ class BanlistsController extends Controller
             'standard-ban-list-21-05' => true,
             'standard-ban-list-21-06' => true,
             'standard-ban-list-21-10' => true,
+            'standard-ban-list-22-08' => true,
+            'standard-ban-list-22-09' => true,
         ];
 
         foreach ($mwls as $mwl) {
