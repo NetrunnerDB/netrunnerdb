@@ -1,3 +1,5 @@
+<script type="text/javascript">
+
 // Fetches the json from an api url
 async function fetchJson(url) {
   return await fetch(url).then(data => data.json());
@@ -66,3 +68,5 @@ function splitBySide(cards) {
 function cardToLatestPrintingLink(card) {
   return Routing.generate('cards_zoom', {card_code:card.attributes.latest_printing_id});
 }
+
+</script>
