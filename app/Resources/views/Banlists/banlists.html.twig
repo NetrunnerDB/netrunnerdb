@@ -66,8 +66,6 @@ async function buildBanlistsView() {
   // Load data from API
   const desiredFormats = ['startup', 'standard', 'eternal'];
   const formats = await Promise.all(desiredFormats.map(f => fetch(`{{ v3_api_url }}/api/v3/public/formats/${f}`).then(data => data.json()).then(json => json.data)));
-  const cards = await fetchCards('?include=card_subtypes');
-  const restrictionsById = makeIdMap(await fetch('{{ v3_api_url }}/api/v3/public/restrictions').then(data => data.json()));
   const restrictions = await Promise.all(formats.map(f =>
     fetchData(f.relationships.restrictions.links.related).then(data => data.sort((a,b) => a.attributes.date_start < b.attributes.date_start))
   ));
@@ -78,19 +76,21 @@ async function buildBanlistsView() {
   // Add each format to the page
   for (const [i, f] of formats.entries()) {
     $(`#tab-pane-${f.id}`).append(`<div class="list"><div class="row"><div id="${f.id}" class="col-sm-12"></div></div></div>`);
+    const jqCol = $(`#${f.id}`);
     if (restrictions[i].length == 0) {
-      $(`#${f.id}`).append(`<p>No cards are currently banned in ${f.attributes.name}. Have a blast!</p>`);
+      jqCol.append(`<p>No cards are currently banned in ${f.attributes.name}. Have a blast!</p>`);
     } else {
-      $(`#${f.id}`).append('<p><button class="show-all btn btn-secondary">Show all</button><button class="hide-all pull-right btn btn-secondary">Hide all</button></p>');
+      jqCol.append('<p><button class="show-all btn btn-secondary">Show all</button><button class="hide-all pull-right btn btn-secondary">Hide all</button></p>');
       for (const r of restrictions[i]) {
         // Create panel
-        $(`#${f.id}`).append(`<div id="restriction-${r.id}" class="panel panel-default"></div>`);
+        jqCol.append(`<div id="restriction-${r.id}" class="panel panel-default"></div>`);
+        const jqPanel = $(`#restriction-${r.id}`);
         // Add header
-        $(`#restriction-${r.id}`).append(`<div class="panel-heading" style="display: flex;"></div>`);
-        $(`#restriction-${r.id} > .panel-heading`).append(`<h3 style="margin: 15px 0 10px 0">${r.attributes.name}${(r.id == f.attributes.active_restriction_id) ? " <em>(active)</em>" : ""}</h3>`);
-        $(`#restriction-${r.id} > .panel-heading`).append(`<button class="list-toggle btn btn-secondary" style="margin-left:auto; margin-top: auto; margin-bottom: auto;">Hide</button>`);
+        jqPanel.append(`<div class="panel-heading" style="display: flex;"></div>`);
+        jqPanel.find(`.panel-heading`).append(`<h3 style="margin: 15px 0 10px 0">${r.attributes.name}${(r.id == f.attributes.active_restriction_id) ? " <em>(active)</em>" : ""}</h3>`)
+                                      .append(`<button class="list-toggle btn btn-secondary" style="margin-left:auto; margin-top: auto; margin-bottom: auto;">Hide</button>`);
         // Add subheader (search link hyphenated for legacy IDs)
-        $(`#restriction-${r.id}`).append(`<div class="panel-heading"><a href=${Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`b!${r.id.replaceAll('_', '-')}`})}>${r.attributes.size} cards</a>. Start Date: ${r.attributes.date_start}.</div>`);
+        jqPanel.append(`<div class="panel-heading"><a href=${Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`b!${r.id.replaceAll('_', '-')}`})}>${r.attributes.size} cards</a>. Start Date: ${r.attributes.date_start}.</div>`);
 
         // Get the affected cards by restriction type
         let cards = await fetchCards(`?include=card_subtypes&filter[search]=in_restriction:true restriction_id:${r.id}`).then(cards => splitBySide(cards));
@@ -106,41 +106,43 @@ async function buildBanlistsView() {
         const [corpPts, runnerPts] = cards.map(cs => makeCardMap(cs, v.points));
 
         // Add body
-        $(`#restriction-${r.id}`).append('<div class="panel-body"><div class="container-fluid"><div class="row flex-fill">');
+        jqPanel.append('<div class="panel-body"><div class="container-fluid"><div class="row flex-fill">');
 
         // Generate corp restrictions
-        $(`#restriction-${r.id} .row`).append(`<div class="col-md-6"><h3>Corp Cards</h3><ul id="${r.id}-corp"></ul></div>`);
+        jqPanel.find(`.row`).append(`<div class="col-md-6"><h3>Corp Cards</h3><ul id="${r.id}-corp"></ul></div>`);
+        const jqCorp = $(`#${r.id}-corp`);
         // Bans (banned subtypes (i.e. currents) are removed beforehand to reduce length)
         if (corpBan.length > 0) {
           if (r.attributes.banned_subtypes.length > 0) { // NOTE: currently hardcoded to only be currents
             const pre = `All cards with the <strong><a href="${Routing.generate('cards_find', {type:'find', 'view':'list', 'q':'s:current d:corp'})}">Current</a></strong> subtype.`;
-            $(`#${r.id}-corp`).append(generateList('Banned', removeCurrents(corpBan), pre));
+            jqCorp.append(generateList('Banned', removeCurrents(corpBan), pre));
           } else {
-            $(`#${r.id}-corp`).append(generateList('Banned', corpBan));
+            jqCorp.append(generateList('Banned', corpBan));
           }
         }
         // The others
-        if (corpRes.length > 0) { $(`#${r.id}-corp`).append(generateList('Restricted', corpRes)); }
-        Object.keys(corpUFC).sort().reverse().forEach(p => { $(`#${r.id}-corp`).append(generateList(`+${p} Universal Influence`, corpUFC[p])); });
-        if (corpPen.length > 0) { $(`#${r.id}-corp`).append(generateList('Identity Influence Reduction', corpPen)); }
-        Object.keys(corpPts).sort().reverse().forEach(p => { $(`#${r.id}-corp`).append(generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, corpPts[p])); });
+        if (corpRes.length > 0) { jqCorp.append(generateList('Restricted', corpRes)); }
+        Object.keys(corpUFC).sort().reverse().forEach(p => { jqCorp.append(generateList(`+${p} Universal Influence`, corpUFC[p])); });
+        if (corpPen.length > 0) { jqCorp.append(generateList('Identity Influence Reduction', corpPen)); }
+        Object.keys(corpPts).sort().reverse().forEach(p => { jqCorp.append(generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, corpPts[p])); });
 
         // Generate runner restrictions
         $(`#restriction-${r.id} .row`).append(`<div class="col-md-6"><h3>Runner Cards</h3><ul id="${r.id}-runner"></ul></div>`);
+        const jqRunner = $(`#${r.id}-runner`);
         // Bans (banned subtypes (i.e. currents) are removed beforehand to reduce length)
         if (runnerBan.length > 0) {
           if (r.attributes.banned_subtypes.length > 0) { // NOTE: currently hardcoded to only be currents
             const pre = `All cards with the <strong><a href="${Routing.generate('cards_find', {type:'find', 'view':'list', 'q':'s:current d:runner'})}">Current</a></strong> subtype.`;
-            $(`#${r.id}-runner`).append(generateList('Banned', removeCurrents(runnerBan), pre));
+            jqRunner.append(generateList('Banned', removeCurrents(runnerBan), pre));
           } else {
-            $(`#${r.id}-runner`).append(generateList('Banned', runnerBan));
+            jqRunner.append(generateList('Banned', runnerBan));
           }
         }
         // The others
-        if (runnerRes.length > 0) { $(`#${r.id}-runner`).append(generateList('Restricted', runnerRes)); }
-        Object.keys(runnerUFC).sort().reverse().forEach(p => { $(`#${r.id}-runner`).append(generateList(`+${p} Universal Influence`, runnerUFC[p])); });
-        if (runnerPen.length > 0) { $(`#${r.id}-runner`).append(generateList('Identity Influence Reduction', runnerPen)); }
-        Object.keys(runnerPts).sort().reverse().forEach(p => { $(`#${r.id}-runner`).append(generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, runnerPts[p])); });
+        if (runnerRes.length > 0) { jqRunner.append(generateList('Restricted', runnerRes)); }
+        Object.keys(runnerUFC).sort().reverse().forEach(p => { jqRunner.append(generateList(`+${p} Universal Influence`, runnerUFC[p])); });
+        if (runnerPen.length > 0) { jqRunner.append(generateList('Identity Influence Reduction', runnerPen)); }
+        Object.keys(runnerPts).sort().reverse().forEach(p => { jqRunner.append(generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, runnerPts[p])); });
       }
     }
   }
