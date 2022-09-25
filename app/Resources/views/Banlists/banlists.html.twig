@@ -66,8 +66,9 @@ async function buildBanlistsView() {
   // Load data from API
   const desiredFormats = ['startup', 'standard', 'eternal'];
   const formats = await Promise.all(desiredFormats.map(f => fetch(`{{ v3_api_url }}/api/v3/public/formats/${f}`).then(data => data.json()).then(json => json.data)));
+  const cards = await fetchCards(`?include=card_subtypes&filter[search]=in_restriction:true`, 250).then(cards => splitBySide(cards));
   const restrictions = await Promise.all(formats.map(f =>
-    fetchData(f.relationships.restrictions.links.related).then(data => data.sort((a,b) => a.attributes.date_start < b.attributes.date_start))
+    fetchData(`{{ v3_api_url }}/api/v3/public/formats/${f.id}/restrictions?sort=-date_start`)
   ));
 
   // Remove the loading indicator
@@ -120,8 +121,6 @@ async function buildBanlistsView() {
   // Add the restriction data to each text box
   for (const format of restrictions) {
     for (const r of format) {
-      // Get the affected cards by restriction type
-      let cards = await fetchCards(`?include=card_subtypes&filter[search]=in_restriction:true restriction_id:${r.id}`).then(cards => splitBySide(cards));
       const v = r.attributes.verdicts;
 
       // Lists (bans, restricted cards, global penalty cards)

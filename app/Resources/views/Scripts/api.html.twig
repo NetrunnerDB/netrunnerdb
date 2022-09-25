@@ -12,9 +12,10 @@ async function fetchData(url) {
 
 // Fetches all cards from the v2 API (accounting for pagination)
 // Returns a list of cards
-async function fetchCards(flags='') {
+async function fetchCards(flags='', pageLimit) {
   const data = [];
-  let json = await fetch(`${v3_api_url}/api/v3/public/cards/${flags}`).then(data => data.json());
+  pageLimit = (pageLimit != undefined) ? `&page[limit]=${pageLimit}` : '';
+  let json = await fetch(`${v3_api_url}/api/v3/public/cards/${flags}${pageLimit}`).then(data => data.json());
   data.push(...json.data);
   while ('next' in json.links) {
     json = await fetch(json.links.next).then(data => data.json());
