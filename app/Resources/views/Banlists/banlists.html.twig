@@ -59,9 +59,7 @@ function generateList(header, cards, pre='') {
 
 async function buildBanlistsView() {
   // Add a temporary loading indicator
-  $('.tab-pane').append(
-    '<p class="temp-loading">Loading...</p>'
-  );
+  $('.tab-pane').append('<p class="temp-loading text-center"><span class="loading-icon"><span class="loading-icon-red"></span><span class="loading-icon-blue"></span><span class="loading-icon-overlap"></span></span>Loading...</p>');
 
   // Load data from API
   const desiredFormats = ['startup', 'standard', 'eternal'];
