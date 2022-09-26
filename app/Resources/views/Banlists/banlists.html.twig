@@ -3,6 +3,7 @@
 {% block title %}Ban Lists{% endblock %}
 
 {% block body %}
+{% include '/Scripts/api.html.twig' %}
 <div class="container" id="banlists">
   <h1>{{ block('title') }}</h1>
   <div>
@@ -17,10 +18,9 @@
     </ul>
     <p>See <a href="https://nisei.net/players/supported-formats/">NISEI's Supported Formats page</a> for more information.</p>
   </div>
-
-  <div role="tabpanel">
+  <hr>
+  <div id="restrictions-root" role="tabpanel" style="display: none;">
     <!-- Nav tabs -->
-    <hr>
     <ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom:20px">
       <li role="presentation"><a href="#tab-pane-startup" role="tab" data-toggle="tab">Startup</a></li>
       <li role="presentation" class="active"><a href="#tab-pane-standard" role="tab" data-toggle="tab">Standard</a></li>
@@ -34,9 +34,23 @@
       <div role="tabpanel" class="tab-pane" id="tab-pane-eternal"></div>
     </div>
   </div>
+
+  <noscript>
+    <p class="text-center">Please enable JavaScript to view this page fully.</p>
+    <hr>
+  </noscript>
 </div>
 
 <script>
+// Takes a list of cards and an object mapping integers to lists of card IDs
+// Returns a new object with the cards in place of their IDs
+function makeCardMap(cards, obj) {
+  return Object.keys(obj).reduce(function(newObj, key) {
+    newObj[key] = cards.filter(card => obj[key].includes(card.id));
+    return newObj
+  }, {});
+}
+
 // Creates a list of cards with the given header
 function generateList(header, cards, pre='') {
   if (pre.length > 0) {
@@ -47,102 +61,48 @@ function generateList(header, cards, pre='') {
   }, `<li><strong>${header}</strong><ul>${pre}`) + '</ul></li>';
 }
 
-// Generates the text for a single restriction
-function restrictionToText(cards, format, restriction) {
-  a = restriction.attributes;
-  code = restriction.id;
-  name = a.name;
-  active = code == format.attributes.active_restriction_id;
-  date_start = a.date_start;
-  count = a.size;
-
-  // Get the affected cards by restriction type
-  v = a.verdicts;
-  [corp, runner] = splitBySide(cards);
-  corpBanned = removeCardsWithSubtypes(getCardsById(corp, v.banned), a.banned_subtypes);
-  corpRestricted = getCardsById (corp, v.restricted);
-  corpUniversalFactionCost = getCardsByIdFromObj(corp, v.universal_faction_cost);
-  corpGlobalPenalty = getCardsByIdFromObj(corp, v.global_penalty);
-  corpPoints = getCardsByIdFromObj(corp, v.points);
-  runnerBanned = removeCardsWithSubtypes(getCardsById(runner, v.banned), a.banned_subtypes);
-  runnerRestricted = getCardsById(runner, v.restricted);
-  runnerUniversalFactionCost = getCardsByIdFromObj(runner, v.universal_faction_cost);
-  runnerGlobalPenalty = getCardsByIdFromObj(runner, v.global_penalty);
-  runnerPoints = getCardsByIdFromObj(runner, v.points);
-
-  // Generate corp restrictions
-  corpBody = '<div class="col-md-6"><h3>Corp Cards</h3><ul>';
-  if (corpBanned.length > 0) {
-    if (a.banned_subtypes.length > 0) { // NOTE: currently hardcoded to only be currents
-      link = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':'s:current d:corp'});
-      pre = `All cards with the <strong><a href="${link}">Current</a></strong> subtype.`;
-    }
-    corpBody += generateList('Banned', corpBanned, pre);
-  }
-  if (corpRestricted.length > 0) {corpBody += generateList('Restricted', corpRestricted);}
-  Object.keys(corpUniversalFactionCost).forEach(p => {corpBody += generateList(`+${p} Universal Influence`, corpUniversalFactionCost[p]);});
-  Object.keys(corpGlobalPenalty).forEach(p => {corpBody += generateList(`Identity Influence Reduction`, corpGlobalPenalty[p]);});
-  Object.keys(corpPoints).forEach(p => {corpBody += generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, corpPoints[p]);});
-  corpBody += '</ul></div>';
-
-  // Generate runner restrictions
-  runnerBody = '<div class="col-md-6"><h3>Runner Cards</h3><ul>';
-  if (runnerBanned.length > 0) {
-    if (a.banned_subtypes.length > 0) { // NOTE: currently hardcoded to only be currents
-      link = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':'s:current d:runner'});
-      pre = `All cards with the <strong><a href="${link}">Current</a></strong> subtype.`;
-    }
-    runnerBody += generateList('Banned', runnerBanned, pre);
-  }
-  if (runnerRestricted.length > 0) {runnerBody += generateList('Restricted', runnerRestricted);}
-  Object.keys(runnerUniversalFactionCost).forEach(p => {runnerBody += generateList(`+${p} Universal Influence`, runnerUniversalFactionCost[p]);});
-  Object.keys(runnerGlobalPenalty).forEach(p => {runnerBody += generateList(`Identity Influence Reduction`, runnerGlobalPenalty[p]);});
-  Object.keys(runnerPoints).forEach(p => {runnerBody += generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, runnerPoints[p]);});
-  runnerBody += '</ul></div>';
-
-  // Output
-  search = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`b!${code.replaceAll('_', '-')}`});
-  header = `<div class="panel-heading" style="display: flex;">` +
-           `<h3 style="margin: 15px 0 10px 0">${name}${active ? " <em>(active)</em>" : ""}</h3>` +
-           `<button class="list-toggle btn btn-secondary" style="margin-left:auto; margin-top: auto; margin-bottom: auto;">Hide</button>` +
-           `</div>`;
-  subheader = `<div class="panel-heading"><a href=${search}>${count} cards</a>. Start Date: ${date_start}.</div>`;
-  body = `<div class="panel-body"><div class="container-fluid"><div class="row flex-fill">${corpBody + runnerBody}</div></div></div>`;
-  return `<div class="panel panel-default">${header + subheader + body}</div>`;
-}
-
 async function buildBanlistsView() {
+  // Unhide the restrictions view (accounting for browsers with JS disabled)
+  $('#restrictions-root').show();
+
   // Add a temporary loading indicator
-  $('.tab-pane').append(
-    '<p class="temp-loading">Loading...</p>'
-  );
+  $('.tab-pane').append(loading_icon);
 
   // Load data from API
   const desiredFormats = ['startup', 'standard', 'eternal'];
-  const formats = await Promise.all(desiredFormats.map(f => fetch(`{{ v3_api_url }}/api/v3/public/formats/${f}`).then(data => data.json()).then(json => json.data)));
-  const cards = await fetchCards();
-  const rData = await fetch('{{ v3_api_url }}/api/v3/public/restrictions').then(data => data.json());
-  const restrictions = await Promise.all(formats.map(f =>
-    fetch(`{{ v3_api_url }}/api/v3/public/snapshots?filter[format_id]=${f.id}`)
-      .then(data => data.json())
-      .then(json => json.data.sort((a,b) => a.attributes.date_start < b.attributes.date_start)
-                             .map(snapshot => snapshot.attributes.restriction_id)
-                             .map(id => getRestrictionById(rData.data, id))
-                             .filter(Boolean)) // Remove nulls
-  ));
+  const [formats, cards, restrictions] = await Promise.all([
+    fetchData(`{{ v3_api_url }}/api/v3/public/formats`).then(fs => fs.filter(f => desiredFormats.includes(f.id))),
+    fetchCards(`?include=card_subtypes&filter[search]=in_restriction:true`, 250).then(splitBySide),
+    fetchData(`{{ v3_api_url }}/api/v3/public/restrictions?sort=-date_start`)
+  ]);
 
   // Remove the loading indicator
   $('.temp-loading').remove();
 
   // Add each format to the page
-  formats.forEach((format, i) => {
-    rs = restrictions[i].length == 0
-       ? `<p>No cards are currently banned in ${format.attributes.name}. Have a blast!</p>`
-       : '<p><button class="show-all btn btn-secondary">Show all</button><button class="hide-all pull-right btn btn-secondary">Hide all</button></p>' +
-         restrictions[i].map(r => restrictionToText (cards, format, r)).join('');
-    $(`#tab-pane-${format.id}`).append(
-      `<div class="list"><div id="${format.id}" class="row"><div class="col-sm-12">${rs}</div></div></div>`
-    );
+  // Start by adding an empty text box for each restriction
+  formats.forEach(f => {
+    $(`#tab-pane-${f.id}`).append(`<div class="list"><div class="row"><div id="${f.id}" class="col-sm-12"></div></div></div>`);
+    const jqCol = $(`#${f.id}`);
+    const formatRestrictions = restrictions.filter(r => f.attributes.restriction_ids.includes(r.id));
+    if (formatRestrictions.length == 0) {
+      jqCol.append(`<p>No cards are currently banned in ${f.attributes.name}. Have a blast!</p>`);
+    } else {
+      jqCol.append('<p><button class="show-all btn btn-secondary">Show all</button><button class="hide-all pull-right btn btn-secondary">Hide all</button></p>');
+      formatRestrictions.forEach(r => {
+        const active = r.id == f.attributes.active_restriction_id;
+        const visible = active || r.id == formatRestrictions[0].id;
+        // Create panel
+        jqCol.append(`<div id="restriction-${r.id}" class="panel panel-default"></div>`);
+        const jqPanel = $(`#restriction-${r.id}`);
+        // Add header
+        jqPanel.append(`<div class="panel-heading" style="display: flex;"></div>`);
+        jqPanel.find(`.panel-heading`).append(`<h3 style="margin: 15px 0 10px 0">${r.attributes.name}${active ? " <em>(active)</em>" : ""}</h3>`)
+                                      .append(`<button class="list-toggle btn btn-secondary" style="margin-left:auto; margin-top: auto; margin-bottom: auto;">${visible ? 'Hide' : 'Show'}</button>`);
+        // Add subheader (search link hyphenated for legacy IDs)
+        jqPanel.append(`<div class="panel-heading" ${visible ? '' : 'style="display: none;"'}><a href=${Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`b!${r.id.replaceAll('_', '-')}`})}>${r.attributes.size} cards</a>. Start Date: ${r.attributes.date_start}.</div>`);
+      });
+    }
   });
 
   // Set up event handling
@@ -156,14 +116,70 @@ async function buildBanlistsView() {
     }
   });
   $('.show-all').on('click', function (event) {
-    let panels = $(this).closest('.list');
-    panels.find('.panel').children().show(250);
+    const panels = $(this).closest('.list');
+    panels.find('.panel').children().show();
     panels.find('.list-toggle').html('Hide');
   });
   $('.hide-all').on('click', function (event) {
-    let panels = $(this).closest('.list');
-    panels.find('.panel').children(':not(:first-child)').hide(250);
+    const panels = $(this).closest('.list');
+    panels.find('.panel').children(':not(:first-child)').hide();
     panels.find('.list-toggle').html('Show');
+  });
+
+  // Add the restriction data to each text box
+  restrictions.forEach(r => {
+    const v = r.attributes.verdicts;
+
+    // Lists (bans, restricted cards, global penalty cards)
+    const [corpBan, runnerBan] = cards.map(cs => cs.filter(card => v.banned?.includes(card.id)));
+    const [corpRes, runnerRes] = cards.map(cs => cs.filter(card => v.restricted?.includes(card.id)));
+    const [corpPen, runnerPen] = cards.map(cs => cs.filter(card => v.global_penalty?.includes(card.id)));
+
+    // Mappings (points, universal faction costs)
+    const [corpUFC, runnerUFC] = cards.map(cs => makeCardMap(cs, v.universal_faction_cost));
+    const [corpPts, runnerPts] = cards.map(cs => makeCardMap(cs, v.points));
+
+    // Get the panel DOM object
+    const jqPanel = $(`#restriction-${r.id}`);
+
+    // Add body
+    jqPanel.append(`<div class="panel-body" ${jqPanel.find(`button`).html() == 'Show' ? 'style="display: none;"' : ''}><div class="container-fluid"><div class="row flex-fill">`);
+
+    // Generate corp restrictions
+    jqPanel.find(`.row`).append(`<div class="col-md-6"><h3>Corp Cards</h3><ul id="${r.id}-corp"></ul></div>`);
+    const jqCorp = $(`#${r.id}-corp`);
+    // Bans (banned subtypes (i.e. currents) are removed beforehand to reduce length)
+    if (corpBan.length > 0) {
+      if (r.attributes.banned_subtypes.length > 0) { // NOTE: currently hardcoded to only be currents
+        const pre = `All cards with the <strong><a href="${Routing.generate('cards_find', {type:'find', 'view':'list', 'q':'s:current d:corp'})}">Current</a></strong> subtype.`;
+        jqCorp.append(generateList('Banned', removeCurrents(corpBan), pre));
+      } else {
+        jqCorp.append(generateList('Banned', corpBan));
+      }
+    }
+    // The others
+    if (corpRes.length > 0) { jqCorp.append(generateList('Restricted', corpRes)); }
+    Object.keys(corpUFC).sort().reverse().forEach(p => { jqCorp.append(generateList(`+${p} Universal Influence`, corpUFC[p])); });
+    if (corpPen.length > 0) { jqCorp.append(generateList('Identity Influence Reduction', corpPen)); }
+    Object.keys(corpPts).sort().reverse().forEach(p => { jqCorp.append(generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, corpPts[p])); });
+
+    // Generate runner restrictions
+    jqPanel.find('.row').append(`<div class="col-md-6"><h3>Runner Cards</h3><ul id="${r.id}-runner"></ul></div>`);
+    const jqRunner = $(`#${r.id}-runner`);
+    // Bans (banned subtypes (i.e. currents) are removed beforehand to reduce length)
+    if (runnerBan.length > 0) {
+      if (r.attributes.banned_subtypes.length > 0) { // NOTE: currently hardcoded to only be currents
+        const pre = `All cards with the <strong><a href="${Routing.generate('cards_find', {type:'find', 'view':'list', 'q':'s:current d:runner'})}">Current</a></strong> subtype.`;
+        jqRunner.append(generateList('Banned', removeCurrents(runnerBan), pre));
+      } else {
+        jqRunner.append(generateList('Banned', runnerBan));
+      }
+    }
+    // The others
+    if (runnerRes.length > 0) { jqRunner.append(generateList('Restricted', runnerRes)); }
+    Object.keys(runnerUFC).sort().reverse().forEach(p => { jqRunner.append(generateList(`+${p} Universal Influence`, runnerUFC[p])); });
+    if (runnerPen.length > 0) { jqRunner.append(generateList('Identity Influence Reduction', runnerPen)); }
+    Object.keys(runnerPts).sort().reverse().forEach(p => { jqRunner.append(generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, runnerPts[p])); });
   });
 }
 
