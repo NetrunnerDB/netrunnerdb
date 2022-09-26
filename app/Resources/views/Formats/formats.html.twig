@@ -24,6 +24,10 @@
 </div>
 <script>
 async function buildFormatsView() {
+  // Add a temporary loading indicator
+  $('#formats').append('<p class="temp-loading text-center"><span class="loading-icon"><span class="loading-icon-red"></span><span class="loading-icon-blue"></span><span class="loading-icon-overlap"></span></span>Loading...</p>');
+
+  // Load api data
   const desiredFormats = new Set(['eternal', 'standard', 'startup']);
 
   const [r1, r2, r3, r4, r5] = await Promise.all(
@@ -46,6 +50,9 @@ async function buildFormatsView() {
   const formats = r1.data
       .filter(snapshot => desiredFormats.has(snapshot.attributes.format_id))
       .sort((a, b) => (a.attributes.format_id < b.attributes.format_id) ? 1 : -1);
+
+  // Remove the loading indicator
+  $('.temp-loading').remove();
 
   // Each Format is a column, with the following struction:
   //   - Name
