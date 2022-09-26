@@ -25,7 +25,7 @@
 <script>
 async function buildFormatsView() {
   // Add a temporary loading indicator
-  $('#formats').append('<p class="temp-loading text-center"><span class="loading-icon"><span class="loading-icon-red"></span><span class="loading-icon-blue"></span><span class="loading-icon-overlap"></span></span>Loading...</p>');
+  $('#formats').append(loading_icon);
 
   // Load api data
   const desiredFormats = new Set(['eternal', 'standard', 'startup']);
