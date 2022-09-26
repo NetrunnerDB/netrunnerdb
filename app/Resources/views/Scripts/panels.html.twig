@@ -1,0 +1,83 @@
+<script type="text/javascript">
+
+/* An object representing the general purpose panels used across nrdb
+ * Assumes there will be at most one header, subheader, and body
+ * Attempting to add more will result in unintended duplication of content
+ */
+class Panel {
+  static instances = new Map();
+  static get(id) {
+    return Panel.instances.get(id);
+  }
+
+  // Creates a panel container including buttons to mass show/hide them
+  // id is optional
+  static createPanelList(parent, id) {
+    const panel_list = parent.append(`<div ${id ? `id="${id}"` : ''} class="panel-list"></div>`).find('.panel-list');
+    panel_list.append('<p><button class="show-all btn btn-secondary">Show all</button><button class="hide-all pull-right btn btn-secondary">Hide all</button></p>');
+    panel_list.find('.show-all').on('click', function (event) {
+      const panels = $(this).closest('.panel-list').find('.panel').each(function() {
+        Panel.get($(this).attr('id')).show();
+      });
+    });
+    panel_list.find('.hide-all').on('click', function (event) {
+      const panels = $(this).closest('.panel-list').find('.panel').each(function() {
+        Panel.get($(this).attr('id')).hide();
+      });
+    });
+    return panel_list;
+  }
+
+  constructor(parent, id, visible=true) {
+    this.parent = parent;
+    this.visible = visible;
+    this.jqRef = parent.append(`<div id="${id}" class="panel panel-default"></div>`).find(`#${id}`);
+    Panel.instances.set(id, this);
+  }
+
+  addHeader(name) {
+    this.header = this.jqRef.append(`<div class="header panel-heading" style="display: flex;"></div>`).find(`.header`);
+    this.header.append(`<h3 style="margin: 15px 0 10px 0">${name}</h3>`)
+               .append(`<button class="btn btn-secondary" style="margin-left:auto; margin-top: auto; margin-bottom: auto;">${this.visible ? 'Hide' : 'Show'}</button>`);
+    this.button = this.header.find('button');
+    const caller = this;
+    this.button.on('click', function() {caller.toggle(250);});
+    return this;
+  }
+
+  addSubheader(content) {
+    this.subheader = this.jqRef.append(`<div class="subheader panel-heading" ${this.visible ? '' : 'style="display: none;"'}>${content}</div>`).find('.subheader');
+    return this;
+  }
+
+  addBody() {
+    this.body = this.jqRef.append(`<div class="panel-body" ${this.visible ? '' : 'style="display: none;"'}>`).find('.panel-body');
+    return this;
+  }
+  addBodyContent(content) {
+    this.body.append(content);
+    return this;
+  }
+
+  show(duration=0) {
+    this.visible = true;
+    this.button.html('Hide');
+    this.subheader.show(duration);
+    this.body.show(duration);
+  }
+  hide(duration=0) {
+    this.visible = false;
+    this.button.html('Show');
+    this.subheader.hide(duration);
+    this.body.hide(duration);
+  }
+  toggle(duration=0) {
+    if (this.visible) {
+      this.hide(duration);
+    } else {
+      this.show(duration);
+    }
+  }
+}
+
+</script>
