@@ -3,6 +3,7 @@
 {% block title %}Play Formats{% endblock %}
 
 {% block body %}
+{% include '/Scripts/api.html.twig' %}
 <div class="container">
 
   <h1>{{ block('title') }}</h1>
@@ -22,14 +23,6 @@
   </div>
 </div>
 <script>
-function makeIdMap(json) {
-  const out = new Map();
-  json.data.forEach(d => {
-    out.set(d.id, d);
-  });
-  return out;
-}
-
 async function buildFormatsView() {
   const desiredFormats = new Set(['eternal', 'standard', 'startup']);
 
@@ -104,7 +97,7 @@ async function buildFormatsView() {
       $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'p', 'packs': packs})}"><span class="icon icon-apex influence-apex"></span> Apex</a></li>`);
       $(`#${format.id}_runner_decklists`).append(`<li><a href="${Routing.generate('decklists_list', {type:'find', 'faction':'u', 'packs': packs})}"><span class="icon icon-sunny-lebeau influence-sunny-lebeau"></span> Sunny Lebeau</a></li>`);
     }
-          
+
     $(`#${format.id}`).append(`<h4>Legal Card Cycles - <a href="${Routing.generate('cards_find', {q: 'e:' + packs.join('|') } )}">${format.attributes.num_cards} Unique Cards</a></h4>`);
 
     $(`#${format.id}`).append(`<ul id="${format.id}_cycles"></ul>`);
