@@ -10,15 +10,15 @@ async function fetchData(url) {
   return await fetchJson(url).then(json => json.data);
 }
 
-// Fetches all cards from the v2 API (accounting for pagination)
+// Fetches all cards from the API (accounting for pagination)
 // Returns a list of cards
 async function fetchCards(flags='', pageLimit) {
   const data = [];
   pageLimit = (pageLimit != undefined) ? `&page[limit]=${pageLimit}` : '';
-  let json = await fetch(`${v3_api_url}/api/v3/public/cards/${flags}${pageLimit}`).then(data => data.json());
+  let json = await fetchJson(`${v3_api_url}/api/v3/public/cards/${flags}${pageLimit}`);
   data.push(...json.data);
   while ('next' in json.links) {
-    json = await fetch(json.links.next).then(data => data.json());
+    json = await fetchJson(json.links.next);
     data.push(...json.data);
   }
   return data;
@@ -68,6 +68,19 @@ function splitBySide(cards) {
 // Generates a link to a card by creating a link to its most recent printing
 function cardToLatestPrintingLink(card) {
   return Routing.generate('cards_zoom', {card_code:card.attributes.latest_printing_id});
+}
+// Creates a simple html link to a given card
+function cardToAnchor(card) {
+  return `<a href="${cardToLink(card)}">${card.attributes.title}</a>`;
+}
+
+// Generates a link to a printing
+function printingToLink(printing) {
+  return Routing.generate('cards_zoom', {card_code:printing.id});
+}
+// Creates a simple html link to a given printing
+function printingToAnchor(printing) {
+  return `<a href="${printingToLink(printing)}">${printing.attributes.title}</a>`;
 }
 
 </script>
