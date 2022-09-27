@@ -3,6 +3,8 @@
 /* An object representing the general purpose panels used across nrdb
  * Assumes there will be at most one header, subheader, and body
  * Attempting to add more will result in unintended duplication of content
+ * Hidden attributes:
+ * - isExclusive: bool - if true, hide all sibling panels when this one is shown
  */
 class Panel {
   static instances = new Map();
@@ -10,21 +12,47 @@ class Panel {
     return Panel.instances.get(id);
   }
 
-  // Creates a panel container including buttons to mass show/hide them
+  // Creates a container of panels
   // id is optional
-  static createPanelList(parent, id) {
+  // controls specifies which controls to generate of "toggle" and "search"
+  static createPanelList(parent, id, ...controls) {
     const panel_list = parent.append(`<div ${id ? `id="${id}"` : ''} class="panel-list"></div>`).find('.panel-list');
-    panel_list.append('<p><button class="show-all btn btn-secondary">Show all</button><button class="hide-all pull-right btn btn-secondary">Hide all</button></p>');
-    panel_list.find('.show-all').on('click', function (event) {
-      const panels = $(this).closest('.panel-list').find('.panel').each(function() {
-        Panel.get($(this).attr('id')).show();
-      });
-    });
-    panel_list.find('.hide-all').on('click', function (event) {
-      const panels = $(this).closest('.panel-list').find('.panel').each(function() {
-        Panel.get($(this).attr('id')).hide();
-      });
-    });
+    if (controls?.length > 0) {
+      panel_list.append('<p class="row"></p>');
+      const row = panel_list.find('.row');
+      const toggle = controls.includes("toggle");
+      const search = controls.includes("search");
+      // Add controls
+      if (toggle) { row.append('<button class="show-all btn btn-secondary">Show all</button>'); }
+      if (search) { row.append('<div class="panel-search"><input type="text" class="form-control" placeholder="Search..." aria-label="Search"></input></div>'); }
+      if (toggle) { row.append('<button class="hide-all col-md-1 col-sm-2 btn btn-secondary">Hide all</button>'); }
+      // Enable event handling
+      if (toggle) {
+        panel_list.find('.show-all').on('click', function (event) {
+          const panels = panel_list.find('.panel').each(function() {
+            Panel.get($(this).attr('id')).show();
+          });
+        });
+        panel_list.find('.hide-all').on('click', function (event) {
+          const panels = panel_list.find('.panel').each(function() {
+            Panel.get($(this).attr('id')).hide();
+          });
+        });
+      }
+      if (search) {
+        const inputField = panel_list.find('.panel-search input');
+        inputField.on('keyup', function() {
+          const query = inputField.val().trim().toLowerCase();
+          panel_list.find('.panel').each(function() {
+            if ($(this).find('.header').html().toLowerCase().includes(query)) {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        });
+      }
+    }
     return panel_list;
   }
 
@@ -60,16 +88,25 @@ class Panel {
   }
 
   show(duration=0) {
+    if (this.onShowFunc) {
+      this.onShowFunc();
+      this.onShowFunc = null;
+    }
+    if (this.isExclusive) {
+      this.parent.find('.panel').each(function() {
+        Panel.get($(this).attr('id')).hide(duration);
+      });
+    }
     this.visible = true;
     this.button.html('Hide');
-    this.subheader.show(duration);
-    this.body.show(duration);
+    this.subheader?.show(duration);
+    this.body?.show(duration);
   }
   hide(duration=0) {
     this.visible = false;
     this.button.html('Show');
-    this.subheader.hide(duration);
-    this.body.hide(duration);
+    this.subheader?.hide(duration);
+    this.body?.hide(duration);
   }
   toggle(duration=0) {
     if (this.visible) {
@@ -78,6 +115,53 @@ class Panel {
       this.show(duration);
     }
   }
+
+  // Provides the panel a function to run the next time show() is called
+  // Assumes the panel is currently hidden
+  set onShow(f) {
+    this.onShowFunc = f;
+  }
 }
 
 </script>
+
+<style>
+
+/* Panel list control panel */
+.panel-list .row {
+  margin: 0 0 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+.panel-list .panel-search {
+  flex-grow: 0;
+  order: 1;
+  width: 100%;
+  padding: 12px 0 0 0;
+}
+.panel-list .show-all, .panel-list .hide-all {
+  flex: auto;
+}
+.panel-list .hide-all {
+  margin-left: 12px;
+}
+
+@media (min-width: 768px) {
+  .panel-list .row > * {
+    margin: 0;
+  }
+  .panel-list .hide-all, .panel-list .show-all {
+    flex: none;
+  }
+  .panel-list .panel-search {
+    flex-grow: 1;
+    order: 0;
+    width: unset;
+    padding: 0;
+  }
+  .panel-list .panel-search:not(:first-child) { /* when surrounded by buttons */
+    padding: 0 12px;
+  }
+}
+
+</style>

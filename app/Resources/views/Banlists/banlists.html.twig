@@ -87,7 +87,7 @@ async function buildBanlistsView() {
     if (formatRestrictions.length == 0) {
       jqPane.append(`<p>No cards are currently banned in ${f.attributes.name}. Have a blast!</p>`);
     } else {
-      const panelList = Panel.createPanelList(jqPane);
+      const panelList = Panel.createPanelList(jqPane, null, "toggle", "search");
       formatRestrictions.forEach(r => {
         const active = r.id == f.attributes.active_restriction_id;
         const visible = active || r.id == formatRestrictions[0].id;
