@@ -3,10 +3,12 @@
 {% block title %}Illustrators{% endblock %}
 
 {% block body %}
+{% include '/Scripts/api.html.twig' %}
+{% include '/Scripts/panels.html.twig' %}
 <div class="container" id="illustrators">
   <h1>{{ block('title') }}</h1>
   <div>
-    <p>The world of Netrunner has been brought to life by a wide selection of amazing artists! This page lists all artists whose work has appeared on cards and lists the cards they illustrated.</p>
+    <p>The world of Netrunner has been brought to life by a wide selection of amazing artists! This page lists all artists whose work has appeared on cards and which cards they illustrated.</p>
   </div>
   <hr>
   <div class="row">
@@ -16,114 +18,42 @@
 </div>
 
 <script>
-// Gets the unique value of a printing used to determine its order
-function printingOrder(printing) {
-  return printing.attributes.date_release + printing.attributes.position;
-}
-
-// Generates the empty text box for a single illustrator
-async function illustratorToTextBox(illustrator) {
-  // Fetch illustrator data
-  const name = illustrator.attributes.name;
-
-  // Output
-  header = `<div class="panel-heading" style="display: flex;">` +
-           `<h3 style="margin: 15px 0 10px 0">${name}</h3>` +
-           `<button class="list-toggle btn btn-secondary" style="margin-left:auto; margin-top: auto; margin-bottom: auto;">Show</button>` +
-           `</div>`;
-  subheader = `<div class="panel-heading subheader" style="display: none;"></div>`;
-  body = `<div class="panel-body" style="display: none; padding: 0;"></div>`;
-  return `<div id="${illustrator.id}" class="panel panel-default">${header + subheader + body}</div>`;
-}
-
-async function fillIllustratorTextBox(illustrator) {
-  // Search query for the illustrator's cards
-  const search = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`i:"${illustrator.attributes.name}"`});
-
-  // Fetch the illustrator's printings' data
-  const printings = await fetch(illustrator.relationships.printings.links.related).then(data => data.json()).then(json => json.data);
-  const count = printings.length + (printings.length > 1 ? ' cards' : ' card');
-
-  // Get the earliest and latest printing of each illustrator
-  let earliest = printings[0];
-  let latest = printings[0];
-  for (let i = 1; i < printings.length; i++) {
-    if (printingOrder(printings[i]) < printingOrder(earliest)) { earliest = printings[i]; }
-    if (printingOrder(printings[i]) > printingOrder(latest)) { latest = printings[i]; }
-  }
-  const bounds = (earliest == latest) ? '' : ` Earliest: ${printingToAnchor(earliest)}. Latest: ${printingToAnchor(latest)}.`;
-
-  // Format the illustrator's printings into 3 columns
-  // const list = printings.map(p => `<li><a href="${printingToLink(p)}">${p.attributes.title}</a></li>`);
-  // const list1 = `<div class="col-sm-4"><ul>${list.splice(0, Math.ceil(printings.length / 3)).join('')}</ul></div>`;
-  // const list2 = `<div class="col-sm-4"><ul>${list.splice(0, Math.ceil(printings.length / 3)).join('')}</ul></div>`;
-  // const list3 = `<div class="col-sm-4"><ul>${list.join('')}</ul></div>`;
-  // const formattedList = list1 + list2 + list3;
-
-  const formattedList =
-    `<table class="rwd-table table table-striped table-condensed" style="margin-bottom: 0;"><tbody><tr class="odd"></tr>` +
-    printings.map(p => `<tr class="odd"><td data-th="Name" style="padding-left: 1em;">${printingToAnchor(p)}</td></tr>`).join('') +
-    `</tbody></table>`;
-
-    // <thead>
-    //   <tr>
-    //     <th>Name</th>
-    //     <th>Cards</th>
-    //   </tr>
-    // </thead>
-
-  // Fill text box
-  $(`#${illustrator.id} .subheader`).append(`<a href="${search}">${count}</a>.${bounds}`);
-  $(`#${illustrator.id} .panel-body`).append(formattedList);
-}
-
 async function buildIllustratorsView() {
   // Add a temporary loading indicator
-  $('#illustrators').append(
-    '<p class="temp-loading">Loading...</p>'
-  );
+  $('#illustrators').append(loading_icon);
 
   // Load data from API
-  const illustrators = await fetch('{{ v3_api_url }}/api/v3/public/illustrators').then(data => data.json()).then(json => json.data);
+  const illustrators = await fetchData('{{ v3_api_url }}/api/v3/public/illustrators?include=printings');
 
   // Remove the loading indicator
   $('.temp-loading').remove();
 
-  // Add a textbox for each illustrator
-  $(`#illustrators`).append(
-    `<p><button id="show-all" class="btn btn-secondary">Show all</button><button id="hide-all" class="pull-right btn btn-secondary">Hide all</button></p>`
-  );
-  for (const illustrator of illustrators) {
-    const textBox = await illustratorToTextBox(illustrator);
-    $(`#illustrators`).append(textBox);
-  }
-
-  // Fill each textbox
+  // Show the illustrators
+  const panelList = new PanelList($('#illustrators'), null, true, "search", "sort");
+  panelList.addSortOption("Name (A-Z)", (panel => panel.title), "ascending");
+  panelList.addSortOption("Name (Z-A)", (panel => panel.title), "descending");
+  panelList.addSortOption("Cards (most)", (panel => parseInt(panel.title.match(/\d+(?= card)/)[0])), "descending");
+  panelList.addSortOption("Cards (least)", (panel => parseInt(panel.title.match(/\d+(?= card)/)[0])), "ascending");
   illustrators.forEach(illustrator => {
-    fillIllustratorTextBox(illustrator);
-  });
+    const panel = panelList.createPanel(illustrator.id, false);
+    const count = illustrator.relationships.printings.data.length;
 
-  // Set up event handling
-  $('.list-toggle').on('click', function (event) {
-    if ($(this).html() == 'Hide') {
-      $(this).html('Show');
-      $(this).closest('.panel').children(':not(:first-child)').hide(250);
-    } else {
-      $(this).html('Hide');
-      $(this).closest('.panel').children().show(250);
-    }
-  });
-  $('#show-all').on('click', function (event) {
-    $('.panel').children().show();
-    $('.list-toggle').html('Hide');
-  });
-  $('#hide-all').on('click', function (event) {
-    $('.panel').children(':not(:first-child)').hide();
-    $('.list-toggle').html('Show');
+    const search = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`i:"${illustrator.attributes.name}"`});
+    panel.addHeader(`${illustrator.attributes.name} • (<a href="${search}">${count} ${count > 1 ? 'cards' : 'card'}</a>)`);
+
+    // Format the illustrator's printings into 3 columns
+    panel.addBody();
+    panel.onShow = async function() {
+      const printings = await fetchData(`{{ v3_api_url }}/api/v3/public/illustrators/${illustrator.id}/printings`);
+      const list = printings.map(p => `<li>${printingToAnchor(p)}</li>`);
+      panel.addBodyContent(`<div class="col-sm-4"><ul>${list.splice(0, Math.ceil(printings.length / 3)).join('')}</ul></div>`);
+      panel.addBodyContent(`<div class="col-sm-4"><ul>${list.splice(0, Math.ceil(printings.length / 3)).join('')}</ul></div>`);
+      panel.addBodyContent(`<div class="col-sm-4"><ul>${list.join('')}</ul></div>`);
+    };
   });
 }
 
-// Create the banlists view on load
+// Create the illustrators view on load
 buildIllustratorsView();
 </script>
 
