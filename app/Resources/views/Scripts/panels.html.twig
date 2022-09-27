@@ -107,7 +107,7 @@ class PanelList {
       if (search) { this.row.append('<div class="panel-search"><input type="text" class="form-control" placeholder="Search..." aria-label="Search"></input></div>'); }
       if (toggle) { this.row.append('<button class="hide-all col-md-1 col-sm-2 btn btn-secondary">Hide all</button>'); }
       if (sort) {
-        this.row.append('<div class="panel-dropdown dropdown"><button class="dropdown-toggle btn" data-toggle="dropdown" role="button" aria-expanded="false">Sort <span class="caret"></span></button><ul class="dropdown-menu" role="menu"></ul></div>');
+        this.row.append('<div class="panel-dropdown dropdown"><button class="dropdown-toggle btn" data-toggle="dropdown" role="button" aria-expanded="false">Sort <span class="caret"></span></button><ul class="dropdown-menu dropdown-menu-right" role="menu"></ul></div>');
         this.sortDropdown = this.row.find('.dropdown-menu');
       }
 
@@ -156,16 +156,16 @@ class PanelList {
   addSortOption(desc, valueFunc, order="descending") {
     const id = `sort-${PanelList.sortCount++}`;
     const ascending = order == "ascending";
-    const panelList = this.panelList;
+    const caller = this;
     this.sortDropdown.append(`<li><a href="#" onClick="return false;" id="${id}">${desc}</a></li>`);
     this.sortDropdown.find(`#${id}`).on('click', function(event) {
       event.stopPropagation();
-      panelList.find('.panel').sort(function(a,b) {
-        const valA = valueFunc(this.panels.get($(a).attr('id')));
-        const valB = valueFunc(this.panels.get($(b).attr('id')));
-        console.log(valA + " " + valB);
+      caller.sortDropdown.dropdown("toggle");
+      caller.panelList.find('.panel').sort(function(a,b) {
+        const valA = valueFunc(caller.panels.get($(a).attr('id')));
+        const valB = valueFunc(caller.panels.get($(b).attr('id')));
         return ascending ? valA > valB : valA < valB;
-      }).appendTo(panelList);
+      }).appendTo(caller.panelList);
     });
   }
 }
@@ -186,8 +186,6 @@ class PanelList {
   width: 100%;
   padding-top: 12px;
 }
-.panel-list .panel-dropdown {
-}
 .panel-list .show-all, .panel-list .hide-all {
   flex: auto;
   flex-grow: 2;
@@ -195,8 +193,8 @@ class PanelList {
 .panel-list .hide-all {
   margin-left: 12px;
 }
-.panel-list .panel-dropdown:not(:first-child) { /* when not the first button */
-  margin-left: 12px;
+.panel-dropdown, .panel-dropdown button, .panel-dropdown .dropdown-menu {
+  width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -214,6 +212,12 @@ class PanelList {
   }
   .panel-list .panel-search:not(:first-child) { /* when surrounded by buttons */
     padding: 0 12px;
+  }
+  .panel-dropdown {
+    padding-left: 12px;
+  }
+  .panel-dropdown, .panel-dropdown button, .panel-dropdown .dropdown-menu {
+    width: unset;
   }
 }
 
