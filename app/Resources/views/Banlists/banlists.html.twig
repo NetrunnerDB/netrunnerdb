@@ -87,13 +87,13 @@ async function buildBanlistsView() {
     if (formatRestrictions.length == 0) {
       jqPane.append(`<p>No cards are currently banned in ${f.attributes.name}. Have a blast!</p>`);
     } else {
-      const panelList = Panel.createPanelList(jqPane, null, "toggle", "search");
+      const panelList = new PanelList(jqPane, null, "toggle", "search");
       formatRestrictions.forEach(r => {
         const active = r.id == f.attributes.active_restriction_id;
         const visible = active || r.id == formatRestrictions[0].id;
 
         // Create panel
-        const panel = new Panel(panelList, r.id, visible);
+        const panel = panelList.createPanel(r.id, visible);
         panel.addHeader(r.attributes.name);
         panel.addSubheader(`<a href=${Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`b!${r.id.replaceAll('_', '-')}`})}>${r.attributes.size} cards</a>. Start Date: ${r.attributes.date_start}.`);
 
