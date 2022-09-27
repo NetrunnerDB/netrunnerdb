@@ -75,6 +75,7 @@
         locale: '{{ app.request.locale }}'
       };
       moment.locale(window.navigator.language);
+      var v3_api_url = '{{ v3_api_url }}';
     </script>
     {% if app.environment == 'prod' %}
     <!-- Global site tag (gtag.js) - Google Analytics -->

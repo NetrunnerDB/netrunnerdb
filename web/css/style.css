@@ -712,6 +712,53 @@ ul.rulings-list blockquote {
   list-style-type: '-  ';
 }
 
+/* Loading icon */
+.loading-icon {
+  display: inline-block;
+  position: relative;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.75em;
+}
+.loading-icon * {
+  display: inline-block;
+  position: absolute;
+}
+
+.loading-icon-red, .loading-icon-blue, .loading-icon-overlap {
+  border: 0.2em solid; /* 20% */
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  animation-name: loading-icon;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+.loading-icon-red, .loading-icon-overlap {
+  border-color: red;
+  transform: translate(-20%, -20%);
+}
+.loading-icon-blue {
+  border-color: blue;
+  transform: translate(20%, 20%);
+  animation-delay: -1s;
+}
+.loading-icon-overlap {
+  border-top: 0;
+  border-bottom: 0;
+}
+
+@keyframes loading-icon {
+  0%   {transform: translate(-20%, -20%);}
+  25%  {transform: translate( 20%, -20%);}
+  50%  {transform: translate( 20%,  20%);}
+  75%  {transform: translate(-20%,  20%);}
+  100% {transform: translate(-20%, -20%);}
+}
+
 /******** fix for twitter typehead + bootstrap input-group-btn ***********/
 
 .input-group .twitter-typeahead {
