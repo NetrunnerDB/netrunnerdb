@@ -1,0 +1,75 @@
+  {% extends '/layout.html.twig' %}
+
+{% block title %}Illustrators{% endblock %}
+
+{% block body %}
+{% include '/Scripts/api.html.twig' %}
+{% include '/Scripts/panels.html.twig' %}
+<div class="container" id="illustrators">
+  <h1>{{ block('title') }}</h1>
+  <div>
+    <p>The world of Netrunner has been brought to life by a wide selection of amazing artists! This page lists all artists whose work has appeared on cards and which cards they illustrated.</p>
+  </div>
+  <hr>
+  <div class="row">
+    <div id="illustrators" class="col-sm-12">
+    </div>
+  </div>
+</div>
+
+<script>
+async function buildIllustratorsView() {
+  // Add a temporary loading indicator
+  $('#illustrators').append(loading_icon);
+
+  // Load data from API
+  const illustrators = await fetchData('{{ v3_api_url }}/api/v3/public/illustrators?include=printings');
+
+  // Remove the loading indicator
+  $('.temp-loading').remove();
+
+  // Show the illustrators
+  const panelList = new PanelList($('#illustrators'), null, true, "search", "sort");
+  panelList.addSortOption("Name (A-Z)", (panel => panel.title), "ascending");
+  panelList.addSortOption("Name (Z-A)", (panel => panel.title), "descending");
+  panelList.addSortOption("Cards (most)", (panel => parseInt(panel.title.match(/\d+(?= card)/)[0])), "descending");
+  panelList.addSortOption("Cards (least)", (panel => parseInt(panel.title.match(/\d+(?= card)/)[0])), "ascending");
+  illustrators.forEach(illustrator => {
+    const panel = panelList.createPanel(illustrator.id, false);
+    const count = illustrator.relationships.printings.data.length;
+
+    const search = Routing.generate('cards_find', {type:'find', 'view':'images', 'q':`i:"${illustrator.attributes.name}"`});
+    panel.addHeader(`${illustrator.attributes.name} — (<a href="${search}">${count} ${count > 1 ? 'cards' : 'card'}</a>)`);
+    panel.addSubheader(`<a class="toggle-images" href="#" onClick="return false;">Show images</a>`);
+
+    // Format the illustrator's printings into 3 columns
+    panel.addBody();
+    panel.onShow = async function() {
+      const printings = await fetchData(`{{ v3_api_url }}/api/v3/public/illustrators/${illustrator.id}/printings`);
+      const list = printings.map(p => `<li class="printing-title">${printingToAnchor(p)}</li><a href="${printingToLink(p)}" class="printing-image" style="display: none;"><img alt="Box-E" style="width: 100%; margin-top: 16px;" class="img-responsive lazyloaded" src="${p.attributes.images.nrdb_classic.large}"></a>`);
+      panel.addBodyContent(`<div class="col-sm-4"><ul>${list.splice(0, Math.ceil(printings.length / 3)).join('')}</ul></div>`);
+      panel.addBodyContent(`<div class="col-sm-4"><ul>${list.splice(0, Math.ceil(printings.length / 3)).join('')}</ul></div>`);
+      panel.addBodyContent(`<div class="col-sm-4"><ul>${list.join('')}</ul></div>`);
+    };
+
+    // Enable the image toggle
+    panel.subheader.find('.toggle-images').on('click', function(event) {
+      event.stopPropagation();
+      if ($(this).html() == 'Show images') {
+        $(this).html('Hide images');
+        panel.body.find('.printing-title').hide();
+        panel.body.find('.printing-image').show();
+      } else {
+        $(this).html('Show images');
+        panel.body.find('.printing-title').show();
+        panel.body.find('.printing-image').hide();
+      }
+    });
+  });
+}
+
+// Create the illustrators view on load
+buildIllustratorsView();
+</script>
+
+{% endblock %}
