@@ -38,8 +38,8 @@ async function buildIllustratorsView() {
     const panel = panelList.createPanel(illustrator.id, false);
     const count = illustrator.relationships.printings.data.length;
 
-    const search = Routing.generate('cards_find', {type:'find', 'view':'list', 'q':`i:"${illustrator.attributes.name}"`});
-    panel.addHeader(`${illustrator.attributes.name} • (<a href="${search}">${count} ${count > 1 ? 'cards' : 'card'}</a>)`);
+    const search = Routing.generate('cards_find', {type:'find', 'view':'images', 'q':`i:"${illustrator.attributes.name}"`});
+    panel.addHeader(`${illustrator.attributes.name} — (<a href="${search}">${count} ${count > 1 ? 'cards' : 'card'}</a>)`);
 
     // Format the illustrator's printings into 3 columns
     panel.addBody();
