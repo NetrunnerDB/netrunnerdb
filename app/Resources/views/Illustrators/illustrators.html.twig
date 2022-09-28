@@ -40,16 +40,31 @@ async function buildIllustratorsView() {
 
     const search = Routing.generate('cards_find', {type:'find', 'view':'images', 'q':`i:"${illustrator.attributes.name}"`});
     panel.addHeader(`${illustrator.attributes.name} — (<a href="${search}">${count} ${count > 1 ? 'cards' : 'card'}</a>)`);
+    panel.addSubheader(`<a class="toggle-images" href="#" onClick="return false;">Show images</a>`);
 
     // Format the illustrator's printings into 3 columns
     panel.addBody();
     panel.onShow = async function() {
       const printings = await fetchData(`{{ v3_api_url }}/api/v3/public/illustrators/${illustrator.id}/printings`);
-      const list = printings.map(p => `<li>${printingToAnchor(p)}</li>`);
+      const list = printings.map(p => `<li class="printing-title">${printingToAnchor(p)}</li><a href="${printingToLink(p)}" class="printing-image" style="display: none;"><img alt="Box-E" style="width: 100%; margin-top: 16px;" class="img-responsive lazyloaded" src="${p.attributes.images.nrdb_classic.large}"></a>`);
       panel.addBodyContent(`<div class="col-sm-4"><ul>${list.splice(0, Math.ceil(printings.length / 3)).join('')}</ul></div>`);
       panel.addBodyContent(`<div class="col-sm-4"><ul>${list.splice(0, Math.ceil(printings.length / 3)).join('')}</ul></div>`);
       panel.addBodyContent(`<div class="col-sm-4"><ul>${list.join('')}</ul></div>`);
     };
+
+    // Enable the image toggle
+    panel.subheader.find('.toggle-images').on('click', function(event) {
+      event.stopPropagation();
+      if ($(this).html() == 'Show images') {
+        $(this).html('Hide images');
+        panel.body.find('.printing-title').hide();
+        panel.body.find('.printing-image').show();
+      } else {
+        $(this).html('Show images');
+        panel.body.find('.printing-title').show();
+        panel.body.find('.printing-image').hide();
+      }
+    });
   });
 }
 
