@@ -75,7 +75,8 @@
         locale: '{{ app.request.locale }}'
       };
       moment.locale(window.navigator.language);
-      var v3_api_url = '{{ v3_api_url }}';
+      const v3_api_url = '{{ v3_api_url }}';
+      const loading_icon = '<p class="temp-loading text-center"><span class="loading-icon"><span class="loading-icon-red"></span><span class="loading-icon-blue"></span><span class="loading-icon-overlap"></span></span>Loading...</p>';
     </script>
     {% if app.environment == 'prod' %}
     <!-- Global site tag (gtag.js) - Google Analytics -->
