@@ -161,11 +161,12 @@ class PanelList {
     this.sortDropdown.find(`#${id}`).on('click', function(event) {
       event.stopPropagation();
       caller.sortDropdown.dropdown("toggle");
-      caller.panelList.find('.panel').sort(function(a,b) {
+      $(caller.panelList.find('.panel').toArray().sort(function(a,b) {
         const valA = valueFunc(caller.panels.get($(a).attr('id')));
         const valB = valueFunc(caller.panels.get($(b).attr('id')));
-        return ascending ? valA > valB : valA < valB;
-      }).appendTo(caller.panelList);
+        const comp = ascending ? valA > valB : valA < valB;
+        return (valA == valB) ? 0 : comp ? 1 : -1;
+      })).each(function() {console.log($(this).find('h3').html());}).appendTo(caller.panelList);
     });
   }
 }
