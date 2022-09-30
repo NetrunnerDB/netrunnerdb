@@ -94,13 +94,7 @@ async function buildBanlistsView() {
       formatRestrictions.forEach(r => {
         const active = r.id == f.attributes.active_restriction_id;
         let visible = active || r.id == formatRestrictions[0].id;
-        if (query_format && query_restriction) {
-          if (f.id == query_format && r.attributes.name == query_restriction) {
-            visible = true;
-          } else {
-            visible = false;
-          }
-        }
+
         // Create panel
         const panel = panelList.createPanel(r.id, visible);
         panel.addHeader(r.attributes.name);
@@ -156,7 +150,7 @@ async function buildBanlistsView() {
 
         // Fill in searchbox specific format/restriction pair passed in.
         if (f.id == query_format && query_restriction) {
-          jqPane.find('.panel-search input').val(query_restriction);
+          jqPane.find('.panel-search input').val(query_restriction).keyup();
         }
       });
     }
