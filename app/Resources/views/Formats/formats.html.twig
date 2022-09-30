@@ -76,7 +76,7 @@ async function buildFormatsView() {
     $(`#${format.id}`).append(`<h4>Current Ban List</h4>`);
     if (format.attributes.restriction_id) {
       const r = restrictions.get(format.attributes.restriction_id);
-      $(`#${format.id}`).append(`<p><strong><a href="#">${r.attributes.name}</a></strong><br />active as of <strong>${r.attributes.date_start}</strong></p>`);
+      $(`#${format.id}`).append(`<p><strong><a href="${Routing.generate('banlists', {'format': format.attributes.format_id, 'restriction': r.attributes.name})}">${r.attributes.name}</a></strong><br />active as of <strong>${r.attributes.date_start}</strong></p>`);
     } else {
       $(`#${format.id}`).append(`<p><strong>None<br />&nbsp;</p>`);
     }

@@ -23,16 +23,16 @@
   <div id="restrictions-root" role="tabpanel" style="display: none;">
     <!-- Nav tabs -->
     <ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom:20px">
-      <li role="presentation"><a href="#tab-pane-startup" role="tab" data-toggle="tab">Startup</a></li>
-      <li role="presentation" class="active"><a href="#tab-pane-standard" role="tab" data-toggle="tab">Standard</a></li>
-      <li role="presentation"><a href="#tab-pane-eternal" role="tab" data-toggle="tab">Eternal</a></li>
+      <li role="presentation" {% if format == 'startup' %}class="active"{% endif %}><a href="#tab-pane-startup" role="tab" data-toggle="tab">Startup</a></li>
+      <li role="presentation" {% if format == 'standard' or format == null %}class="active"{% endif %}><a href="#tab-pane-standard" role="tab" data-toggle="tab">Standard</a></li>
+      <li role="presentation" {% if format == 'eternal' %}class="active"{% endif %}><a href="#tab-pane-eternal" role="tab" data-toggle="tab">Eternal</a></li>
     </ul>
     <hr>
     <!-- Tab panes -->
     <div class="tab-content">
-      <div role="tabpanel" class="tab-pane" id="tab-pane-startup"></div>
-      <div role="tabpanel" class="tab-pane active" id="tab-pane-standard"></div>
-      <div role="tabpanel" class="tab-pane" id="tab-pane-eternal"></div>
+      <div role="tabpanel" class="tab-pane{% if format == 'startup' %} active{% endif %}" id="tab-pane-startup"></div>
+      <div role="tabpanel" class="tab-pane{% if format == 'standard' or format == null %} active{% endif %}" id="tab-pane-standard"></div>
+      <div role="tabpanel" class="tab-pane{% if format == 'eternal' %} active{% endif %}" id="tab-pane-eternal"></div>
     </div>
   </div>
 
@@ -80,6 +80,9 @@ async function buildBanlistsView() {
   // Remove the loading indicator
   $('.temp-loading').remove();
 
+  const query_format = {% if format %}'{{ format | e('js') }}'{% else %}null{% endif %};
+  const query_restriction = {% if restriction %}'{{ restriction | e('js') }}'{% else %}null{% endif %};
+
   // Add each format to the page
   formats.forEach(f => {
     const jqPane = $(`#tab-pane-${f.id}`);
@@ -90,8 +93,14 @@ async function buildBanlistsView() {
       const panelList = new PanelList(jqPane, null, false, "toggle", "search");
       formatRestrictions.forEach(r => {
         const active = r.id == f.attributes.active_restriction_id;
-        const visible = active || r.id == formatRestrictions[0].id;
-
+        let visible = active || r.id == formatRestrictions[0].id;
+        if (query_format && query_restriction) {
+          if (f.id == query_format && r.attributes.name == query_restriction) {
+            visible = true;
+          } else {
+            visible = false;
+          }
+        }
         // Create panel
         const panel = panelList.createPanel(r.id, visible);
         panel.addHeader(r.attributes.name);
@@ -144,6 +153,11 @@ async function buildBanlistsView() {
         Object.keys(runnerUFC).sort().reverse().forEach(p => { jqRunner.append(generateList(`+${p} Universal Influence`, runnerUFC[p])); });
         if (runnerPen.length > 0) { jqRunner.append(generateList('Identity Influence Reduction', runnerPen)); }
         Object.keys(runnerPts).sort().reverse().forEach(p => { jqRunner.append(generateList(`${p} ${p == 1 ? 'Point' : 'Points'}`, runnerPts[p])); });
+
+        // Fill in searchbox specific format/restriction pair passed in.
+        if (f.id == query_format && query_restriction) {
+          jqPane.find('.panel-search input').val(query_restriction);
+        }
       });
     }
   });
