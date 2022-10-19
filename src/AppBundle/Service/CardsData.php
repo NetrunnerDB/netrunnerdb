@@ -566,16 +566,16 @@ class CardsData
                     foreach ($condition as $arg) {
                         switch ($operator) {
                             case ':':
-                                $or[] = "((t.id != 9 AND COALESCE(c.factionCost, 0) = ?$i) or (t.id = 9 AND COALESCE(c.influenceLimit, 0) =?$i))";
+                                $or[] = "((t.code != 'identity' AND COALESCE(c.factionCost, 0) = ?$i) or (t.code = 'identity' AND COALESCE(c.influenceLimit, 0) =?$i))";
                                 break;
                             case '!':
-                                $or[] = "((t.id != 9 AND COALESCE(c.factionCost, 0) != ?$i) or (t.id = 9 AND COALESCE(c.influenceLimit, 0) != ?$i))";
+                                $or[] = "((t.code != 'identity' AND COALESCE(c.factionCost, 0) != ?$i) or (t.code = 'identity' AND COALESCE(c.influenceLimit, 0) != ?$i))";
                                 break;
                             case '<':
-                                $or[] = "((t.id != 9 AND COALESCE(c.factionCost, 0) < ?$i) or (t.id = 9 AND COALESCE(c.influenceLimit, 0) < ?$i))";
+                                $or[] = "((t.code != 'identity' AND COALESCE(c.factionCost, 0) < ?$i) or (t.code = 'identity' AND COALESCE(c.influenceLimit, 0) < ?$i))";
                                 break;
                             case '>':
-                                $or[] = "((t.id != 9 AND COALESCE(c.factionCost, 0) > ?$i) or (t.id = 9 AND COALESCE(c.influenceLimit, 0) > ?$i))";
+                                $or[] = "((t.code != 'identity' AND COALESCE(c.factionCost, 0) > ?$i) or (t.code = 'identity' AND COALESCE(c.influenceLimit, 0) > ?$i))";
                                 break;
                         }
                         $parameters[$i++] = $arg;
