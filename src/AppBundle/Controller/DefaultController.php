@@ -151,7 +151,6 @@ class DefaultController extends Controller
         $response->setMaxAge($this->getParameter('long_cache'));
 
         $banlists = $entityManager->getRepository(Mwl::class)->findBy([], ['dateStart' => 'DESC']);
-        $cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ['position' => 'DESC']);
         $rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
         $packs = $entityManager->getRepository('AppBundle:Pack')->findBy([], ['dateRelease' => 'DESC']);
         $cardAliases = $cardsData->getPrettyCardAliases();
@@ -159,7 +158,6 @@ class DefaultController extends Controller
         return $this->render('/Default/syntax.html.twig', [
             "pagetitle" => "Search Syntax Reference",
             "banlists" => $banlists,
-            "cycles" => $cycles,
             "rotations" => $rotations,
             "packs" => $packs,
             "aliases" => $cardAliases,

@@ -3,478 +3,135 @@
 {% block title %}NetrunnerDB Search Syntax{% endblock %}
 
 {% block body %}
-{% include '/Scripts/api.html.twig' %}
-{% include '/Scripts/panels.html.twig' %}
 <div class="container">
 
   <h1>{{ block('title') }}</h1>
 
   <ul>
-    <li>a search query is a series of one or more <b>conditions</b> separated by one or more spaces:</li>
-    <ul>
-      <li><code>condition1 condition2 condition3</code> – <em>gets all cards that meet the requirements of all three conditions</em></li>
-    </ul>
-    <li>each <b>condition</b> must be some or all of the name of a card, the ID code for a card, or a criteria search:</li>
-    <ul>
-      <li><code>Street</code> – <em>gets all cards with "Street" in their name</em></li>
-      <li><code>12024</code> – <em>gets the card with code "12024"</em></li>
-      <li><code>x:credit</code> – <em>gets all cards with "credit" in their ability text (see below for the full list of accepted criteria)</em></li>
-    </ul>
-    <li>additionally you can combine <b>condition</b>s with a pipe (<code>|</code>) which acts as an "or" operator:</li>
-    <ul>
-      <li><code>Pelangi|12024|x:credit</code> – <em>gets any card with "Street" in its name, the code "12024", or with "credit" in its text</em></li>
-    </ul>
-    <li>Note that <b>condition</b>s containing spaces must be surrounded with quotation marks:</li>
-    <ul>
-      <li><code>"Street Magic"|12024|x:"take all credits"</code></li>
-    </ul>
-  </ul>
-
-  <hr>
-
-  <h2>Syntax</h2>
-  <p>This is an overview of the available operands and operators you can use to search for cards.</p>
-
-  <div class="panel-parent">
-    <div class="syntax-panel">
-      <h3 class="header">Accepted operands</h3>
-      <h4 class="subheader">You can use these to search for cards with specific properties</h4>
-      <div class="body">
-        <ul>
-          <li><code>g</code> – advancement cost</li>
-          <li><code>v</code> – agenda points</li>
-          <li><code>b</code> – ban list <em>(not available in deckbuilding)</em></li>
-          <li><code>l</code> – base link</li>
-          <li><code>o</code> – cost</li>
-          <li><code>c</code> – cycle <em>(not available in deckbuilding)</em></li>
-          <li><code>f</code> – faction <em>(not available in deckbuilding)</em></li>
-          <li><code>a</code> – flavor text</li>
-          <li><code>i</code> – illustrator</li>
-          <li><code>n</code> – influence (faction cost)</li>
-          <li><code>m</code> – memory usage</li>
-          <li><code>y</code> – quantity printed in set</li>
-          <li><code>r</code> – release date <em>(not available in deckbuilding)</em></li>
-          <li><code>z</code> – rotation <em>(not available in deckbuilding)</em></li>
-          <li><code>e</code> – set</li>
-          <li><code>d</code> – side</li>
-          <li><code>p</code> – strength</li>
-          <li><code>s</code> – subtype</li>
-          <li><code>x</code> – text</li>
-          <li><code>_</code> – title</li>
-          <li><code>h</code> – trash cost</li>
-          <li><code>t</code> – type</li>
-          <li><code>u</code> – unique</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Accepted operators</h3>
-      <h4 class="subheader">These specify whether you want to find cards that match your search query or don't match it</h4>
-      <div class="body">
-        <ul>
-          <li><code>:</code> – equals</li>
-          <li><code>!</code> – different from</li>
-          <li><code>&lt;</code> – less than (numeric values only)</li>
-          <li><code>&gt;</code> – more than (numeric values only)</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Some examples</h3>
-      <div class="body">
-        <ul>
-          <li><code>test</code> or <code>_:test</code> searches for cards "test" in their title</li>
-          <li><code>BLC</code> searches for cards with the acronym "BLC"</li>
-          <li><code>_:a _!b</code> searches for cards with "a" in their title but not "b"</li>
-          <li><code>t:asset</code> searches for all Assets</li>
-          <li><code>t:asset s:ambush</code> searches for every Asset that has the subtype Ambush</li>
-          <li><code>x:"make a run"</code> searches for all cards with the text "make a run"</li>
-          <li><code>t:asset|upgrade f:n</code> searches for all NBN cards that are Assets or Upgrades</li>
-          <li><code>f:a|s n&lt;3</code> searches for all Anarch or Shaper cards with a faction cost less than 3</li>
-          <li><code>t:ice s!barrier|sentry|"code gate"</code> searches for all ICE that are neither barrier, code gate nor sentry</li>
-          <li><code>r&lt;2013-01-01</code> searches for all cards released up to Jan 1, 2013</li>
-          <li><code>d:r|c</code> searches for all Runner or Corp cards</li>
-          <li><code>x:&#34;the Corp loses 1 credit&#34;</code> returns Amina, Corporate &#34;Grant&#34;, and Lamprey</li>
-          <li><code>d:corp z:current</code> returns all Corp cards in the cycles valid for the latest rotation</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Card aliases</h3>
-      <h4 class="subheader">These are shortcuts you can use instead of cards' names when searching for cards by title</h4>
-      <div class="body">
-        <ul>
-        {% for col in aliases|batch(aliases|length / 2) %}
-          <div class="col-sm-6">
-            {% for card, alias_list in col %}
-            <li>{{ card }} : {% for alias in alias_list %}<code>{{ alias }}</code> {% endfor %}</li>
-            {% endfor %}
-          </div>
-        {% endfor %}
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <hr>
-
-  <h2>Operands</h2>
-  <p>This section goes into further detail on each operand.</p>
-
-  <div class="panel-parent">
-    <div class="syntax-panel">
-      <h3 class="header">Advancement cost (<code>g</code>)</h3>
-      <h4 class="subheader">Searching based on agenda advancement cost</h4>
-      <div class="body">
-        This operand searches for the advancement cost of agendas. Using it will filter out all non-agenda cards. To match the install/play/rez cost of other cards, use <code>o</code>.
-        <ul>
-          <li><code>g:3</code> – gets all 3/X agendas</li>
-          <li><code>g&gt;4</code> – gets all agendas with an advancement cost greater than 4</li>
-          <li><code>g:5 v:3</code> – gets all 5/3 agendas</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Agenda points (<code>v</code>)</h3>
-      <h4 class="subheader">Searching based on agenda points</h4>
-      <div class="body">
-        This operand searches for the printed agenda points on agendas. Using it will filter out all non-agenda cards.
-        <ul>
-          <li><code>v:2</code> – gets all X/2 agendas</li>
-          <li><code>v&gt;3</code> – gets all agendas worth more than 3 points</li>
-          <li><code>g:5 v:3</code> – gets all 5/3 agendas</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Banlist (<code>b</code>)</h3>
-      <h4 class="subheader">Searching based on inclusion in a banlist, MWL, or points list</h4>
-      <div class="body">
-        <p><code>b:...</code> will exclude any cards banned by the given banlist. Ban List has two additional options: <code>active</code> or <code>latest</code>. These two only differ when there is a not-yet-active banlist.</p>
-        <p>Valid options are:</p>
-        <ul>
-          <li><code>active</code></li>
-          <li><code>latest</code></li>
-        {% set latest_found = false %}
-        {% for banlist in banlists %}
-          <li><code>{{ banlist.code }}</code>{% if banlist.active %} (active){% endif %}{% if latest_found == false %} (latest){% set latest_found = true %}{% endif %}</li>
-        {% endfor %}
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Base link (<code>l</code>)</h3>
-      <h4 class="subheader">Searching based on Runner identity base links</h4>
-      <div class="body">
-        This operand searches for the base link of Runner IDs. Using it will filter out all other types of cards.
-        <ul>
-          <li><code>l:2</code> – gets all identities with a base link of 2</li>
-          <li><code>l&gt;0</code> – gets all identities with a base linnk greater than 0</li>
-          <li><code>l!1</code> – gets all identities that don't have 1 base link</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Cost (<code>o</code>)</h3>
-      <h4 class="subheader">Searching based on cost</h4>
-      <div class="body">
-        <p>This operand searches for a different value depending on card type. It matches the play cost of events and operations, the install cost of Runner installables, and the rez cost of Corp installables.</p>
-        <p>You can use the type query (<code>t:...</code>) to specify which type of cost you mean.</p>
-        <p>Using this operand will filter out agendas. To match the advancement cost of agendas, use <code>g</code>.</p>
-        <ul>
-          <li><code>o:0</code> – gets all 0-cost cards</li>
-          <li><code>o&gt;5</code> – gets all cards costing more than 5 credits</li>
-          <li><code>o!2</code> – gets all cards that don't cost 2 credits</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Cycle (<code>c</code>)</h3>
-      <h4 class="subheader">Searching based on cycle (including core sets, deluxe expansions, and other non-cycle releases)</h4>
-      <div class="body">
-        <p>This operand matches the position of each cycle:</p>
-        {% for col in cycles|batch(cycles|length / 2) %}
-          <div class="col-sm-6">
-            <ul>
-              {% for cycle in col %}
-              <li><code>{{ cycle.position }}</code> – {{ cycle.name }}</li>
-              {% endfor %}
-            </ul>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Faction (<code>f</code>)</h3>
-      <h4 class="subheader">Searching based on faction</h4>
-      <div class="body">
-        This operand accepts full faction codes (e.g. <code>nbn</code>, <code>haas-bioroid</code>, <code>weyland-consortium</code>, <code>sunny-lebeau</code>, etc) or the following shortcuts:
-        <ul>
-          <li>The first letter of each non-neutral, non-mini faction</li>
-          <li>The second letter, or first two letters, of mini-factions (e.g. <code>p</code> or <code>ap</code> for Apex)
-          <li><code>mini</code> for all mini-factions</li>
-          <li><code>nc</code> for <code>neutral-corp</code></li>
-          <li><code>nr</code> for <code>neutral-runner</code></li>
-          <li><code>-</code> or <code>neutral</code> for both neutral factions</li>
-          <li><code>weyland</code> for <code>weyland-consortium</code></li>
-          <li><code>hb</code> for <code>haas-bioroid</code></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Flavor text (<code>a</code>)</h3>
-      <h4 class="subheader">Searching based on card's flavor text</h4>
-      <div class="body">
-        This operand searches for cards with flavor text containing the given query.
-        <ul>
-          <li><code>a:g00ru</code> – gets all cards referencing "g00ru" in their flavor text</li>
-          <li><code>a!a|e|i|o|u</code> – gets all cards with flavor text, but without any vowels in that flavor text</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Illustrator (<code>i</code>)</h3>
-      <h4 class="subheader">Searching based on illustrator</h4>
-      <div class="body">
-        This operand searches for cards illustrated by a given artist. Note that some cards have reprints illustrated by different artists to their original printing.
-        <ul>
-          <li><code>i:"scott uminga"</code> – gets all cards illustrated by Scott Uminga</li>
-          <li><code>i!"matt zeilinger"</code> – gets all cards not illustrated by Matt Zeilinger</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Influence (faction cost) (<code>n</code>)</h3>
-      <h4 class="subheader">Searching based on card's influence, or an identity's maximum influence limit</h4>
-      <div class="body">
-        <p>This operand searches for the influence of non-identity cards, and the maximum influence limit on identities.</p>
-        <p>Note that non-neutral agendas and identities with an infinite influence limit (e.g. the draft IDs) count as having a limit of 0.</p>
-        <p>You can use the type query (<code>t:...</code>) to exclude IDs or limit your search to them.</p>
-        <ul>
-          <li><code>n:3</code> – gets all cards that cost 3 influence</li>
-          <li><code>n&gt;0 t!identity</code> – gets all cards with more than 0 influence, excluding IDs</li>
-          <li><code>n!15</code> – gets all cards that don't have 15 influence, or have an influence limit of 15</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Memory usage (<code>m</code>)</h3>
-      <h4 class="subheader">Searching based on program memory usage</h4>
-      <div class="body">
-        This operand searches for the memory cost of programs. Using it will filter out all non-program cards.
-        <ul>
-          <li><code>m:0</code> – gets all programs that use 0 MU</li>
-          <li><code>m&gt;2</code> – gets all programs that use more than 2 MU</li>
-          <li><code>m!3</code> – gets all programs that don't use 3 MU</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Quantity printed in set (<code>y</code>)</h3>
-      <h4 class="subheader">Searching based on the quantity of each card printed in its set</h4>
-      <div class="body">
-        This operand finds all cards that were printed in a given quantity in any set they were released in. For most cards this value is 3.
-        <ul>
-          <li><code>y:6</code> – gets all cards that were printed in a group of 6 copies</li>
-          <li><code>y!3</code> – gets all cards that were not printed in a group of 3 copies</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Release Date (<code>r</code>)</h3>
-      <h4 class="subheader">Searching based on release date</h4>
-      <div class="body">
-        This is a special case using only the operators <code>&lt;</code> (inclusive) and <code>&gt;</code> (exclusive) and only understands the arguments <code>now</code> or a date YYYY-MM-DD:
-        <ul>
-          <li><code>r&gt;now</code> – gets all unreleased cards</li>
-          <li><code>r&lt;2022-10-27</code> – gets all cards released before October 27, 2022</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Rotation (<code>z</code>)</h3>
-      <h4 class="subheader">Searching based on inclusion in a rotation</h4>
-      <div class="body">
-        <p>This operand restricts results to cards legal for a given rotation. There are several additional options: <code>current</code>, <code>latest</code>, <code>standard</code>, and <code>startup</code>. <code>current</code> and <code>latest</code> only differ when there is a not-yet-active rotation. <code>standard</code> is an alias for <code>current</code>. Rotation can also specify a specific rotation.</p>
-        <p>Valid options are:</p>
-        <ul>
-          <li><code>current</code></li>
-          <li><code>latest</code></li>
-          <li><code>standard</code></li>
-          <li><code>startup</code></li>
-        {% set active_found = false %}
-        {% set latest_found = false %}
-        {% set today = "now"|date("Y-m-d") %}
-        {% for rotation in rotations %}
-          <li><code>{{ rotation.code }}</code>{% if (active_found == false) and (today >= rotation.getDateStart|date("Y-m-d")) %} (current){% set active_found = true %}{% endif %}{% if latest_found == false %} (latest){% set latest_found = true %}{% endif %}</li>
-        {% endfor %}
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Set (<code>e</code>)</h3>
-      <h4 class="subheader">Searching based on set (including data packs, core sets, deluxe expansions, and other releases)</h4>
-      <div class="body">
-        <p>This operand matches the set codes for each set:</p>
+    <li>a search string is a conjunction of one or more <b>conditions</b> separated by one or more spaces</li>
+    <li>a <b>condition</b> is either:
+      <ul>
+        <li>a <b>word</b> or <b>expression</b> or <b>disjunction</b></li>
+        <li>a <b>criteria</b> followed by an <b>operator</b> followed by a <b>word</b> or <b>expression</b> or <b>disjunction</b>
+      </ul>
+        </li>
+        <li>a <b>word</b> must match <code>/[\w\-]/</code>: letters, numbers, dashes</li>
+        <li>an <b>expression</b> is any text between <code>"</code> (double quotes)</li>
+        <li>a <b>disjunction</b> is several <b>words</b> or <b>expressions</b> separated by <code>|</code></li>
+        <li>a <b>criteria</b> is a single letter:
+          <ul>
+            <li><code>_</code> &ndash; title</li>
+            <li><code>x</code> &ndash; text</li>
+            <li><code>a</code> &ndash; flavor text</li>
+            <li><code>e</code> &ndash; set</li>
+            <li><code>c</code> &ndash; cycle <em>(not available in deckbuilding)</em></li>
+            <li><code>t</code> &ndash; type</li>
+            <li><code>f</code> &ndash; faction <em>(not available in deckbuilding)</em></li>
+            <li><code>s</code> &ndash; subtype</li>
+            <li><code>d</code> &ndash; side</li>
+            <li><code>i</code> &ndash; illustrator</li>
+            <li><code>o</code> &ndash; cost</li>
+            <li><code>g</code> &ndash; advancement cost</li>
+            <li><code>l</code> &ndash; base link</li>
+            <li><code>m</code> &ndash; memory usage</li>
+            <li><code>n</code> &ndash; influence (faction cost)</li>
+            <li><code>p</code> &ndash; strength</li>
+            <li><code>v</code> &ndash; agenda points</li>
+            <li><code>h</code> &ndash; trash cost</li>
+            <li><code>r</code> &ndash; release date <em>(not available in deckbuilding)</em></li>
+            <li><code>u</code> &ndash; unique</li>
+            <li><code>y</code> &ndash; quantity printed in set</li>
+            <li><code>b</code> &ndash; ban list <em>(not available in deckbuilding)</em></li>
+            <li><code>z</code> &ndash; rotation <em>(not available in deckbuilding)</em></li>
+          </ul>
+        </li>
+        <li>an <b>operator</b> is either:
+          <ul>
+            <li><code>:</code> &ndash; equals</li>
+            <li><code>!</code> &ndash; different from</li>
+            <li><code>&lt;</code> &ndash; less than</li>
+            <li><code>&gt;</code> &ndash; more than</li>
+          </ul>
+        </li>
+        <li><b>Title</b> - If you enter text with no criteria, it will attempt to match against card titles (e.g. <code>mca</code> will match MCA Austerity Policy and MCA Informant). The only exceptions are:
+          <ul>
+            <li>Two-or more letters in all capitals will attempt to match cards by acronym (e.g. <code>BLC</code> will match Blue Level Clearance and Black Level Clearance)</li>
+            <li>Writing the ID number of a card will match that card specifically (e.g. <code>20073</code> will match Green Level Clearance)</li>
+            <li>Some cards have aliases that will match them (e.g. <code>clippy</code> will match Paperclip)
+          </ul>
+        </li>
+        <li><b>Faction</b> <code>f</code> accepts full faction codes (e.g. nbn, haas-bioroid, weyland-consortium, sunny-lebeau, etc) or the following shortcuts:
+          <ul>
+            <li>The first letter of each non-neutral, non-mini faction</li>
+            <li>The second letter, or first two letters, of mini-factions (e.g. <code>p</code> or <code>ap</code> for Apex)
+            <li><code>mini</code> for all mini-factions</li>
+            <li><code>nc</code> for <code>neutral-corp</code></li>
+            <li><code>nr</code> for <code>neutral-runner</code></li>
+            <li><code>-</code> or <code>neutral</code> for both neutral factions</li>
+            <li><code>weyland</code> for <code>weyland-consortium</code></li>
+            <li><code>hb</code> for <code>haas-bioroid</code></li>
+          </ul>
+        </li>
+        <li><b>Release Date</b> <code>r</code> is a special case using only the operators <code>&lt;</code> (inclusive) and <code>&gt;</code> (exclusive) and only understands the arguments <code>now</code> or a date YYYY-MM-DD</li>
+        <li><b>Ban List</b> <code>b</code> will exclude any cards banned by that ban list. Ban List has 2 different special options in addition to specific Ban Lists: <code>active</code> or <code>latest</code>. These two only differ when there is a yet-to-be-active Ban List. Ban List can also specify a specific Ban List. Valid Ban List options are:
+          <ul>
+          {% set latest_found = false %}
+          {% for banlist in banlists %}
+            <li><code>{{ banlist.code }}</code>{% if banlist.active %} (active){% endif %}{% if latest_found == false %} (latest){% set latest_found = true %}{% endif %}</li>
+          {% endfor %}
+          </ul>
+        </li>
+        <li><b>Rotation</b> <code>z</code> will restrict results to cards legal for that rotation. Rotation has several different special options in addition to specific rotations: <code>current</code>, <code>latest</code>, <code>standard</code>, and <code>startup</code>. <code>current</code> and <code>latest</code> only differ when there is a yet-to-be-active rotation. <code>standard</code> is an alias for <code>current</code>. Rotation can also specify a specific rotation. Valid specific rotation options are:
+          <ul>
+          {% set active_found = false %}
+          {% set latest_found = false %}
+          {% set today = "now"|date("Y-m-d") %}
+          {% for rotation in rotations %}
+            <li><code>{{ rotation.code }}</code>{% if (active_found == false) and (today >= rotation.getDateStart|date("Y-m-d")) %} (current){% set active_found = true %}{% endif %}{% if latest_found == false %} (latest){% set latest_found = true %}{% endif %}</li>
+          {% endfor %}
+          </ul>
+        </li>
+        <li><b>Set</b> <code>e</code> will match the set codes from each set:
+        <div class="container">
         {% for col in packs|batch(packs|length / 2) %}
           <div class="col-sm-6">
             <ul>
               {% for pack in col %}
-              <li><code>{{ pack.code }}</code> – {{ pack.name }}</li>
+              <li><code>{{ pack.code }}</code> &ndash; {{ pack.name }}</li>
               {% endfor %}
             </ul>
           </div>
         {% endfor %}
-      </div>
-    </div>
+        </div>
+        </li>
+  </ul>
 
-    <div class="syntax-panel">
-      <h3 class="header">Side (<code>d</code>)</h3>
-      <h4 class="subheader">Searching based on side</h4>
-      <div class="body">
-        <ul>
-          <li><code>d:runner</code> or <code>d:r</code> – gets all Runner cards</li>
-          <li><code>d:corp</code> or <code>d:c</code> – gets all Corp cards</li>
-        </ul>
-      </div>
-    </div>
+  <h2>Search examples</h2>
 
-    <div class="syntax-panel">
-      <h3 class="header">Strength (<code>p</code>)</h3>
-      <h4 class="subheader">Searching based on an icebreaker or piece of ice's strength</h4>
-      <div class="body">
-        <p>This operand searches for the strength of ice and programs with a strength value (i.e. icebreakers). Using it will filter out all cards without a strength value.</p>
-        <p>If you want to find programs that don't have strength, you can search for non-icebreaker programs (<code>t:program s!icebreaker</code>).</p>
-        <ul>
-          <li><code>p:4</code> – gets all cards with a strength of 4</li>
-          <li><code>p&lt;6 t:ice</code> – gets all ice with less than 6 strength</li>
-          <li><code>p!1 s:icebreaker</code> – gets all icebreakers that don't have a base strength of 1</li>
-        </ul>
-      </div>
-    </div>
+  <ul>
+    <li><code>test</code> or <code>_:test</code> searches for cards "test" in their title</li>
+    <li><code>BLC</code> searches for cards with the acronym "BLC"</li>
+    <li><code>_:a _!b</code> searches for cards with "a" in their title but not "b"</li>
+    <li><code>t:asset</code> searches for all Assets</li>
+    <li><code>t:asset s:ambush</code> searches for every Asset that has the subtype Ambush</li>
+    <li><code>x:"make a run"</code> searches for all cards with the text "make a run"</li>
+    <li><code>t:asset|upgrade f:n</code> searches for all NBN cards that are Assets or Upgrades</li>
+    <li><code>f:a|s n&lt;3</code> searches for all Anarch or Shaper cards with a faction cost less than 3</li>
+    <li><code>t:ice s!barrier|sentry|"code gate"</code> searches for all ICE that are neither barrier, code gate nor sentry</li>
+    <li><code>r&lt;2013-01-01</code> searches for all cards released up to Jan 1, 2013</li>
+    <li><code>d:r|c</code> searches for all Runner or Corp cards</li>
+    <li><code>x:&#34;the Corp loses 1 credit&#34;</code> returns Amina, Corporate &#34;Grant&#34;, and Lamprey</li>
+    <li><code>d:corp z:current</code> returns all Corp cards in the cycles valid for the latest rotation</li>
+  </ul>
 
-    <div class="syntax-panel">
-      <h3 class="header">Subtype (<code>s</code>)</h3>
-      <h4 class="subheader">Searching based on subtypes</h4>
-      <div class="body">
-        This operand searches for cards with matching subtypes. Note that queries must match the entire subtype (e.g. <code>virus</code> will match viruses, but <code>iru</code> will not).
-        <ul>
-          <li><code>s:barrier|"code gate"|sentry</code> – gets all barriers, code gates, and sentries</li>
-          <li><code>s!location</code> – gets all cards (Runner and Corp) that do not have the location subtype</li>
-        </ul>
-      </div>
-    </div>
+  <h2>Card aliases</h2>
 
-    <div class="syntax-panel">
-      <h3 class="header">Text (<code>x</code>)</h3>
-      <h4 class="subheader">Searching based on card's text</h4>
-      <div class="body">
-        You can use the <code>x</code> syntax to match substrings of a card's ability text (as opposed to its flavor text):
-        <ul>
-          <li><code>x:run</code> – gets all cards with "run" in their text</li>
-          <li><code>x!"whenever the corp"</code> – gets all cards without "whenever the corp" in their text</li>
-          <li><code>x:"per turn"|"per run" x:2</code> – gets all with either "per turn" or "per run", and with the number 2 in their text</li>
-        </ul>
-      </div>
-    </div>
+  <p>The following are shortcuts you can use instead of cards' names.</p>
 
-    <div class="syntax-panel">
-      <h3 class="header">Title (<code>_</code>)</h3>
-      <h4 class="subheader">Searching based on card's titles</h4>
-      <div class="body">
-        If you enter text with no criteria, it will attempt to match against card titles (e.g. <code>mca</code> will match MCA Austerity Policy and MCA Informant). The only exceptions are:
-        <ul>
-          <li>Two-or more letters in all capitals will attempt to match cards by acronym (e.g. <code>BLC</code> will match Blue Level Clearance and Black Level Clearance)</li>
-          <li>Writing the ID number of a card will match that card specifically (e.g. <code>20073</code> will match Green Level Clearance)</li>
-          <li>Some cards have aliases that will match them (e.g. <code>clippy</code> will match Paperclip)
-        </ul>
-        Note that you can also search for card titles by using the <code>_</code> operand. This allows you to search for cards that don't contain a certain string:
-        <ul>
-          <li><code>_!not</code> – gets all cards that do not contain "not" in their titles</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Trash cost (<code>h</code>)</h3>
-      <h4 class="subheader">Searching based on trash cost</h4>
-      <div class="body">
-        This operand searches for the trash cost of cards with trash costs. Using it will filter out all cards without a trash cost.
-        <ul>
-          <li><code>h:4</code> – gets all cards with a trash cost of 4</li>
-          <li><code>h&lt;2</code> – gets all cards with a trash cost less than 2</li>
-          <li><code>h!3</code> – gets all cards with trash costs that don't have a trash cost of 3</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Type (<code>t</code>)</h3>
-      <h4 class="subheader">Searching based on card type</h4>
-      <div class="body">
-        This operand searches for cards that are or aren't a certain type.
-        <ul>
-          <li><code>t:asset|upgrade</code> – gets all assets and upgrades</li>
-          <li><code>t!resource</code> – gets all cards (Runner and Corp) except resources</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="syntax-panel">
-      <h3 class="header">Uniqueness (<code>u</code>)</h3>
-      <h4 class="subheader">Searching for unique or non-unique cards</h4>
-      <div class="body">
-        This operand will find all unique cards, unless it is given a value of <code>0</code>. Using the <code>!</code> operator inverts this.
-        <ul>
-          <li><code>u:0</code> or <code>u!1</code> – gets all cards that are not unique</li>
-          <li><code>u:1</code> or <code>u!0</code> – gets all unique cards</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
+  <ul>
+  {% for card, alias_list in aliases %}
+    <li>{{ card }} : {% for alias in alias_list %}<code>{{ alias }}</code> {% endfor %}</li>
+  {% endfor %}
+  </ul>
 </div>
-
-<script>
-async function buildSyntaxView() {
-
-  // Rebuild each section with dynamic panels
-  $('.panel-parent').each(function(i) {
-    const panelList = new PanelList($(this), null, false, ...(i == 1 ? ["search", "toggle"] : [])); // The first one doesn't need toggles or searching
-
-    // Replace the static panels with dynamic ones
-    $(this).find('.syntax-panel').each(function(j) {
-      const panel = panelList.createPanel(`syntax-panel-${i}-${j}`, false);
-      panel.addHeader($(this).find('.header').html());
-      const subheader = $(this).find('.subheader').html();
-      if (subheader) {
-        panel.addSubheader(subheader);
-      }
-      panel.addBody().addBodyContent($(this).find('.body').html());
-      $(this).remove();
-    });
-  });
-
-}
-
-// Create the syntax view on load
-buildSyntaxView();
-</script>
 {% endblock %}

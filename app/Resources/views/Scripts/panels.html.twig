@@ -131,7 +131,7 @@ class PanelList {
         inputField.on('keyup', function() {
           const query = inputField.val().trim().toLowerCase();
           panelList.find('.panel').each(function() {
-            if ($(this).find('.header').text().toLowerCase().includes(query)) {
+            if ($(this).find('.header').html().toLowerCase().includes(query)) {
               $(this).show();
             } else {
               $(this).hide();
