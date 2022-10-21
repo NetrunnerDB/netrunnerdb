@@ -152,6 +152,7 @@ class DefaultController extends Controller
 
         $banlists = $entityManager->getRepository(Mwl::class)->findBy([], ['dateStart' => 'DESC']);
         $rotations = $entityManager->getRepository(Rotation::class)->findBy([], ['dateStart' => 'DESC']);
+        $cycles = $entityManager->getRepository('AppBundle:Cycle')->findBy([], ['position' => 'DESC']);
         $packs = $entityManager->getRepository('AppBundle:Pack')->findBy([], ['dateRelease' => 'DESC']);
         $cardAliases = $cardsData->getPrettyCardAliases();
 
@@ -159,6 +160,7 @@ class DefaultController extends Controller
             "pagetitle" => "Search Syntax Reference",
             "banlists" => $banlists,
             "rotations" => $rotations,
+            "cycles" => $cycles,
             "packs" => $packs,
             "aliases" => $cardAliases,
         ], $response);
