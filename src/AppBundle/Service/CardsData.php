@@ -719,7 +719,7 @@ class CardsData
                         $mwl = $this->entityManager->getRepository(Mwl::class)->findOneBy(['code' => $condition[0]], ["dateStart" => "DESC"]);
                     }
                     if ($mwl) {
-                        $cond = $operator == ":" ? "in" : "not in";
+                        $cond = $operator == "!" ? "in" : "not in";
                         $clauses[] = "(c.id $cond (SELECT mc.card_id FROM AppBundle:MwlCard mc WHERE mc.mwl_id = ?$i))";
                         $parameters[$i++] = $mwl->getId();
                     }
