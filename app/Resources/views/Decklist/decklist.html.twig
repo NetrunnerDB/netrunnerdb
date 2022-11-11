@@ -55,7 +55,7 @@ NRDB.user.params.decklist_id = Decklist.id;
                    }, function() {
                        alert('Copy to clipboard failed. Sorry!');
                    });
-                   return false;">Copy Legacy URL for Jinteki.net</a>
+                   return false;">Copy legacy URL </a>
             </div>
             {% if duplicate %}
             | <small>Duplicate of <a href="{{ path('decklist_view', { 'decklist_uuid': duplicate.uuid, 'decklist_name': duplicate.prettyname|e('url') }) }}">{{ duplicate.name }}</a></small>
