@@ -114,6 +114,8 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
   }, {
     display: function(card) { return card.title + ' (' + card.pack.name + ')'; },
     source: findMatches
+  }).bind('typeahead:render', function() {
+    $('#filter-text').parent().find('.tt-selectable:first').addClass('tt-cursor');
   });
 
   make_cost_graph();
