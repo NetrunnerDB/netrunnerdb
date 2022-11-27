@@ -248,6 +248,10 @@ class Judge
                 $problem = 'copies';
             }
 
+            if (($identity->getCode() == '34093' /* Nova Initiumia */ || $identity->getCode() == '34128' /* Ampere */) && $qty > 1) {
+                $problem = 'copies';
+            }
+
             if ($card->getSide() !== $identity->getSide()) {
                 $problem = 'side';
             }
