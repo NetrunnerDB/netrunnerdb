@@ -23,7 +23,7 @@ async function buildIllustratorsView() {
   $('#illustrators').append(loading_icon);
 
   // Load data from API
-  const illustrators = await fetchData('{{ v3_api_url }}/api/v3/public/illustrators?include=printings');
+  const illustrators = await fetchData('{{ v3_api_url }}/api/v3/public/illustrators');
 
   // Remove the loading indicator
   $('.temp-loading').remove();
@@ -36,7 +36,7 @@ async function buildIllustratorsView() {
   panelList.addSortOption("Cards (least)", (panel => parseInt(panel.title.match(/\d+(?= card)/)[0])), "ascending");
   illustrators.forEach(illustrator => {
     const panel = panelList.createPanel(illustrator.id, false);
-    const count = illustrator.relationships.printings.data.length;
+    const count = illustrator.attributes.num_printings;
 
     const search = Routing.generate('cards_find', {type:'find', 'view':'images', 'q':`i:"${illustrator.attributes.name}"`});
     panel.addHeader(`${illustrator.attributes.name} — (<a href="${search}">${count} ${count > 1 ? 'cards' : 'card'}</a>)`);
