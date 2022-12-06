@@ -92,7 +92,7 @@ class UserSummaryCommand extends ContainerAwareCommand
         foreach ($reviews as $review) {
             $card = $review->getCard();
             $url = $this->router->generate('cards_zoom', ['card_code' => $card->getCode()]);
-            $output->writeln("    Review on {$card->getTitle()} ({$card->getCode()}) {$url_prefix}{$url}\n{$comment->getText()}\n");
+            $output->writeln("    Review on {$card->getTitle()} ({$card->getCode()}) {$url_prefix}{$url}\n{$review->getText()}\n");
         }
 
         $output-> writeln('===== Review Comments ===');
