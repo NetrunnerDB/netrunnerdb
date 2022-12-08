@@ -552,7 +552,7 @@ ul.rulings-list blockquote {
   padding: 5px 10px;
 }
 
-#restricted:not(:empty), #rotated:not(:empty), #limited:not(:empty) {
+#restricted:not(:empty), #rotated:not(:empty), #limited:not(:empty), #ampere_agenda_limit:not(:empty) {
   color: red;
   display: list-item;
   list-style-type: disc;
