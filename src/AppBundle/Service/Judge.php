@@ -211,6 +211,8 @@ class Judge
         $restricted = false;
         $problem = null;
 
+        $agendas_per_faction = [];
+
         /** @var SlotInterface $slot */
         foreach ($slots as $slot) {
             $card = $slot->getCard();
@@ -270,6 +272,13 @@ class Judge
                 $agendaPoints += $card->getAgendaPoints() * $qty;
             }
 
+            if ($identity->getCode() == '34128' /* ampere */ && $card->getType()->getCode() === "agenda" && $card->getFaction()->getCode() !== 'neutral-corp') {
+              if (!isset($agendas_per_faction[$card->getFaction()->getCode()])) {
+                $agendas_per_faction[$card->getFaction()->getCode()] = 0;
+              }
+              $agendas_per_faction[$card->getFaction()->getCode()]++;
+            }
+
             $influenceSpent += $this->getInfluenceCostOfCard($slot, $slots, $identity);
 
             if ($card->getGlobalPenalty() !== null && $influenceLimit !== null) {
@@ -290,6 +299,14 @@ class Judge
 
         if (!($influenceLimit == null || $influenceLimit == 0) && $influenceSpent > $influenceLimit) {
             $problem = 'influence';
+        }
+
+        if ($identity->getCode() == '34128' /* ampere */) {
+            foreach ($agendas_per_faction as $faction => $num_agendas) {
+                if ($num_agendas > 2) {
+                    $problem = 'ampere_agendas';
+                }
+            }
         }
 
         // agenda points rule, except for draft identities because Cube
@@ -372,7 +389,10 @@ class Judge
             case 'copies':
                 return "The deck has too many copies of a card.";
                 break;
-        }
+            case 'ampere_agendas':
+                return "More than 2 agendas included from a non-neutral Corp faction.";
+                break;
+         }
 
         return null;
     }
