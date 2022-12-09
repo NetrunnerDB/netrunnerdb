@@ -512,25 +512,21 @@ function check_ampere_agenda_limits() {
     let agendasByFaction = new Map();
     let nb_violations = 0;
     NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'agenda', faction_code: { '$ne': 'neutral-corp' } }).forEach(function (card) {
-        console.log(`(${card.faction_code}) ${card.title}`);
         if (!(card.faction_code in agendasByFaction)) {
             agendasByFaction[card.faction_code] = 0;
         }
         agendasByFaction[card.faction_code]++;
         for (faction in agendasByFaction) {
-            console.log(`checking for ${faction}`);
             if (agendasByFaction[faction] > 2) {
                 nb_violations++;
             } 
         }
-        // nb_violations++;
     });
     if(nb_violations > 0) {
         $('#ampere_agenda_limit').text('More than 2 agendas included from a non-neutral Corp faction.').show();
     } else {
         $('#ampere_agenda_limit').text('').hide();
     }
-    console.log(agendasByFaction);
 }
 
 function show_onesies() {
