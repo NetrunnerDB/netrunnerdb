@@ -17,7 +17,7 @@ function update_max_qty() {
       max_qty = 9;
     }
     // Nova Initiumia & Ampere only allow a max of 1 copy per card.
-    if (Identity.code == '34093' || Identity.code == '34128') {
+    if (Identity.code == '33093' || Identity.code == '33128') {
       max_qty = 1;
     }
     NRDB.data.cards.updateById(card.code, {

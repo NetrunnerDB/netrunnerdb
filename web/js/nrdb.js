@@ -506,7 +506,7 @@ function update_deck(options) {
 }
 
 function check_ampere_agenda_limits() {
-    if (Identity.code != '34128') {
+    if (Identity.code != '33128' /* Ampere */) {
         return;
     }
     let agendasByFaction = new Map();
