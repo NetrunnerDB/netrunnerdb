@@ -192,19 +192,16 @@ function create_collection_tab(initialPackSelection) {
   NRDB.data.packs.find().forEach(function(pack) { if (rotated_cycles[pack.cycle.code]) { rotated_packs[pack.code] = 1; } });
 
   $('#collection_startup').on('click', function(event) {
-    let startup_cycles = Array();
-    startup_cycles['ashes'] = 1;
+    let startup_cycles = Array(); // Hardcoded Startup Codes
     startup_cycles['system-gateway'] = 1;
     startup_cycles['system-update-2021'] = 1;
     startup_cycles['borealis'] = 1;
-    let startup_packs = Array();
-    startup_packs['df'] = 1;
-    startup_packs['urbp'] = 1;
-    startup_packs['ur'] = 1;
+    let startup_packs = Array(); // Hardcoded Startup Codes
     startup_packs['sg'] = 1;
     startup_packs['su21'] = 1;
     startup_packs['msbp'] = 1;
     startup_packs['ms'] = 1;
+    startup_packs['ph'] = 1;
     event.preventDefault();
     $('#pack_code').find(':checkbox').each(function() {
       $(this).prop('checked', Boolean(startup_cycles[$(this).prop('name')] || startup_packs[$(this).prop('name')]));
