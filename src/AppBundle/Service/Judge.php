@@ -250,7 +250,7 @@ class Judge
                 $problem = 'copies';
             }
 
-            if (($identity->getCode() == '34093' /* Nova Initiumia */ || $identity->getCode() == '34128' /* Ampere */) && $qty > 1) {
+            if (($identity->getCode() == '33093' /* Nova Initiumia */ || $identity->getCode() == '33128' /* Ampere */) && $qty > 1) {
                 $problem = 'copies';
             }
 
@@ -272,7 +272,7 @@ class Judge
                 $agendaPoints += $card->getAgendaPoints() * $qty;
             }
 
-            if ($identity->getCode() == '34128' /* ampere */ && $card->getType()->getCode() === "agenda" && $card->getFaction()->getCode() !== 'neutral-corp') {
+            if ($identity->getCode() == '33128' /* ampere */ && $card->getType()->getCode() === "agenda" && $card->getFaction()->getCode() !== 'neutral-corp') {
               if (!isset($agendas_per_faction[$card->getFaction()->getCode()])) {
                 $agendas_per_faction[$card->getFaction()->getCode()] = 0;
               }
@@ -301,7 +301,7 @@ class Judge
             $problem = 'influence';
         }
 
-        if ($identity->getCode() == '34128' /* ampere */) {
+        if ($identity->getCode() == '33128' /* ampere */) {
             foreach ($agendas_per_faction as $faction => $num_agendas) {
                 if ($num_agendas > 2) {
                     $problem = 'ampere_agendas';
