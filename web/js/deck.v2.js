@@ -266,6 +266,7 @@ function create_collection_tab(initialPackSelection) {
     }
   });
 
+  // Create elements for faction and card type selectors.
   $('.filter').each(function(index, div) {
     var columnName = $(div).attr('id');
     var arr = [];
@@ -670,6 +671,8 @@ function handle_quantity_change(event) {
         });
     });
     refresh_collection();
+    // This is the magic incantation that allows the card quantity to update correctly when changing IDs.
+    $('#mwl_code').trigger('change');
   } else {
     $.each(CardDivs, function(nbcols, rows) {
       // rows is an array of card rows
