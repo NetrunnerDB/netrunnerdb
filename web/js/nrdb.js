@@ -493,6 +493,7 @@ function update_deck(options) {
     check_influence(influenceSpent);
     check_restricted();
     check_deck_limit();
+    check_agenda_factions();
     check_ampere_agenda_limits();
     if (NRDB.settings && NRDB.settings.getItem('check-rotation')) {
         check_rotation();
@@ -505,6 +506,22 @@ function update_deck(options) {
         setTimeout(make_strength_graph, 100);
 }
 
+function check_agenda_factions() {
+    let problem = false;
+    if (Identity.faction_code != 'neutral-corp' && MWL) {
+        NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'agenda', faction_code: { '$ne': 'neutral-corp' } }).forEach(function (card) {
+            if (card.faction_code != Identity.faction_code) {
+                problem = true;
+            }
+        });
+    }
+
+    if (problem) {
+        $('#out_of_faction_agendas').text('Deck includes out of faction agendas.').show();
+    } else {
+        $('#out_of_faction_agendas').text('').hide();
+    }
+}
 function check_ampere_agenda_limits() {
     if (Identity.code != '33128' /* Ampere */) {
         return;
