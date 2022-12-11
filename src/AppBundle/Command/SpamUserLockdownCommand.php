@@ -31,7 +31,7 @@ class SpamUserLockdownCommand extends ContainerAwareCommand
     {
         $this
         ->setName('app:spam_user_lockdown')
-        ->setDescription('Print out a summary of user decks, decklists, reviews, and comments.')
+        ->setDescription('Lock down a user account that was spamming and remove their trash.')
         ->addArgument(
             'username',
             InputArgument::REQUIRED,
@@ -44,7 +44,7 @@ class SpamUserLockdownCommand extends ContainerAwareCommand
         ->addArgument(
             'url_prefix',
             InputArgument::OPTIONAL,
-            'Username to summarize.',
+            'URL to use for link generation. https://netrunnerdb.com by default. Set to http://localhost:8080/app_dev.php for local dev use cases.',
             'https://netrunnerdb.com'
         )
         ;
@@ -71,34 +71,24 @@ class SpamUserLockdownCommand extends ContainerAwareCommand
         $output->writeln("  username: {$user->getUsername()}");
         $output->writeln("  email: {$user->getEmail()}");
         $output->writeln("  last_login: {$user->getLastLogin()->format('Y-m-d H:i:s')}");
-        $output->writeln("  soft_ban: {$user->getSoftBan()}");
-        $output->writeln('===================');
+        $output->writeln('==========================');
 
-#        $output-> writeln('===== Decks =============');
-#        $decks = $user->getDecks();
-#        $output->writeln("  # decks: {$decks->count()}");
-#        foreach ($decks as $deck) {
-#          $output->writeln("   Deck {$deck->getId()}: {$deck->getName()}");
-#        }
-#
-#        $output-> writeln('===== Decklists =========');
-#        $decklists = $user->getDeckLists();
-#        $output->writeln("  # decklists: {$decklists->count()}");
-#
         $output-> writeln('===== Comments =========');
         $commentEntity = $this->entityManager->getRepository('AppBundle:Comment');
         $comments = $commentEntity->findBy(['author' => $user]);
         $num_comments = count($comments);
         $output->writeln("  # comments: {$num_comments}");
+        $affected_decklists = [];
         foreach ($comments as $comment) {
             $decklist = $comment->getDecklist();
+            array_push($affected_decklists, $decklist->getUuid());
             $url = $this->router->generate('decklist_view', ['decklist_uuid' => $decklist->getUuid()]);
             $output->writeln("    Comment on {$decklist->getName()} ({$decklist->getUuid()}) {$url_prefix}{$url}\n{$comment->getText()}\n");
             $this->entityManager->remove($comment);
         }
         $this->entityManager->flush();
 
-        $output-> writeln('===== Review Comments ===');
+        $output->writeln('===== Review Comments ===');
         $reviewCommentEntity = $this->entityManager->getRepository('AppBundle:Reviewcomment');
         $reviewComments = $reviewCommentEntity->findBy(['author' => $user]);
         $num_reviewComments = count($reviewComments);
@@ -111,15 +101,16 @@ class SpamUserLockdownCommand extends ContainerAwareCommand
         }
         $this->entityManager->flush();
 
-        $output-> writeln('===== Reviews ===========');
+        $output->writeln('===== Reviews ===========');
         $reviews = $user->getReviews();
         $output->writeln("  # reviews: {$reviews->count()}");
         foreach ($reviews as $review) {
             $card = $review->getCard();
             $url = $this->router->generate('cards_zoom', ['card_code' => $card->getCode()]);
-            $output->writeln("    Review on {$card->getTitle()} ({$card->getCode()}) {$url_prefix}{$url}\n{$review->getText()}\n");
-            foreach ($review->getVotes() as $vote) {
-                $this->entityManager->remove($vote);
+            $num_votes = count($review->getVotes());
+            $output->writeln("    Review on {$card->getTitle()} ({$card->getCode()}) with {$num_votes} votes @ {$url_prefix}{$url}\n{$review->getText()}\n");
+            foreach ($review->getVotes() as $vote_user) {
+                $review->removeVote($vote_user);
             }
             foreach ($review->getComments() as $comment) {
                 $this->entityManager->remove($comment);
@@ -134,14 +125,8 @@ class SpamUserLockdownCommand extends ContainerAwareCommand
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $output->writeln("\n\n================================");
-        $output->writeln("User Summary for {$username}:");
-        $output->writeln("  username: {$user->getUsername()}");
-        $output->writeln("  email: {$user->getEmail()}");
-        $output->writeln("  last_login: {$user->getLastLogin()->format('Y-m-d H:i:s')}");
-        $output->writeln("  soft_ban: {$user->getSoftBan()}");
-        $output->writeln("  # comments: {$num_comments}");
-        $output->writeln("  # reviews: {$reviews->count()}");
-        $output->writeln("  # reviewComments: {$num_reviewComments}");
+        $output->writeln("Recalculate decklist nbcomments fields");
+        $update_decklist_nbcomments_sql = "UPDATE decklist d SET nbcomments = (SELECT COUNT(*) FROM comment c WHERE c.decklist_id = d.id)";
+        $this->entityManager->getConnection()->executeQuery($update_decklist_nbcomments_sql);
     }
 }

@@ -61,7 +61,6 @@ class UserSummaryCommand extends ContainerAwareCommand
         $output->writeln("  username: {$user->getUsername()}");
         $output->writeln("  email: {$user->getEmail()}");
         $output->writeln("  last_login: {$user->getLastLogin()->format('Y-m-d H:i:s')}");
-        $output->writeln("  soft_ban: {$user->getSoftBan()}");
         $output->writeln('===================');
 
         $output-> writeln('===== Decks =============');
@@ -92,7 +91,8 @@ class UserSummaryCommand extends ContainerAwareCommand
         foreach ($reviews as $review) {
             $card = $review->getCard();
             $url = $this->router->generate('cards_zoom', ['card_code' => $card->getCode()]);
-            $output->writeln("    Review on {$card->getTitle()} ({$card->getCode()}) {$url_prefix}{$url}\n{$review->getText()}\n");
+            $num_votes = count($review->getVotes());
+            $output->writeln("    Review on {$card->getTitle()} ({$card->getCode()}) with {$num_votes} votes @ {$url_prefix}{$url}\n{$review->getText()}\n");
         }
 
         $output-> writeln('===== Review Comments ===');
@@ -111,7 +111,6 @@ class UserSummaryCommand extends ContainerAwareCommand
         $output->writeln("  username: {$user->getUsername()}");
         $output->writeln("  email: {$user->getEmail()}");
         $output->writeln("  last_login: {$user->getLastLogin()->format('Y-m-d H:i:s')}");
-        $output->writeln("  soft_ban: {$user->getSoftBan()}");
         $output->writeln("  # decks: {$decks->count()}");
         $output->writeln("  # decklists: {$decklists->count()}");
         $output->writeln("  # comments: {$num_comments}");
