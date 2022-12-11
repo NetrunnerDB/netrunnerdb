@@ -493,6 +493,8 @@ function update_deck(options) {
     check_influence(influenceSpent);
     check_restricted();
     check_deck_limit();
+    check_agenda_factions();
+    check_ampere_agenda_limits();
     if (NRDB.settings && NRDB.settings.getItem('check-rotation')) {
         check_rotation();
     } else {
@@ -502,6 +504,46 @@ function update_deck(options) {
         setTimeout(make_cost_graph, 100);
     if ($('#strengthChart .highcharts-container').length)
         setTimeout(make_strength_graph, 100);
+}
+
+function check_agenda_factions() {
+    let problem = false;
+    if (Identity.faction_code != 'neutral-corp' && MWL) {
+        NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'agenda', faction_code: { '$ne': 'neutral-corp' } }).forEach(function (card) {
+            if (card.faction_code != Identity.faction_code) {
+                problem = true;
+            }
+        });
+    }
+
+    if (problem) {
+        $('#out_of_faction_agendas').text('Deck includes out of faction agendas.').show();
+    } else {
+        $('#out_of_faction_agendas').text('').hide();
+    }
+}
+function check_ampere_agenda_limits() {
+    if (Identity.code != '33128' /* Ampere */) {
+        return;
+    }
+    let agendasByFaction = new Map();
+    let nb_violations = 0;
+    NRDB.data.cards.find({ indeck: { '$gt': 0 }, type_code: 'agenda', faction_code: { '$ne': 'neutral-corp' } }).forEach(function (card) {
+        if (!(card.faction_code in agendasByFaction)) {
+            agendasByFaction[card.faction_code] = 0;
+        }
+        agendasByFaction[card.faction_code]++;
+        for (faction in agendasByFaction) {
+            if (agendasByFaction[faction] > 2) {
+                nb_violations++;
+            } 
+        }
+    });
+    if(nb_violations > 0) {
+        $('#ampere_agenda_limit').text('More than 2 agendas included from a non-neutral Corp faction.').show();
+    } else {
+        $('#ampere_agenda_limit').text('').hide();
+    }
 }
 
 function show_onesies() {

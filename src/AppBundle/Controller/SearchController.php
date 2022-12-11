@@ -510,7 +510,7 @@ class SearchController extends Controller
                     $standard_legal = "available";
 
                     // Startup legality is currently hard-coded since the DB doesn't know anything about it.
-                    $startupCycles = ['ashes' => true, 'system-gateway' => true, 'system-update-2021' => true, 'borealis' => true];
+                    $startupCycles = ['system-gateway' => true, 'system-update-2021' => true, 'borealis' => true]; // Hardcoded Startup Codes
                     $startup_legal = false;
 
                     $rotated_count = 0;

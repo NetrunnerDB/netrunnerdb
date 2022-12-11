@@ -16,6 +16,12 @@ function update_max_qty() {
     if(draft_packs.includes(Identity.pack_code)) {
       max_qty = 9;
     }
+    if (max_qty > 0) {
+      // Nova Initiumia & Ampere only allow a max of 1 copy per card.
+      if (Identity.code == '33093' || Identity.code == '33128') {
+        max_qty = 1;
+      }
+    }
     NRDB.data.cards.updateById(card.code, {
       maxqty : max_qty
     });
@@ -188,19 +194,16 @@ function create_collection_tab(initialPackSelection) {
   NRDB.data.packs.find().forEach(function(pack) { if (rotated_cycles[pack.cycle.code]) { rotated_packs[pack.code] = 1; } });
 
   $('#collection_startup').on('click', function(event) {
-    let startup_cycles = Array();
-    startup_cycles['ashes'] = 1;
+    let startup_cycles = Array(); // Hardcoded Startup Codes
     startup_cycles['system-gateway'] = 1;
     startup_cycles['system-update-2021'] = 1;
     startup_cycles['borealis'] = 1;
-    let startup_packs = Array();
-    startup_packs['df'] = 1;
-    startup_packs['urbp'] = 1;
-    startup_packs['ur'] = 1;
+    let startup_packs = Array(); // Hardcoded Startup Codes
     startup_packs['sg'] = 1;
     startup_packs['su21'] = 1;
     startup_packs['msbp'] = 1;
     startup_packs['ms'] = 1;
+    startup_packs['ph'] = 1;
     event.preventDefault();
     $('#pack_code').find(':checkbox').each(function() {
       $(this).prop('checked', Boolean(startup_cycles[$(this).prop('name')] || startup_packs[$(this).prop('name')]));
@@ -263,6 +266,7 @@ function create_collection_tab(initialPackSelection) {
     }
   });
 
+  // Create elements for faction and card type selectors.
   $('.filter').each(function(index, div) {
     var columnName = $(div).attr('id');
     var arr = [];
@@ -667,6 +671,8 @@ function handle_quantity_change(event) {
         });
     });
     refresh_collection();
+    // This is the magic incantation that allows the card quantity to update correctly when changing IDs.
+    $('#mwl_code').trigger('change');
   } else {
     $.each(CardDivs, function(nbcols, rows) {
       // rows is an array of card rows

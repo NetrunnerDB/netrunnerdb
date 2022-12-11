@@ -47,8 +47,7 @@ $(document).on('data.app', function() {
   rotated_cycles['napd'] = 1;
   NRDB.data.cycles.find( { "rotated": true } ).forEach(function(cycle) { rotated_cycles[cycle.code] = 1; });
 
-  var startup_cycles = Array();
-  startup_cycles['ashes'] = 1;
+  var startup_cycles = Array(); // Hardcoded Startup Codes
   startup_cycles['system-gateway'] = 1;
   startup_cycles['system-update-2021'] = 1;
   startup_cycles['borealis'] = 1;
