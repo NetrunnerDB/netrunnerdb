@@ -52,7 +52,7 @@
           <div class="col-sm-5" style="margin-bottom:2em">
             <div class="card-image">
               {% if card.imageUrl %}
-                 <img data-src="{{ card_image_url }}{{ asset(card.large_image_path)  }}" alt="{{ card.title }}" class="img-responsive lazyload" style="margin:auto">
+                 <img data-src="{{ card_image_url }}{{ asset(card.large_image_path)  }}" alt="{{ card.title }}" class="img-responsive lazyload card-image-rounded-corners" style="margin:auto">
               {% else %}
                  <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
               {% endif %}
