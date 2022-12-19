@@ -141,7 +141,7 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
 .qtip-nrdb .card-image-corp-operation { background-size:105px; background-position: -1px -2px }
 .qtip-nrdb .card-image-corp-upgrade { background-size:105px; background-position: -4px 8px }
 .qtip-nrdb .card-image-corp-ice { background-size:115px; background-position: -9px -77px;transform: rotate(90deg) ;-webkit-transform: rotate(90deg) ;-moz-transform: rotate(90deg) ;-o-transform: rotate(90deg) ;-ms-transform: rotate(90deg)}
-.card-image img { border-radius: 15px; }
+.card-image { border-radius: 4.19%/3%; }
 
 article.rules aside{border-left:1px solid blue;padding-left:20px}
 article.rules span.anr{font-style:italic;white-space:nowrap}

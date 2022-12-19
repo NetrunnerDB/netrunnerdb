@@ -30,7 +30,7 @@
 </h2>
 <div class="row">
 <div class="col-md-3">
-<a href="{{ path('cards_zoom',{_locale:app.request.locale,card_code:item['identity'].code}) }}" class="no-popup"><img data-src="{{ card_image_url }}{{ asset(item['identity'].largeImagePath) }}" class="img-responsive lazyload"></a>
+<a href="{{ path('cards_zoom',{_locale:app.request.locale,card_code:item['identity'].code}) }}" class="no-popup"><img data-src="{{ card_image_url }}{{ asset(item['identity'].largeImagePath) }}" class="img-responsive lazyload card-image"></a>
 </div>
 <div class="col-md-9">
 <table class="table table-condensed">

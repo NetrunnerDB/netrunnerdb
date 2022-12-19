@@ -9,7 +9,7 @@
 {% if index in cards|keys %}
 {% set card = cards[index] %}
 <div class="col-sm-3" style="margin-bottom:30px">
-  <a href="{{ card.url }}" class="no-popup"><img data-src="{{ card_image_url }}{{ asset(card.large_image_path)  }}" alt="{{ card.title }}" style="width:100%" class="img-responsive lazyload"></a>
+  <a href="{{ card.url }}" class="no-popup"><img data-src="{{ card_image_url }}{{ asset(card.large_image_path)  }}" alt="{{ card.title }}" style="width:100%" class="img-responsive lazyload card-image"></a>
 </div>
 {% endif %}
 {% endfor %}
