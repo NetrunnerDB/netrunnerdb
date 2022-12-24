@@ -887,9 +887,6 @@ class CardsData
 
         // If the card has text
         if (strlen($cardinfo['text']) > 0) {
-            // replacing <trace>
-            $cardinfo['text'] = preg_replace('/<trace>([^<]+) ([X\d]+)<\/trace>/', '<strong>\1 [\2]</strong>–', $cardinfo['text']);
-
             // replacing <errata>
             $cardinfo['text'] = preg_replace('/<errata>(.+)<\/errata>/', '<em><span class="glyphicon glyphicon-alert"></span> \1</em>', $cardinfo['text']);
 

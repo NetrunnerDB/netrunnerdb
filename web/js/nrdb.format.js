@@ -46,7 +46,6 @@
         text = text.replace(/\[weyland-consortium\]/g, '<span class="icon icon-weyland-consortium" aria-hidden="true"></span><span class="icon-fallback">weyland consortium</span>');
         text = text.replace(/\[interrupt\]/g, '<span class="icon icon-interrupt" aria-hidden="true"></span><span class="icon-fallback">interrupt</span>');
 
-        text = text.replace(/<trace>([^<]+) ([X\d]+)<\/trace>/g, '<strong>$1 [$2]</strong>–');
         text = text.replace(/<errata>(.+)<\/errata>/, '<em><span class="glyphicon glyphicon-alert"></span> $1</em>');
 
         text = text.split("\n").join('</p><p>');
