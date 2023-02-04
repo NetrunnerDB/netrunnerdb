@@ -9,7 +9,16 @@
                 var matchingCards = _.filter(all_cards, function (card) {
                     return regexp.test(_.deburr(card.title).toLowerCase().trim());
                 });
-                cb(_.sortBy(matchingCards, 'title'));
+                matchingCards.sort((card1, card2) => {
+                    if(card1.title.startsWith(q) && !card2.title.startsWith(q)) {
+                        return -1;
+                    }
+                    if(card2.title.startsWith(q) && !card1.title.startsWith(q)) {
+                        return 1;
+                    }
+                    return card1.title < card2.title ? -1 : 1;
+                });
+                cb(matchingCards);
             }
 
             $('#search-input').typeahead({
