@@ -1,5 +1,5 @@
 Docker & docker-compose based development environment for
-[netrunnerdb](https://github.com/alsciende/netrunnerdb).
+[netrunnerdb](https://github.com/netrunnerdb/netrunnerdb).
 
 This is just designed for local development only and not for any production use cases.
 
@@ -13,15 +13,15 @@ All file changes should be picked up without restarting docker with the
 exception of .htaccess and app_dev.php since those are copied into the image.
 
 First, you will need to check out the
-[netrunnerdb](https://github.com/alsciende/netrunnerdb) and
-[netrunner-cards-json](https://github.com/Alsciende/netrunner-cards-json)
+[netrunnerdb](https://github.com/netrunnerdb/netrunnerdb) and
+[netrunner-cards-json](https://github.com/netrunnerdb/netrunner-cards-json)
 repositories somewhere on your system. It is easiest to check them out next to
 nrdb-dev-env.
 
 ```sh
 cd ..
-git checkout https://github.com/alsciende/netrunnerdb
-git checkout https://github.com/Alsciende/netrunner-cards-json
+git checkout https://github.com/netrunnerdb/netrunnerdb
+git checkout https://github.com/netrunnerdb/netrunner-cards-json
 cd nrdb-dev-env
 ```
 
