@@ -2,16 +2,23 @@ $(document).on('data.app', function() {
   var latestCards = select_only_latest_cards(NRDB.data.cards.find());
 
   function findMatches(q, cb) {
-    if(q.match(/^\w:/)) return;
+    if (q.match(/^\w:/)) { return; }
+
     var regexp = new RegExp(q, 'i');
+    function normalizeTitle(cardTitle) {
+      return _.deburr(cardTitle).toLowerCase().trim();
+    }
     var matchingCards = _.filter(latestCards, function (card) {
-      return regexp.test(_.deburr(card.title).toLowerCase().trim());
+      return regexp.test(normalizeTitle(card.title));
     });
     matchingCards.sort((card1, card2) => {
-        if(card1.title.startsWith(q) && !card2.title.startsWith(q)) {
+        var card1title = normalizeTitle(card1.title);
+        var card2title = normalizeTitle(card2.title);
+        var normalizedQuery = normalizeTitle(q);
+        if(card1title.startsWith(normalizedQuery) && !card2title.startsWith(normalizedQuery)) {
             return -1;
         }
-        if(card2.title.startsWith(q) && !card1.title.startsWith(q)) {
+        if(card2title.startsWith(normalizedQuery) && !card1title.startsWith(normalizedQuery)) {
             return 1;
         }
         return card1.title < card2.title ? -1 : 1;

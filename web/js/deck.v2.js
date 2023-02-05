@@ -106,16 +106,22 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
     // TODO(plural): Make this variable initialized at page load and only updated when the collection changes instead of here on every keypress!
     var matchingPacks = NRDB.data.cards.find({maxqty: { '$gt': 0 }, side_code: Side, pack_code: Filters.pack_code || []});
     var latestCards = select_only_latest_cards(matchingPacks);
-    var regexp = new RegExp(q, 'i');
-    var matchingCards = _.filter(latestCards, function (card) {
-      return regexp.test(_.deburr(card.title).toLowerCase().trim());
-    });
 
+    var regexp = new RegExp(q, 'i');
+    function normalizeTitle(cardTitle) {
+      return _.deburr(cardTitle).toLowerCase().trim();
+    }
+    var matchingCards = _.filter(latestCards, function (card) {
+      return regexp.test(normalizeTitle(card.title));
+    });
     matchingCards.sort((card1, card2) => {
-        if(card1.title.startsWith(q) && !card2.title.startsWith(q)) {
+        var card1title = normalizeTitle(card1.title);
+        var card2title = normalizeTitle(card2.title);
+        var normalizedQuery = normalizeTitle(q);
+        if(card1title.startsWith(normalizedQuery) && !card2title.startsWith(normalizedQuery)) {
             return -1;
         }
-        if(card2.title.startsWith(q) && !card1.title.startsWith(q)) {
+        if(card2title.startsWith(normalizedQuery) && !card1title.startsWith(normalizedQuery)) {
             return 1;
         }
         return card1.title < card2.title ? -1 : 1;
