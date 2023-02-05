@@ -32,7 +32,7 @@
                 function normalizeTitle(cardTitle) {
                     return _.deburr(cardTitle).toLowerCase().trim();
                 }
-                var matchingCards = _.filter(all_cards, function (card) {
+                var matchingCards = _.filter(latest_cards, function (card) {
                     return regexp.test(normalizeTitle(card.title));
                 });
                 matchingCards.sort((card1, card2) => {
