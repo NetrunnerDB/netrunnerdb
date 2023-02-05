@@ -2,7 +2,7 @@ This repository holds the source code of [NetrunnerDB](https://netrunnerdb.com).
 
 # This is not where the cards data is
 
-The data used by NetrunnerDB is at https://github.com/NetrunnerDB/netrunner-cards-json. If you want to fix a mistake in some card data, or add the data of a new card, you can submit a PR [there](https://github.com/Alsciende/netrunner-cards-json/pulls). Also, that's where the localized data is.
+The data used by NetrunnerDB is at https://github.com/NetrunnerDB/netrunner-cards-json. If you want to fix a mistake in some card data, or add the data of a new card, you can submit a PR [there](https://github.com/netrunnerdb/netrunner-cards-json/pulls). Also, that's where the localized data is.
 
 # Installing a local copy of NetrunnerDB
 
