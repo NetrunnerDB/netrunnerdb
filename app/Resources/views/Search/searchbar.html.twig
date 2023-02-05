@@ -1,6 +1,22 @@
     <script type="text/javascript">
         Promise.all([NRDB.data.promise, NRDB.ui.promise]).then(function() {
-            var all_cards = NRDB.data.cards.find();
+            // TODO(plural): Find a better place for this and remove the duplicate definitions.
+            // This will filter matchingCards to only the latest version of each card, preserving the original order of matchingCards.
+            function select_only_latest_cards(matchingCards) {
+                var latestCardsByTitle = {};
+                for (var card of matchingCards) {
+                    var latestCard = latestCardsByTitle[card.title];
+                    if (!latestCard || card.code > latestCard.code) {
+                        latestCardsByTitle[card.title] = card;
+                    }
+                }
+                return matchingCards.filter(function(value, index, arr) {
+                    return value.code == latestCardsByTitle[value.title].code;
+                });
+            }
+
+            // We only need to calculate the latest_cards once and not on every findMatches call.
+            var latest_cards = select_only_latest_cards(NRDB.data.cards.find());
 
             function findMatches(q, cb) {
                 if (q.match(/^\w:/)) { return; }
@@ -9,7 +25,7 @@
                 function normalizeTitle(cardTitle) {
                   return _.deburr(cardTitle).toLowerCase().trim();
                 }
-                var matchingCards = _.filter(all_cards, function (card) {
+                var matchingCards = _.filter(latest_cards, function (card) {
                     return regexp.test(normalizeTitle(card.title));
                 });
                 matchingCards.sort((card1, card2) => {
