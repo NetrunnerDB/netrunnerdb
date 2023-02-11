@@ -4,7 +4,6 @@
   var cache = {
     'show-disabled': false,
     'only-deck': false,
-    'ignore-limited-copies': false,
     'show-onesies': false,
     'show-cacherefresh': false,
     'display-columns': 1,
@@ -12,7 +11,8 @@
     'show-suggestions': 3,
     'buttons-behavior': 'cumulative',
     'sort-order': 'type',
-    'check-rotation': true
+    'check-rotation': true,
+    'card-limits': 'legal'
   };
 
   settings.load = function load() {

@@ -34,13 +34,18 @@
     var qtyelt = modal.find('.modal-qty');
     if(qtyelt && typeof Filters != "undefined") {
 
-      var pref_extended_maxqty = card.maxqty;
-      if (NRDB.settings && NRDB.settings.getItem("ignore-limited-copies")) { // if the setting is enabled,
-        pref_extended_maxqty = Math.max(pref_extended_maxqty, 3); // increase allowed copies up to 3.
+      var max_qty = card.maxqty;
+      switch (NRDB.settings.getItem("card-limits")) {
+      case "ignore":
+        max_qty = Math.max(3, max_qty);
+        break;
+      case "max":
+        max_qty = 9;
+        break;
       }
 
       var qty = '';
-      for(var i=0; i<=pref_extended_maxqty; i++) {
+      for(var i=0; i<=max_qty; i++) {
         qty += '<label class="btn btn-default"><input type="radio" name="qty" value="'+i+'">'+i+'</label>';
       }
       qtyelt.html(qty);

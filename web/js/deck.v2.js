@@ -158,7 +158,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
     case 'only-deck':
       refresh_collection();
       break;
-    case 'ignore-limited-copies':
+    case 'card-limits':
       refresh_collection(true);
       break;
     case 'show-suggestions':
@@ -754,19 +754,18 @@ function build_div(record) {
     influ += "●";
   }
 
-  /**
-   * This controls the true value of how many copies of a card can be in a deck.
-   * maxqty is normally 3, and is X for cards with text "limit X per deck".
-   * However, if somebody wants to use an illegal number of copies for casual play,
-   * a setting in the builder can increase this up to 3.
-   */
-  var pref_extended_maxqty = record.maxqty;
-  if (NRDB.settings && NRDB.settings.getItem("ignore-limited-copies")) { // if the setting is enabled,
-    pref_extended_maxqty = Math.max(pref_extended_maxqty, 3); // increase allowed copies up to 3.
+  var max_qty = record.maxqty;
+  switch (NRDB.settings.getItem("card-limits")) {
+  case "ignore":
+    max_qty = Math.max(3, max_qty);
+    break;
+  case "max":
+    max_qty = 9;
+    break;
   }
 
   var radios = '';
-  for (var i = 0; i <= pref_extended_maxqty; i++) {
+  for (var i = 0; i <= max_qty; i++) {
     if (i && !(i % 4)) {
       radios += '<br>';
     }
