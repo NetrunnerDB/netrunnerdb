@@ -755,13 +755,15 @@ function build_div(record) {
   }
 
   var max_qty = record.maxqty;
-  switch (NRDB.settings.getItem("card-limits")) {
-  case "ignore":
-    max_qty = Math.max(3, max_qty);
-    break;
-  case "max":
-    max_qty = 9;
-    break;
+  if (record.type.code != 'identity') {
+    switch (NRDB.settings.getItem("card-limits")) {
+    case "ignore":
+      max_qty = Math.max(3, max_qty);
+      break;
+    case "max":
+      max_qty = 9;
+      break;
+    }
   }
 
   var radios = '';
