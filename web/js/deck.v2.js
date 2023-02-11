@@ -12,10 +12,6 @@ function update_max_qty() {
     if(card.pack_code == 'core' || card.pack_code == 'core2' || card.pack_code == 'sc19') {
       max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
     }
-    const draft_packs = ["draft"];
-    if(draft_packs.includes(Identity.pack_code)) {
-      max_qty = 9;
-    }
     if (max_qty > 0) {
       // Nova Initiumia & Ampere only allow a max of 1 copy per card.
       if (Identity.code == '33093' || Identity.code == '33128') {
@@ -726,10 +722,6 @@ function update_core_sets() {
   }).forEach(function(card) {
         var modifiedCard = get_mwl_modified_card(card);
     var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), modifiedCard.deck_limit);
-    const draft_packs = ["draft"];
-    if(draft_packs.includes(Identity.pack_code)) {
-      max_qty = 9;
-    }
     NRDB.data.cards.updateById(card.code, {
       maxqty : max_qty
     });
