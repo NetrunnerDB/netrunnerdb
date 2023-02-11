@@ -271,38 +271,59 @@ var Filters = {},
     </div>
     <!-- tabpanel Settings -->
     <div role="tabpanel" class="tab-pane" id="tab-pane-settings">
-        <fieldset>
+      <div class="row">
+        <fieldset class="col-md-12">
           <div class="checkbox"><label><input type="checkbox" name="show-disabled" data-persistence> Show unusable cards</label></div>
           <div class="checkbox"><label><input type="checkbox" name="only-deck" data-persistence> Show only used cards</label></div>
-      <div class="checkbox"><label><input type="checkbox" name="show-onesies" data-persistence> Show 1.1.1.1 format compliance</label></div>
-      <div class="checkbox"><label><input type="checkbox" name="show-cacherefresh" data-persistence> Show Cache Refresh format compliance</label></div>
-            <div class="checkbox"><label><input type="checkbox" name="check-rotation" data-persistence> Check for Rotation compliance</label></div>
-      </fieldset>
-        <fieldset>
+          <div class="checkbox"><label><input type="checkbox" name="show-onesies" data-persistence> Show 1.1.1.1 format compliance</label></div>
+          <div class="checkbox"><label><input type="checkbox" name="show-cacherefresh" data-persistence> Show Cache Refresh format compliance</label></div>
+          <div class="checkbox"><label><input type="checkbox" name="check-rotation" data-persistence> Check for Rotation compliance</label></div>
+          <br>
+        </fieldset>
+      </div>
+      <div class="row">
+        <fieldset class="col-md-6 padding-bottom-md">
+          <label>Column display</label>
           <div class="radio"><label><input type="radio" name="display-columns" value="1" data-persistence> Display on 1 column</label></div>
           <div class="radio"><label><input type="radio" name="display-columns" value="2" data-persistence> Display on 2 columns</label></div>
           <div class="radio"><label><input type="radio" name="display-columns" value="3" data-persistence> Display on 3 columns</label></div>
+          <br>
         </fieldset>
-      <fieldset>
+        <fieldset class="col-md-6">
+          <label>Card suggestions</label>
+          <div class="radio"><label><input type="radio" name="show-suggestions" value="0" data-persistence> Show no suggestions</label></div>
+          <div class="radio"><label><input type="radio" name="show-suggestions" value="3" data-persistence>Show 3 suggestions</label></div>
+          <div class="radio"><label><input type="radio" name="show-suggestions" value="10" data-persistence> Show 10 suggestions</label></div>
+          <br>
+        </fieldset>
+        <fieldset class="col-md-6">
+          <label>Core Set limits</label>
           <div class="radio"><label><input type="radio" name="core-sets" value="1" data-persistence> Use 1 Core Set</label></div>
-        <div class="radio"><label><input type="radio" name="core-sets" value="2" data-persistence> Use 2 Core Sets</label></div>
-        <div class="radio"><label><input type="radio" name="core-sets" value="3" data-persistence> Use 3 Core Sets</label></div>
-      </fieldset>
-      <fieldset>
-        <div class="radio"><label><input type="radio" name="show-suggestions" value="0" data-persistence> Show no suggestions</label></div>
-        <div class="radio"><label><input type="radio" name="show-suggestions" value="3" data-persistence>Show 3 suggestions</label></div>
-        <div class="radio"><label><input type="radio" name="show-suggestions" value="10" data-persistence> Show 10 suggestions</label></div>
-      </fieldset>
-      <fieldset>
-        <div class="radio"><label><input type="radio" name="buttons-behavior" value="cumulative" data-persistence> Faction/type cumulative</label></div>
-        <div class="radio"><label><input type="radio" name="buttons-behavior" value="exclusive" data-persistence> Faction/type exclusive</label></div>
-      </fieldset>
-      <fieldset>
-        <div class="radio"><label><input type="radio" name="sort-order" value="type" data-persistence> Sort by Type</label></div>
-        <div class="radio"><label><input type="radio" name="sort-order" value="number" data-persistence> Sort by Set</label></div>
-        <div class="radio"><label><input type="radio" name="sort-order" value="faction" data-persistence> Sort by Faction</label></div>
-        <div class="radio"><label><input type="radio" name="sort-order" value="title" data-persistence> Sort by Name</label></div>
-      </fieldset>
+          <div class="radio"><label><input type="radio" name="core-sets" value="2" data-persistence> Use 2 Core Sets</label></div>
+          <div class="radio"><label><input type="radio" name="core-sets" value="3" data-persistence> Use 3 Core Sets</label></div>
+          <br>
+        </fieldset>
+        <fieldset class="col-md-6">
+          <label>Card limits</label>
+          <div class="radio"><label><input type="radio" name="card-limits" value="legal" data-persistence> Legal limit</label></div>
+          <div class="radio"><label><input type="radio" name="card-limits" value="ignore" data-persistence> Ignore printed limits (casual play)</label></div>
+          <div class="radio"><label><input type="radio" name="card-limits" value="max" data-persistence> Maximum 9 (casual play)</label></div>
+          <br>
+        </fieldset>
+          <fieldset class="col-md-6">
+            <label>Sort cards</label>
+            <div class="radio"><label><input type="radio" name="sort-order" value="type" data-persistence> Sort by Type</label></div>
+            <div class="radio"><label><input type="radio" name="sort-order" value="number" data-persistence> Sort by Set</label></div>
+            <div class="radio"><label><input type="radio" name="sort-order" value="faction" data-persistence> Sort by Faction</label></div>
+            <div class="radio"><label><input type="radio" name="sort-order" value="title" data-persistence> Sort by Name</label></div>
+            <br>
+          </fieldset>
+          <fieldset class="col-md-6">
+            <label>Faction/type controls</label>
+            <div class="radio"><label><input type="radio" name="buttons-behavior" value="cumulative" data-persistence> Cumulative</label></div>
+            <div class="radio"><label><input type="radio" name="buttons-behavior" value="exclusive" data-persistence> Exclusive</label></div>
+          </fieldset>
+      </div>
     </div>
   </div>
 

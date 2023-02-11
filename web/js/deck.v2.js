@@ -12,10 +12,6 @@ function update_max_qty() {
     if(card.pack_code == 'core' || card.pack_code == 'core2' || card.pack_code == 'sc19') {
       max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), max_qty);
     }
-    const draft_packs = ["draft"];
-    if(draft_packs.includes(Identity.pack_code)) {
-      max_qty = 9;
-    }
     if (max_qty > 0) {
       // Nova Initiumia & Ampere only allow a max of 1 copy per card.
       if (Identity.code == '33093' || Identity.code == '33128') {
@@ -157,6 +153,9 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
     case 'show-disabled':
     case 'only-deck':
       refresh_collection();
+      break;
+    case 'card-limits':
+      refresh_collection(true);
       break;
     case 'show-suggestions':
       NRDB.suggestions.show();
@@ -744,10 +743,6 @@ function update_core_sets() {
   }).forEach(function(card) {
         var modifiedCard = get_mwl_modified_card(card);
     var max_qty = Math.min(card.quantity * NRDB.settings.getItem('core-sets'), modifiedCard.deck_limit);
-    const draft_packs = ["draft"];
-    if(draft_packs.includes(Identity.pack_code)) {
-      max_qty = 9;
-    }
     NRDB.data.cards.updateById(card.code, {
       maxqty : max_qty
     });
@@ -768,18 +763,31 @@ function update_mwl(event) {
 
 function build_div(record) {
   var influ = "";
-  for (var i = 0; i < record.faction_cost; i++)
+  for (var i = 0; i < record.faction_cost; i++) {
     influ += "●";
+  }
+
+  var max_qty = record.maxqty;
+  if (record.type.code != 'identity') {
+    switch (NRDB.settings.getItem("card-limits")) {
+    case "ignore":
+      max_qty = Math.max(3, max_qty);
+      break;
+    case "max":
+      max_qty = 9;
+      break;
+    }
+  }
 
   var radios = '';
-  for (var i = 0; i <= record.maxqty; i++) {
-    if(i && !(i%4)) {
+  for (var i = 0; i <= max_qty; i++) {
+    if (i && !(i % 4)) {
       radios += '<br>';
     }
     radios += '<label class="btn btn-xs btn-default'
-        + (i == record.indeck ? ' active' : '')
-        + '"><input type="radio" name="qty-' + record.code
-        + '" value="' + i + '">' + i + '</label>';
+      + (i == record.indeck ? ' active' : '')
+      + '"><input type="radio" name="qty-' + record.code
+      + '" value="' + i + '">' + i + '</label>';
   }
 
   var div = '';
@@ -855,7 +863,9 @@ function is_card_usable(record) {
   return true;
 }
 
-function update_filtered() {
+function update_filtered(forceBuild) {
+  if (!forceBuild) forceBuild = false; // default parameter value
+
   $('#collection-table').empty();
   $('#collection-grid').empty();
 
@@ -886,8 +896,10 @@ function update_filtered() {
       return;
 
     var index = card.code;
-    var row = (CardDivs[display_columns][index] || (CardDivs[display_columns][index] = build_div(card)))
-        .data("index", card.code);
+    if (!CardDivs[display_columns][index] || forceBuild) {
+      CardDivs[display_columns][index] = build_div(card);
+    }
+    var row = CardDivs[display_columns][index].data("index", card.code);
     row.find('input[name="qty-' + card.code + '"]').each(
         function(i, element) {
           if ($(element).val() == card.indeck)

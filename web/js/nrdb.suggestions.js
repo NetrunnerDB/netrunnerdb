@@ -107,15 +107,28 @@
   suggestions.div = function(card) {
     var faction = card.faction_code;
     var influ = "";
-    for (var i = 0; i < card.factioncost; i++)
+    for (var i = 0; i < card.factioncost; i++) {
       influ += "●";
+    }
+
+    var max_qty = card.maxqty;
+    if (card.type.code != 'identity') {
+      switch (NRDB.settings.getItem("card-limits")) {
+      case "ignore":
+        max_qty = Math.max(3, max_qty);
+        break;
+      case "max":
+        max_qty = 9;
+        break;
+      }
+    }
 
     var radios = '';
-    for (var i = 0; i <= card.maxqty; i++) {
+    for (var i = 0; i <= max_qty; i++) {
       radios += '<label class="btn btn-xs btn-default'
-          + (i == card.indeck ? ' active' : '')
-          + '"><input type="radio" name="qty-' + card.code
-          + '" value="' + i + '">' + i + '</label>';
+        + (i == card.indeck ? ' active' : '')
+        + '"><input type="radio" name="qty-' + card.code
+        + '" value="' + i + '">' + i + '</label>';
     }
 
     var imgsrc = card.faction_code.substr(0,7) === "neutral" ? "" : '<img data-src="'

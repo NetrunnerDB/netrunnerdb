@@ -34,13 +34,25 @@
     var qtyelt = modal.find('.modal-qty');
     if(qtyelt && typeof Filters != "undefined") {
 
-      var qty = '';
-        for(var i=0; i<=card.maxqty; i++) {
-          qty += '<label class="btn btn-default"><input type="radio" name="qty" value="'+i+'">'+i+'</label>';
+      var max_qty = card.maxqty;
+      if (card.type.code != 'identity') {
+        switch (NRDB.settings.getItem("card-limits")) {
+        case "ignore":
+          max_qty = Math.max(3, max_qty);
+          break;
+        case "max":
+          max_qty = 9;
+          break;
         }
-        qtyelt.html(qty);
+      }
 
-        qtyelt.find('label').each(function (index, element) {
+      var qty = '';
+      for(var i=0; i<=max_qty; i++) {
+        qty += '<label class="btn btn-default"><input type="radio" name="qty" value="'+i+'">'+i+'</label>';
+      }
+      qtyelt.html(qty);
+
+      qtyelt.find('label').each(function (index, element) {
         if(index == card.indeck) $(element).addClass('active');
         else $(element).removeClass('active');
       });
