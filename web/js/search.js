@@ -67,16 +67,31 @@ $(document).on('data.app', function() {
   startup_cycles['system-gateway'] = 1;
   startup_cycles['system-update-2021'] = 1;
   startup_cycles['borealis'] = 1;
+  var nsg_cycles = Array(); // Hardcoded NSG Codes
+  nsg_cycles['system-gateway'] = 1;
+  nsg_cycles['system-update-2021'] = 1;
+  nsg_cycles['ashes'] = 1;
+  nsg_cycles['borealis'] = 1;
   var rotated_packs = Array();
   var startup_packs = Array();
+  var nsg_packs = Array();
   NRDB.data.packs.find().forEach(function(pack) {
     if (rotated_cycles[pack.cycle.code]) { rotated_packs[pack.code] = 1; }
     if (startup_cycles[pack.cycle.code]) { startup_packs[pack.code] = 1; }
+    if (nsg_cycles[pack.cycle.code]) { nsg_packs[pack.code] = 1; }
   });
 
   $('#select_startup').on('click', function (event) {
     $('#allowed_packs').find('input[type="checkbox"]').each(function() {
       $(this).prop('checked', Boolean(startup_cycles[this.value] || startup_packs[this.value]));
+    });
+    handle_checkbox_change();
+    return false;
+  });
+
+  $('#select_nsg').on('click', function (event) {
+    $('#allowed_packs').find('input[type="checkbox"]').each(function() {
+      $(this).prop('checked', Boolean(nsg_cycles[this.value] || nsg_packs[this.value]));
     });
     handle_checkbox_change();
     return false;
