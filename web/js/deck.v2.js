@@ -318,7 +318,7 @@ function create_collection_tab(initialPackSelection) {
 
   FilterQuery = get_filter_query(Filters);
 
-  $('#mwl_code').trigger('change');
+  update_mwl();
   // triggers a refresh_collection();
   // triggers a update_deck();
 
@@ -500,6 +500,14 @@ $(function() {
     },
     index : 1
   }]);
+  $('#format_code').on('change', function() {
+    if ($(this).val() == 'casual') {
+      $('#mwl_code').hide();
+    } else {
+      $('#mwl_code').show();
+    }
+    update_mwl();
+  });
   $('#mwl_code').on('change', update_mwl);
   $('#tbody-history').on('click', 'a[role=button]', load_snapshot);
   setInterval(autosave_interval, 1000);
@@ -708,7 +716,7 @@ function handle_quantity_change(event) {
     });
     refresh_collection();
     // This is the magic incantation that allows the card quantity to update correctly when changing IDs.
-    $('#mwl_code').trigger('change');
+    update_mwl();
   } else {
     $.each(CardDivs, function(nbcols, rows) {
       // rows is an array of card rows
@@ -750,10 +758,12 @@ function update_core_sets() {
 }
 
 function update_mwl(event) {
-  var mwl_code = $(this).val();
   MWL = null;
-  if(mwl_code) {
-    MWL = NRDB.data.mwl.findById(mwl_code);
+  if ($('#format_code').val() != 'casual') {
+    var mwl_code = $('#mwl_code').val();
+    if (mwl_code) {
+      MWL = NRDB.data.mwl.findById(mwl_code);
+    }
   }
   CardDivs = [ null, {}, {}, {} ];
   update_max_qty();

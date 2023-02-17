@@ -100,13 +100,16 @@ var Filters = {},
   </div>
   <div class="form-group">
     <label for="mwl_code">Legality</label>
-    <select class="form-control" name="mwl_code" id="mwl_code">
+    <select class="form-control" name="format_code" id="format_code">
+      <option value="standard" selected="selected">Standard</option>
+      <option value="casual">Startup/Casual</option>
+    </select>
+    <select class="form-control" name="mwl_code" id="mwl_code" style="margin-top: 10px;">
       {% for mwl in list_mwl %}
       <option value="{{ mwl.code }}"{% if mwl.code == deck.mwl_code %} selected="selected"{% endif %}>
         {{ mwl.name }}{% if not mwl.active %}{% if mwl.dateStart %} (after {{ mwl.dateStart|date('Y-m-d') }}){% endif %}{% else %} (active){% endif %}
       </option>
-        {% endfor %}
-        <option value=""{% if deck.mwl_code == null %} selected="selected"{% endif %}>Casual Play</option>
+      {% endfor %}
     </select>
   </div>
   <button type="submit" class="btn btn-warning">Save</button>
