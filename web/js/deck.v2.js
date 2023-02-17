@@ -156,6 +156,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
       break;
     case 'card-limits':
       refresh_collection(true);
+      NRDB.suggestions.show();
       break;
     case 'show-suggestions':
       NRDB.suggestions.show();
