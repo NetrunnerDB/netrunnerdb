@@ -99,7 +99,13 @@ var Filters = {},
     <input type="text" class="form-control decklist-name" name="name" value="{{ deck.name }}">
   </div>
   <div class="form-group">
-    <label for="mwl_code">Legality</label>
+    <label for="mwl_code" class="visible-sm visible-xs">
+      Legality <small style="font-weight:normal; font-style:italic">(not retained on save)</small>
+    </label>
+    <label for="mwl_code" class="hidden-sm hidden-xs">
+      Legality
+      <sup data-toggle='tooltip' title='For filtering the cardpool while deckbuilding. Settings are not retained on save.'>?</sup>
+    </label>
     <select class="form-control" name="format_code" id="format_code">
       <option value="standard" selected="selected">Standard</option>
       <option value="casual">Startup/Casual</option>
