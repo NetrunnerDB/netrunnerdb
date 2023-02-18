@@ -655,7 +655,7 @@ class BuilderController extends Controller
         $decklist_id = intval(filter_var($request->get('decklist_id'), FILTER_SANITIZE_NUMBER_INT));
         $description = trim($request->get('description'));
         $tags = explode(',', filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES));
-        $mwl_code = $request->get('mwl_code');
+        $mwl_code = $request->get('format_casual') ? null : $request->get('mwl_code');
 
         if ($deck instanceof Deck) {
             $deckManager->saveDeck($this->getUser(), $deck, $decklist_id, $name, $description, $tags, $mwl_code, $content, $source_deck ? $source_deck : null);
