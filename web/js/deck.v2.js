@@ -500,12 +500,7 @@ $(function() {
     },
     index : 1
   }]);
-  $('#format_code').on('change', function() {
-    if ($(this).val() == 'casual') {
-      $('#mwl_code').hide();
-    } else {
-      $('#mwl_code').show();
-    }
+  $('input[name="format-casual"]').on('change', function() {
     update_mwl();
   });
   $('#mwl_code').on('change', update_mwl);
@@ -759,7 +754,7 @@ function update_core_sets() {
 
 function update_mwl(event) {
   MWL = null;
-  if ($('#format_code').val() != 'casual') {
+  if (!$('input[name="format-casual"]').is(':checked')) {
     var mwl_code = $('#mwl_code').val();
     if (mwl_code) {
       MWL = NRDB.data.mwl.findById(mwl_code);
@@ -769,6 +764,7 @@ function update_mwl(event) {
   update_max_qty();
   refresh_collection();
   update_deck();
+  $('#mwl_code').prop("disabled", $('input[name="format-casual"]').is(':checked'));
 }
 
 function build_div(record) {
