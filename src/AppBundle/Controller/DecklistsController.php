@@ -229,7 +229,7 @@ class DecklistsController extends Controller
         $dbh = $entityManager->getConnection();
 
         $cards_code = $request->query->get('cards');
-        $faction_code = filter_var($request->query->get('faction'), FILTER_SANITIZE_STRING);
+        $faction_code = str_replace('-', '_', strtolower(filter_var($request->query->get('faction'), FILTER_SANITIZE_STRING)));
         $author_name = filter_var($request->query->get('author'), FILTER_SANITIZE_STRING);
         $decklist_title = filter_var($request->query->get('title'), FILTER_SANITIZE_STRING);
         $sort = $request->query->get('sort');
