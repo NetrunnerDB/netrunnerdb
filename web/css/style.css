@@ -565,7 +565,9 @@ ul.rulings-list blockquote {
   padding: 0 2px;
 }
 
-/* Card legality indicators */
+/* Card legality and ruling verification indicators */
+.legality-verified:before,
+.legality-unverified:before,
 .legality-available:before,
 .legality-unavailable:before,
 .legality-legal:before,
