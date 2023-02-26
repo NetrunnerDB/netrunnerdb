@@ -197,7 +197,7 @@
         {% if card.rulings|length %}
         <ul class="rulings-list">
             {% for ruling in card.rulings %}
-            <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}" data-ruling-nsg-rules-team-verified="{{ ruling.nsg_rules_team_verified ? 'true' : 'false'}}">[{% if ruling.nsg_rules_team_verified %}This ruling has been verified by the NSG Rules Team{% else %}This ruling has not been verified by the NSG Rules Team.{% endif %}] {{ ruling.text | raw }}</li>
+            <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}" data-ruling-nsg-rules-team-verified="{{ ruling.nsg_rules_team_verified ? 'true' : 'false'}}" class="{% if ruling.nsg_rules_team_verified %}legality-verified{% else %}legality-unverified{% endif %}">{{ ruling.text | raw }}</li>
             {% endfor %}
         </ul>
         {% else %}

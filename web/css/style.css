@@ -586,6 +586,14 @@ ul.rulings-list blockquote {
   text-align: center;
 }
 
+.legality-verified:before {
+  content: "VERIFIED";
+  background-color: #577A57;
+}
+.legality-unverified:before {
+  content: "UNVERIFIED";
+  background-color: #8F8F8F;
+}
 .legality-available:before {
   content: "LEGAL";
   background-color: #577A57;
