@@ -197,7 +197,7 @@
         {% if card.rulings|length %}
         <ul class="rulings-list">
             {% for ruling in card.rulings %}
-            <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}">{{ ruling.text | raw }}</li>
+            <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}" data-ruling-nsg-rules-team-verified="{{ ruling.nsg_rules_team_verified ? 'true' : 'false'}}">[{% if ruling.nsg_rules_team_verified %}This ruling has been verified by the NSG Rules Team{% else %}This ruling has not been verified by the NSG Rules Team.{% endif %}] {{ ruling.text | raw }}</li>
             {% endfor %}
         </ul>
         {% else %}
@@ -286,6 +286,9 @@
                                 <div class="well text-muted" id="add-ruling-form-preview"><small>Preview.</small></div>
                             </div>
                             <div class="col-sm-12">
+                                <input type="checkbox" id="nsg_rules_team_verified" name="nsg_rules_team_verified" value="true"> <label for="nsg_rules_team_verified">NSG Rules Team Verified Ruling?</label>
+                            </div>
+                            <div class="col-sm-12">
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
@@ -316,6 +319,9 @@
                             </div>
                             <div class="col-sm-12">
                                 <div class="well text-muted" id="edit-ruling-form-preview"><small>Preview.</small></div>
+                            </div>
+                            <div class="col-sm-12">
+                                <input type="checkbox" id="edit-ruling-nsg-rules-team-verified" name="nsg_rules_team_verified" value="true"> <label for="edit-ruling-nsg-rules-team-verified">NSG Rules Team Verified Ruling?</label>
                             </div>
                             <div class="col-sm-12">
                                 <button type="submit" class="btn btn-primary">Submit</button>

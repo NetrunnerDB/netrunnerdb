@@ -38,4 +38,8 @@ AppBundle\Entity\Ruling:
         text:
             type: text
             nullable: false
-
+        nsg_rules_team_verified:
+            type: boolean
+            nullable: false
+            options:
+                default: false

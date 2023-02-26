@@ -1160,9 +1160,10 @@ class CardsData
         $response = [];
         foreach ($rulings as $ruling) {
             $response[] = [
-                'id'      => $ruling->getId(),
-                'text'    => $ruling->getText(),
-                'rawtext' => $ruling->getRawtext(),
+                'id'                      => $ruling->getId(),
+                'text'                    => $ruling->getText(),
+                'rawtext'                 => $ruling->getRawtext(),
+                'nsg_rules_team_verified' => $ruling->getNsgRulesTeamVerified(),
             ];
         }
 
