@@ -40,6 +40,7 @@ class RulingController extends Controller
         $ruling->setCard($card);
         $ruling->setRawtext($rawtext);
         $ruling->setText($text);
+        $ruling->setNsgRulesTeamVerified($request->request->get('nsg_rules_team_verified') == 'true');
         $entityManager->persist($ruling);
         $entityManager->flush();
 
@@ -67,6 +68,7 @@ class RulingController extends Controller
 
         $ruling->setRawtext($rawtext);
         $ruling->setText($text);
+        $ruling->setNsgRulesTeamVerified($request->request->get('nsg_rules_team_verified') == 'true');
         $entityManager->flush();
 
         return $this->redirectToRoute('cards_zoom', ['card_code' => $ruling->getCard()->getCode()]);

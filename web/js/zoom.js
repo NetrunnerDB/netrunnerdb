@@ -95,8 +95,11 @@ function edit_ruling(event) {
     $('#edit-ruling-card-id').val(cardId);
     var rulingId = $(this).closest('li').data('ruling-id');
     var rulingText = $(this).closest('li').data('ruling-text');
+    var nsgRulesTeamVerified = $(this).closest('li').data('ruling-nsg-rules-team-verified');
+    console.log(`nsgRulesTeamVerified == ${nsgRulesTeamVerified}`);
     $('#edit-ruling-id').val(rulingId);
     $('#edit-ruling-form-text').val(rulingText);
+    $('#edit-ruling-nsg-rules-team-verified').prop('checked', nsgRulesTeamVerified);
 
     var converter = new Markdown.Converter();
     $('#edit-ruling-form-text').on(

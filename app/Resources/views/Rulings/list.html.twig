@@ -20,7 +20,10 @@
                     <h4><a id="{{ card.code }}" href="{{ path('cards_zoom', {card_code: card.code}) }}">{{ card.title }}</a> (<span class="icon icon-{{ card.pack.cycle.code }}"></span> {{ card.pack.name }}, {{card.position}})</h4>
                     <ul class="rulings-list">
                         {% for ruling in card.rulings %}
-                            <li>{{ ruling.text|raw }}</li>
+                            <li class="{% if ruling.nsgRulesTeamVerified %}legality-verified{% else %}legality-unverified{% endif %}">
+                                <em>Updated {{ ruling.dateUpdate | date("Y-m-d") }}</em>
+                                {{ ruling.text|raw }}
+                            </li>
                             {% endfor %}
                     </ul>
                 {% endif %}

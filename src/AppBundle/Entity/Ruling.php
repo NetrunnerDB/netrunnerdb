@@ -35,6 +35,11 @@ class Ruling implements TimestampableInterface
     private $text;
 
     /**
+     * @var boolean
+     */
+    private $nsg_rules_team_verified;
+
+    /**
      * @var Card
      */
     private $card;
@@ -87,6 +92,16 @@ class Ruling implements TimestampableInterface
     public function setText(string $text)
     {
         $this->text = $text;
+    }
+
+    public function getNsgRulesTeamVerified()
+    {
+        return $this->nsg_rules_team_verified;
+    }
+
+    public function setNsgRulesTeamVerified(bool $nsg_rules_team_verified)
+    {
+        $this->nsg_rules_team_verified = $nsg_rules_team_verified;
     }
 
     public function getCard()
