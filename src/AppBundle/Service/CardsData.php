@@ -1163,6 +1163,7 @@ class CardsData
                 'id'                      => $ruling->getId(),
                 'text'                    => $ruling->getText(),
                 'rawtext'                 => $ruling->getRawtext(),
+                'date_update'             => $ruling->getDateUpdate(),
                 'nsg_rules_team_verified' => $ruling->getNsgRulesTeamVerified(),
             ];
         }

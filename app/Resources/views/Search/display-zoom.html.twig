@@ -197,7 +197,10 @@
         {% if card.rulings|length %}
         <ul class="rulings-list">
             {% for ruling in card.rulings %}
-            <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}" data-ruling-nsg-rules-team-verified="{{ ruling.nsg_rules_team_verified ? 'true' : 'false'}}" class="{% if ruling.nsg_rules_team_verified %}legality-verified{% else %}legality-unverified{% endif %}">{{ ruling.text | raw }}</li>
+            <li data-ruling-id="{{ ruling.id }}" data-ruling-text="{{ ruling.rawtext }}" data-ruling-nsg-rules-team-verified="{{ ruling.nsg_rules_team_verified ? 'true' : 'false'}}" class="{% if ruling.nsg_rules_team_verified %}legality-verified{% else %}legality-unverified{% endif %}">
+                <em>Updated {{ ruling.date_update | date("Y-m-d") }}</em>
+                {{ ruling.text | raw }}
+            </li>
             {% endfor %}
         </ul>
         {% else %}
