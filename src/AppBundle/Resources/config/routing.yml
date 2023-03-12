@@ -685,6 +685,12 @@ api_public_mwl:
     defaults:
         _controller: AppBundle:PublicApi20:mwl
 
+api_public_rulings:
+    path: /api/2.0/public/rulings
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:PublicApi20:rulings
+
 api_private_decks:
     path: /api/2.0/private/decks
     methods: [GET]
