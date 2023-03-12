@@ -540,4 +540,23 @@ class PublicApi20Controller extends FOSRestController
         return $this->entityManager->getRepository('AppBundle:Mwl')->findAll();
       }, $request);
     }
+
+    /**
+     * Get all Ruling data
+     */
+    public function rulingsAction(Request $request)
+    {
+      $rulings = $this->entityManager->getRepository('AppBundle:Ruling')->findAll();
+
+      $out = [];
+      foreach($rulings as $r) {
+        array_push($out, [
+          'title' => $r->getCard()->getTitle(),
+          'ruling' => str_replace('\r', '', $r->getRawText()),
+          'date_update' => date_format($r->getDateUpdate(), 'Y-m-d'),
+          'nsg_rules_team_verified' => $r->getNsgRulesTeamVerified()
+        ]);
+      }
+      return $this->prepareResponseFromCache($out, count($out), new DateTime(), $request);
+    }
 }
