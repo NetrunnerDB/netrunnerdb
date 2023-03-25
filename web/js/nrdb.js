@@ -761,7 +761,7 @@ function check_influence(influenceSpent) {
         displayInfluenceLimit = InfluenceLimit + '-' + influencePenalty + '★=' + (InfluenceLimit - influencePenalty);
     }
     if (InfluenceLimit === Number.POSITIVE_INFINITY) {
-        displayInfluenceLimit = "&#8734;";
+        displayInfluenceLimit = availableInfluence = "&#8734;";
     }
     var isOver = remainingInfluence < InfluenceSpent;
     $('#influence').html(InfluenceSpent + " influence spent (max " + displayInfluenceLimit + ", available " + availableInfluence + ")")[isOver ? 'addClass' : 'removeClass']("text-danger");
