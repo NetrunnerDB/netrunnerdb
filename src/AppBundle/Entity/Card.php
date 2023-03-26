@@ -1017,10 +1017,25 @@ class Card implements NormalizableInterface, TimestampableInterface
 
     /**
      * @return string
+    */
+    public function getDaegedImageCode()
+    {
+      if ($this->code != '33028') {
+        return '33028';
+      } else {
+        // Tunnel Vision, the Cerberus 3, Grim, Lab Dog, Watchdog, Pup, Komainu, Rover Algo, Bankhar, EotL (Sundog)
+        $dogs = array('33081', '29006', '06096', '06094', '04020', '08052', '11015', '05018', '05017', '12100', '33074', '33125');
+        return $dogs[array_rand($dogs)];
+      }
+      return $this->code != '33028' ? '33028' : '33081';
+    }
+
+    /**
+     * @return string
      */
     public function getTinyImagePath()
     {
-      return '/tiny/' . $this->code . '.jpg';
+      return '/tiny/' . $this->getDaegedImageCode() . '.jpg';
     }
 
     /**
@@ -1028,7 +1043,7 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getSmallImagePath()
     {
-      return '/small/' . $this->code . '.jpg';
+      return '/small/' . $this->getDaegedImageCode() . '.jpg';
     }
 
     /**
@@ -1036,7 +1051,7 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getMediumImagePath()
     {
-      return '/medium/' . $this->code . '.jpg';
+      return '/medium/' . $this->getDaegedImageCode() . '.jpg';
     }
 
     /**
@@ -1044,7 +1059,7 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getLargeImagePath()
     {
-      return '/large/' . $this->code . '.jpg';
+      return '/large/' . $this->getDaegedImageCode() . '.jpg';
     }
 
     /**
