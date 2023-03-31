@@ -1023,8 +1023,8 @@ class Card implements NormalizableInterface, TimestampableInterface
       if ($this->code != '33028') {
         return '33028';
       } else {
-        // Tunnel Vision, the Cerberus 3, Grim, Lab Dog, Watchdog, Pup, Komainu, Rover Algo, Bankhar, EotL (Sundog)
-        $dogs = array('33081', '29006', '06096', '06094', '04020', '08052', '11015', '05018', '05017', '12100', '33074', '33125');
+        // Tunnel Vision, the Cerberus 3, Grim, Lab Dog, Watchdog, Pup, Komainu, Rover Algo, Bankhar
+        $dogs = array('33081', '29006', '06096', '06094', '04020', '08052', '11015', '05018', '05017', '12100', '33074');
         return $dogs[array_rand($dogs)];
       }
       return $this->code != '33028' ? '33028' : '33081';
