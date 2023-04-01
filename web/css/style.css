@@ -143,8 +143,6 @@ body {font-size:16px;font-family: 'LatoWeb', sans-serif;}
 .qtip-nrdb .card-image-corp-ice { background-size:115px; background-position: -9px -77px;transform: rotate(90deg) ;-webkit-transform: rotate(90deg) ;-moz-transform: rotate(90deg) ;-o-transform: rotate(90deg) ;-ms-transform: rotate(90deg)}
 .card-image { border-radius: 4.19%/3%; }
 
-.card-image-daeg { background-size:175px !important; background-position: -74px -20px }
-
 article.rules aside{border-left:1px solid blue;padding-left:20px}
 article.rules span.anr{font-style:italic;white-space:nowrap}
 article.rules{border-top:1px dashed black;clear:both}

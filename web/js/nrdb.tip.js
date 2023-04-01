@@ -32,7 +32,8 @@
             type += '<p>Strength <b>' + card.strength + '</b></p>';
         var image_svg = '';
         if($('#nrdb_svg_hex').length) {
-            image_svg = '<div class="card-image card-image-daeg" style="background-image:url(https://static.nrdbassets.com/v1/small/33028.jpg)"><svg width="103px" height="90px" viewBox="0 0 677 601" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><mask id="mask"><use xlink:href="#rect" style="fill:white" /><use xlink:href="#hex" style="fill:black"/></mask><use xlink:href="#rect" mask="url(#mask)"/><use xlink:href="#hex" style="stroke:black;fill:none;stroke-width:15" /></svg></div>';
+            image_svg = '<div class="card-image card-image-' + card.side_code + '-' + card.type_code + '"' + (card.imageUrl ? ' style="background-image:url(' + NRDB.card_image_url + '/small/' + card.code+ '.jpg)"' : '')
+                    + '><svg width="103px" height="90px" viewBox="0 0 677 601" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><mask id="mask"><use xlink:href="#rect" style="fill:white" /><use xlink:href="#hex" style="fill:black"/></mask><use xlink:href="#rect" mask="url(#mask)"/><use xlink:href="#hex" style="stroke:black;fill:none;stroke-width:15" /></svg></div>';
         }
 
         $('.qtip').each(function(){
