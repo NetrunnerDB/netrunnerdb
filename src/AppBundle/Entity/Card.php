@@ -1035,7 +1035,7 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getTinyImagePath()
     {
-      return '/tiny/' . $this->getDaegedImageCode() . '.jpg';
+      return '/tiny/' . $this->code . '.jpg';
     }
 
     /**
@@ -1043,7 +1043,7 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getSmallImagePath()
     {
-      return '/small/' . $this->getDaegedImageCode() . '.jpg';
+      return '/small/' . $this->code . '.jpg';
     }
 
     /**
@@ -1051,13 +1051,21 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getMediumImagePath()
     {
-      return '/medium/' . $this->getDaegedImageCode() . '.jpg';
+      return '/medium/' . $this->code . '.jpg';
     }
 
     /**
      * @return string
      */
     public function getLargeImagePath()
+    {
+      return '/large/' . $this->code . '.jpg';
+    }
+
+    /**
+     * @return string
+     */
+    public function getDaegImagePath()
     {
       return '/large/' . $this->getDaegedImageCode() . '.jpg';
     }
