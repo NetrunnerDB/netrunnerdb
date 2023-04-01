@@ -1017,21 +1017,6 @@ class Card implements NormalizableInterface, TimestampableInterface
 
     /**
      * @return string
-    */
-    public function getDaegedImageCode()
-    {
-      if ($this->code != '33028') {
-        return '33028';
-      } else {
-        // Tunnel Vision, the Cerberus 3, Grim, Lab Dog, Watchdog, Pup, Komainu, Rover Algo, Bankhar
-        $dogs = array('33081', '29006', '06096', '06094', '04020', '08052', '11015', '05018', '05017', '12100', '33074');
-        return $dogs[array_rand($dogs)];
-      }
-      return $this->code != '33028' ? '33028' : '33081';
-    }
-
-    /**
-     * @return string
      */
     public function getTinyImagePath()
     {
@@ -1060,14 +1045,6 @@ class Card implements NormalizableInterface, TimestampableInterface
     public function getLargeImagePath()
     {
       return '/large/' . $this->code . '.jpg';
-    }
-
-    /**
-     * @return string
-     */
-    public function getDaegImagePath()
-    {
-      return '/large/' . $this->getDaegedImageCode() . '.jpg';
     }
 
     /**
