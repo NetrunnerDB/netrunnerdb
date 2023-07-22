@@ -175,6 +175,7 @@ tbody .btn-group{white-space:nowrap}
 .decklist blockquote p {font-size:100%;}
 .decklist h1{border-bottom:1px solid lightgray}
 .decklist h1 img{vertical-align:text-top;margin-right:10px}
+.decklist img {max-width: 100%;}
 .social-icon-like{color:red}
 .social-icon-favorite{color:orange}
 .social-icon-comment{color:green}
