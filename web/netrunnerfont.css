@@ -138,7 +138,10 @@
 .icon-borealis:before {
   content: "\e931";
 }
-.icon-anarch:before {
+.icon-liberation:before {
+  content: "\e933";
+}
+..icon-anarch:before {
   content: "\e91a";
 }
 .icon-criminal:before {
