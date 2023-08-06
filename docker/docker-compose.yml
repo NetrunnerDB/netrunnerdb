@@ -39,7 +39,7 @@ services:
 
   nrdb-dev-db:
     container_name: nrdb-dev-db
-    image: "mysql:5"
+    image: "mysql:8"
     restart: always
     volumes:
       - dbdata:/var/lib/mysql
