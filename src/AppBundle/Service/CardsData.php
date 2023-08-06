@@ -729,7 +729,7 @@ class CardsData
                     $condition[0] = strtolower($condition[0]);
                     if ($condition[0] == "startup") {
                         // Add the valid cycles for startup and add them to the WHERE clause for the query.
-                        $cycles = ['system-gateway', 'system-update-2021', 'borealis']; // Hardcoded Startup Codes
+                        $cycles = ['system-gateway', 'system-update-2021', 'borealis', 'liberation']; // Hardcoded Startup Codes
                         $placeholders = array();
                         foreach($cycles as $cycle) {
                             array_push($placeholders, "?$i");
