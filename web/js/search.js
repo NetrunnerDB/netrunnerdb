@@ -67,11 +67,13 @@ $(document).on('data.app', function() {
   startup_cycles['system-gateway'] = 1;
   startup_cycles['system-update-2021'] = 1;
   startup_cycles['borealis'] = 1;
+  startup_cycles['liberation'] = 1;
   var nsg_cycles = Array(); // Hardcoded NSG Codes
   nsg_cycles['system-gateway'] = 1;
   nsg_cycles['system-update-2021'] = 1;
   nsg_cycles['ashes'] = 1;
   nsg_cycles['borealis'] = 1;
+  nsg_cycles['liberation'] = 1;
   var rotated_packs = Array();
   var startup_packs = Array();
   var nsg_packs = Array();
