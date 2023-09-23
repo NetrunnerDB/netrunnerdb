@@ -43,11 +43,18 @@
 </div>
 
 <script>
-// Takes a list of cards and an object mapping integers to lists of card IDs
+// Takes a list of cards and an object mapping card IDs to integers
 // Returns a new object with the cards in place of their IDs
 function makeCardMap(cards, obj) {
-  return Object.keys(obj).reduce(function(newObj, key) {
-    newObj[key] = cards.filter(card => obj[key].includes(card.id));
+  const points = new Map();
+  for (const [card_id, p] of Object.entries(obj)) {
+    if (!(p in points)) {
+      points[p] = [];
+    }
+    points[p].push(card_id)
+  }
+  return Object.keys(points).reduce(function(newObj, key) {
+    newObj[key] = cards.filter(card => points[key].includes(card.id));
     return newObj
   }, {});
 }
