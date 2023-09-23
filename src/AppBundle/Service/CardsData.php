@@ -143,7 +143,7 @@ class CardsData
         /** @var Cycle[] $list_cycles */
         $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "DESC"]);
         $non_standard_packs = ['draft', 'napd'];
-        $startup_cycles = ['system-gateway', 'system-update-2021', 'borealis'];
+        $startup_cycles = ['system-gateway', 'system-update-2021', 'borealis', 'liberation']; // Hardcoded Startup Codes
         $non_startup_cycles = [];
         $non_eternal_packs = ['draft', 'napd', 'tdc'];
         $cycles = [];
