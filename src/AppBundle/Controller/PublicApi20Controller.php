@@ -543,6 +543,14 @@ class PublicApi20Controller extends FOSRestController
 
     /**
      * Get all Ruling data
+     *
+     * @ApiDoc(
+     *  section="Rulings",
+     *  resource=true,
+     *  description="Get all the ruling data by card title.",
+     *  parameters={
+     *  },
+     * )
      */
     public function rulingsAction(Request $request)
     {
