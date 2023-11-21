@@ -38,7 +38,7 @@ class ReviewController extends Controller
         }
 
         // bot prevention - this shouldn't ever happen unless a user messes with the comment input source
-        if (count($user->getDecks()) > 0) {
+        if (!$user->isVerified()) {
             return new Response(json_encode("You must have at least one private decklist before you may write a review."));
         }
 
@@ -275,7 +275,7 @@ class ReviewController extends Controller
                 'nexturl'         => $currpage == $nbpages ? null : $this->generateUrl($route, $params + [
                         "page" => $nextpage,
                     ]),
-                'comments_enabled' => count($user->getDecks()) > 0,
+                'comments_enabled' => $user->isVerified(),
             ],
 
             $response
@@ -359,7 +359,7 @@ class ReviewController extends Controller
                         "user_id" => $user->getId(),
                         "page"    => $nextpage,
                     ]),
-                'comments_enabled' => count($user->getDecks()) > 0,
+                'comments_enabled' => $user->isVerified(),
             ],
 
             $response
@@ -380,7 +380,7 @@ class ReviewController extends Controller
         $user = $this->getUser();
 
         // bot prevention - this shouldn't ever happen unless a user messes with the comment input source
-        if (count($user->getDecks()) > 0) {
+        if (!$user->isVerified()) {
             return new Response(json_encode("You must have at least one private decklist before you may post comments."));
         }
 

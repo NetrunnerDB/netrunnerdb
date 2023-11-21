@@ -329,6 +329,14 @@ class User extends BaseUser
     }
 
     /**
+     * @return boolean True iff the user has at least one private decklist, proving they're not a bot
+     */
+    public function isVerified()
+    {
+        return count($this->decks) > 0;
+    }
+
+    /**
      * @return Deck[]|Collection
      */
     public function getDecks()

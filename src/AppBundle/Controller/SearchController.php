@@ -635,7 +635,7 @@ class SearchController extends Controller
             "metadescription" => $meta,
             "locales"         => $locales,
             "currentRotationCycles" => $currentRotationCycles,
-            "comments_enabled"      => count($user->getDecks()) > 0,
+            "comments_enabled"      => $user->isVerified(),
         ], $response);
     }
 
