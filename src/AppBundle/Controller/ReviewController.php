@@ -258,6 +258,7 @@ class ReviewController extends Controller
         }
 
         $user = $this->getUser();
+        $userVerified = $user ? $user->isVerified() : false;
 
         return $this->render(
 
@@ -275,7 +276,7 @@ class ReviewController extends Controller
                 'nexturl'         => $currpage == $nbpages ? null : $this->generateUrl($route, $params + [
                         "page" => $nextpage,
                     ]),
-                'comments_enabled' => $user->isVerified(),
+                'comments_enabled' => $userVerified,
             ],
 
             $response
