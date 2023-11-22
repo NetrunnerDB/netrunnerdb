@@ -342,6 +342,10 @@ class ReviewController extends Controller
             ];
         }
 
+        // The user who is reading the review, not the user who wrote it
+        $reader = $this->getUser();
+        $readerVerified = $reader ? $reader->isVerified() : false;
+
         return $this->render(
 
             '/Reviews/reviews.html.twig',
@@ -360,7 +364,7 @@ class ReviewController extends Controller
                         "user_id" => $user->getId(),
                         "page"    => $nextpage,
                     ]),
-                'comments_enabled' => $user->isVerified(),
+                'comments_enabled' => $readerVerified,
             ],
 
             $response
