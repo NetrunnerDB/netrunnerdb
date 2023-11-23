@@ -506,6 +506,11 @@ class SocialController extends Controller
     {
         $user = $this->getUser();
 
+        // Bot prevention - this shouldn't ever happen unless a user messes with the comment input source
+        if (!$user.data.comments_enabled) {
+            return;
+        }
+
         $decklist_uuid = $request->get('uuid');
         $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist_uuid]);
         if (!$decklist instanceof Decklist) {

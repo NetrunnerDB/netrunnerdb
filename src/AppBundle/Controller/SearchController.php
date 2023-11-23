@@ -619,6 +619,9 @@ class SearchController extends Controller
             $card = $cards[0];
         }
 
+        $user = $this->getUser();
+        $userVerified = $user ? $user->isVerified() : false;
+
         // be careful if $s="short", $cards is an array with 2 levels instead of just 1
         return $this->render('/Search/display-' . $view . '.html.twig', [
             "view"            => $view,
@@ -633,6 +636,7 @@ class SearchController extends Controller
             "metadescription" => $meta,
             "locales"         => $locales,
             "currentRotationCycles" => $currentRotationCycles,
+            "comments_enabled"      => $userVerified,
         ], $response);
     }
 
