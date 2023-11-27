@@ -507,7 +507,7 @@ class SocialController extends Controller
         $user = $this->getUser();
 
         // Bot prevention - this shouldn't ever happen unless a user messes with the comment input source
-        if (!$user.data.comments_enabled) {
+        if (!$user || !$user->isVerified()) {
             return;
         }
 
