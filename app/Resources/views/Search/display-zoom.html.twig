@@ -86,11 +86,13 @@
                     </div>
                 {% endif %}
 
-                {% if card.flavor %}
-                    <div class="card-flavor">
+                <div class="card-flavor">
+                    {% if card.code == "33084" %}
                         {{ card.flavor|raw|escape|nl2br }}
-                    </div>
-                {% endif %}
+                    {% elseif card.flavor %}
+                        {{ card.flavor|raw|nl2br }}
+                    {% endif %}
+                </div>
 
                 {% if card.illustrator %}
                     <div class="card-illustrator">
