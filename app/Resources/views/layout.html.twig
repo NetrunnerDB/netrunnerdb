@@ -14,7 +14,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta property="og:image" content="{% if pageimage %}{{ pageimage }}{% else %}https://netrunnerdb.com/icon.png{% endif %}" />
+    <meta property="og:image" content="{% if pageimage is defined and pageimage %}{{ pageimage }}{% else %}https://netrunnerdb.com/icon.png{% endif %}" />
     {% if pagedescription is defined %}<meta name="description" content="{{ pagedescription }}">{% endif %}
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
