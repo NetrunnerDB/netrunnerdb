@@ -17,9 +17,10 @@ class RotationController extends Controller
         $r = $entityManager->createQuery("SELECT r FROM AppBundle:Rotation r ORDER BY r.dateStart DESC");
 
         return $this->render('/Rotation/rotation.html.twig', [
-            'pagetitle'          => "Rotation",
-            'rotations'          => $r->getResult(),
-			'cycles_and_packs'   => $cardsData->getCyclesAndPacks(),
+            'pagetitle'        => "Rotation",
+            'pagedescription'  => "Compare the different card pools from the Standard format.",
+            'rotations'        => $r->getResult(),
+            'cycles_and_packs' => $cardsData->getCyclesAndPacks(),
        ]);
     }
 }

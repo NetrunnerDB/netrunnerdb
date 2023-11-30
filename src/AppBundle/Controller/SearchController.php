@@ -454,12 +454,14 @@ class SearchController extends Controller
                         $pack = $entityManager->getRepository('AppBundle:Pack')->findOneBy(["code" => $conditions[0][2]]);
                         if ($pack instanceof Pack) {
                             $title = $pack->getName();
+                            $description = "View all cards from the $title pack.";
                         }
                     }
                     if ($conditions[0][0] == "c") {
                         $cycle = $entityManager->getRepository('AppBundle:Cycle')->findOneBy(["code" => $conditions[0][2]]);
                         if ($cycle instanceof Cycle) {
                             $title = $cycle->getName();
+                            $description = "View all cards from the $title cycle.";
                         }
                     }
                 }
@@ -614,6 +616,19 @@ class SearchController extends Controller
         if (empty($title)) {
             $title = $q;
         }
+        if (empty($description)) {
+            if (count($cards) == 0) {
+                $description = "This search query has no results.";
+            } else if (count($cards) > 1) {
+                $description = "View all " . strval(count($cards)) . " results of this card search query.";
+            } else {
+                $description = $this->formatCardForEmbed($cards[0]);
+                $image = "https://card-images.netrunnerdb.com/v1" . $cards[0]["medium_image_path"]; // Hardcoding the link because
+            }
+        }
+        if (empty($image)) {
+            $image = "";
+        }
 
         if ($view == "zoom") {
             $card = $cards[0];
@@ -630,10 +645,43 @@ class SearchController extends Controller
             "searchbar"       => $searchbar,
             "pagination"      => $pagination,
             "pagetitle"       => $title,
+            "pagedescription" => $description,
+            "pageimage"       => $image,
             "metadescription" => $meta,
             "locales"         => $locales,
             "currentRotationCycles" => $currentRotationCycles,
         ], $response);
+    }
+
+    private function formatCardForEmbed($card)
+    {
+        $out = "";
+
+        // Title
+        $out .= "<h2>" . ($card["uniqueness"] ? "♦ " : "") . $card["title"] . "</h2><br>";
+        // Type/subtype
+        if (empty($card["subtype"])) {
+            $out .= "<b>" . $card["type_name"] . "</b> ";
+        } else {
+            $out .= "<b>" . $card["type_name"] . ":</b> " . $card["subtype"] . " ";
+        }
+        // Stats
+        if ($card["type_code"] == "identity") {
+            $out .= "(" . $card["minimumdecksize"] . "/" . $card["influencelimit"] . ")<br>";
+        } else if ($card["type_code"] == "agenda") {
+            $out .= "(" . $card["advancementcost"] . "/" . $card["agendapoints"] . ")<br>";
+        } else {
+            $out .= "(" . $card["cost"] . ")<br>";
+            if (!empty($card["memorycost"])) {
+                $out .= "<b>MU cost:</b> " . $card["memorycost"] . "<br>";
+            } else if (!empty($card["trashcost"])) {
+                $out .= "<b>Trash cost:</b> " . $card["trashcost"] . "<br>";
+            }
+        }
+        // Text
+        $out .= $card["stripped_text"];
+
+        return $out;
     }
 
     public function setsAction(EntityManagerInterface $entityManager, CardsData $cardsData)

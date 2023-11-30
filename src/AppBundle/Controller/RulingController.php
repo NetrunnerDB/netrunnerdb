@@ -104,6 +104,8 @@ class RulingController extends Controller
         $list = $entityManager->getRepository('AppBundle:Card')->findAll();
 
         $response = $this->render('/Rulings/list.html.twig', [
+            'pagetitle'       => 'Rulings',
+            'pagedescription' => 'Check out the official and unofficial rulings on cards and their interactions.',
             'list' => $list,
         ]);
         $response->setPublic();
