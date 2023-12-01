@@ -658,24 +658,24 @@ class SearchController extends Controller
         $out = "";
 
         // Title
-        $out .= "<h2>" . ($card["uniqueness"] ? "♦ " : "") . $card["title"] . "</h2><br>";
+        $out .= ($card["uniqueness"] ? "♦ " : "") . $card["title"] . "\n";
         // Type/subtype
         if (empty($card["subtype"])) {
-            $out .= "<b>" . $card["type_name"] . "</b> ";
+            $out .= $card["type_name"] . " ";
         } else {
-            $out .= "<b>" . $card["type_name"] . ":</b> " . $card["subtype"] . " ";
+            $out .= $card["type_name"] . ": " . $card["subtype"] . " ";
         }
         // Stats
         if ($card["type_code"] == "identity") {
-            $out .= "(" . $card["minimumdecksize"] . "/" . $card["influencelimit"] . ")<br>";
+            $out .= "(" . $card["minimumdecksize"] . "/" . $card["influencelimit"] . ")\n";
         } else if ($card["type_code"] == "agenda") {
-            $out .= "(" . $card["advancementcost"] . "/" . $card["agendapoints"] . ")<br>";
+            $out .= "(" . $card["advancementcost"] . "/" . $card["agendapoints"] . ")\n";
         } else {
-            $out .= "(" . $card["cost"] . ")<br>";
+            $out .= "(" . $card["cost"] . ")\n";
             if (!empty($card["memorycost"])) {
-                $out .= "<b>MU cost:</b> " . $card["memorycost"] . "<br>";
+                $out .= "MU cost: " . $card["memorycost"] . "\n";
             } else if (!empty($card["trashcost"])) {
-                $out .= "<b>Trash cost:</b> " . $card["trashcost"] . "<br>";
+                $out .= "Trash cost: " . $card["trashcost"] . "\n";
             }
         }
         // Text
