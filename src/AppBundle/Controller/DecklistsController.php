@@ -57,7 +57,7 @@ class DecklistsController extends Controller
                     $result = $decklistManager->favorites($user->getId(), $start, $limit);
                 }
                 $pagetitle = "Favorite Decklists";
-                $pagedescription = "View your favourited decklists.";
+                $pagedescription = "Browse your favourited decklists.";
                 break;
             case 'mine':
                 $response->setPrivate();
@@ -68,32 +68,32 @@ class DecklistsController extends Controller
                     $result = $decklistManager->by_author($user->getId(), $start, $limit);
                 }
                 $pagetitle = "My Decklists";
-                $pagedescription = "View your own published decklists.";
+                $pagedescription = "Browse your own published decklists.";
                 break;
             case 'recent':
                 $result = $decklistManager->recent($start, $limit);
                 $pagetitle = "Recent Decklists";
-                $pagedescription = "View recently published decklists.";
+                $pagedescription = "Browse recently published decklists.";
                 break;
             case 'dotw':
                 $result = $decklistManager->dotw($start, $limit);
                 $pagetitle = "Decklist of the week";
-                $pagedescription = "View the decklists of the week.";
+                $pagedescription = "Browse the decklists of the week.";
                 break;
             case 'halloffame':
                 $result = $decklistManager->halloffame($start, $limit);
                 $pagetitle = "Hall of Fame";
-                $pagedescription = "View the most loved decklists from all of NetrunnerDB history.";
+                $pagedescription = "Browse the most loved decklists from all of NetrunnerDB history.";
                 break;
             case 'hottopics':
                 $result = $decklistManager->hottopics($start, $limit);
                 $pagetitle = "Hot Topics";
-                $pagedescription = "View decklists currently receiving attention.";
+                $pagedescription = "Browse decklists currently receiving attention.";
                 break;
             case 'tournament':
                 $result = $decklistManager->tournaments($start, $limit);
                 $pagetitle = "Tournaments";
-                $pagedescription = "View decklists that placed in tournaments.";
+                $pagedescription = "Browse decklists that placed in tournaments.";
                 break;
             case 'trashed':
                 $this->denyAccessUnlessGranted('ROLE_MODERATOR');
@@ -109,7 +109,7 @@ class DecklistsController extends Controller
             default:
                 $result = $decklistManager->popular($start, $limit);
                 $pagetitle = "Popular Decklists";
-                $pagedescription = "View popular recently published decklists.";
+                $pagedescription = "Browse recent popular decklists.";
                 break;
         }
 
