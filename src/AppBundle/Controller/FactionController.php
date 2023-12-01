@@ -96,7 +96,7 @@ class FactionController extends Controller
                 ];
             }
 
-            // Sort the identities alphabetically. 
+            // Sort the identities alphabetically.
             usort($decklists, function ($a, $b) {
                 return strcasecmp($a['identity']->getTitle(), $b['identity']->getTitle());
             });
@@ -108,9 +108,10 @@ class FactionController extends Controller
         }
 
         return $this->render('/Faction/faction.html.twig', [
-            "pagetitle"    => "Faction Page: $faction_name",
-            "results"      => $result,
-            "banned_cards" => $banned_cards,
+            "pagetitle"       => "Faction Page: $faction_name",
+            "pagedescription" => "Explore all $faction_name identities and recent decklists.",
+            "results"         => $result,
+            "banned_cards"    => $banned_cards,
         ], $response);
     }
 }

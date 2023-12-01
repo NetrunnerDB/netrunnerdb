@@ -45,6 +45,7 @@ class DecklistsController extends Controller
             case 'find':
                 $result = $decklistManager->find($start, $limit, $request, $cardsData);
                 $pagetitle = "Decklist search results";
+                $pagedescription = "View the results of a decklist search.";
                 $header = $this->searchForm($request, $entityManager, $cardsData);
                 break;
             case 'favorites':
@@ -56,6 +57,7 @@ class DecklistsController extends Controller
                     $result = $decklistManager->favorites($user->getId(), $start, $limit);
                 }
                 $pagetitle = "Favorite Decklists";
+                $pagedescription = "View your favourited decklists.";
                 break;
             case 'mine':
                 $response->setPrivate();
@@ -66,26 +68,32 @@ class DecklistsController extends Controller
                     $result = $decklistManager->by_author($user->getId(), $start, $limit);
                 }
                 $pagetitle = "My Decklists";
+                $pagedescription = "View your own published decklists.";
                 break;
             case 'recent':
                 $result = $decklistManager->recent($start, $limit);
                 $pagetitle = "Recent Decklists";
+                $pagedescription = "View recently published decklists.";
                 break;
             case 'dotw':
                 $result = $decklistManager->dotw($start, $limit);
                 $pagetitle = "Decklist of the week";
+                $pagedescription = "View the decklists of the week.";
                 break;
             case 'halloffame':
                 $result = $decklistManager->halloffame($start, $limit);
                 $pagetitle = "Hall of Fame";
+                $pagedescription = "View the most loved decklists from all of NetrunnerDB history.";
                 break;
             case 'hottopics':
                 $result = $decklistManager->hottopics($start, $limit);
                 $pagetitle = "Hot Topics";
+                $pagedescription = "View decklists currently receiving attention.";
                 break;
             case 'tournament':
                 $result = $decklistManager->tournaments($start, $limit);
                 $pagetitle = "Tournaments";
+                $pagedescription = "View decklists that placed in tournaments.";
                 break;
             case 'trashed':
                 $this->denyAccessUnlessGranted('ROLE_MODERATOR');
@@ -101,6 +109,7 @@ class DecklistsController extends Controller
             default:
                 $result = $decklistManager->popular($start, $limit);
                 $pagetitle = "Popular Decklists";
+                $pagedescription = "View popular recently published decklists.";
                 break;
         }
 
@@ -152,7 +161,7 @@ class DecklistsController extends Controller
 
         return $this->render('/Decklist/decklists.html.twig', [
             'pagetitle'       => $pagetitle,
-            'pagedescription' => "Browse the collection of thousands of premade decks.",
+            'pagedescription' => $pagedescription ? $pagedescription : "Browse the collection of thousands of premade decks.",
             'decklists'       => $decklists,
             'packs'           => $packs,
             'factions'        => $factions,
@@ -199,6 +208,7 @@ class DecklistsController extends Controller
 
         return $this->render('/Search/search.html.twig', [
             'pagetitle' => 'Decklist Search',
+            'pagedescription' => 'Search for published Netrunner decklists.',
             'url'       => $request
                 ->getRequestUri(),
             'factions'  => $factions,
