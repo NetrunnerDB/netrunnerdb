@@ -1287,7 +1287,7 @@ class SocialController extends Controller
 
         return $this->render('/Default/donators.html.twig', [
             'pagetitle' => 'The Gracious Donators',
-            'pagedescription' => "NetrunnerDB wouldn't be the same without them. Many, many thanks."
+            'pagedescription' => "NetrunnerDB wouldn't be the same without them. Many, many thanks.",
             'donators'  => $users,
         ], $response);
     }
