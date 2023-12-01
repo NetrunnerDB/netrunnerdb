@@ -146,6 +146,8 @@ class SearchController extends Controller
                 'view'             => 'card',
                 'sort'             => 'set',
                 'title'            => $card->getTitle(),
+                'description'      => $formatCardForEmbed($card),
+                'image'            => "https://card-images.netrunnerdb.com/v1" . $cards[0]["medium_image_path"],
                 'meta'             => $meta,
                 'locale'           => $request->getLocale(),
             ]
@@ -198,6 +200,7 @@ class SearchController extends Controller
                 'sort'          => $sort,
                 'page'          => $page,
                 'title'         => $pack->getName(),
+                'description'   => "View all cards from the " . $pack->getName() . " pack.",
                 'meta'          => $meta,
                 'locale'        => $request->getLocale(),
                 'currentPack'   => $pack,
@@ -234,6 +237,7 @@ class SearchController extends Controller
                 'sort'          => $sort,
                 'page'          => $page,
                 'title'         => $cycle->getName(),
+                'description'   => "View all cards from the " . $cycle->getName() . " cycle.",
                 'meta'          => $meta,
                 'locale'        => $request->getLocale(),
             ]
@@ -365,6 +369,8 @@ class SearchController extends Controller
         string $sort,
         int $page = 1,
         string $title = "",
+        string $description = "",
+        string $image = "",
         string $meta = "",
         string $locale = null,
         array $locales = null,
@@ -448,6 +454,7 @@ class SearchController extends Controller
                 $view = 'zoom';
             }
 
+            // Catch the edge case where only a single cycle xor pack was searched but the page title/description wasn't set
             if ($title == "") {
                 if (count($conditions) == 1 && count($conditions[0]) == 3 && $conditions[0][1] == ":") {
                     if ($conditions[0][0] == "e") {
@@ -613,18 +620,20 @@ class SearchController extends Controller
             "view_options" => self::VIEW_OPTIONS,
         ]);
 
-        if (empty($title)) {
-            $title = $q;
-        }
+        // Default values for page titles and descriptions
         if (empty($description)) {
             if (count($cards) == 0) {
                 $description = "This search query has no results.";
             } else if (count($cards) > 1) {
                 $description = "View all " . strval(count($cards)) . " results of this card search query.";
             } else {
+                $title = $cards[0]["title"];
                 $description = $this->formatCardForEmbed($cards[0]);
-                $image = "https://card-images.netrunnerdb.com/v1" . $cards[0]["medium_image_path"]; // Hardcoding the link because
+                $image = "https://card-images.netrunnerdb.com/v1" . $cards[0]["medium_image_path"];
             }
+        }
+        if (empty($title)) {
+            $title = $q;
         }
         if (empty($image)) {
             $image = "";
@@ -661,25 +670,23 @@ class SearchController extends Controller
     {
         $out = "";
 
-        // Title
-        $out .= "<h2>" . ($card["uniqueness"] ? "♦ " : "") . $card["title"] . "</h2><br>";
         // Type/subtype
         if (empty($card["subtype"])) {
-            $out .= "<b>" . $card["type_name"] . "</b> ";
+            $out .= $card["type_name"] . " ";
         } else {
-            $out .= "<b>" . $card["type_name"] . ":</b> " . $card["subtype"] . " ";
+            $out .= $card["type_name"] . ": " . $card["subtype"] . " ";
         }
         // Stats
         if ($card["type_code"] == "identity") {
-            $out .= "(" . $card["minimumdecksize"] . "/" . $card["influencelimit"] . ")<br>";
+            $out .= "(" . $card["minimumdecksize"] . "/" . $card["influencelimit"] . ")\n";
         } else if ($card["type_code"] == "agenda") {
-            $out .= "(" . $card["advancementcost"] . "/" . $card["agendapoints"] . ")<br>";
+            $out .= "(" . $card["advancementcost"] . "/" . $card["agendapoints"] . ")\n";
         } else {
-            $out .= "(" . $card["cost"] . ")<br>";
+            $out .= "(" . $card["cost"] . ")\n";
             if (!empty($card["memorycost"])) {
-                $out .= "<b>MU cost:</b> " . $card["memorycost"] . "<br>";
+                $out .= "MU cost: " . $card["memorycost"] . "\n";
             } else if (!empty($card["trashcost"])) {
-                $out .= "<b>Trash cost:</b> " . $card["trashcost"] . "<br>";
+                $out .= "Trash cost: " . $card["trashcost"] . "\n";
             }
         }
         // Text
