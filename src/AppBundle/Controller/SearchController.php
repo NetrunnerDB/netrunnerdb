@@ -666,8 +666,6 @@ class SearchController extends Controller
     {
         $out = "";
 
-        // Title
-        $out .= ($card["uniqueness"] ? "♦ " : "") . $card["title"] . "\n";
         // Type/subtype
         if (empty($card["subtype"])) {
             $out .= $card["type_name"] . " ";
