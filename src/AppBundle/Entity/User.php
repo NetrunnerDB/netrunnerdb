@@ -478,7 +478,7 @@ class User extends BaseUser
 
     public function getMaxNbDecks()
     {
-        return 5*(100+floor($this->reputation/ 10));
+        return 6*(100+floor($this->reputation/ 10));
     }
 
     /**
