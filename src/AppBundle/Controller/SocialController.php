@@ -428,7 +428,7 @@ class SocialController extends Controller
 
         $description = 'A public decklist by ' . $decklist['username'] . ".";
         if (!empty(trim($decklist['rawdescription']))) {
-            $description .= "User description:\n" . $decklist['rawdescription'];
+            $description .= "\n\nUser description:\n\n" . $decklist['rawdescription'];
         }
 
         $imagePath = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $decklist['identity_code']])->getMediumImagePath();
