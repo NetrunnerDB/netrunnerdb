@@ -957,6 +957,7 @@ class BuilderController extends Controller
               s.name side_name,
               c.code identity_code,
               f.code faction_code,
+              u.username user_name,
               CASE WHEN u.id=? THEN 1 ELSE 0 END is_owner
             FROM deck d
               LEFT JOIN mwl m  ON d.mwl_id=m.id
@@ -1045,12 +1046,18 @@ class BuilderController extends Controller
         $problem = $deck['problem'];
         $deck['message'] = isset($problem) ? $judge->problem($deck) : '';
 
+        $description = "An unpublished decklist by " . $deck["user_name"] . ".";
+
+        $identity = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $deck["identity_code"]]);
+        $image = "https://card-images.netrunnerdb.com/v1" . $identity->getMediumImagePath();
+
         return $this->render(
 
             '/Builder/deckview.html.twig',
             [
                 'pagetitle'           => "Deckbuilder",
-                'pagedescription'     => "Build your own custom deck with the help of a powerful deckbuilder.",
+                'pagedescription'     => $description,
+                'pageimage'           => $image,
                 'deck'                => $deck,
                 'published_decklists' => $published_decklists,
                 'parent_decklists'    => $parent_decklists,
