@@ -146,8 +146,7 @@ class SearchController extends Controller
                 'view'             => 'card',
                 'sort'             => 'set',
                 'title'            => $card->getTitle(),
-                'description'      => $formatCardForEmbed($card),
-                'image'            => "https://card-images.netrunnerdb.com/v1" . $cards[0]["medium_image_path"],
+                'image'            => "https://card-images.netrunnerdb.com/v1" . $card->getMediumImagePath(),
                 'meta'             => $meta,
                 'locale'           => $request->getLocale(),
             ]
