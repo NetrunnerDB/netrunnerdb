@@ -1,13 +1,4 @@
-body {
-  font-size: 16px;
-  font-family: 'LatoWeb', sans-serif;
-}
-
 :root {
-
-  /* Legacy ----------------------------------- */
-
-  --nrdb-color--888: #888888;
   
   /* General ----------------------------------- */
   
@@ -80,13 +71,60 @@ body {
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
+
+    /* General ----------------------------------- */
+
     --nrdb-color--text: rgb(200, 195, 188);
     --nrdb-color--link: #46A7FB;
     --nrdb-color--background: #181A1B;
     --nrdb-color--light-gray: #1C1E1F;
     --nrdb-color--card: #1C1E1F;
     --nrdb-color--border: #313131;
+
+    /* Factions ----------------------------------- */
+    
+    /*** Jinteki */
+    --nrdb-color--jinteki-hover: #160407;
+    --nrdb-color--jinteki-bg: #2C070E;
+
+    /*** Shaper */
+    --nrdb-color--shaper-hover: #051505;
+    --nrdb-color--shaper-bg: #0A290A;
+
+    /*** Haas-bioroid */
+    --nrdb-color--haas-bioroid-hover: #0D0316;
+    --nrdb-color--haas-bioroid-bg: #1A062D;
+
+    /*** Anarch */
+    --nrdb-color--anarch-hover: #1A0600;
+    --nrdb-color--anarch-bg: #330D00;
+
+    /*** Criminal */
+    --nrdb-color--criminal-hover: #030816;
+    --nrdb-color--criminal-bg: #07102C;
+
+    /*** NBN */
+    --nrdb-color--nbn-hover: #1A0D00;
+    --nrdb-color--nbn-bg: #331C00;
+
+    /*** Weyland Consortium */
+    --nrdb-color--weyland-consortium-hover: #0A100A;
+    --nrdb-color--weyland-consortium-bg: #132013;
+
+    /*** Neutral */
+    --nrdb-color--neutral-hover: #0B0D0F;
+    --nrdb-color--neutral-bg: #171A1C;
   }
+}
+
+html {
+  background: var(--nrdb-color--light-gray);
+}
+
+body {
+  font-size: 16px;
+  font-family: 'LatoWeb', sans-serif;
+  color: var(--nrdb-color--text);
 }
 
 a {
@@ -120,7 +158,7 @@ a {
 }
 
 .card-text {
-  border-left: 2px solid var(--nrdb-color--888);
+  border-left: 2px solid var(--nrdb-color--gray);
 }
 
 .card-text sup {
@@ -140,7 +178,7 @@ a {
 .card-text::before,
 .card-flavor::before,
 .card-illustrator::before {
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--nrdb-color--border);
   width: 95%;
   content: "";
   margin: 5px auto;
@@ -439,14 +477,37 @@ a {
   font-size: 85.7%
 }
 
+.qtip-nrdb .card-image-wrapper,
 .qtip-nrdb .card-image {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+.qtip-nrdb .card-image-wrapper {
+  background-color: var(--nrdb-color--black);
   float: right;
   height: 90px;
   width: 101px;
+  margin: 5px 0px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .qtip-nrdb .card-image-wrapper {
+    background-color: var(--nrdb-color--white);
+  }
+}
+
+.qtip-nrdb .card-image {
   background-size: 120px;
   background-repeat: no-repeat;
-  margin: 5px 0px;
-  position: relative
+  z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 95%;
+  height: 95%;
 }
 
 .qtip-nrdb .card-image svg {
@@ -754,7 +815,7 @@ tbody .btn-group {
 }
 
 #table-draw-simulator-content div.card-proxy {
-  background: var(--nrdb-color--888);
+  background: var(--nrdb-color--gray);
   color: var(--nrdb-color--white);
   width: 99px;
   height: 138px;
@@ -794,7 +855,7 @@ tbody .btn-group {
 }
 
 .twitter-typeahead .tt-hint {
-  color: var(--nrdb-color--aaa);
+  color: var(--nrdb-color--dark-gray);
   margin-left: 11px;
   margin-top: 4px
 }
@@ -1281,7 +1342,7 @@ ul.rulings-list blockquote {
 }
 
 .search-example {
-  border: 1px solid var(--nrdb-color--888);
+  border: 1px solid var(--nrdb-color--gray);
   font-family: monospace;
   padding: 0 2px;
 }
@@ -1446,7 +1507,7 @@ ul.rulings-list blockquote {
 }
 
 #update-log tr {
-  color: var(--nrdb-color--888);
+  color: var(--nrdb-color--gray);
   border-bottom: 1px solid var(--nrdb-color--border);
   vertical-align: top;
 }
@@ -1581,13 +1642,22 @@ a.list-group-item:focus, a.list-group-item:hover, button.list-group-item:focus, 
   color: var(--nrdb-color--text);
 }
 
+.panel {
+  background-color: unset;
+}
+
 .panel-default {
   border-color: var(--nrdb-color--border);
 }
 
 .panel-default > .panel-heading {
   background-color: var(--nrdb-color--border);
+  border-color: var(--nrdb-color--border);
   color: inherit;
+}
+
+.panel-body.card-panel {
+  background-color: var(--nrdb-color--card);
 }
 
 a.list-group-item, button.list-group-item {
@@ -1596,4 +1666,24 @@ a.list-group-item, button.list-group-item {
 
 .table-striped > tbody > tr:nth-of-type(2n+1) {
   background-color: var(--nrdb-color--card);
+}
+
+.pager li > a, 
+.pager li > span {
+  background-color: var(--nrdb-color--border);
+  border-color: var(--nrdb-color--border);
+  color: var(--nrdb-color--text);
+}
+
+/*
+.pager li > a:hover,
+.pager li > span:hover {
+  background-color: var(--nrdb-color--text);
+}
+*/
+
+.qtip-bootstrap {
+  background-color: var(--nrdb-color--card);
+  border-color: var(--nrdb-color--border);
+  color: var(--nrdb-color--text);
 }
