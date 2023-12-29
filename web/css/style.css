@@ -645,8 +645,9 @@ footer {
 
 .jumbotron {
   /*box-shadow:-1px 1px 4px*/
-  border: 1px solid var(--nrdb-color--silver);
-  border-width: 1px 0px
+  border: 1px solid var(--nrdb-color--border);
+  border-width: 1px 0px;
+  background-color: var(--nrdb-color--card);
 }
 
 textarea {
@@ -1686,4 +1687,9 @@ a.list-group-item, button.list-group-item {
   background-color: var(--nrdb-color--card);
   border-color: var(--nrdb-color--border);
   color: var(--nrdb-color--text);
+}
+
+.table>tbody>tr>td,
+.table>thead>tr>th {
+  border-color: var(--nrdb-color--border);
 }
