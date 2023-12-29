@@ -42,7 +42,7 @@ $hasMinorProblems = (bool) count($minorProblems);
     <style>
         /* styles copied from symfony framework bundle */
         html {
-            background: var(--nrdb-color--offwhite);
+            background: var(--nrdb-color--light-gray);
         }
 
         body {
