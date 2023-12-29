@@ -41,14 +41,6 @@ $hasMinorProblems = (bool) count($minorProblems);
     <title>Symfony Configuration Checker</title>
     <style>
         /* styles copied from symfony framework bundle */
-        html {
-            background: var(--nrdb-color--light-gray);
-        }
-
-        body {
-            font: 11px Verdana, Arial, sans-serif;
-            color: var(--nrdb-color--text);
-        }
 
         .sf-reset,
         .sf-reset .block,
