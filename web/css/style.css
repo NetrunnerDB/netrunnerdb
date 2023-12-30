@@ -72,57 +72,54 @@
   --nrdb-color--neutral-bg: #E2E5E8;
 }
 
-@media (prefers-color-scheme: dark) {
-  
-  :root {
+:root[data-theme="dark"] {
 
-    /* General ----------------------------------- */
+  /* General ----------------------------------- */
   
-    --nrdb-color--text: rgb(200, 195, 188);
-    --nrdb-color--link: #46A7FB;
-    --nrdb-color--link-hover: #b3dbff;
-    --nrdb-color--background: #181A1B;
-    --nrdb-color--light-gray: #1C1E1F;
-    --nrdb-color--card: #1C1E1F;
-    --nrdb-color--card-hover: #222425;
-    --nrdb-color--border: #313131;
-    --nrdb-color--code: inherit;
-    --nrdb-color--code-bg: var(--nrdb-color--border);
-    
-    /* Factions ----------------------------------- */
-    
-    /*** Jinteki */
-    --nrdb-color--jinteki-hover: #FBE7EB30;
-    --nrdb-color--jinteki-bg: #f8d0d830;
-    
-    /*** Shaper */
-    --nrdb-color--shaper-hover: #EAFAEA30;
-    --nrdb-color--shaper-bg: #d6f5d630;
-    
-    /*** Haas-bioroid */
-    --nrdb-color--haas-bioroid-hover: #F3EAFC30;
-    --nrdb-color--haas-bioroid-bg: #e7d4f930;
-    
-    /*** Anarch */
-    --nrdb-color--anarch-hover: #FFECE630;
-    --nrdb-color--anarch-bg: #ffd9cc30;
-    
-    /*** Criminal */
-    --nrdb-color--criminal-hover: #ECF0FC30;
-    --nrdb-color--criminal-bg: #d9e1f930;
-    
-    /*** NBN */
-    --nrdb-color--nbn-hover: #FFF3E630;
-    --nrdb-color--nbn-bg: #ffe8cc30;
-    
-    /*** Weyland Consortium */
-    --nrdb-color--weyland-consortium-hover: #E6EFE630;
-    --nrdb-color--weyland-consortium-bg: #cce0cc30;
-    
-    /*** Neutral */
-    --nrdb-color--neutral-hover: #F0F2F430;
-    --nrdb-color--neutral-bg: #E2E5E830;
-  }
+  --nrdb-color--text: rgb(200, 195, 188);
+  --nrdb-color--link: #46A7FB;
+  --nrdb-color--link-hover: #b3dbff;
+  --nrdb-color--background: #181A1B;
+  --nrdb-color--light-gray: #1C1E1F;
+  --nrdb-color--card: #1C1E1F;
+  --nrdb-color--card-hover: #222425;
+  --nrdb-color--border: #313131;
+  --nrdb-color--code: inherit;
+  --nrdb-color--code-bg: var(--nrdb-color--border);
+  
+  /* Factions ----------------------------------- */
+  
+  /*** Jinteki */
+  --nrdb-color--jinteki-hover: #FBE7EB30;
+  --nrdb-color--jinteki-bg: #f8d0d830;
+  
+  /*** Shaper */
+  --nrdb-color--shaper-hover: #EAFAEA30;
+  --nrdb-color--shaper-bg: #d6f5d630;
+  
+  /*** Haas-bioroid */
+  --nrdb-color--haas-bioroid-hover: #F3EAFC30;
+  --nrdb-color--haas-bioroid-bg: #e7d4f930;
+  
+  /*** Anarch */
+  --nrdb-color--anarch-hover: #FFECE630;
+  --nrdb-color--anarch-bg: #ffd9cc30;
+  
+  /*** Criminal */
+  --nrdb-color--criminal-hover: #ECF0FC30;
+  --nrdb-color--criminal-bg: #d9e1f930;
+  
+  /*** NBN */
+  --nrdb-color--nbn-hover: #FFF3E630;
+  --nrdb-color--nbn-bg: #ffe8cc30;
+  
+  /*** Weyland Consortium */
+  --nrdb-color--weyland-consortium-hover: #E6EFE630;
+  --nrdb-color--weyland-consortium-bg: #cce0cc30;
+  
+  /*** Neutral */
+  --nrdb-color--neutral-hover: #F0F2F430;
+  --nrdb-color--neutral-bg: #E2E5E830;
 }
 
 html {
@@ -1803,31 +1800,36 @@ legend {
   border-color: transparent;
 }
 
-/*
 button[data-theme-toggle="light"],
 button[data-theme-toggle="dark"] {
   border: unset;
-  width: 52px;
-  padding-top: 14px;
-  padding-bottom: 14px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: inherit;
 }
 
-button[data-theme-toggle="light"] {
-  background-color: grey;
+button[data-theme-toggle] svg {
+  fill: var(--nrdb-color--text); /* Fallback if currentColor isn't supported */
+  fill: currentColor;
+  width: 17px;
+  height: 17px;
 }
 
-button[data-theme-toggle="light"] span:last-of-type {
+button[data-theme-toggle="light"] svg {
+  fill: #9d9d9d;
+}
+
+button[data-theme-toggle="light"] svg:last-of-type {
   display: none;
 }
 
-button[data-theme-toggle="dark"] {
-  background-color: black;
-}
-
-button[data-theme-toggle="dark"] span:first-of-type {
+button[data-theme-toggle="dark"] svg:first-of-type {
   display: none;
 }
-*/
 
 code {
   color: var(--nrdb-color--code);
@@ -1849,7 +1851,8 @@ code {
   color: inherit;
 }
 
-.btn.btn-default {
+.btn.btn-default,
+.btn.btn-secondary {
   background-color: var(--nrdb-color--border);
   border-color: var(--nrdb-color--border);
   color: inherit;
