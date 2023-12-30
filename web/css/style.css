@@ -72,54 +72,57 @@
   --nrdb-color--neutral-bg: #E2E5E8;
 }
 
-:root[data-theme="dark"] {
+@media (prefers-color-scheme: dark) {
   
-  /* General ----------------------------------- */
+  :root {
+
+    /* General ----------------------------------- */
   
-  --nrdb-color--text: rgb(200, 195, 188);
-  --nrdb-color--link: #46A7FB;
-  --nrdb-color--link-hover: #b3dbff;
-  --nrdb-color--background: #181A1B;
-  --nrdb-color--light-gray: #1C1E1F;
-  --nrdb-color--card: #1C1E1F;
-  --nrdb-color--card-hover: #222425;
-  --nrdb-color--border: #313131;
-  --nrdb-color--code: inherit;
-  --nrdb-color--code-bg: var(--nrdb-color--border);
-  
-  /* Factions ----------------------------------- */
-  
-  /*** Jinteki */
-  --nrdb-color--jinteki-hover: #FBE7EB30;
-  --nrdb-color--jinteki-bg: #f8d0d830;
-  
-  /*** Shaper */
-  --nrdb-color--shaper-hover: #EAFAEA30;
-  --nrdb-color--shaper-bg: #d6f5d630;
-  
-  /*** Haas-bioroid */
-  --nrdb-color--haas-bioroid-hover: #F3EAFC30;
-  --nrdb-color--haas-bioroid-bg: #e7d4f930;
-  
-  /*** Anarch */
-  --nrdb-color--anarch-hover: #FFECE630;
-  --nrdb-color--anarch-bg: #ffd9cc30;
-  
-  /*** Criminal */
-  --nrdb-color--criminal-hover: #ECF0FC30;
-  --nrdb-color--criminal-bg: #d9e1f930;
-  
-  /*** NBN */
-  --nrdb-color--nbn-hover: #FFF3E630;
-  --nrdb-color--nbn-bg: #ffe8cc30;
-  
-  /*** Weyland Consortium */
-  --nrdb-color--weyland-consortium-hover: #E6EFE630;
-  --nrdb-color--weyland-consortium-bg: #cce0cc30;
-  
-  /*** Neutral */
-  --nrdb-color--neutral-hover: #F0F2F430;
-  --nrdb-color--neutral-bg: #E2E5E830;
+    --nrdb-color--text: rgb(200, 195, 188);
+    --nrdb-color--link: #46A7FB;
+    --nrdb-color--link-hover: #b3dbff;
+    --nrdb-color--background: #181A1B;
+    --nrdb-color--light-gray: #1C1E1F;
+    --nrdb-color--card: #1C1E1F;
+    --nrdb-color--card-hover: #222425;
+    --nrdb-color--border: #313131;
+    --nrdb-color--code: inherit;
+    --nrdb-color--code-bg: var(--nrdb-color--border);
+    
+    /* Factions ----------------------------------- */
+    
+    /*** Jinteki */
+    --nrdb-color--jinteki-hover: #FBE7EB30;
+    --nrdb-color--jinteki-bg: #f8d0d830;
+    
+    /*** Shaper */
+    --nrdb-color--shaper-hover: #EAFAEA30;
+    --nrdb-color--shaper-bg: #d6f5d630;
+    
+    /*** Haas-bioroid */
+    --nrdb-color--haas-bioroid-hover: #F3EAFC30;
+    --nrdb-color--haas-bioroid-bg: #e7d4f930;
+    
+    /*** Anarch */
+    --nrdb-color--anarch-hover: #FFECE630;
+    --nrdb-color--anarch-bg: #ffd9cc30;
+    
+    /*** Criminal */
+    --nrdb-color--criminal-hover: #ECF0FC30;
+    --nrdb-color--criminal-bg: #d9e1f930;
+    
+    /*** NBN */
+    --nrdb-color--nbn-hover: #FFF3E630;
+    --nrdb-color--nbn-bg: #ffe8cc30;
+    
+    /*** Weyland Consortium */
+    --nrdb-color--weyland-consortium-hover: #E6EFE630;
+    --nrdb-color--weyland-consortium-bg: #cce0cc30;
+    
+    /*** Neutral */
+    --nrdb-color--neutral-hover: #F0F2F430;
+    --nrdb-color--neutral-bg: #E2E5E830;
+  }
 }
 
 html {
@@ -1800,6 +1803,7 @@ legend {
   border-color: transparent;
 }
 
+/*
 button[data-theme-toggle="light"],
 button[data-theme-toggle="dark"] {
   border: unset;
@@ -1823,6 +1827,7 @@ button[data-theme-toggle="dark"] {
 button[data-theme-toggle="dark"] span:first-of-type {
   display: none;
 }
+*/
 
 code {
   color: var(--nrdb-color--code);
