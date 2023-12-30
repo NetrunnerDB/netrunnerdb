@@ -32,7 +32,7 @@
             type += '<p>Strength <b>' + card.strength + '</b></p>';
         var image_svg = '';
         if($('#nrdb_svg_hex').length) {
-            image_svg = '<div class="card-image-wrapper"><div class="card-image card-image-' + card.side_code + '-' + card.type_code + '"' + (card.imageUrl ? ' style="background-image:url(' + NRDB.card_image_url + '/small/' + card.code+ '.jpg)"' : '') + '></div></div>';
+            image_svg = '<div class="card-image-wrapper"><div class="card-image-mask"><div class="card-image card-image-' + card.side_code + '-' + card.type_code + '"' + (card.imageUrl ? ' style="background-image:url(' + NRDB.card_image_url + '/small/' + card.code+ '.jpg)"' : '') + '></div></div></div>';
         }
 
         $('.qtip').each(function(){
