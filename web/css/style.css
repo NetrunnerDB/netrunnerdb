@@ -1546,7 +1546,7 @@ ul.rulings-list blockquote {
 }
 
 #update-log tr:first-child {
-  color: var(--nrdb-color--black);
+  color: inherit;
 }
 
 #update-log td {
