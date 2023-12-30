@@ -12,6 +12,7 @@
   --nrdb-color--link-hover: #23527c;
   --nrdb-color--background: var(--nrdb-color--white);
   --nrdb-color--card: #f8f8f8;
+  --nrdb-color--card-hover: #f0f0f0;
   --nrdb-color--border: #eee;
   --nrdb-color--like: red;
   --nrdb-color--favorite: orange;
@@ -25,6 +26,8 @@
   --nrdb-color--rotated: #558DEC;
   --nrdb-color--restricted: #8E80FF;
   --nrdb-color--unverified: #8F8F8F;
+  --nrdb-color--code: #c7254e;
+  --nrdb-color--code-bg: #f9f2f4;
   
   /* Factions ----------------------------------- */
 
@@ -69,54 +72,54 @@
   --nrdb-color--neutral-bg: #E2E5E8;
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-
-    /* General ----------------------------------- */
-
-    --nrdb-color--text: rgb(200, 195, 188);
-    --nrdb-color--link: #46A7FB;
-    --nrdb-color--link-hover: #b3dbff;
-    --nrdb-color--background: #181A1B;
-    --nrdb-color--light-gray: #1C1E1F;
-    --nrdb-color--card: #1C1E1F;
-    --nrdb-color--border: #313131;
-
-    /* Factions ----------------------------------- */
-    
-    /*** Jinteki */
-    --nrdb-color--jinteki-hover: #FBE7EB30;
-    --nrdb-color--jinteki-bg: #f8d0d830;
-
-    /*** Shaper */
-    --nrdb-color--shaper-hover: #EAFAEA30;
-    --nrdb-color--shaper-bg: #d6f5d630;
-
-    /*** Haas-bioroid */
-    --nrdb-color--haas-bioroid-hover: #F3EAFC30;
-    --nrdb-color--haas-bioroid-bg: #e7d4f930;
-
-    /*** Anarch */
-    --nrdb-color--anarch-hover: #FFECE630;
-    --nrdb-color--anarch-bg: #ffd9cc30;
-
-    /*** Criminal */
-    --nrdb-color--criminal-hover: #ECF0FC30;
-    --nrdb-color--criminal-bg: #d9e1f930;
-
-    /*** NBN */
-    --nrdb-color--nbn-hover: #FFF3E630;
-    --nrdb-color--nbn-bg: #ffe8cc30;
-
-    /*** Weyland Consortium */
-    --nrdb-color--weyland-consortium-hover: #E6EFE630;
-    --nrdb-color--weyland-consortium-bg: #cce0cc30;
-
-    /*** Neutral */
-    --nrdb-color--neutral-hover: #F0F2F430;
-    --nrdb-color--neutral-bg: #E2E5E830;
-  }
+:root[data-theme="dark"] {
+  
+  /* General ----------------------------------- */
+  
+  --nrdb-color--text: rgb(200, 195, 188);
+  --nrdb-color--link: #46A7FB;
+  --nrdb-color--link-hover: #b3dbff;
+  --nrdb-color--background: #181A1B;
+  --nrdb-color--light-gray: #1C1E1F;
+  --nrdb-color--card: #1C1E1F;
+  --nrdb-color--card-hover: #222425;
+  --nrdb-color--border: #313131;
+  --nrdb-color--code: inherit;
+  --nrdb-color--code-bg: var(--nrdb-color--border);
+  
+  /* Factions ----------------------------------- */
+  
+  /*** Jinteki */
+  --nrdb-color--jinteki-hover: #FBE7EB30;
+  --nrdb-color--jinteki-bg: #f8d0d830;
+  
+  /*** Shaper */
+  --nrdb-color--shaper-hover: #EAFAEA30;
+  --nrdb-color--shaper-bg: #d6f5d630;
+  
+  /*** Haas-bioroid */
+  --nrdb-color--haas-bioroid-hover: #F3EAFC30;
+  --nrdb-color--haas-bioroid-bg: #e7d4f930;
+  
+  /*** Anarch */
+  --nrdb-color--anarch-hover: #FFECE630;
+  --nrdb-color--anarch-bg: #ffd9cc30;
+  
+  /*** Criminal */
+  --nrdb-color--criminal-hover: #ECF0FC30;
+  --nrdb-color--criminal-bg: #d9e1f930;
+  
+  /*** NBN */
+  --nrdb-color--nbn-hover: #FFF3E630;
+  --nrdb-color--nbn-bg: #ffe8cc30;
+  
+  /*** Weyland Consortium */
+  --nrdb-color--weyland-consortium-hover: #E6EFE630;
+  --nrdb-color--weyland-consortium-bg: #cce0cc30;
+  
+  /*** Neutral */
+  --nrdb-color--neutral-hover: #F0F2F430;
+  --nrdb-color--neutral-bg: #E2E5E830;
 }
 
 html {
@@ -1668,7 +1671,7 @@ ul.rulings-list blockquote {
 }
 
 a.list-group-item:focus, a.list-group-item:hover, button.list-group-item:focus, button.list-group-item:hover {
-  background-color: var(--nrdb-color--border);
+  background-color: var(--nrdb-color--card-hover);
   color: var(--nrdb-color--text);
 }
 
@@ -1753,13 +1756,6 @@ legend {
     color: var(--nrdb-color--white);
   }
 
-  /*
-  .btn {
-    background-color: var(--nrdb-color--white);
-    color: var(--nrdb-color--black);
-  }
-  */
-
   .highcharts-background {
     fill: var(--nrdb-color--border);
   }
@@ -1802,4 +1798,68 @@ legend {
 #login a.btn[href*="/resetting/"] {
   background-color: transparent;
   border-color: transparent;
+}
+
+button[data-theme-toggle="light"],
+button[data-theme-toggle="dark"] {
+  border: unset;
+  width: 52px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+button[data-theme-toggle="light"] {
+  background-color: grey;
+}
+
+button[data-theme-toggle="light"] span:last-of-type {
+  display: none;
+}
+
+button[data-theme-toggle="dark"] {
+  background-color: black;
+}
+
+button[data-theme-toggle="dark"] span:first-of-type {
+  display: none;
+}
+
+code {
+  color: var(--nrdb-color--code);
+  background-color: var(--nrdb-color--code-bg);
+}
+
+.modal-dialog .modal-content {
+  background-color: var(--nrdb-color--card);
+  border-color: var(--nrdb-color--border);
+  color: inherit;
+}
+
+.modal-dialog .modal-header,
+.modal-dialog .modal-footer {
+  border-color: var(--nrdb-color--border);
+}
+
+.close {
+  color: inherit;
+}
+
+.btn.btn-default {
+  background-color: var(--nrdb-color--border);
+  border-color: var(--nrdb-color--border);
+  color: inherit;
+}
+
+#deck-builder #faction-filter.form-control {
+  background-color: var(--nrdb-color--card) !important;
+}
+
+.table-hover > tbody > tr:hover {
+  background-color: var(--nrdb-color--border);
+}
+
+.well {
+  background-color: var(--nrdb-color--border);
+  border-color: var(--nrdb-color--border);
+  color: inherit;
 }
