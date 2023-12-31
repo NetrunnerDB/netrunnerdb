@@ -1696,8 +1696,8 @@ a.list-group-item:focus, a.list-group-item:hover, button.list-group-item:focus, 
   color: inherit;
 }
 
-.panel-body.card-panel {
-  background-color: var(--nrdb-color--card);
+.panel-body {
+  background-color: var(--nrdb-color--white);
 }
 
 .panel-default .btn {
@@ -1716,17 +1716,15 @@ a.list-group-item, button.list-group-item {
 
 .pager li > a, 
 .pager li > span {
-  background-color: var(--nrdb-color--border);
+  background-color: var(--nrdb-color--white);
   border-color: var(--nrdb-color--border);
-  color: var(--nrdb-color--text);
+  color: var(--nrdb-color--link);
 }
 
-/*
 .pager li > a:hover,
 .pager li > span:hover {
-  background-color: var(--nrdb-color--text);
+  color: var(--nrdb-color--link-hover);
 }
-*/
 
 .qtip-bootstrap {
   background-color: var(--nrdb-color--card);
@@ -1744,7 +1742,16 @@ legend {
   border-color: var(--nrdb-color--border);
 }
 
-@media (prefers-color-scheme: dark) {
+:root[data-theme="dark"] {
+  
+  .pager li > a, 
+  .pager li > span {
+    background-color: var(--nrdb-color--border);
+  }
+
+  .panel-body {
+    background-color: var(--nrdb-color--card);
+  }
 
   .qtip-nrdb .card-image-wrapper {
     background-color: var(--nrdb-color--white);
