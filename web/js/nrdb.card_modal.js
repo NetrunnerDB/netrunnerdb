@@ -24,7 +24,7 @@
     modal.data('index', code);
     modal.find('.card-modal-link').attr('href', Routing.generate('cards_zoom',{card_code:card.code}));
     modal.find('h3.modal-title').html((card.uniqueness ? "&diams; " : "")+card.title);
-    modal.find('.modal-image').html('<img class="img-responsive" src="'+card.imageUrl+'" alt="'+card.title+'">');
+    modal.find('.modal-image').html('<img class="img-responsive card-image" src="'+card.imageUrl+'" alt="'+card.title+'">');
     modal.find('.modal-info').html(
       '<div class="card-info">'+NRDB.format.type(card)+'</div>'
       +'<div><small>' + card.faction.name + ' &bull; '+ card.pack.name + '</small></div>'
