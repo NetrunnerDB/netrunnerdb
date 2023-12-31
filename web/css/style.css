@@ -1878,14 +1878,3 @@ code {
   border-color: var(--nrdb-color--border);
   color: inherit;
 }
-
-
-
-
-
-.qtip {
-  top: 0% !important;
-  left: 0% !important;
-  display: block !important;
-  opacity: 1 !important;
-}
