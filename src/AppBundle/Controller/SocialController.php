@@ -426,8 +426,18 @@ class SocialController extends Controller
              WHERE s.decklist_id=?
              ORDER BY y.position ASC, p.position ASC", [$decklist_id])->fetchAll();
 
+        $description = 'A public decklist by ' . $decklist['username'] . ".";
+        if (!empty(trim($decklist['rawdescription']))) {
+            $description .= "\n\nUser description:\n\n" . $decklist['rawdescription'];
+        }
+
+        $imagePath = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $decklist['identity_code']])->getMediumImagePath();
+        $image = "https://card-images.netrunnerdb.com/v1" . $imagePath;
+
         return $this->render('/Decklist/decklist.html.twig', [
             'pagetitle'           => $decklist['name'],
+            'pagedescription'     => $description,
+            'pageimage'           => $image,
             'decklist'            => $decklist,
             'commenters'          => $commenters,
             'precedent_decklists' => $precedent_decklists,
@@ -505,6 +515,11 @@ class SocialController extends Controller
     public function commentAction(Request $request, EntityManagerInterface $entityManager, \Swift_Mailer $mailer, TextProcessor $textProcessor)
     {
         $user = $this->getUser();
+
+        // Bot prevention - this shouldn't ever happen unless a user messes with the comment input source
+        if (!$user || !$user->isVerified()) {
+            return;
+        }
 
         $decklist_uuid = $request->get('uuid');
         $decklist = $entityManager->getRepository('AppBundle:Decklist')->findOneBy(["uuid" => $decklist_uuid]);
@@ -1008,12 +1023,24 @@ class SocialController extends Controller
         $reviews = $entityManager->getRepository('AppBundle:Review')->findBy(['user' => $user]);
         $nbreviews = count($reviews);
 
+        $description = "A NetrunnerDB member since " . $user->getCreation()->format('d F Y');
+        if ($nbdecklists == 1) {
+            $description .= "One published decklist\n";
+        } else {
+            $description .= ($nbdecklists == 0 ? "No" : strval($nbdecklists)) . " published decklists\n";
+        }
+        if ($nbreviews == 1) {
+            $description .= "One published review\n";
+        } else {
+            $description .= ($nbreviews == 0 ? "No" : strval($nbreviews)) . " published reviews";
+        }
 
         return $this->render('/Default/public_profile.html.twig', [
-            'pagetitle'   => $user->getUsername(),
-            'user'        => $user,
-            'nbdecklists' => $nbdecklists,
-            'nbreviews'   => $nbreviews,
+            'pagetitle'       => $user->getUsername(),
+            'pagedescription' => $description,
+            'user'            => $user,
+            'nbdecklists'     => $nbdecklists,
+            'nbreviews'       => $nbreviews,
         ], $response);
     }
 
@@ -1265,6 +1292,7 @@ class SocialController extends Controller
 
         return $this->render('/Default/donators.html.twig', [
             'pagetitle' => 'The Gracious Donators',
+            'pagedescription' => "NetrunnerDB wouldn't be the same without them. Many, many thanks.",
             'donators'  => $users,
         ], $response);
     }
@@ -1294,9 +1322,10 @@ class SocialController extends Controller
         $entityManager->flush();
 
         return $this->render('/Activity/activity.html.twig', [
-            'pagetitle'    => 'Activity',
-            'items_by_day' => $items_by_day,
-            'max'          => $days,
+            'pagetitle'       => 'Activity',
+            'pagedescription' => 'The latest activity from NetrunnerDB users.',
+            'items_by_day'    => $items_by_day,
+            'max'             => $days,
         ], $response);
     }
 

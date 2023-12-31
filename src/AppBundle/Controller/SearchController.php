@@ -146,6 +146,7 @@ class SearchController extends Controller
                 'view'             => 'card',
                 'sort'             => 'set',
                 'title'            => $card->getTitle(),
+                'image'            => "https://card-images.netrunnerdb.com/v1" . $card->getMediumImagePath(),
                 'meta'             => $meta,
                 'locale'           => $request->getLocale(),
             ]
@@ -198,6 +199,7 @@ class SearchController extends Controller
                 'sort'          => $sort,
                 'page'          => $page,
                 'title'         => $pack->getName(),
+                'description'   => "View all cards from the " . $pack->getName() . " pack.",
                 'meta'          => $meta,
                 'locale'        => $request->getLocale(),
                 'currentPack'   => $pack,
@@ -234,6 +236,7 @@ class SearchController extends Controller
                 'sort'          => $sort,
                 'page'          => $page,
                 'title'         => $cycle->getName(),
+                'description'   => "View all cards from the " . $cycle->getName() . " cycle.",
                 'meta'          => $meta,
                 'locale'        => $request->getLocale(),
             ]
@@ -365,6 +368,8 @@ class SearchController extends Controller
         string $sort,
         int $page = 1,
         string $title = "",
+        string $description = "",
+        string $image = "",
         string $meta = "",
         string $locale = null,
         array $locales = null,
@@ -448,18 +453,21 @@ class SearchController extends Controller
                 $view = 'zoom';
             }
 
+            // Catch the edge case where only a single cycle xor pack was searched but the page title/description wasn't set
             if ($title == "") {
                 if (count($conditions) == 1 && count($conditions[0]) == 3 && $conditions[0][1] == ":") {
                     if ($conditions[0][0] == "e") {
                         $pack = $entityManager->getRepository('AppBundle:Pack')->findOneBy(["code" => $conditions[0][2]]);
                         if ($pack instanceof Pack) {
                             $title = $pack->getName();
+                            $description = "View all cards from the $title pack.";
                         }
                     }
                     if ($conditions[0][0] == "c") {
                         $cycle = $entityManager->getRepository('AppBundle:Cycle')->findOneBy(["code" => $conditions[0][2]]);
                         if ($cycle instanceof Cycle) {
                             $title = $cycle->getName();
+                            $description = "View all cards from the $title cycle.";
                         }
                     }
                 }
@@ -611,13 +619,31 @@ class SearchController extends Controller
             "view_options" => self::VIEW_OPTIONS,
         ]);
 
+        // Default values for page titles and descriptions
+        if (empty($description)) {
+            if (count($cards) == 0) {
+                $description = "This search query has no results.";
+            } else if (count($cards) > 1) {
+                $description = "View all " . strval(count($cards)) . " results of this card search query.";
+            } else {
+                $title = $cards[0]["title"];
+                $description = $this->formatCardForEmbed($cards[0]);
+                $image = "https://card-images.netrunnerdb.com/v1" . $cards[0]["medium_image_path"];
+            }
+        }
         if (empty($title)) {
             $title = $q;
+        }
+        if (empty($image)) {
+            $image = "";
         }
 
         if ($view == "zoom") {
             $card = $cards[0];
         }
+
+        $user = $this->getUser();
+        $userVerified = $user ? $user->isVerified() : false;
 
         // be careful if $s="short", $cards is an array with 2 levels instead of just 1
         return $this->render('/Search/display-' . $view . '.html.twig', [
@@ -630,10 +656,42 @@ class SearchController extends Controller
             "searchbar"       => $searchbar,
             "pagination"      => $pagination,
             "pagetitle"       => $title,
+            "pagedescription" => $description,
+            "pageimage"       => $image,
             "metadescription" => $meta,
             "locales"         => $locales,
             "currentRotationCycles" => $currentRotationCycles,
+            "comments_enabled"      => $userVerified,
         ], $response);
+    }
+
+    private function formatCardForEmbed($card)
+    {
+        $out = "";
+
+        // Type/subtype
+        if (empty($card["subtype"])) {
+            $out .= $card["type_name"] . " ";
+        } else {
+            $out .= $card["type_name"] . ": " . $card["subtype"] . " ";
+        }
+        // Stats
+        if ($card["type_code"] == "identity") {
+            $out .= "(" . $card["minimumdecksize"] . "/" . $card["influencelimit"] . ")\n";
+        } else if ($card["type_code"] == "agenda") {
+            $out .= "(" . $card["advancementcost"] . "/" . $card["agendapoints"] . ")\n";
+        } else {
+            $out .= "(" . $card["cost"] . ")\n";
+            if (!empty($card["memorycost"])) {
+                $out .= "MU cost: " . $card["memorycost"] . "\n";
+            } else if (!empty($card["trashcost"])) {
+                $out .= "Trash cost: " . $card["trashcost"] . "\n";
+            }
+        }
+        // Text
+        $out .= $card["stripped_text"];
+
+        return $out;
     }
 
     public function setsAction(EntityManagerInterface $entityManager, CardsData $cardsData)

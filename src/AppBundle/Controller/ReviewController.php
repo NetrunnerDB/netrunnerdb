@@ -37,6 +37,11 @@ class ReviewController extends Controller
             return new Response(json_encode("Your reputation doesn't allow you to write more reviews."));
         }
 
+        // bot prevention - this shouldn't ever happen unless a user messes with the comment input source
+        if (!$user->isVerified()) {
+            return new Response(json_encode("You must have at least one private decklist before you may write a review."));
+        }
+
         $card_id = filter_var($request->get('card_id'), FILTER_SANITIZE_NUMBER_INT);
         /** @var Card $card */
         $card = $entityManager->getRepository('AppBundle:Card')->find($card_id);
@@ -252,6 +257,9 @@ class ReviewController extends Controller
             ];
         }
 
+        $user = $this->getUser();
+        $userVerified = $user ? $user->isVerified() : false;
+
         return $this->render(
 
             '/Reviews/reviews.html.twig',
@@ -268,6 +276,7 @@ class ReviewController extends Controller
                 'nexturl'         => $currpage == $nbpages ? null : $this->generateUrl($route, $params + [
                         "page" => $nextpage,
                     ]),
+                'comments_enabled' => $userVerified,
             ],
 
             $response
@@ -333,6 +342,10 @@ class ReviewController extends Controller
             ];
         }
 
+        // The user who is reading the review, not the user who wrote it
+        $reader = $this->getUser();
+        $readerVerified = $reader ? $reader->isVerified() : false;
+
         return $this->render(
 
             '/Reviews/reviews.html.twig',
@@ -351,6 +364,7 @@ class ReviewController extends Controller
                         "user_id" => $user->getId(),
                         "page"    => $nextpage,
                     ]),
+                'comments_enabled' => $readerVerified,
             ],
 
             $response
@@ -369,6 +383,11 @@ class ReviewController extends Controller
     public function commentAction(Request $request, EntityManagerInterface $entityManager, TextProcessor $textProcessor)
     {
         $user = $this->getUser();
+
+        // bot prevention - this shouldn't ever happen unless a user messes with the comment input source
+        if (!$user->isVerified()) {
+            return new Response(json_encode("You must have at least one private decklist before you may post comments."));
+        }
 
         $review_id = filter_var($request->get('comment_review_id'), FILTER_SANITIZE_NUMBER_INT);
         /** @var Review $review */

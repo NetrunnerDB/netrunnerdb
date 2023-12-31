@@ -86,11 +86,13 @@
                     </div>
                 {% endif %}
 
-                {% if card.flavor %}
-                    <div class="card-flavor">
+                <div class="card-flavor">
+                    {% if card.code == "33084" %}
                         {{ card.flavor|raw|escape|nl2br }}
-                    </div>
-                {% endif %}
+                    {% elseif card.flavor %}
+                        {{ card.flavor|raw|nl2br }}
+                    {% endif %}
+                </div>
 
                 {% if card.illustrator %}
                     <div class="card-illustrator">
@@ -255,10 +257,12 @@
                 {% endfor %}
 
                 {% endif %}
-                <form action="{{ path('card_reviewcomment_post') }}" method="POST" class="form-comment">
-                    <input type="hidden" name="comment_review_id" value="{{ review.id }}">
-                    <button class="btn btn-link btn-write-comment">Add a comment</button  >
-                </form>
+                {% if comments_enabled %}
+                  <form action="{{ path('card_reviewcomment_post') }}" method="POST" class="form-comment">
+                      <input type="hidden" name="comment_review_id" value="{{ review.id }}">
+                      <button class="btn btn-link btn-write-comment">Add a comment</button>
+                  </form>
+                {% endif %}
             </div>
         </article>
         {% endfor %}

@@ -13,7 +13,8 @@ class IllustratorsController extends Controller
     public function getAction(EntityManagerInterface $entityManager)
     {
         return $this->render('/Illustrators/illustrators.html.twig', [
-            'pagetitle'                     => "Illustrators",
+            'pagetitle'       => "Illustrators",
+            'pagedescription' => "Credit the artists who designed the look of the game.",
         ]);
     }
 }

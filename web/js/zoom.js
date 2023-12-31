@@ -155,6 +155,10 @@ function write_comment(event) {
         alert('You must be logged in to leave a comment on a card.');
         return;
     }
+    if(!NRDB.user.data.comments_enabled) {
+        alert('You must have at least one private decklist before you may post comments.');
+        return;
+    }
 
     $(this).replaceWith(
         '<div class="input-group">' +
@@ -238,7 +242,11 @@ function form_comment_submit(event) {
 }
 
 function setup_write() {
-    $('.reviews-header').prepend('<button class="pull-right btn btn-default review-button"><span class="glyphicon glyphicon-pencil"></span> Write a review</button>');
+    if (NRDB.user.data.comments_enabled) {
+        $('.reviews-header').prepend('<button class="pull-right btn btn-default review-button"><span class="glyphicon glyphicon-pencil"></span> Write a review</button>');
+    } else {
+        $('.reviews-header').prepend('<button class="pull-right btn btn-default review-button disabled"><span class="glyphicon glyphicon-pencil"></span> You must have a private decklist before you may write reviews</button>');
+    }
 }
 
 function setup_edit() {
@@ -264,6 +272,9 @@ function like_review(event) {
 function write_review_open(event) {
     if(!NRDB.user.data.is_authenticated) {
         alert('You must be logged in to write a card review.');
+        return;
+    } else if (!NRDB.user.data.comments_enabled) {
+        alert('You must have at least one private decklist before you may write a card review.');
         return;
     }
     var form = $(".review-edit-form");

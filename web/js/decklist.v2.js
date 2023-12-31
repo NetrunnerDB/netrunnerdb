@@ -67,6 +67,13 @@ function setup_moderation(moderation_status, moderation_reason, is_moderator) {
 
 function setup_comment_form() {
 
+    if (!NRDB.user.data.comments_enabled) {
+      $('<form method="POST" action=""><div class="form-group">'
+      + '<textarea id="comment-form-text" class="form-control" name="comment" disabled="disabled" style="resize:none" placeholder="You must have at least one private decklist before you may post comments."></textarea>'
+      + '</div></form>').insertAfter('#comment-form');
+      return;
+    }
+
     var form = $('<form method="POST" action="' + Routing.generate('decklist_comment') + '"><input type="hidden" name="uuid" value="' + Decklist.uuid + '"><div class="form-group">'
             + '<textarea id="comment-form-text" class="form-control" maxlength="10000" rows="4" name="comment" placeholder="Enter your comment in Markdown format. Type # to enter a card name. Type $ to enter a symbol. Type @ to enter a user name."></textarea>'
             + '</div><div class="well text-muted" id="comment-form-preview"><small>Preview. Look <a href="http://daringfireball.net/projects/markdown/dingus">here</a> for a Markdown syntax reference.</small></div>'
@@ -328,10 +335,10 @@ $(function () {
 
     $('#open-lists a').on("click", function(event) {
       if ($('#open-lists a').text() == '(show more)') {
-         $('#open-lists a').text('(show less)'); 
+         $('#open-lists a').text('(show less)');
          $('.other-list').show();
       } else {
-         $('#open-lists a').text('(show more)'); 
+         $('#open-lists a').text('(show more)');
          $('.other-list').hide();
       }
       event.preventDefault();

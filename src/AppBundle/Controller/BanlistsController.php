@@ -20,6 +20,7 @@ class BanlistsController extends Controller
             'format'                        => $request->query->get('format'),
             'restriction'                   => $request->query->get('restriction'),
             'pagetitle'                     => "Ban Lists",
+            'pagedescription'               => "View the ban lists for each format from throughout the game's history.",
         ]);
     }
 }

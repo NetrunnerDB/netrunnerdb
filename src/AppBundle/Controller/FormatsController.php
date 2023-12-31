@@ -14,7 +14,8 @@ class FormatsController extends Controller
     public function getAction(EntityManagerInterface $entityManager)
     {
         return $this->render('/Formats/formats.html.twig', [
-            'pagetitle'          => "Play Formats",
+            'pagetitle'       => "Play Formats",
+            'pagedescription' => "See the official formats for Netrunner play.",
         ]);
     }
 }

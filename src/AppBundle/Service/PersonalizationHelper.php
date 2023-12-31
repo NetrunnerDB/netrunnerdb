@@ -51,6 +51,7 @@ class PersonalizationHelper
             'unchecked_activity' => $this->activityHelper->countUncheckedItems($this->activityHelper->getItems($user)),
             'is_moderator'       => $this->authorizationChecker->isGranted('ROLE_MODERATOR'),
             'roles'              => $user->getRoles(),
+            'comments_enabled'   => $user->isVerified(),
             'following'          => array_map(function (User $following) {
                 return $following->getId();
             }, $user->getFollowing()->toArray()),

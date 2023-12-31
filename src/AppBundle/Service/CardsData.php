@@ -832,6 +832,7 @@ class CardsData
             "subtype"           => $card->getKeywords(),
             "formatted_type"    => $card->getFormattedType(),
             "text"              => $card->getText(),
+            "stripped_text"     => $card->getStrippedText(),
             "advancementcost"   => $card->getAdvancementCost(),
             "agendapoints"      => $card->getAgendaPoints(),
             "baselink"          => $card->getBaseLink(),
