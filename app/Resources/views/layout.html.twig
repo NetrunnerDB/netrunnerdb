@@ -26,6 +26,16 @@
     <link rel="stylesheet" href="{{ asset('/latofonts.css') }}">
     <link rel="stylesheet" href="{{ asset('/netrunnerfont.css') }}">
 
+    {# Set the light/dark theme asap to reduce FOUC #}
+    <script type="text/javascript">
+      let theme = localStorage.getItem('theme');
+      if (theme === null) {
+        set_theme(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      }
+      document.querySelector('html').setAttribute('data-theme', theme);
+      document.querySelector('button[data-theme-toggle]').setAttribute('data-theme-toggle', theme);
+    </script>
+
     <script src="{{ asset('/bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData","version": asset_version('')}) }}"></script>
 
