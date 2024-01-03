@@ -2,26 +2,20 @@
 
 function set_theme(theme = 'light') {
     localStorage.setItem('theme', theme);
-    document.querySelector('html').setAttribute('data-theme', theme);
-    document.querySelector('button[data-theme-toggle]').setAttribute('data-theme-toggle', theme);
+    $('html').attr('data-theme', theme);
+    $('button[data-theme-toggle]').attr('data-theme-toggle', theme);
 }
 
+// NOTE: The initial state of the theme on each page is implemented in layout.html.twig to reduce load time
 window.addEventListener('DOMContentLoaded', () => {
-
     // Register click event for theme toggle button
-    document.querySelector('button[data-theme-toggle]').addEventListener('click', () => {
+    $('button[data-theme-toggle]').on('click', () => {
         set_theme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light');
     })
-
-    let theme = localStorage.getItem('theme');
-
-    // If 'theme' is set in localStorage, return to avoid overwriting
-    if (theme !== null) {
-        return set_theme(theme);
-    }
-
-    // Otherwise, get the user's preferred theme, and pass it to set_theme()
-    set_theme(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    $('a[data-theme-toggle]').on('click', (event) => {
+        event.preventDefault();
+        set_theme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light');
+    });
 })
 
 // Listen for system theme preference change
