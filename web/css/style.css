@@ -91,13 +91,13 @@
   /* General ----------------------------------- */
 
   --nrdb-color--text: #c8c2bc;
-  --nrdb-color--link: #889DC4; /*#46A7FB;*/
+  --nrdb-color--link: #889DC4;
   --nrdb-color--link-hover: #b3dbff;
-  --nrdb-color--background: #1c1e22; /*#181A1B;*/
-  --nrdb-color--light-gray: #16181b; /*#1C1E1F;*/
+  --nrdb-color--background: #1c1e22;
+  --nrdb-color--light-gray: #16181b;
   --nrdb-color--card: #1C1E1F;
   --nrdb-color--card-hover: #222425;
-  --nrdb-color--border: #303133; /*#262729;*/ /*#313131;*/
+  --nrdb-color--border: #303133;
 
   --nrdb-color--navbar-bg: var(--nrdb-color--light-gray);
 
@@ -1408,10 +1408,6 @@ div.ad-blocked {
 .navbar-brand span.icon:nth-child(2) {
   position: absolute;
   left: 15px;
-}
-
-.navbar-inverse .navbar-nav > li > .dropdown-toggle {
-  /* background-color: transparent !important; */
 }
 
 .navbar-inverse .navbar-brand:hover,
