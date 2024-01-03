@@ -81,8 +81,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
   types.forEach(function(type) {
     var label = $('<label class="btn btn-default btn-sm" data-code="'
         + type.code + '" title="'+type.name+'"><input type="checkbox" name="' + type.code
-        + '"><img src="' + Url_TypeImage.replace('xxx', type.code)
-        + '" style="height:12px" alt="'+type.code+'"></label>');
+        + '"><svg class="typeIcon" aria-label="'+type.code+'"><use xlink:href="#icon-'+type.code+'"></use></svg></label>');
     label.tooltip({container: 'body'});
     $('#type_code').append(label);
   });
@@ -817,8 +816,7 @@ function build_div(record) {
         + '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
         + record.title + '</a> '+get_influence_penalty_icons(record)+'</td><td class="influence influence-' + record.faction_code
         + '">' + influ + '</td><td class="type" title="' + record.type.name
-        + '"><img src="/images/types/'
-        + record.type_code + '.png" alt="'+record.type.name+'">'
+        + '"><svg class="typeIcon" aria-label="'+record.type.code+'"><use xlink:href="#icon-'+record.type.code+'"></use></svg>'
         + '</td><td class="faction" title="' + record.faction.name + '">'
         + imgsrc + '</td></tr>');
     break;

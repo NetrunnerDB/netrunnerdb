@@ -144,8 +144,7 @@
           + '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
           + card.title + '</a></td><td class="influence influence-' + faction
           + '">' + influ + '</td><td class="type" title="' + card.type.name
-          + '"><img data-src="/images/types/'
-          + card.type_code + '.png" class="lazyload" alt="'+card.type.name+'">'
+          + '"><svg class="typeIcon" aria-label="'+card.type.code+'"><use xlink:href="#icon-'+card.type.code+'"></use></svg>'
           + '</td><td class="faction" title="' + card.faction.name + '">'
           + imgsrc + '</td></tr>');
 

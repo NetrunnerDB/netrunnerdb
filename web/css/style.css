@@ -28,6 +28,7 @@
   --nrdb-color--unverified: #8F8F8F;
   --nrdb-color--code: #c7254e;
   --nrdb-color--code-bg: #f9f2f4;
+  --nrdb-color--icon: #a9a9a9;
   
   /* Factions ----------------------------------- */
 
@@ -1884,4 +1885,10 @@ code {
   background-color: var(--nrdb-color--border);
   border-color: var(--nrdb-color--border);
   color: inherit;
+}
+
+.typeIcon {
+  width:12px;
+  height:12px;
+  fill: var(--nrdb-color--icon);
 }
