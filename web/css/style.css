@@ -134,7 +134,7 @@
 
 
   /*** Anarch */
-  --nrdb-color--anarch: #b36b51;
+  --nrdb-color--anarch: #d9693f;
   --nrdb-color--anarch-hover: #FFECE630;
   --nrdb-color--anarch-bg: #ffd9cc30;
 
@@ -218,6 +218,16 @@
   #navbar-factions {
     background-color: #16181B;
     border-color: #16181B;
+  }
+
+  /*** Update log */
+  #update-log {
+    border: 1px solid var(--nrdb-color--light-gray);
+    background-color: var(--nrdb-color--light-gray);
+  }
+  #update-log th,
+  #update-log tr {
+    border-bottom: 1px solid var(--nrdb-color--background);
   }
 
   /*** Quick fixes */
