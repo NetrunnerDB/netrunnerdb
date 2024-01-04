@@ -30,7 +30,7 @@
     <script type="text/javascript">
       let theme = localStorage.getItem('theme');
       if (theme === null) {
-        set_theme(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
       document.querySelector('html').setAttribute('data-theme', theme);
       document.querySelector('button[data-theme-toggle]').setAttribute('data-theme-toggle', theme);
