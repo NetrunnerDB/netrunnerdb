@@ -40,7 +40,7 @@
   --nrdb-color--code: #c7254e;
   --nrdb-color--code-bg: #f9f2f4;
   --nrdb-color--alert-danger: #a94442;
-  --nrdb-color--alert-danger-bg: #512f2f;
+  --nrdb-color--alert-danger-bg: #f2dede;
   --nrdb-color--alert-danger-border: #ebccd1;
 
   /* Factions ----------------------------------- */
@@ -126,8 +126,8 @@
   --nrdb-color--unverified: #494949;
   --nrdb-color--code: #c7254e;
   --nrdb-color--code-bg: #f9f2f4;
-  --nrdb-color--alert-danger: #DB9595;
-  --nrdb-color--alert-danger-bg: #621818;
+  --nrdb-color--alert-danger: #a94442;
+  --nrdb-color--alert-danger-bg: #512f2f;
   --nrdb-color--alert-danger-border: #812F2F;
 
   /* Factions ----------------------------------- */
