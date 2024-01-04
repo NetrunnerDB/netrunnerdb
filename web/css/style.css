@@ -198,20 +198,20 @@
     border-color: #3f6240;
   }
   .btn-warning {
-    background-color: #8d4543;
-    border-color: #8d4543;
-  }
-  .btn-warning:hover {
-    background-color: #6e3737;
-    border-color: #6e3737;
-  }
-  .btn-danger {
     background-color: #a07b50;
     border-color: #a07b50;
   }
-  .btn-danger:hover {
+  .btn-warning:hover {
     background-color: #7b6040;
     border-color: #7b6040;
+  }
+  .btn-danger {
+    background-color: #8d4543;
+    border-color: #8d4543;
+  }
+  .btn-danger:hover {
+    background-color: #6e3737;
+    border-color: #6e3737;
   }
 
   /*** Faction banner */
