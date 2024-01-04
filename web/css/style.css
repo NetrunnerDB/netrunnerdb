@@ -1967,11 +1967,11 @@ button[data-theme-toggle="light"] svg {
   fill: #9d9d9d;
 }
 
-button[data-theme-toggle="light"] svg:last-of-type {
+html[data-theme="light"] button[data-theme-toggle] svg:last-of-type {
   display: none;
 }
 
-button[data-theme-toggle="dark"] svg:first-of-type {
+html[data-theme="dark"] button[data-theme-toggle] svg:first-of-type {
   display: none;
 }
 
