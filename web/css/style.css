@@ -40,7 +40,7 @@
   --nrdb-color--code: #c7254e;
   --nrdb-color--code-bg: #f9f2f4;
   --nrdb-color--alert-danger: #a94442;
-  --nrdb-color--alert-danger-bg: #512f2f;
+  --nrdb-color--alert-danger-bg: #f2dede;
   --nrdb-color--alert-danger-border: #ebccd1;
 
   /* Factions ----------------------------------- */
@@ -126,8 +126,8 @@
   --nrdb-color--unverified: #494949;
   --nrdb-color--code: #c7254e;
   --nrdb-color--code-bg: #f9f2f4;
-  --nrdb-color--alert-danger: #DB9595;
-  --nrdb-color--alert-danger-bg: #621818;
+  --nrdb-color--alert-danger: #ff908e;
+  --nrdb-color--alert-danger-bg: #371414;
   --nrdb-color--alert-danger-border: #812F2F;
 
   /* Factions ----------------------------------- */
@@ -198,20 +198,20 @@
     border-color: #3f6240;
   }
   .btn-warning {
-    background-color: #8d4543;
-    border-color: #8d4543;
-  }
-  .btn-warning:hover {
-    background-color: #6e3737;
-    border-color: #6e3737;
-  }
-  .btn-danger {
     background-color: #a07b50;
     border-color: #a07b50;
   }
-  .btn-danger:hover {
+  .btn-warning:hover {
     background-color: #7b6040;
     border-color: #7b6040;
+  }
+  .btn-danger {
+    background-color: #8d4543;
+    border-color: #8d4543;
+  }
+  .btn-danger:hover {
+    background-color: #6e3737;
+    border-color: #6e3737;
   }
 
   /*** Faction banner */
@@ -1967,11 +1967,11 @@ button[data-theme-toggle="light"] svg {
   fill: #9d9d9d;
 }
 
-button[data-theme-toggle="light"] svg:last-of-type {
+html[data-theme="light"] button[data-theme-toggle] svg:last-of-type {
   display: none;
 }
 
-button[data-theme-toggle="dark"] svg:first-of-type {
+html[data-theme="dark"] button[data-theme-toggle] svg:first-of-type {
   display: none;
 }
 
