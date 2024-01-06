@@ -26,62 +26,62 @@ function getDisplayDescriptions(sort) {
                 {
                     id: 'event',
                     label: 'Event',
-                    image: '/images/types/event.png',
+                    image: '/images/icons.svg#type-event',
                 }, {
                     id: 'hardware',
                     label: 'Hardware',
-                    image: '/images/types/hardware.png',
+                    image: '/images/icons.svg#type-hardware',
                 }, {
                     id: 'resource',
                     label: 'Resource',
-                    image: '/images/types/resource.png',
+                    image: '/images/icons.svg#type-resource',
                 }, {
                     id: 'agenda',
                     label: 'Agenda',
-                    image: '/images/types/agenda.png',
+                    image: '/images/icons.svg#type-agenda',
                 }, {
                     id: 'asset',
                     label: 'Asset',
-                    image: '/images/types/asset.png',
+                    image: '/images/icons.svg#type-asset',
                 }, {
                     id: 'upgrade',
                     label: 'Upgrade',
-                    image: '/images/types/upgrade.png',
+                    image: '/images/icons.svg#type-upgrade',
                 }, {
                     id: 'operation',
                     label: 'Operation',
-                    image: '/images/types/operation.png',
+                    image: '/images/icons.svg#type-operation',
                 },
             ],
             [// second column
                 {
                     id: 'icebreaker',
                     label: 'Icebreaker',
-                    image: '/images/types/program.png',
+                    image: '/images/icons.svg#type-program',
                 }, {
                     id: 'program',
                     label: 'Program',
-                    image: '/images/types/program.png',
+                    image: '/images/icons.svg#type-program',
                 }, {
                     id: 'barrier',
                     label: 'Barrier',
-                    image: '/images/types/ice.png',
+                    image: '/images/icons.svg#type-ice',
                 }, {
                     id: 'code-gate',
                     label: 'Code Gate',
-                    image: '/images/types/ice.png',
+                    image: '/images/icons.svg#type-ice',
                 }, {
                     id: 'sentry',
                     label: 'Sentry',
-                    image: '/images/types/ice.png',
+                    image: '/images/icons.svg#type-ice',
                 }, {
                     id: 'multi',
                     label: 'Multi',
-                    image: '/images/types/ice.png',
+                    image: '/images/icons.svg#type-ice',
                 }, {
                     id: 'none',
                     label: 'Other',
-                    image: '/images/types/ice.png',
+                    image: '/images/icons.svg#type-ice',
                 },
             ],
         ],
@@ -352,9 +352,9 @@ function update_deck(options) {
         var div = $('<div>').addClass('col-sm-' + cols_size).appendTo($('#deck-content'));
         for (var rownum = 0; rownum < rows.length; rownum++) {
             var row = rows[rownum];
-            var item = $('<h5> ' + row.label + ' (<span></span>)</h5>').hide();
+            var item = $(`<h5>${row.label} (<span></span>)</h5>`).hide();
             if (row.image) {
-                $('<img>').addClass(DisplaySort + '-icon').addClass('lazyload').attr('data-src', row.image).attr('alt', row.label).prependTo(item);
+                item = $(`<h5><svg class="typeIcon" aria-label="${row.label}"><use xlink:href="${row.image}"></use></svg></svg>${row.label} (<span></span>)</h5>`).hide();
             } else if (DisplaySort == "faction") {
                 $('<span class="icon icon-' + row.id + ' ' + row.id + '"></span>').prependTo(item);
             }

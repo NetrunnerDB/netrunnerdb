@@ -837,9 +837,10 @@ tbody#decks {
   white-space: nowrap
 }
 
-#deck-content img {
+#deck-content svg {
   height: 15px;
-  vertical-align: text-bottom
+  vertical-align: text-bottom;
+  margin-right: 2px;
 }
 
 .type,
