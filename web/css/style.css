@@ -2069,6 +2069,11 @@ code {
   fill: var(--nrdb-color--icon);
 }
 
+.typeIcon--large {
+  width: 36px;
+  height: 36px;
+}
+
 #faction_code,
 #type_code {
   border: 1px solid var(--nrdb-color--border-light);
@@ -2098,72 +2103,84 @@ code {
 }
 
 
+svg[data-icon-color="adam"],
 #navbar-factions svg[aria-label="Adam"],
 #factions-dropdown svg[aria-label="Adam"],
 #faction_code [data-code="adam"] svg {
   fill: var(--nrdb-color--adam);
 }
 
+svg[data-icon-color="anarch"],
 #navbar-factions svg[aria-label="Anarch"],
 #factions-dropdown svg[aria-label="Anarch"],
 #faction_code [data-code="anarch"] svg {
   fill: var(--nrdb-color--anarch);
 }
 
+svg[data-icon-color="apex"],
 #navbar-factions svg[aria-label="Apex"],
 #factions-dropdown svg[aria-label="Apex"],
 #faction_code [data-code="apex"] svg {
   fill: var(--nrdb-color--apex);
 }
 
+svg[data-icon-color="criminal"],
 #navbar-factions svg[aria-label="Criminal"],
 #factions-dropdown svg[aria-label="Criminal"],
 #faction_code [data-code="criminal"] svg {
   fill: var(--nrdb-color--criminal);
 }
 
+svg[data-icon-color="shaper"],
 #navbar-factions svg[aria-label="Shaper"],
 #factions-dropdown svg[aria-label="Shaper"],
 #faction_code [data-code="shaper"] svg {
   fill: var(--nrdb-color--shaper);
 }
 
+svg[data-icon-color="sunny-lebeau"],
 #navbar-factions svg[aria-label="Sunny Lebeau"],
 #factions-dropdown svg[aria-label="Sunny Lebeau"],
 #faction_code [data-code="sunny-lebeau"] svg {
   fill: var(--nrdb-color--sunny-lebeau);
 }
 
+svg[data-icon-color="neutral-runner"],
 #navbar-factions svg[aria-label="Neutral Runner"],
 #factions-dropdown svg[aria-label="Neutral Runner"],
 #faction_code [data-code="neutral-runner"] svg {
   fill: var(--nrdb-color--neutral);
 }
 
+svg[data-icon-color="haas-bioroid"],
 #navbar-factions svg[aria-label="Haas-bioroid"],
 #factions-dropdown svg[aria-label="Haas-bioroid"],
 #faction_code [data-code="haas-bioroid"] svg {
   fill: var(--nrdb-color--haas-bioroid);
 }
 
+svg[data-icon-color="jinteki"],
 #navbar-factions svg[aria-label="Jinteki"],
 #factions-dropdown svg[aria-label="Jinteki"],
 #faction_code [data-code="jinteki"] svg {
   fill: var(--nrdb-color--jinteki);
 }
 
+svg[data-icon-color="nbn"],
 #navbar-factions svg[aria-label="NBN"],
 #factions-dropdown svg[aria-label="NBN"],
 #faction_code [data-code="nbn"] svg {
   fill: var(--nrdb-color--nbn);
 }
 
+svg[data-icon-color="weyland-consortium"],
 #navbar-factions svg[aria-label="Weyland Consortium"],
 #factions-dropdown svg[aria-label="Weyland Consortium"],
 #faction_code [data-code="weyland-consortium"] svg {
   fill: var(--nrdb-color--weyland-consortium);
 }
 
+svg[data-icon-color="neutral-corp"],
 #navbar-factions svg[aria-label="Neutral Corp"],
 #factions-dropdown svg[aria-label="Neutral Corp"],
 #faction_code [data-code="neutral-corp"] svg {
@@ -2181,4 +2198,11 @@ code {
 #navbar-factions li a {
   justify-content: center;
   text-align: center;
+}
+
+.decklist-name__title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
