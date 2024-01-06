@@ -2139,3 +2139,7 @@ code {
 #faction_code [data-code="neutral-corp"] svg {
   fill: var(--nrdb-color--neutral);
 }
+
+#comments .comment-date {
+  color: var(--nrdb-color--text);
+}
