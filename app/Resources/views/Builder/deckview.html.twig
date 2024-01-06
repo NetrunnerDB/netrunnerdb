@@ -33,7 +33,10 @@ var Identity = null,
 
 <!-- Title -->
 <div>
-  <h1 style="border-bottom:1px solid lightgray"><span class="icon icon-{{ deck.faction_code }} {{ deck.faction_code }}"></span> {{ deck.name }}</h1>
+  <h1 style="border-bottom:1px solid lightgray">
+    <svg class="typeIcon" data-icon-color="{{ deck.faction_code }}" aria-label="{{ deck.faction_code }}"><use xlink:href="/images/icons.svg#faction-{{ deck.faction_code }}"></use></svg>
+    {{ deck.name }}
+  </h1>
   {% if deck.problem %}
   <div class="alert alert-danger" role="alert">{{ deck.message }}</div>
   {% endif %}

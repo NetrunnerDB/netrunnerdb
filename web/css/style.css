@@ -39,11 +39,13 @@
   --nrdb-color--unverified: #8F8F8F;
   --nrdb-color--code: #c7254e;
   --nrdb-color--code-bg: #f9f2f4;
+  --nrdb-color--icon: #888888;
   --nrdb-color--alert-danger: #a94442;
   --nrdb-color--alert-danger-bg: #f2dede;
   --nrdb-color--alert-danger-border: #ebccd1;
-
+  
   /* Factions ----------------------------------- */
+  --nrdb-color--generic-faction: #333333;
 
   /*** Jinteki */
   --nrdb-color--jinteki: crimson;
@@ -80,10 +82,31 @@
   --nrdb-color--weyland-consortium-hover: #E6EFE6;
   --nrdb-color--weyland-consortium-bg: #cce0cc;
 
+  /*** Sunny Lebeau */
+  --nrdb-color--sunny-lebeau: #66686B;
+  --nrdb-color--sunny-lebeau-hover: #0C0D0D;
+  --nrdb-color--sunny-lebeau-bg: #1B1C1D;
+
+  /*** Adam */
+  --nrdb-color--adam: #A89C33;
+  --nrdb-color--adam-hover: #F9F8EB;
+  --nrdb-color--adam-bg: #F2EFD4;
+
+  /*** Apex */
+  --nrdb-color--apex: #000000;
+  --nrdb-color--apex-hover: #0D0D0D;
+  --nrdb-color--apex-bg: #1C1C1C;
+
   /*** Neutral */
   --nrdb-color--neutral: gray;
   --nrdb-color--neutral-hover: #F0F2F4;
   --nrdb-color--neutral-bg: #E2E5E8;
+}
+
+:root[data-theme="light"] {
+  svg[aria-label="nbn"] {
+    fill: var(--nrdb-color--nbn);
+  }
 }
 
 :root[data-theme="dark"] {
@@ -108,10 +131,7 @@
   --nrdb-color--btn-border-hover: #262729;
   --nrdb-color--btn-bg-active: #1A1B1D;
   --nrdb-color--btn-border-active: #262729;
-
-  --nrdb-color--code: inherit;
-  --nrdb-color--code-bg: var(--nrdb-color--border);
-
+  
   --nrdb-color--like: #b75454;
   --nrdb-color--favorite: #C6B460;
   --nrdb-color--comment: #448258;
@@ -124,14 +144,13 @@
   --nrdb-color--rotated: #37435E;
   --nrdb-color--restricted: #674B76;
   --nrdb-color--unverified: #494949;
-  --nrdb-color--code: #c7254e;
-  --nrdb-color--code-bg: #f9f2f4;
+  --nrdb-color--code: inherit;
+  --nrdb-color--code-bg: var(--nrdb-color--border);
   --nrdb-color--alert-danger: #ff908e;
   --nrdb-color--alert-danger-bg: #371414;
   --nrdb-color--alert-danger-border: #812F2F;
 
   /* Factions ----------------------------------- */
-
 
   /*** Anarch */
   --nrdb-color--anarch: #d9693f;
@@ -159,7 +178,7 @@
   --nrdb-color--jinteki-bg: #f8d0d830;
 
   /*** NBN */
-  --nrdb-color--nbn: #bba037;
+  --nrdb-color--nbn: #FFDE00;
   --nrdb-color--nbn-hover: #FFF3E630;
   --nrdb-color--nbn-bg: #ffe8cc30;
 
@@ -167,6 +186,21 @@
   --nrdb-color--weyland-consortium: #458c45;
   --nrdb-color--weyland-consortium-hover: #E6EFE630;
   --nrdb-color--weyland-consortium-bg: #cce0cc30;
+
+  /*** Sunny Lebeau */
+  --nrdb-color--sunny-lebeau: var(--nrdb-color--neutral);
+  --nrdb-color--sunny-lebeau-hover: var(--nrdb-color--neutral-hover);
+  --nrdb-color--sunny-lebeau-bg: var(--nrdb-color--neutral-bg);
+
+  /*** Adam */
+  --nrdb-color--apex: var(--nrdb-color--neutral);
+  --nrdb-color--apex-hover: var(--nrdb-color--neutral-hover);
+  --nrdb-color--apex-bg: var(--nrdb-color--neutral-bg);
+
+  /*** Apex */
+  --nrdb-color--apex: var(--nrdb-color--neutral);
+  --nrdb-color--apex-hover: var(--nrdb-color--neutral-hover);
+  --nrdb-color--apex-bg: var(--nrdb-color--neutral-bg);
 
   /*** Neutral */
   --nrdb-color--neutral-hover: #F0F2F430;
@@ -809,9 +843,10 @@ tbody#decks {
   white-space: nowrap
 }
 
-#deck-content img {
+#deck-content svg {
   height: 15px;
-  vertical-align: text-bottom
+  vertical-align: text-bottom;
+  margin-right: 2px;
 }
 
 .type,
@@ -841,7 +876,7 @@ tbody .btn-group {
 }
 
 .decklist .comment-date {
-  color: var(--nrdb-color--light-gray);
+  color: var(--nrdb-color--text);
   float: right
 }
 
@@ -2026,4 +2061,159 @@ code {
   background-color: var(--nrdb-color--border);
   border-color: var(--nrdb-color--border);
   color: inherit;
+}
+
+.typeIcon {
+  width: 16px;
+  height: 16px;
+  fill: var(--nrdb-color--icon);
+}
+
+.typeIcon--large {
+  width: 36px;
+  height: 36px;
+}
+
+#faction_code,
+#type_code {
+  border: 1px solid var(--nrdb-color--border-light);
+  border-radius: 3px;
+}
+
+#faction_code label.btn:not(:last-of-type),
+#type_code label.btn:not(:last-of-type) {
+  border-right: 1px solid var(--nrdb-color--border-light);
+}
+
+#faction_code label.btn.active,
+#type_code label.btn.active {
+  background-color: var(--nrdb-color--card);
+}
+
+#faction_code label.btn.active:active,
+#type_code label.btn.active:active,
+#faction_code label.btn.active:focus,
+#type_code label.btn.active:focus {
+  border-color: transparent;
+}
+
+#faction_code label.btn svg,
+#type_code label.btn svg {
+  margin-top: 5px;
+}
+
+
+svg[data-icon-color="adam"],
+#navbar-factions svg[aria-label="Adam"],
+#factions-dropdown svg[aria-label="Adam"],
+#faction_code [data-code="adam"] svg {
+  fill: var(--nrdb-color--adam);
+}
+
+svg[data-icon-color="anarch"],
+#navbar-factions svg[aria-label="Anarch"],
+#factions-dropdown svg[aria-label="Anarch"],
+#faction_code [data-code="anarch"] svg {
+  fill: var(--nrdb-color--anarch);
+}
+
+svg[data-icon-color="apex"],
+#navbar-factions svg[aria-label="Apex"],
+#factions-dropdown svg[aria-label="Apex"],
+#faction_code [data-code="apex"] svg {
+  fill: var(--nrdb-color--apex);
+}
+
+svg[data-icon-color="criminal"],
+#navbar-factions svg[aria-label="Criminal"],
+#factions-dropdown svg[aria-label="Criminal"],
+#faction_code [data-code="criminal"] svg {
+  fill: var(--nrdb-color--criminal);
+}
+
+svg[data-icon-color="shaper"],
+#navbar-factions svg[aria-label="Shaper"],
+#factions-dropdown svg[aria-label="Shaper"],
+#faction_code [data-code="shaper"] svg {
+  fill: var(--nrdb-color--shaper);
+}
+
+svg[data-icon-color="sunny-lebeau"],
+#navbar-factions svg[aria-label="Sunny Lebeau"],
+#factions-dropdown svg[aria-label="Sunny Lebeau"],
+#faction_code [data-code="sunny-lebeau"] svg {
+  fill: var(--nrdb-color--sunny-lebeau);
+}
+
+svg[data-icon-color="neutral-runner"],
+#navbar-factions svg[aria-label="Neutral Runner"],
+#factions-dropdown svg[aria-label="Neutral Runner"],
+#faction_code [data-code="neutral-runner"] svg {
+  fill: var(--nrdb-color--neutral);
+}
+
+svg[data-icon-color="haas-bioroid"],
+#navbar-factions svg[aria-label="Haas-bioroid"],
+#factions-dropdown svg[aria-label="Haas-bioroid"],
+#faction_code [data-code="haas-bioroid"] svg {
+  fill: var(--nrdb-color--haas-bioroid);
+}
+
+svg[data-icon-color="jinteki"],
+#navbar-factions svg[aria-label="Jinteki"],
+#factions-dropdown svg[aria-label="Jinteki"],
+#faction_code [data-code="jinteki"] svg {
+  fill: var(--nrdb-color--jinteki);
+}
+
+svg[data-icon-color="nbn"],
+#navbar-factions svg[aria-label="NBN"],
+#factions-dropdown svg[aria-label="NBN"],
+#faction_code [data-code="nbn"] svg {
+  fill: var(--nrdb-color--nbn);
+}
+
+svg[data-icon-color="weyland-consortium"],
+#navbar-factions svg[aria-label="Weyland Consortium"],
+#factions-dropdown svg[aria-label="Weyland Consortium"],
+#faction_code [data-code="weyland-consortium"] svg {
+  fill: var(--nrdb-color--weyland-consortium);
+}
+
+svg[data-icon-color="neutral-corp"],
+#navbar-factions svg[aria-label="Neutral Corp"],
+#factions-dropdown svg[aria-label="Neutral Corp"],
+#faction_code [data-code="neutral-corp"] svg {
+  fill: var(--nrdb-color--neutral);
+}
+
+#navbar-factions li a,
+#factions-dropdown li a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+#navbar-factions li a {
+  justify-content: center;
+  text-align: center;
+}
+
+.icon-with-title,
+.decklist-name__title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+table .table-cell {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.table > tbody > tr > td[data-th="Faction"] {
+  vertical-align: revert; !important;
 }
