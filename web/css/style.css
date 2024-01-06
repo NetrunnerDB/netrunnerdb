@@ -2200,6 +2200,7 @@ svg[data-icon-color="neutral-corp"],
   text-align: center;
 }
 
+.icon-with-title,
 .decklist-name__title {
   display: flex;
   flex-direction: row;
