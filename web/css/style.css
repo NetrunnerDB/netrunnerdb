@@ -2098,69 +2098,87 @@ code {
 }
 
 
+#navbar-factions svg[aria-label="Adam"],
 #factions-dropdown svg[aria-label="Adam"],
 #faction_code [data-code="adam"] svg {
   fill: var(--nrdb-color--adam);
 }
 
+#navbar-factions svg[aria-label="Anarch"],
 #factions-dropdown svg[aria-label="Anarch"],
 #faction_code [data-code="anarch"] svg {
   fill: var(--nrdb-color--anarch);
 }
 
+#navbar-factions svg[aria-label="Apex"],
 #factions-dropdown svg[aria-label="Apex"],
 #faction_code [data-code="apex"] svg {
   fill: var(--nrdb-color--apex);
 }
 
+#navbar-factions svg[aria-label="Criminal"],
 #factions-dropdown svg[aria-label="Criminal"],
 #faction_code [data-code="criminal"] svg {
   fill: var(--nrdb-color--criminal);
 }
 
+#navbar-factions svg[aria-label="Shaper"],
 #factions-dropdown svg[aria-label="Shaper"],
 #faction_code [data-code="shaper"] svg {
   fill: var(--nrdb-color--shaper);
 }
 
+#navbar-factions svg[aria-label="Sunny Lebeau"],
 #factions-dropdown svg[aria-label="Sunny Lebeau"],
 #faction_code [data-code="sunny-lebeau"] svg {
   fill: var(--nrdb-color--sunny-lebeau);
 }
 
+#navbar-factions svg[aria-label="Neutral Runner"],
 #factions-dropdown svg[aria-label="Neutral Runner"],
 #faction_code [data-code="neutral-runner"] svg {
   fill: var(--nrdb-color--neutral);
 }
 
+#navbar-factions svg[aria-label="Haas-bioroid"],
 #factions-dropdown svg[aria-label="Haas-bioroid"],
 #faction_code [data-code="haas-bioroid"] svg {
   fill: var(--nrdb-color--haas-bioroid);
 }
 
+#navbar-factions svg[aria-label="Jinteki"],
 #factions-dropdown svg[aria-label="Jinteki"],
 #faction_code [data-code="jinteki"] svg {
   fill: var(--nrdb-color--jinteki);
 }
 
+#navbar-factions svg[aria-label="NBN"],
 #factions-dropdown svg[aria-label="NBN"],
 #faction_code [data-code="nbn"] svg {
   fill: var(--nrdb-color--nbn);
 }
 
+#navbar-factions svg[aria-label="Weyland Consortium"],
 #factions-dropdown svg[aria-label="Weyland Consortium"],
 #faction_code [data-code="weyland-consortium"] svg {
   fill: var(--nrdb-color--weyland-consortium);
 }
 
+#navbar-factions svg[aria-label="Neutral Corp"],
 #factions-dropdown svg[aria-label="Neutral Corp"],
 #faction_code [data-code="neutral-corp"] svg {
   fill: var(--nrdb-color--neutral);
 }
 
+#navbar-factions li a,
 #factions-dropdown li a {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 4px;
+}
+
+#navbar-factions li a {
+  justify-content: center;
+  text-align: center;
 }
