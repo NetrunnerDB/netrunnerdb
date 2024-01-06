@@ -131,9 +131,7 @@
         + '" value="' + i + '">' + i + '</label>';
     }
 
-    var imgsrc = card.faction_code.substr(0,7) === "neutral" ? "" : '<img data-src="'
-          + Url_FactionImage.replace('xxx', card.faction_code)
-          + '" class="lazyload" alt="'+card.title+'">';
+    var imgsrc = card.faction_code.substr(0,7) === "neutral" ? "" : '<svg class="typeIcon" aria-label="'+card.faction_code+'"><use xlink:href="/images/icons.svg#faction-'+card.faction_code+'"></use></svg>';
     var div = $('<tr class="card-container" data-index="'
           + card.code
           + '"><td><button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Remove</span></button></td>'
