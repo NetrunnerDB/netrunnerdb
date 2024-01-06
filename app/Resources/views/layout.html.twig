@@ -136,18 +136,58 @@
               <li><a href="{{ path('cards_sets') }}">Sets</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Factions <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
+                <ul id="factions-dropdown" class="dropdown-menu" role="menu">
                   <li role="presentation" class="dropdown-header">Runner</li>
-                  <li><a href="{{ path('faction_page',{faction_code:'anarch'}) }}"><span class="icon icon-anarch influence-anarch"></span> Anarch</a></li>
-                  <li><a href="{{ path('faction_page',{faction_code:'criminal'}) }}"><span class="icon icon-criminal influence-criminal"></span> Criminal</a></li>
-                  <li><a href="{{ path('faction_page',{faction_code:'shaper'}) }}"><span class="icon icon-shaper influence-shaper"></span> Shaper</a></li>
-                  <li><a href="{{ path('faction_page',{faction_code:'mini-factions'}) }}"><span style="padding-left:16px">Mini-factions</span></a></li>
+                  <li>
+                    <a href="{{ path('faction_page',{faction_code:'anarch'}) }}">
+                      <svg class="typeIcon" aria-label="Anarch"><use xlink:href="/images/icons.svg#faction-anarch"></use></svg>
+                      Anarch
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ path('faction_page',{faction_code:'criminal'}) }}">
+                      <svg class="typeIcon" aria-label="Criminal"><use xlink:href="/images/icons.svg#faction-criminal"></use></svg>
+                      Criminal
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ path('faction_page',{faction_code:'shaper'}) }}">
+                      <svg class="typeIcon" aria-label="Shaper"><use xlink:href="/images/icons.svg#faction-shaper"></use></svg>
+                      Shaper
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ path('faction_page',{faction_code:'mini-factions'}) }}">
+                      <svg class="typeIcon" aria-label="Mini-factions"><use xlink:href="/images/icons.svg#faction-neutral-runner"></use></svg>
+                      Mini-factions
+                    </a>
+                    </li>
                   <li class="divider"></li>
                   <li role="presentation" class="dropdown-header">Corp</li>
-                  <li><a href="{{ path('faction_page',{faction_code:'haas-bioroid'}) }}"><span class="icon icon-haas-bioroid influence-haas-bioroid"></span> Haas-Bioroid</a></li>
-                  <li><a href="{{ path('faction_page',{faction_code:'jinteki'}) }}"><span class="icon icon-jinteki influence-jinteki"></span> Jinteki</a></li>
-                  <li><a href="{{ path('faction_page',{faction_code:'nbn'}) }}"><span class="icon icon-nbn influence-nbn"></span> NBN</a></li>
-                  <li><a href="{{ path('faction_page',{faction_code:'weyland-consortium'}) }}"><span class="icon icon-weyland-consortium influence-weyland-consortium"></span> Weyland Consortium</a></li>
+                  <li>
+                    <a href="{{ path('faction_page',{faction_code:'haas-bioroid'}) }}">
+                      <svg class="typeIcon" aria-label="Haas-bioroid"><use xlink:href="/images/icons.svg#faction-haas-bioroid"></use></svg>
+                      Haas-Bioroid
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ path('faction_page',{faction_code:'jinteki'}) }}">
+                      <svg class="typeIcon" aria-label="Jinteki"><use xlink:href="/images/icons.svg#faction-jinteki"></use></svg>
+                      Jinteki
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ path('faction_page',{faction_code:'nbn'}) }}">
+                      <svg class="typeIcon" aria-label="NBN"><use xlink:href="/images/icons.svg#faction-nbn"></use></svg>
+                      NBN
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{{ path('faction_page',{faction_code:'weyland-consortium'}) }}">
+                      <svg class="typeIcon" aria-label="Weyland Consortium"><use xlink:href="/images/icons.svg#faction-weyland-consortium"></use></svg>
+                      Weyland Consortium
+                    </a>
+                  </li>
                 </ul>
               </li>
               <li class="dropdown">

@@ -2098,50 +2098,69 @@ code {
 }
 
 
+#factions-dropdown svg[aria-label="Adam"],
 #faction_code [data-code="adam"] svg {
   fill: var(--nrdb-color--adam);
 }
 
+#factions-dropdown svg[aria-label="Anarch"],
 #faction_code [data-code="anarch"] svg {
   fill: var(--nrdb-color--anarch);
 }
 
+#factions-dropdown svg[aria-label="Apex"],
 #faction_code [data-code="apex"] svg {
   fill: var(--nrdb-color--apex);
 }
 
+#factions-dropdown svg[aria-label="Criminal"],
 #faction_code [data-code="criminal"] svg {
   fill: var(--nrdb-color--criminal);
 }
 
+#factions-dropdown svg[aria-label="Shaper"],
 #faction_code [data-code="shaper"] svg {
   fill: var(--nrdb-color--shaper);
 }
 
+#factions-dropdown svg[aria-label="Sunny Lebeau"],
 #faction_code [data-code="sunny-lebeau"] svg {
   fill: var(--nrdb-color--sunny-lebeau);
 }
 
+#factions-dropdown svg[aria-label="Neutral Runner"],
 #faction_code [data-code="neutral-runner"] svg {
   fill: var(--nrdb-color--neutral);
 }
 
+#factions-dropdown svg[aria-label="Haas-bioroid"],
 #faction_code [data-code="haas-bioroid"] svg {
   fill: var(--nrdb-color--haas-bioroid);
 }
 
+#factions-dropdown svg[aria-label="Jinteki"],
 #faction_code [data-code="jinteki"] svg {
   fill: var(--nrdb-color--jinteki);
 }
 
+#factions-dropdown svg[aria-label="NBN"],
 #faction_code [data-code="nbn"] svg {
   fill: var(--nrdb-color--nbn);
 }
 
+#factions-dropdown svg[aria-label="Weyland Consortium"],
 #faction_code [data-code="weyland-consortium"] svg {
   fill: var(--nrdb-color--weyland-consortium);
 }
 
+#factions-dropdown svg[aria-label="Neutral Corp"],
 #faction_code [data-code="neutral-corp"] svg {
   fill: var(--nrdb-color--neutral);
+}
+
+#factions-dropdown li a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
 }
