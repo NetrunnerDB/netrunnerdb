@@ -870,7 +870,7 @@ tbody .btn-group {
 }
 
 .decklist .comment-date {
-  color: var(--nrdb-color--light-gray);
+  color: var(--nrdb-color--text);
   float: right
 }
 
@@ -2138,8 +2138,4 @@ code {
 
 #faction_code [data-code="neutral-corp"] svg {
   fill: var(--nrdb-color--neutral);
-}
-
-#comments .comment-date {
-  color: var(--nrdb-color--text);
 }
