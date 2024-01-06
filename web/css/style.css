@@ -14,6 +14,7 @@
   --nrdb-color--card: #f8f8f8;
   --nrdb-color--card-hover: #f0f0f0;
   --nrdb-color--border: #eee;
+  --nrdb-color--border-dark: #ddd;
   --nrdb-color--like: red;
   --nrdb-color--favorite: orange;
   --nrdb-color--comment: green;
@@ -28,9 +29,10 @@
   --nrdb-color--unverified: #8F8F8F;
   --nrdb-color--code: #c7254e;
   --nrdb-color--code-bg: #f9f2f4;
-  --nrdb-color--icon: #a9a9a9;
+  --nrdb-color--icon: #888888;
   
   /* Factions ----------------------------------- */
+  --nrdb-color--generic-faction: #333333;
 
   /*** Jinteki */
   --nrdb-color--jinteki: crimson;
@@ -85,10 +87,13 @@
   --nrdb-color--card: #1C1E1F;
   --nrdb-color--card-hover: #222425;
   --nrdb-color--border: #313131;
+  --nrdb-color--border-light: #404040;
   --nrdb-color--code: inherit;
   --nrdb-color--code-bg: var(--nrdb-color--border);
+  --nrdb-color--icon: #a9a9a9;
   
   /* Factions ----------------------------------- */
+  --nrdb-color--generic-faction: var(--nrdb-color--icon);
   
   /*** Jinteki */
   --nrdb-color--jinteki-hover: #FBE7EB30;
@@ -1888,7 +1893,84 @@ code {
 }
 
 .typeIcon {
-  width:12px;
-  height:12px;
+  width: 14px;
+  height: 14px;
   fill: var(--nrdb-color--icon);
+}
+
+#faction_code,
+#type_code {
+  border: 1px solid var(--nrdb-color--border-light);
+  border-radius: 3px;
+}
+
+#faction_code label.btn:not(:last-of-type),
+#type_code label.btn:not(:last-of-type) {
+  border-right: 1px solid var(--nrdb-color--border-light);
+}
+
+#faction_code label.btn.active,
+#type_code label.btn.active {
+  background-color: var(--nrdb-color--card);
+}
+
+#faction_code label.btn.active:active,
+#type_code label.btn.active:active,
+#faction_code label.btn.active:focus,
+#type_code label.btn.active:focus {
+  border-color: transparent;
+}
+
+#faction_code label.btn svg,
+#type_code label.btn svg {
+  margin-top: 5px;
+}
+
+
+#faction_code [data-code="adam"] svg {
+  fill: var(--nrdb-color--generic-faction);
+}
+
+#faction_code [data-code="anarch"] svg {
+  fill: var(--nrdb-color--anarch);
+}
+
+#faction_code [data-code="apex"] svg {
+  fill: var(--nrdb-color--generic-faction);
+}
+
+#faction_code [data-code="criminal"] svg {
+  fill: var(--nrdb-color--criminal);
+}
+
+#faction_code [data-code="shaper"] svg {
+  fill: var(--nrdb-color--shaper);
+}
+
+#faction_code [data-code="sunny-lebeau"] svg {
+  fill: var(--nrdb-color--generic-faction);
+}
+
+#faction_code [data-code="neutral-runner"] svg {
+  fill: var(--nrdb-color--neutral);
+}
+
+#faction_code [data-code="haas-bioroid"] svg {
+  fill: var(--nrdb-color--haas-bioroid);
+}
+
+#faction_code [data-code="jinteki"] svg {
+  fill: var(--nrdb-color--jinteki);
+}
+
+#faction_code [data-code="nbn"] svg {
+  fill: var(--nrdb-color--nbn);
+}
+
+#faction_code [data-code="weyland-consortium"] svg {
+  fill: var(--nrdb-color--weyland-consortium);
+}
+
+#faction_code [data-code="neutral-corp"] svg {
+  fill: var(--nrdb-color--neutral);
 }
