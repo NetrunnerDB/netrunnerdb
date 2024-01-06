@@ -103,6 +103,12 @@
   --nrdb-color--neutral-bg: #E2E5E8;
 }
 
+:root[data-theme="light"] {
+  svg[aria-label="nbn"] {
+    fill: var(--nrdb-color--nbn);
+  }
+}
+
 :root[data-theme="dark"] {
 
   /* General ----------------------------------- */
@@ -172,7 +178,7 @@
   --nrdb-color--jinteki-bg: #f8d0d830;
 
   /*** NBN */
-  --nrdb-color--nbn: #bba037;
+  --nrdb-color--nbn: #FFDE00;
   --nrdb-color--nbn-hover: #FFF3E630;
   --nrdb-color--nbn-bg: #ffe8cc30;
 
