@@ -57,7 +57,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
   factions.forEach(function(faction) {
     var label = $('<label class="btn btn-default btn-sm" data-code="' + faction.code
         + '" title="'+faction.name+'"><input type="checkbox" name="' + faction.code
-        + '"><svg class="typeIcon" aria-label="'+faction.code+'"><use xlink:href="#faction-'+faction.code+'"></use></svg></label>');
+        + '"><svg class="typeIcon" aria-label="'+faction.code+'"><use xlink:href="/images/icons.svg#faction-'+faction.code+'"></use></svg></label>');
     label.tooltip({container: 'body'});
     $('#faction_code').append(label);
   });
@@ -79,7 +79,7 @@ Promise.all([NRDB.data.promise, NRDB.settings.promise]).then(function() {
   types.forEach(function(type) {
     var label = $('<label class="btn btn-default btn-sm" data-code="'
         + type.code + '" title="'+type.name+'"><input type="checkbox" name="' + type.code
-        + '"><svg class="typeIcon" aria-label="'+type.code+'"><use xlink:href="#type-'+type.code+'"></use></svg></label>');
+        + '"><svg class="typeIcon" aria-label="'+type.code+'"><use xlink:href="/images/icons.svg#type-'+type.code+'"></use></svg></label>');
     label.tooltip({container: 'body'});
     $('#type_code').append(label);
   });
@@ -814,7 +814,7 @@ function build_div(record) {
         + '" data-target="#cardModal" data-remote="false" data-toggle="modal">'
         + record.title + '</a> '+get_influence_penalty_icons(record)+'</td><td class="influence influence-' + record.faction_code
         + '">' + influ + '</td><td class="type" title="' + record.type.name
-        + '"><svg class="typeIcon" aria-label="'+record.type.code+'"><use xlink:href="#type-'+record.type.code+'"></use></svg>'
+        + '"><svg class="typeIcon" aria-label="'+record.type.code+'"><use xlink:href="/images/icons.svg#type-'+record.type.code+'"></use></svg>'
         + '</td><td class="faction" title="' + record.faction.name + '">'
         + imgsrc + '</td></tr>');
     break;
