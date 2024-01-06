@@ -79,6 +79,21 @@
   --nrdb-color--weyland-consortium-hover: #E6EFE6;
   --nrdb-color--weyland-consortium-bg: #cce0cc;
 
+  /*** Sunny Lebeau */
+  --nrdb-color--sunny-lebeau: #66686B;
+  --nrdb-color--sunny-lebeau-hover: #0C0D0D;
+  --nrdb-color--sunny-lebeau-bg: #1B1C1D;
+
+  /*** Adam */
+  --nrdb-color--adam: #A89C33;
+  --nrdb-color--adam-hover: #F9F8EB;
+  --nrdb-color--adam-bg: #F2EFD4;
+
+  /*** Apex */
+  --nrdb-color--apex: #000000;
+  --nrdb-color--apex-hover: #0D0D0D;
+  --nrdb-color--apex-bg: #1C1C1C;
+
   /*** Neutral */
   --nrdb-color--neutral: gray;
   --nrdb-color--neutral-hover: #F0F2F4;
@@ -107,7 +122,6 @@
   --nrdb-color--btn-border-hover: #262729;
   --nrdb-color--btn-bg-active: #1A1B1D;
   --nrdb-color--btn-border-active: #262729;
-
   
   --nrdb-color--like: #b75454;
   --nrdb-color--favorite: #C6B460;
@@ -128,7 +142,6 @@
   --nrdb-color--alert-danger-border: #812F2F;
 
   /* Factions ----------------------------------- */
-
 
   /*** Anarch */
   --nrdb-color--anarch: #d9693f;
@@ -164,6 +177,21 @@
   --nrdb-color--weyland-consortium: #458c45;
   --nrdb-color--weyland-consortium-hover: #E6EFE630;
   --nrdb-color--weyland-consortium-bg: #cce0cc30;
+
+  /*** Sunny Lebeau */
+  --nrdb-color--sunny-lebeau: var(--nrdb-color--neutral);
+  --nrdb-color--sunny-lebeau-hover: var(--nrdb-color--neutral-hover);
+  --nrdb-color--sunny-lebeau-bg: var(--nrdb-color--neutral-bg);
+
+  /*** Adam */
+  --nrdb-color--apex: var(--nrdb-color--neutral);
+  --nrdb-color--apex-hover: var(--nrdb-color--neutral-hover);
+  --nrdb-color--apex-bg: var(--nrdb-color--neutral-bg);
+
+  /*** Apex */
+  --nrdb-color--apex: var(--nrdb-color--neutral);
+  --nrdb-color--apex-hover: var(--nrdb-color--neutral-hover);
+  --nrdb-color--apex-bg: var(--nrdb-color--neutral-bg);
 
   /*** Neutral */
   --nrdb-color--neutral-hover: #F0F2F430;
@@ -2061,7 +2089,7 @@ code {
 
 
 #faction_code [data-code="adam"] svg {
-  fill: var(--nrdb-color--generic-faction);
+  fill: var(--nrdb-color--adam);
 }
 
 #faction_code [data-code="anarch"] svg {
@@ -2069,7 +2097,7 @@ code {
 }
 
 #faction_code [data-code="apex"] svg {
-  fill: var(--nrdb-color--generic-faction);
+  fill: var(--nrdb-color--apex);
 }
 
 #faction_code [data-code="criminal"] svg {
@@ -2081,7 +2109,7 @@ code {
 }
 
 #faction_code [data-code="sunny-lebeau"] svg {
-  fill: var(--nrdb-color--generic-faction);
+  fill: var(--nrdb-color--sunny-lebeau);
 }
 
 #faction_code [data-code="neutral-runner"] svg {
