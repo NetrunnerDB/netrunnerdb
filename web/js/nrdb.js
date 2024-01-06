@@ -354,7 +354,7 @@ function update_deck(options) {
             var row = rows[rownum];
             var item = $(`<h5>${row.label} (<span></span>)</h5>`).hide();
             if (row.image) {
-                item = $(`<h5><svg class="typeIcon" aria-label="${row.label}"><use xlink:href="${row.image}"></use></svg></svg>${row.label} (<span></span>)</h5>`).hide();
+                item = $(`<h5><svg class="typeIcon" aria-label="${row.label}"><use xlink:href="${row.image}"></use></svg>${row.label} (<span></span>)</h5>`).hide();
             } else if (DisplaySort == "faction") {
                 $('<span class="icon icon-' + row.id + ' ' + row.id + '"></span>').prependTo(item);
             }
