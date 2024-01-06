@@ -22,9 +22,11 @@
          <a href="{{ card.url }}" class="card{% if card.available == false %} card-preview{% endif %}" data-index="{{ card.code }}">{{ card.title }}</a>
       </td>
       <td data-th="Faction">
-         {% if card.faction_code[:7] != 'neutral' %}
-            <svg class="typeIcon" data-icon-color="{{ card.faction_code }}" aria-label="{{ card.faction_code }}"><use xlink:href="/images/icons.svg#faction-{{ card.faction_code }}"></use></svg>
-         {% endif %}
+         <div class="table-cell">
+            {% if card.faction_code[:7] != 'neutral' %}
+               <svg class="typeIcon" data-icon-color="{{ card.faction_code }}" aria-label="{{ card.faction_code }}"><use xlink:href="/images/icons.svg#faction-{{ card.faction_code }}"></use></svg>
+            {% endif %}
+         </div>
       </td>
       <td data-th="Cost">{{ card.cost }}{{ card.advancementcost }}</td>
       <td data-th="Type" >{{ card.type_name }}</td>
@@ -32,7 +34,7 @@
       <td data-th="Subtype">{{ card.subtype }}</td>
       <td data-th="Influence">
          {% if card.factioncost > 0 %}
-         <span class="influence-{{ card.cssfaction }}">
+         <span class="influence-{{ card.cssfaction }}" aria-label="{{ card.factioncost }} Influence">
             {% for i in 1..card.factioncost %}&#9679;{% if i%5==0 %}&nbsp;{% endif %}{% endfor %}
          </span>
          {% endif %}

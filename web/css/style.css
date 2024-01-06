@@ -2207,3 +2207,13 @@ svg[data-icon-color="neutral-corp"],
   align-items: center;
   gap: 8px;
 }
+
+table .table-cell {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.table > tbody > tr > td[data-th="Faction"] {
+  vertical-align: revert; !important;
+}
