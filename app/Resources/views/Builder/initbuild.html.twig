@@ -65,11 +65,7 @@
   <div class="list-group">
     {% for identity in identities %}
     {% set banned = identity.code in banned_cards|keys %}
-    {# Spark Agency's most recent pack was system core 2019, which has rotated
-       Currently IDs are checked for rotation by checking their most recent pack
-       Sparks is hardcoded here to not be rotated
-       TODO - Make the check if ANY packs its in are standard legal #}
-    {% set rotated = identity.pack.cycle.rotated and identity.code != '25105' %}
+    {% set rotated = identity.pack.cycle.rotated %}
     <a href="{{ path('deck_initbuild', {card_code:identity.code}) }}"
        class="identity list-group-item faction-{{ identity.faction.code }} pack-{{ identity.pack.code }} {% if rotated %}rotated{% endif %} {% if banned %}banned{% endif %}"
        data-code="{{ identity.code }}">

@@ -34,99 +34,85 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
         $this
             ->setName('app:legality:apply-mwl')
             ->setDescription('Compute decklist legality for a MWL')
-            ->addArgument(
-                'mwl_code',
-                InputArgument::REQUIRED,
-                'Code of the MWL'
-            )
             ->addOption(
-                'decklist',
-                'd',
+                'mwl_code',
+                'm',
                 InputOption::VALUE_OPTIONAL,
-                'Id of the decklist'
-            )
-
-            ;
+                'Code of the MWL. If not provided, the command will iterate over each item in the mwl table.'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $mwl_code = $input->getArgument('mwl_code');
-        $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
+        $mwlCodes = [];
 
-        if (!$mwl instanceof Mwl) {
-            throw new \Exception("MWL not found");
-        }
-
-        $decklist_id = $input->getOption('decklist');
-        if ($decklist_id) {
-            $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($decklist_id);
-            if (!$decklist instanceof Decklist) {
-                throw new \Exception("Decklist not found");
-            }
-            $legality = $this->entityManager->getRepository('AppBundle:Legality')->findOneBy(['mwl' => $mwl, 'decklist' => $decklist]);
-            if (!$legality instanceof Legality) {
-                $legality = new Legality();
-                $legality->setDecklist($decklist);
-                $legality->setMwl($mwl);
-                $this->entityManager->persist($legality);
-            }
-            $this->judge->computeLegality($legality);
-            $this->entityManager->flush();
-            if ($legality->getIsLegal()) {
-                $output->writeln("<info>Done. Decklist is legal.</info>");
-            } else {
-                $output->writeln("<info>Done. Decklist is NOT legal.</info>");
-            }
-            return;
-        }
-
-        $countDql = "SELECT COUNT(d)
-            FROM AppBundle:Decklist d
-            WHERE NOT EXISTS (
-                SELECT l
-                FROM AppBundle:Legality l
-                WHERE l.decklist=d AND l.mwl=?1
-            )
-            ORDER BY d.id DESC";
-        $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $mwl);
-        $count = $countQuery->getSingleResult()[1];
-        $output->writeln("<comment>Found $count decklists to analyze</comment>");
-
-        if (!$count) {
-            return;
-        }
-
-        $progress = new ProgressBar($output, $count);
-        $progress->setRedrawFrequency(10);
-        $progress->start();
-
-        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
-        $batchSize = 100;
-        $i = 0;
-
-        $fetchDql = str_replace('COUNT(d)', 'd', $countDql);
-        $fetchQuery = $this->entityManager->createQuery($fetchDql)->setParameter(1, $mwl);
-        $iterableResult = $fetchQuery->iterate();
-        foreach ($iterableResult as $row) {
+        $mwl_code = $input->getOption('mwl_code');
+        if ($mwl_code) {
             $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwl_code]);
 
-            $legality = new Legality();
-            $legality->setDecklist($row[0]);
-            $legality->setMwl($mwl);
-            $this->judge->computeLegality($legality);
-            $this->entityManager->persist($legality);
-
-            if (($i % $batchSize) === 0) {
-                $this->entityManager->flush();
-                $this->entityManager->clear();
+            if (!$mwl instanceof Mwl) {
+                throw new \Exception("MWL not found");
             }
-
-            $progress->advance();
-            ++$i;
+            $mwlCodes[] = $mwl->getCode();
+        } else {
+            $mwlEntities = $this->entityManager->getRepository('AppBundle:Mwl')->findBy([]);
+            foreach ($mwlEntities as $mwl) {
+                $mwlCodes[] = $mwl->getCode();
+            }
         }
 
-        $progress->finish();
+        foreach ($mwlCodes as $mwlCode) {
+            $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwlCode]);
+
+            $output->writeln("<info>Applying legality for MWL $mwlCode...</info>");
+
+            // Find all decklists that do not have a legality present for the given MWL.
+            $countDql = "SELECT COUNT(d)
+                FROM AppBundle:Decklist d
+                WHERE NOT EXISTS (
+                    SELECT l
+                    FROM AppBundle:Legality l
+                    WHERE l.decklist=d AND l.mwl=?1
+                )
+                ORDER BY d.id DESC";
+            $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $mwl);
+            $count = $countQuery->getSingleResult()[1];
+            $output->writeln("<comment>Found $count decklists to analyze</comment>");
+
+            if (!$count) {
+                continue;
+            }
+
+            $progress = new ProgressBar($output, $count);
+            $progress->setRedrawFrequency(10);
+            $progress->start();
+
+            $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+            $batchSize = 100;
+            $i = 0;
+
+            $fetchDql = str_replace('COUNT(d)', 'd', $countDql);
+            $fetchQuery = $this->entityManager->createQuery($fetchDql)->setParameter(1, $mwlCode);
+            $iterableResult = $fetchQuery->iterate();
+            foreach ($iterableResult as $row) {
+                $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwlCode]);
+                $legality = new Legality();
+                $legality->setDecklist($row[0]);
+                $legality->setMwl($mwl);
+                $this->judge->computeLegality($legality);
+                $this->entityManager->persist($legality);
+
+                if (($i % $batchSize) === 0) {
+                    $this->entityManager->flush();
+                    $this->entityManager->clear();
+                }
+
+                $progress->advance();
+                ++$i;
+            }
+            $progress->finish();
+        }
+
         $output->writeln("\n<info>Done</info>");
         $this->entityManager->flush();
     }

@@ -1,7 +1,7 @@
 :root {
-  
+
   /* General ----------------------------------- */
-  
+
   --nrdb-color--white: #fff;
   --nrdb-color--black: #000;
   --nrdb-color--gray: gray;
@@ -14,11 +14,21 @@
   --nrdb-color--card: #f8f8f8;
   --nrdb-color--card-hover: #f0f0f0;
   --nrdb-color--border: #eee;
-  --nrdb-color--border-dark: #ddd;
+
+  --nrdb-color--navbar-bg: #222;
+
+  --nrdb-color--btn: #333;
+  --nrdb-color--btn-bg: #eee;
+  --nrdb-color--btn-border: #ddd;
+  --nrdb-color--btn-bg-hover: #ddd;
+  --nrdb-color--btn-border-hover: #ddd;
+  --nrdb-color--btn-bg-active: #eee;
+  --nrdb-color--btn-border-active: #ddd;
+
   --nrdb-color--like: red;
   --nrdb-color--favorite: orange;
   --nrdb-color--comment: green;
-  --nrdb-color--error: red;
+  --nrdb-color--error: #a94442;
   --nrdb-color--corp: blue;
   --nrdb-color--runner: red;
   --nrdb-color--admin: deeppink;
@@ -78,54 +88,155 @@
 :root[data-theme="dark"] {
 
   /* General ----------------------------------- */
-  
-  --nrdb-color--text: rgb(200, 195, 188);
-  --nrdb-color--link: #46A7FB;
+
+  --nrdb-color--text: #c8c2bc;
+  --nrdb-color--link: #889DC4;
   --nrdb-color--link-hover: #b3dbff;
-  --nrdb-color--background: #181A1B;
-  --nrdb-color--light-gray: #1C1E1F;
+  --nrdb-color--background: #1c1e22;
+  --nrdb-color--light-gray: #16181b;
   --nrdb-color--card: #1C1E1F;
   --nrdb-color--card-hover: #222425;
-  --nrdb-color--border: #313131;
-  --nrdb-color--border-light: #404040;
+  --nrdb-color--border: #303133;
+
+  --nrdb-color--navbar-bg: var(--nrdb-color--light-gray);
+
+  --nrdb-color--btn: #c8c2bc;
+  --nrdb-color--btn-bg: #262729;
+  --nrdb-color--btn-border: #262729;
+  --nrdb-color--btn-bg-hover: #202123;
+  --nrdb-color--btn-border-hover: #262729;
+  --nrdb-color--btn-bg-active: #1A1B1D;
+  --nrdb-color--btn-border-active: #262729;
+
+  
+  --nrdb-color--like: #b75454;
+  --nrdb-color--favorite: #C6B460;
+  --nrdb-color--comment: #448258;
+  --nrdb-color--error: #a94442;
+  --nrdb-color--corp: #6b6bff;
+  --nrdb-color--runner: #c65454;
+  --nrdb-color--admin: deeppink;
+  --nrdb-color--legal: #698146;
+  --nrdb-color--banned: #7F4554;
+  --nrdb-color--rotated: #37435E;
+  --nrdb-color--restricted: #674B76;
+  --nrdb-color--unverified: #494949;
   --nrdb-color--code: inherit;
   --nrdb-color--code-bg: var(--nrdb-color--border);
-  --nrdb-color--icon: #a9a9a9;
-  
+  --nrdb-color--alert-danger: #ff908e;
+  --nrdb-color--alert-danger-bg: #371414;
+  --nrdb-color--alert-danger-border: #812F2F;
+
   /* Factions ----------------------------------- */
-  --nrdb-color--generic-faction: var(--nrdb-color--icon);
-  
-  /*** Jinteki */
-  --nrdb-color--jinteki-hover: #FBE7EB30;
-  --nrdb-color--jinteki-bg: #f8d0d830;
-  
-  /*** Shaper */
-  --nrdb-color--shaper-hover: #EAFAEA30;
-  --nrdb-color--shaper-bg: #d6f5d630;
-  
-  /*** Haas-bioroid */
-  --nrdb-color--haas-bioroid-hover: #F3EAFC30;
-  --nrdb-color--haas-bioroid-bg: #e7d4f930;
-  
+
+
   /*** Anarch */
+  --nrdb-color--anarch: #d9693f;
   --nrdb-color--anarch-hover: #FFECE630;
   --nrdb-color--anarch-bg: #ffd9cc30;
-  
+
   /*** Criminal */
+  --nrdb-color--criminal: #3862df;
   --nrdb-color--criminal-hover: #ECF0FC30;
   --nrdb-color--criminal-bg: #d9e1f930;
-  
+
+  /*** Shaper */
+  --nrdb-color--shaper: #60a260;
+  --nrdb-color--shaper-hover: #EAFAEA30;
+  --nrdb-color--shaper-bg: #d6f5d630;
+
+  /*** Haas-bioroid */
+  --nrdb-color--haas-bioroid: #8854b9;
+  --nrdb-color--haas-bioroid-hover: #F3EAFC30;
+  --nrdb-color--haas-bioroid-bg: #e7d4f930;
+
+  /*** Jinteki */
+  --nrdb-color--jinteki: #b14157;
+  --nrdb-color--jinteki-hover: #FBE7EB30;
+  --nrdb-color--jinteki-bg: #f8d0d830;
+
   /*** NBN */
+  --nrdb-color--nbn: #bba037;
   --nrdb-color--nbn-hover: #FFF3E630;
   --nrdb-color--nbn-bg: #ffe8cc30;
-  
+
   /*** Weyland Consortium */
+  --nrdb-color--weyland-consortium: #458c45;
   --nrdb-color--weyland-consortium-hover: #E6EFE630;
   --nrdb-color--weyland-consortium-bg: #cce0cc30;
-  
+
   /*** Neutral */
   --nrdb-color--neutral-hover: #F0F2F430;
   --nrdb-color--neutral-bg: #E2E5E830;
+
+  /*** Bootstrap buttons */
+  .btn-primary {
+    background-color: #365678;
+    border-color: #365678;
+  }
+  .btn-primary:hover {
+    background-color: #2c445e;
+    border-color: #2c445e;
+  }
+  .btn-info {
+    background-color: #528495;
+    border-color: #528495;
+  }
+  .btn-info:hover {
+    background-color: #416774;
+    border-color: #416774;
+  }
+  .btn-success {
+    background-color: #507e50;
+    border-color: #507e50;
+  }
+  .btn-success:hover {
+    background-color: #3f6240;
+    border-color: #3f6240;
+  }
+  .btn-warning {
+    background-color: #a07b50;
+    border-color: #a07b50;
+  }
+  .btn-warning:hover {
+    background-color: #7b6040;
+    border-color: #7b6040;
+  }
+  .btn-danger {
+    background-color: #8d4543;
+    border-color: #8d4543;
+  }
+  .btn-danger:hover {
+    background-color: #6e3737;
+    border-color: #6e3737;
+  }
+
+  /*** Faction banner */
+  #navbar-factions {
+    background-color: #16181B;
+    border-color: #16181B;
+  }
+
+  /*** Update log */
+  #update-log {
+    border: 1px solid var(--nrdb-color--light-gray);
+    background-color: var(--nrdb-color--light-gray);
+  }
+  #update-log th,
+  #update-log tr {
+    border-bottom: 1px solid var(--nrdb-color--background);
+  }
+
+  /*** Quick fixes */
+  .table > tbody > tr.warning > td {
+    background-color: #1f1e1b;
+  }
+  .navbar-inverse {
+    border-bottom: 0;
+  }
+  .label-default {
+    background-color: #444;
+  }
 }
 
 html {
@@ -155,6 +266,12 @@ a {
 a:hover,
 a:focus {
   color: var(--nrdb-color--link-hover);
+}
+
+.alert-danger {
+  color: var(--nrdb-color--alert-danger);
+  background-color: var(--nrdb-color--alert-danger-bg);
+  border-color: var(--nrdb-color--alert-danger-border);
 }
 
 .social {
@@ -1287,6 +1404,10 @@ div.ad-blocked {
   margin: auto;
 }
 
+.navbar {
+  background-color: var(--nrdb-color--navbar-bg)
+}
+
 .navbar-brand {
   position: relative;
 }
@@ -1294,10 +1415,6 @@ div.ad-blocked {
 .navbar-brand span.icon:nth-child(2) {
   position: absolute;
   left: 15px;
-}
-
-.navbar-inverse .navbar-nav>li>.dropdown-toggle {
-  background-color: transparent !important;
 }
 
 .navbar-inverse .navbar-brand:hover,
@@ -1476,12 +1593,7 @@ ul.rulings-list blockquote {
 }
 
 .legality-interactive:before {
-  transition: min-width 0.5s;
-}
-
-.legality-interactive.legality-restricted:before {
-  transition: none;
-  /* "RESTRICTED" is too long and makes the animation weird */
+  min-width: 1em;
 }
 
 .legality-interactive:not(:hover):not(:active):before {
@@ -1720,7 +1832,7 @@ a.list-group-item, button.list-group-item {
   background-color: var(--nrdb-color--card);
 }
 
-.pager li > a, 
+.pager li > a,
 .pager li > span {
   background-color: var(--nrdb-color--white);
   border-color: var(--nrdb-color--border);
@@ -1749,8 +1861,8 @@ legend {
 }
 
 :root[data-theme="dark"] {
-  
-  .pager li > a, 
+
+  .pager li > a,
   .pager li > span {
     background-color: var(--nrdb-color--border);
   }
@@ -1771,7 +1883,7 @@ legend {
   .dropdown-header {
     color: var(--nrdb-color--dark-gray);
   }
-  
+
   .dropdown-menu>li>a {
     color: var(--nrdb-color--white);
   }
@@ -1792,15 +1904,14 @@ legend {
   }
 }
 
-.nav > li > a:focus, 
+.nav > li > a:focus,
 .nav > li > a:hover {
   background-color: var(--nrdb-color--border);
 }
 
 
 .form-control,
-.multiselect,
-.dropdown-toggle {
+.multiselect {
   background-color: var(--nrdb-color--border) !important;
   border-color: var(--nrdb-color--border);
   color: inherit;
@@ -1813,6 +1924,16 @@ legend {
 .dropdown-toggle:focus,
 .dropdown-toggle:hover {
   color: inherit;
+  background-color: inherit;
+}
+
+.dropdown-menu > li > a:focus,
+.dropdown-menu > li > a:hover {
+  background-color: var(--nrdb-color--btn-bg);
+}
+
+.dropdown-menu .divider {
+  background-color: var(--nrdb-color--btn-border);
 }
 
 #login a.btn[href*="/resetting/"] {
@@ -1843,11 +1964,11 @@ button[data-theme-toggle="light"] svg {
   fill: #9d9d9d;
 }
 
-button[data-theme-toggle="light"] svg:last-of-type {
+html[data-theme="light"] button[data-theme-toggle] svg:last-of-type {
   display: none;
 }
 
-button[data-theme-toggle="dark"] svg:first-of-type {
+html[data-theme="dark"] button[data-theme-toggle] svg:first-of-type {
   display: none;
 }
 
@@ -1873,9 +1994,21 @@ code {
 
 .btn.btn-default,
 .btn.btn-secondary {
-  background-color: var(--nrdb-color--border);
-  border-color: var(--nrdb-color--border);
-  color: inherit;
+  background-color: var(--nrdb-color--btn-bg);
+  border-color: var(--nrdb-color--btn-border);
+  color: var(--nrdb-color--btn);
+}
+.btn.btn-default:hover,
+.btn.btn-secondary:hover {
+  background-color: var(--nrdb-color--btn-bg-hover);
+  border-color: var(--nrdb-color--btn-border-hover);
+  color: var(--nrdb-color--btn);
+}
+.btn.btn-default.active,
+.btn.btn-secondary.active {
+  background-color: var(--nrdb-color--btn-bg-active);
+  border-color: var(--nrdb-color--btn-border-active);
+  color: var(--nrdb-color--btn);
 }
 
 #deck-builder #faction-filter.form-control {
