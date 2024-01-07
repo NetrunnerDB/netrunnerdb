@@ -2217,3 +2217,12 @@ table .table-cell {
 .table > tbody > tr > td[data-th="Faction"] {
   vertical-align: revert; !important;
 }
+
+/*  Select all icon types under .card-text */
+.card-text abbr[class*="icon icon-"] {
+  font-size: 0px;
+}
+
+.card-text abbr[class*="icon icon-"]:before {
+  font-size: 16px;
+}
