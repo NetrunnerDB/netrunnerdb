@@ -32,7 +32,7 @@
                             {{ card.advancementcost }}/{{ card.agendapoints }}<span class="icon icon-agenda-points"></span>
                         {% endif %}
                         {% if card.type_code != "identity" and card.type_code != "agenda" %}
-                            <abbr title="{{ card.cost }} Credit{{ card.cost > 1 ? 's' : '' }}">{{ card.formatted_cost|raw }}</abbr>
+                            <abbr title="{{ card.cost }} Credit{{ card.cost != 1 ? 's' : '' }}">{{ card.formatted_cost|raw }}</abbr>
                         {% endif %}
                     </span>
                 </h3>
