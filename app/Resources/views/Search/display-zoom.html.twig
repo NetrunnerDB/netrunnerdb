@@ -76,7 +76,8 @@
                     <div class="card-influence">
                         Influence:
                         <span class="icon icon-{{ card.faction_code }} {{ card.faction_code }}"></span>
-                        {{ card.faction_cost_dots|raw }}
+                        {# Singular line, as it creates whitespace otherwise #}
+                        <span aria-label="{{ card.factioncost }} Influence" style="font-size: 0px;">{{ card.factioncost }}</span><span aria-hidden="true" style="user-select: none;">{{ card.faction_cost_dots|raw }}</span>
                     </div>
                 {% endif %}
 
