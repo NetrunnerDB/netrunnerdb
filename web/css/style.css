@@ -24,6 +24,7 @@
   --nrdb-color--btn-border-hover: #ddd;
   --nrdb-color--btn-bg-active: #eee;
   --nrdb-color--btn-border-active: #ddd;
+  --nrdb-color--input-bg: #fafafa;
 
   --nrdb-color--like: red;
   --nrdb-color--favorite: orange;
@@ -43,7 +44,7 @@
   --nrdb-color--alert-danger: #a94442;
   --nrdb-color--alert-danger-bg: #f2dede;
   --nrdb-color--alert-danger-border: #ebccd1;
-  
+
   /* Factions ----------------------------------- */
   --nrdb-color--generic-faction: #333333;
 
@@ -131,7 +132,8 @@
   --nrdb-color--btn-border-hover: #262729;
   --nrdb-color--btn-bg-active: #1A1B1D;
   --nrdb-color--btn-border-active: #262729;
-  
+  --nrdb-color--input-bg: #262729;
+
   --nrdb-color--like: #b75454;
   --nrdb-color--favorite: #C6B460;
   --nrdb-color--comment: #448258;
@@ -1848,8 +1850,12 @@ a.list-group-item:focus, a.list-group-item:hover, button.list-group-item:focus, 
 
 .panel-default > .panel-heading {
   background-color: var(--nrdb-color--border);
-  border-color: var(--nrdb-color--border);
+  border-color: var(--nrdb-color--btn-border);
   color: inherit;
+}
+
+.panel-heading:not(:first-of-type) {
+  border-radius: 0;
 }
 
 .panel-body {
@@ -1950,8 +1956,8 @@ legend {
 
 .form-control,
 .multiselect {
-  background-color: var(--nrdb-color--border) !important;
-  border-color: var(--nrdb-color--border);
+  background-color: var(--nrdb-color--input-bg) !important;
+  border-color: var(--nrdb-color--btn-border);
   color: inherit;
 }
 
