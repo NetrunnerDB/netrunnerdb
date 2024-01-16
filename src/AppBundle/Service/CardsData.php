@@ -97,21 +97,21 @@ class CardsData
     public function replaceSymbols(string $text)
     {
         $map = [
-            '[subroutine]'         => '<span class="icon icon-subroutine" aria-hidden="true"></span><span class="icon-fallback">subroutine</span>',
-            '[credit]'             => '<span class="icon icon-credit" aria-hidden="true"></span><span class="icon-fallback">credit</span>',
-            '[trash]'              => '<span class="icon icon-trash" aria-hidden="true"></span><span class="icon-fallback">trash</span>',
-            '[click]'              => '<span class="icon icon-click" aria-hidden="true"></span><span class="icon-fallback">click</span>',
-            '[recurring-credit]'   => '<span class="icon icon-recurring-credit" aria-hidden="true"></span><span class="icon-fallback">recurring credit</span>',
-            '[mu]'                 => '<span class="icon icon-mu" aria-hidden="true"></span><span class="icon-fallback">memory unit</span>',
-            '[link]'               => '<span class="icon icon-link" aria-hidden="true"></span><span class="icon-fallback">link</span>',
-            '[anarch]'             => '<span class="icon icon-anarch" aria-hidden="true"></span><span class="icon-fallback">anarch</span>',
-            '[criminal]'           => '<span class="icon icon-criminal" aria-hidden="true"></span><span class="icon-fallback">criminal</span>',
-            '[shaper]'             => '<span class="icon icon-shaper" aria-hidden="true"></span><span class="icon-fallback">shaper</span>',
-            '[jinteki]'            => '<span class="icon icon-jinteki" aria-hidden="true"></span><span class="icon-fallback">jinteki</span>',
-            '[haas-bioroid]'       => '<span class="icon icon-haas-bioroid" aria-hidden="true"></span><span class="icon-fallback">haas bioroid</span>',
-            '[nbn]'                => '<span class="icon icon-nbn" aria-hidden="true"></span><span class="icon-fallback">nbn</span>',
-            '[weyland-consortium]' => '<span class="icon icon-weyland-consortium" aria-hidden="true"></span><span class="icon-fallback">weyland consortium</span>',
-            '[interrupt]'          => '<span class="icon icon-interrupt" aria-hidden="true"></span><span class="icon-fallback">interrupt</span>',
+            '[subroutine]'         => '<abbr class="icon icon-subroutine" title="Subroutine">[subroutine]</abbr>',
+            '[credit]'             => '<abbr class="icon icon-credit" title="Credit">[credit]</abbr>',
+            '[trash]'              => '<abbr class="icon icon-trash" title="Trash">[trash]</abbr>',
+            '[click]'              => '<abbr class="icon icon-click" title="Click">[click]</abbr>',
+            '[recurring-credit]'   => '<abbr class="icon icon-recurring-credit title="Recurring credit">[recurring credit]</abbr>',
+            '[mu]'                 => '<abbr class="icon icon-mu" title="Memory unit">[memory unit]</abbr>',
+            '[link]'               => '<abbr class="icon icon-link" title="Link">[link]</abbr>',
+            '[anarch]'             => '<abbr class="icon icon-anarch" title="Anarch">[anarch]</abbr>',
+            '[criminal]'           => '<abbr class="icon icon-criminal" title="Criminal">[criminal]</abbr>',
+            '[shaper]'             => '<abbr class="icon icon-shaper" title="Shaper">[shaper]</abbr>',
+            '[jinteki]'            => '<abbr class="icon icon-jinteki" title="Jinteki">[jinteki]</abbr>',
+            '[haas-bioroid]'       => '<abbr class="icon icon-haas-btitle="Haas-bioroid">[haas bioroid]</abbr>',
+            '[nbn]'                => '<abbr class="icon icon-nbn" title="NBN">[nbn]</abbr>',
+            '[weyland-consortium]' => '<abbr class="icon icon-weyland-consortium" title="Weyland Consortium">[weyland consortium]</abbr>',
+            '[interrupt]'          => '<abbr class="icon icon-interrupt" title="Interrupt">[interrupt]</abbr>',
         ];
 
         return str_replace(array_keys($map), array_values($map), $text);
