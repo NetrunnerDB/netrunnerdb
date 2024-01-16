@@ -22,8 +22,8 @@
   --nrdb-color--btn-border: #ddd;
   --nrdb-color--btn-bg-hover: #ddd;
   --nrdb-color--btn-border-hover: #ddd;
-  --nrdb-color--btn-bg-active: #eee;
-  --nrdb-color--btn-border-active: #ddd;
+  --nrdb-color--btn-bg-active: #ddd;
+  --nrdb-color--btn-border-active: #ccc;
   --nrdb-color--input-bg: #fafafa;
 
   --nrdb-color--like: red;
@@ -2093,7 +2093,7 @@ code {
 
 #faction_code label.btn.active,
 #type_code label.btn.active {
-  background-color: var(--nrdb-color--card);
+  background-color: var(--nrdb-color--btn-bg-active);
 }
 
 #faction_code label.btn.active:active,
