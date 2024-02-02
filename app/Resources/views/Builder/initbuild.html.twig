@@ -69,7 +69,7 @@
     <a href="{{ path('deck_initbuild', {card_code:identity.code}) }}"
        class="identity list-group-item faction-{{ identity.faction.code }} pack-{{ identity.pack.code }} {% if rotated %}rotated{% endif %} {% if banned %}banned{% endif %}"
        data-code="{{ identity.code }}">
-      <span class="icon icon-{{ identity.faction.code }} {{ identity.faction.code }}"></span>
+      <svg class="typeIcon" aria-label="{{ identity.faction.name }}" data-icon-color="{{ identity.faction.code }}" style="transform:translateY(2px);margin-right:0.5em;"><use xlink:href="/images/icons.svg#faction-{{ identity.faction.code }}"></use></svg>
       <span class="name">{{ identity.title(app.request.locale) }}</span>
       <span class="small">({{ identity.pack.name }})</span>
       <span style="margin-left: 4px;" class="legality-indicator {% if rotated %}legality-rotated{% endif %} {% if banned %}legality-banned{% endif %}"></span>

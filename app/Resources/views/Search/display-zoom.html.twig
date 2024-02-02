@@ -32,7 +32,7 @@
                             {{ card.advancementcost }}/{{ card.agendapoints }}<span class="icon icon-agenda-points"></span>
                         {% endif %}
                         {% if card.type_code != "identity" and card.type_code != "agenda" %}
-                            {{ card.formatted_cost|raw }}
+                            <abbr title="{{ card.cost }} Credit{{ card.cost != 1 ? 's' : '' }}">{{ card.formatted_cost|raw }}</abbr>
                         {% endif %}
                     </span>
                 </h3>
@@ -75,8 +75,9 @@
                 {% if card.type_code != "identity" and card.faction_cost_dots|length > 0 %}
                     <div class="card-influence">
                         Influence:
-                        <span class="icon icon-{{ card.faction_code }} {{ card.faction_code }}"></span>
-                        {{ card.faction_cost_dots|raw }}
+                        <svg class="typeIcon" aria-label="{{ card.faction_name }}" data-icon-color="{{ card.faction_code }}"><use xlink:href="/images/icons.svg#faction-{{ card.faction_code }}"></use></svg>
+                        {# Singular line, as it creates whitespace otherwise #}
+                        <span aria-label="{{ card.factioncost }} Influence" style="font-size: 0px;">{{ card.factioncost }}</span><span aria-hidden="true" style="user-select: none;">{{ card.faction_cost_dots|raw }}</span>
                     </div>
                 {% endif %}
 

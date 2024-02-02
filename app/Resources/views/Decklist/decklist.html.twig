@@ -29,8 +29,10 @@ NRDB.user.params.decklist_id = Decklist.id;
 <div class="row">
     <div class="col-xs-12 panel-group">
         <h1 class="decklist-name">
-            <span class="hidden-xs icon icon-{{ decklist.faction_code }} {{ decklist.faction_code }}"></span>
-            {{ decklist.name }}
+            <div class="decklist-name__title">
+              <svg class="typeIcon typeIcon--large" data-icon-color="{{ decklist.faction_code }}" aria-label="{{ decklist.faction_code }}"><use xlink:href="/images/icons.svg#faction-{{ decklist.faction_code }}"></use></svg>
+              {{ decklist.name }}
+            </div>
         </h1>
         <div class="social">
             <div class="" id="social-icons">

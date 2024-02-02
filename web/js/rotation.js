@@ -10,8 +10,7 @@ Promise.all([NRDB.data.promise]).then(function() {
   let addTypeButton = function(type) {
     let label = $('<label class="btn btn-default btn-sm" data-code="'
         + type.code + '" title="'+type.name+'"><input type="checkbox" name="' + type.code
-        + '"><img src="' + Url_TypeImage.replace('xxx', type.code)
-        + '" style="height:12px" alt="'+type.code+'"></label>');
+        + '"><svg class="typeIcon" aria-label="'+type.code+'"><use xlink:href="/images/icons.svg#type-'+type.code+'"></use></svg></label>');
     label.tooltip({container: 'body'});
     $('#type_code').append(label);
   };
@@ -28,9 +27,7 @@ Promise.all([NRDB.data.promise]).then(function() {
     factions.forEach(function(faction) {
       var label = $('<label class="btn btn-default btn-sm" data-code="' + faction.code
           + '" title="'+faction.name+'"><input type="checkbox" name="' + faction.code
-          + '"><img src="'
-          + Url_FactionImage.replace('xxx', faction.code)
-          + '" style="height:12px" alt="'+faction.code+'"></label>');
+          + '"><svg class="typeIcon" aria-label="'+faction.code+'"><use xlink:href="/images/icons.svg#faction-'+faction.code+'"></use></svg></label>');
       label.tooltip({container: 'body'});
       $('#faction_code').append(label);
     });
@@ -161,7 +158,7 @@ Promise.all([NRDB.data.promise]).then(function() {
         $('<div style="display:' + (visible ? 'block' : 'none') + '" data-title="' + card.title.replaceAll('"', '') + '" data-faction="' + card.faction.code + '" data-type="' + card.type.code + '">' +
             '<span class="legality-' + card['diff'] + '"></span> ' +
             '<span class="icon icon-' + card.faction.code + ' influence-' + card.faction.code + '"></span>' +
-            ' <img src="' + Url_TypeImage.replace('xxx', card.type.code) + '" style="height:12px" alt="'+card.type.code+'">' +
+            ' <svg class="typeIcon" aria-label="'+card.type.code+'"><use xlink:href="/images/icons.svg#type-'+card.type.code+'"></use></svg>' +
             ' <a href="' + Routing.generate('cards_zoom', {card_code:card.code}) + '">' + card.title + '</a></div>')
       );
     });

@@ -16,8 +16,8 @@
 {% set faction = result.faction %}
 {% set decklists = result.decklists %}
 <div class="page-header influence-{{ faction.code }}">
-  <h1>
-    <span class="icon icon-{{ faction.code }}"></span>
+  <h1 class="icon-with-title">
+    <svg class="typeIcon typeIcon--large" data-icon-color="{{ faction.code }}" aria-label="{{ faction.code }}"><use xlink:href="/images/icons.svg#faction-{{ faction.code }}"></use></svg>
     {{ faction.name }}
   </h1>
 </div>
