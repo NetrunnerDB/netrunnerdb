@@ -13,9 +13,8 @@
     async function getPronouns() {
         // Attempt to get card's pronouns
         const printing = await fetchData(`${v3_api_url}/api/v3/public/printings/{{ card.code }}`);
-        const card = await fetchData(`${v3_api_url}/api/v3/public/cards/${printing.attributes.card_id}`);
-        if (card.pronouns) {
-            $(".card-stats").append(`<br>Pronouns: ${card.pronouns}`)
+        if (printing.attributes.pronouns) {
+            $(".card-stats").append(`<br>Pronouns: ${printing.attributes.pronouns}`)
         }
     }
     getPronouns();
