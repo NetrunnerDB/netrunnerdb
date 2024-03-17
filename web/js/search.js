@@ -66,7 +66,6 @@ $(document).on('data.app', function() {
   var startup_cycles = Array(); // Hardcoded Startup Codes
   startup_cycles['system-gateway'] = 1;
   startup_cycles['system-update-2021'] = 1;
-  startup_cycles['borealis'] = 1;
   startup_cycles['liberation'] = 1;
   var nsg_cycles = Array(); // Hardcoded NSG Codes
   nsg_cycles['system-gateway'] = 1;

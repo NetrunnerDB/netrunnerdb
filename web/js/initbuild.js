@@ -45,7 +45,7 @@ $(function() {
             let visible = true;
             // Startup
             if (format === 'startup') {
-                visible = ['sg', 'su21', 'msbp', 'ms', 'ph', 'tai'].some(p => $(this).hasClass('pack-' + p)); // Hardcoded Startup Codes
+                visible = ['sg', 'su21', 'tai', 'rwr'].some(p => $(this).hasClass('pack-' + p)); // Hardcoded Startup Codes
             }
             // Standard
             else if (format === 'standard') {
