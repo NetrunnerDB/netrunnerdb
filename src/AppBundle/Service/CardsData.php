@@ -267,7 +267,7 @@ class CardsData
                             $parameters[$i++] = $arg;
                         } elseif ($acronym) {
                             $cond = [];
-                            $cond[] = "(BINARY(c.title) like ?$i)";
+                            $cond[] = "(c.strippedTitle like ?$i)";
                             $parameters[$i++] = "%$arg%";
                             $like = implode('% ', str_split($arg));
                             $cond[] = "(REPLACE(c.title, '-', ' ') like ?$i)";
@@ -280,7 +280,7 @@ class CardsData
                                 $or[] = "not (" . implode ("or", $cond) . ")";
                             }
                         } else {
-                            $or[] = "(c.title " . ($operator == ":" ? "like" : "not like") . " ?$i)";
+                            $or[] = "(c.strippedTitle " . ($operator == ":" ? "like" : "not like") . " ?$i)";
                             $parameters[$i++] = "%$arg%";
                         }
                     }

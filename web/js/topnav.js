@@ -27,11 +27,11 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then(function() {
       return _.deburr(cardTitle).toLowerCase().trim();
     }
     var matchingCards = _.filter(latest_cards, function (card) {
-      return regexp.test(normalizeTitle(card.title));
+      return regexp.test(normalizeTitle(card.stripped_title));
     });
     matchingCards.sort((card1, card2) => {
-        var card1title = normalizeTitle(card1.title);
-        var card2title = normalizeTitle(card2.title);
+        var card1title = normalizeTitle(card1.stripped_title);
+        var card2title = normalizeTitle(card2.stripped_title);
         var normalizedQuery = normalizeTitle(q);
         if(card1title.startsWith(normalizedQuery) && !card2title.startsWith(normalizedQuery)) {
             return -1;
