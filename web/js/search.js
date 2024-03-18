@@ -9,7 +9,7 @@ $(document).on('data.app', function() {
       return _.deburr(cardTitle).toLowerCase().trim();
     }
     var matchingCards = _.filter(latestCards, function (card) {
-      return regexp.test(normalizeTitle(card.title));
+      return regexp.test(normalizeTitle(card.stripped_title));
     });
     matchingCards.sort((card1, card2) => {
         var card1title = normalizeTitle(card1.title);
