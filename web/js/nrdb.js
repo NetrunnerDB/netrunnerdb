@@ -536,7 +536,7 @@ function check_ampere_agenda_limits() {
         for (faction in agendasByFaction) {
             if (agendasByFaction[faction] > 2) {
                 nb_violations++;
-            } 
+            }
         }
     });
     if(nb_violations > 0) {
@@ -1119,7 +1119,7 @@ function build_jintekinet(deck) {
             return this.nodeType == 3;
         })[0].nodeValue[0];
         var name = $(line).children('a').eq(0).text();
-        lines.push(num + " " + name);
+        lines.push(num + " " + name.replaceAll(/ʼ/g, `'`).replaceAll(/[“”]/g, `"`));
     });
     return lines;
 }
