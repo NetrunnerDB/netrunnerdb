@@ -9,7 +9,7 @@ $(document).on('data.app', function() {
       return _.deburr(cardTitle).toLowerCase().trim();
     }
     var matchingCards = _.filter(latestCards, function (card) {
-      return regexp.test(normalizeTitle(card.title));
+      return regexp.test(normalizeTitle(card.stripped_title));
     });
     matchingCards.sort((card1, card2) => {
         var card1title = normalizeTitle(card1.title);
@@ -57,6 +57,10 @@ $(document).on('data.app', function() {
   });
 
   $('#allowed_packs').on('change', handle_checkbox_change);
+  $('#toggle_show_packs').on('click', function() {
+    var hidden = $('#allowed_packs').is(":visible");
+    $(this).text(hidden ? "Show card packs" : "Hide card packs");
+  });
 
   let rotated_cycles = Array();
   rotated_cycles['draft'] = 1;
