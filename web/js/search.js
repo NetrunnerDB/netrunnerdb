@@ -57,6 +57,10 @@ $(document).on('data.app', function() {
   });
 
   $('#allowed_packs').on('change', handle_checkbox_change);
+  $('#toggle_show_packs').on('click', function() {
+    var hidden = $('#allowed_packs').is(":visible");
+    $(this).text(hidden ? "Show card packs" : "Hide card packs");
+  });
 
   let rotated_cycles = Array();
   rotated_cycles['draft'] = 1;

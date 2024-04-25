@@ -48,7 +48,7 @@
                 </select>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4" style="margin-bottom:15px">
             <div class="form-group">
                 <label for="">Author name</label> <input type="text"
                                                          class="form-control" id="author" name="author"
@@ -81,16 +81,16 @@
             <button type="submit" class="btn btn-primary btn-block">Search</button>
         </div>
         <div class="col-sm-4">
-            <p><a data-toggle="collapse" data-target="#allowed_packs" href="#allowed_packs">Select allowed packs</a> <span id="packs-on"></span> <span id="packs-off"></span></p>
+            <p>Filter by card pool:</p>
+            <p>
+                <a href="#" id="select_startup">Startup</a> |
+                <a href="#" id="select_standard">Standard</a> |
+                <a href="#" id="select_nsg">NSG</a> |
+                <a href="#" id="select_all">All</a> |
+                <a href="#" id="select_none">None</a>
+            </p>
+            <p style="margin-bottom:0"><a id="toggle_show_packs" data-toggle="collapse" data-target="#allowed_packs" href="#">Show card packs</a> <span id="packs-on"></span> <span id="packs-off"></span></p>
             <div id="allowed_packs" class="collapse">
-                <div>
-                    <a href="#" id="select_startup">Startup</a> |
-                    <a href="#" id="select_standard">Standard</a> |
-                    <a href="#" id="select_nsg">NSG</a> |
-                    <a href="#" id="select_all">All</a> |
-                    <a href="#" id="select_none">None</a>
-                </div>
-
                 {% for category in cycles_and_packs %}
                     <div class="checkbox -bs-checklist">
                         {% if category.packs|length == 1 %}
