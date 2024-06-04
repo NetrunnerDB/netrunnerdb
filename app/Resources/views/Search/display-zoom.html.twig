@@ -17,7 +17,16 @@
             $(".card-stats").append(`<br>Pronouns: ${printing.attributes.pronouns}`)
         }
     }
+    async function getPronunciation() {
+        const card = await fetchData(`${v3_api_url}/api/v3/public/printings/{{ card.code }}/card`);
+        if (card.attributes.pronunciation_approximation && card.attributes.pronunciation_ipa) {
+            $(".card-stats").append(
+                `<br>Pronunciation: ${card.attributes.pronunciation_ipa} (${card.attributes.pronunciation_approximation})`
+            );
+        }
+    }
     getPronouns();
+    getPronunciation();
 </script>
 
 <div class="row">
