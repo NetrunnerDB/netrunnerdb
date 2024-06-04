@@ -364,6 +364,7 @@ a:focus {
 
 .card-text::before,
 .card-flavor::before,
+.card-pronunciation-break::before,
 .card-illustrator::before {
   border-top: 1px solid var(--nrdb-color--border);
   width: 95%;
