@@ -20,8 +20,8 @@
     async function getPronunciation() {
         const card = await fetchData(`${v3_api_url}/api/v3/public/printings/{{ card.code }}/card`);
         if (card.attributes.pronunciation_approximation && card.attributes.pronunciation_ipa) {
-            $(".card-stats").append(
-                `<br>Pronunciation: ${card.attributes.pronunciation_ipa} (${card.attributes.pronunciation_approximation})`
+            $(".card-pronunciation").append(
+                `Pronunciation: ${card.attributes.pronunciation_ipa} (${card.attributes.pronunciation_approximation})`
             );
         }
     }
@@ -108,12 +108,18 @@
                     </div>
                 {% endif %}
 
-                <div class="card-flavor">
-                    {% if card.code == "33084" %}
-                        {{ card.flavor|raw|escape|nl2br }}
-                    {% elseif card.flavor %}
-                        {{ card.flavor|raw|nl2br }}
-                    {% endif %}
+                {% if card.flavor|length > 0 %}
+                    <div class="card-flavor">
+                        {% if card.code == "33084" %}
+                            {{ card.flavor|raw|escape|nl2br }}
+                        {% elseif card.flavor %}
+                            {{ card.flavor|raw|nl2br }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <div class="card-pronunciation">
+
                 </div>
 
                 {% if card.illustrator %}

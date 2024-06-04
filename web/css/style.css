@@ -357,6 +357,11 @@ a:focus {
   font-size: 0.8em;
 }
 
+.card-pronunciation {
+  font-style: italic;
+  font-size: 0.8em;
+}
+
 .card-text::before,
 .card-flavor::before,
 .card-illustrator::before {
