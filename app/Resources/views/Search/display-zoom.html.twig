@@ -21,7 +21,7 @@
         const card = await fetchData(`${v3_api_url}/api/v3/public/printings/{{ card.code }}/card`);
         if (card.attributes.pronunciation_approximation && card.attributes.pronunciation_ipa) {
             $(".card-pronunciation").append(
-                `Pronunciation: ${card.attributes.pronunciation_ipa} (${card.attributes.pronunciation_approximation})`
+                `::before Pronunciation: ${card.attributes.pronunciation_ipa} (${card.attributes.pronunciation_approximation})`
             );
         }
     }
