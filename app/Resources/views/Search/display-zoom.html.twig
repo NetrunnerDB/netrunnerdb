@@ -17,7 +17,16 @@
             $(".card-stats").append(`<br>Pronouns: ${printing.attributes.pronouns}`)
         }
     }
+    async function getPronunciation() {
+        const card = await fetchData(`${v3_api_url}/api/v3/public/printings/{{ card.code }}/card`);
+        if (card.attributes.pronunciation_approximation && card.attributes.pronunciation_ipa) {
+            $(".card-pronunciation").append(
+                `<div class="card-pronunciation-break"></div>Pronunciation: ${card.attributes.pronunciation_ipa}<br>(${card.attributes.pronunciation_approximation})`
+            );
+        }
+    }
     getPronouns();
+    getPronunciation();
 </script>
 
 <div class="row">
@@ -99,13 +108,15 @@
                     </div>
                 {% endif %}
 
-                <div class="card-flavor">
-                    {% if card.code == "33084" %}
-                        {{ card.flavor|raw|escape|nl2br }}
-                    {% elseif card.flavor %}
-                        {{ card.flavor|raw|nl2br }}
-                    {% endif %}
-                </div>
+                {% if card.flavor|length > 0 %}
+                    <div class="card-flavor">
+                        {% if card.code == "33084" %}
+                            {{ card.flavor|raw|escape|nl2br }}
+                        {% elseif card.flavor %}
+                            {{ card.flavor|raw|nl2br }}
+                        {% endif %}
+                    </div>
+                {% endif %}
 
                 {% if card.illustrator %}
                     <div class="card-illustrator">
@@ -116,10 +127,13 @@
                                 join(', ') |
                                 raw
                             }}
-                            </a>
                         </small>
                     </div>
                 {% endif %}
+
+                <div class="card-pronunciation">
+
+                </div>
             </div>
         </div>
         <a href="{{ path('decklists_list', {type:'find',_locale:app.request.locale, 'cards[]':card.code}) }}">Decklists with this card</a>
