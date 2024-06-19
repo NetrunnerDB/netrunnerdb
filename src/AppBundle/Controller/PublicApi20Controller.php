@@ -542,6 +542,46 @@ class PublicApi20Controller extends FOSRestController
     }
 
     /**
+     * Get all Review data
+     *
+     * @ApiDoc(
+     *  section="Reviews",
+     *  resource=true,
+     *  description="Get all the reviews data by card title.",
+     *  parameters={
+     *  },
+     * )
+     */
+    public function reviewsAction(Request $request)
+    {
+      $rulings = $this->entityManager->getRepository('AppBundle:Review')->findAll();
+
+      $out = [];
+      foreach($rulings as $r) {
+        $comments = [];
+        foreach($r->getComments() as $comment) {
+          array_push($comments, [
+            'user' => $comment->getAuthor()->getUsername(),
+            'comment' => str_replace('\r', '', $r->getText()),
+            'date_create' => $comment->getDateCreation()->format('c'),
+            'date_update' => $comment->getDateupdate()->format('c'),
+          ]);
+        }
+        array_push($out, [
+          'id' => $r->getId(),
+          'title' => $r->getCard()->getTitle(),
+          'user' => $r->getUser()->getUsername(),
+          'ruling' => str_replace('\r', '', $r->getRawText()),
+          'votes' => $r->getNbvotes(),
+          'comments' => $comments,
+          'date_create' => $r->getDateCreation()->format('c'),
+          'date_update' => $r->getDateupdate()->format('c'),
+        ]);
+      }
+      return $this->prepareResponseFromCache($out, count($out), new DateTime(), $request);
+    }
+
+    /**
      * Get all Ruling data
      *
      * @ApiDoc(
