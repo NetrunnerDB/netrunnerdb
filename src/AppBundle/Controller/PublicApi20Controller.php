@@ -562,7 +562,7 @@ class PublicApi20Controller extends FOSRestController
         foreach($r->getComments() as $comment) {
           array_push($comments, [
             'user' => $comment->getAuthor()->getUsername(),
-            'comment' => str_replace('\r', '', $r->getText()),
+            'comment' => str_replace('\r', '', $comment->getText()),
             'date_create' => $comment->getDateCreation()->format('c'),
             'date_update' => $comment->getDateupdate()->format('c'),
           ]);
