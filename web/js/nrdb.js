@@ -492,6 +492,7 @@ function update_deck(options) {
     }
     check_influence(influenceSpent);
     check_restricted();
+    check_startup_constraints();
     check_deck_limit();
     check_agenda_factions();
     check_ampere_agenda_limits();
@@ -543,6 +544,32 @@ function check_ampere_agenda_limits() {
         $('#ampere_agenda_limit').text('More than 2 agendas included from a non-neutral Corp faction.').show();
     } else {
         $('#ampere_agenda_limit').text('').hide();
+    }
+}
+
+function check_startup_constraints() {
+    if(MWL && MWL['name'].includes("Startup Ban List")){
+        const five_threes = NRDB.data.cards.find({ 
+            indeck: { '$gt': 0 },
+            type_code: 'agenda'
+        }).filter(function (card) {
+            return card.agenda_points >= 3;
+        });
+
+        const num_five_threes = five_threes.reduce(function (count, agenda){
+            return count + agenda['indeck'];
+        }, 0);
+
+        if(num_five_threes > 3){
+            $('#startupvalidation').text('More than 3 agendas included with 3 or more agenda points each.').show();
+        }
+        else {
+            // remove any messages if things are okay
+            $('#startupvalidation').text('').hide();
+        }
+    }
+    else {
+        $('#startupvalidation').text('').hide();
     }
 }
 

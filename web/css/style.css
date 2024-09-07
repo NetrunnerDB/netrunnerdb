@@ -1543,6 +1543,7 @@ ul.rulings-list blockquote {
 #rotated:not(:empty),
 #limited:not(:empty),
 #out_of_faction_agendas:not(:empty),
+#startupvalidation:not(:empty),
 #ampere_agenda_limit:not(:empty) {
   color: var(--nrdb-color--error);
   display: list-item;
