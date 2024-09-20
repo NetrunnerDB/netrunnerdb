@@ -548,7 +548,7 @@ function check_ampere_agenda_limits() {
 }
 
 function check_startup_constraints() {
-    if(MWL && MWL['name'].includes("Startup Ban List")){
+    if(MWL && MWL['name'].includes("Startup Ban List 24.09")){
         const five_threes = NRDB.data.cards.find({ 
             indeck: { '$gt': 0 },
             type_code: 'agenda'
