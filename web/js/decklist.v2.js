@@ -58,6 +58,7 @@ function setup_moderation(moderation_status, moderation_reason, is_moderator) {
             break;
         case 2: // MODERATION_TRASHED
             $('#btn-moderation-restore,#btn-moderation-absolve').parent().removeClass('disabled');
+            $('#btn-moderation-restore,#btn-moderation-delete').parent().removeClass('disabled');
             break;
         case 3: // MODERATION_DELETED
             $('#btn-moderation-restore').parent().removeClass('disabled');
