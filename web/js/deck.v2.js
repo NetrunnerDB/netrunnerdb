@@ -462,7 +462,7 @@ $(function() {
   var converter = new Markdown.Converter();
   $('#description').on('keyup', function() {
     $('#description-preview').html(
-        converter.makeHtml($('#description').val()));
+        converter.makeHtml(escapeHtml($('#description').val())));
   });
 
   $('#description').textcomplete([{

@@ -110,7 +110,7 @@ function setup_comment_form() {
     $('#comment-form-text').on(
             'keyup',
             function () {
-                $('#comment-form-preview').html(converter.makeHtml($('#comment-form-text').val()));
+                $('#comment-form-preview').html(converter.makeHtml(escapeHtml($('#comment-form-text').val())));
             }
     );
 
@@ -385,10 +385,10 @@ function edit_form() {
 
   var converter = new Markdown.Converter();
   $('#publish-decklist-description-preview').html(
-    converter.makeHtml($('#publish-decklist-description').val()));
+    converter.makeHtml(escapeHtml($('#publish-decklist-description').val())));
   $('#publish-decklist-description').on('keyup', function() {
     $('#publish-decklist-description-preview').html(
-        converter.makeHtml($('#publish-decklist-description').val()));
+        converter.makeHtml(escapeHtml($('#publish-decklist-description').val())));
   });
 
   $('#publish-decklist-description').textcomplete([{

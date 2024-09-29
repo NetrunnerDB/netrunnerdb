@@ -656,7 +656,7 @@ class BuilderController extends Controller
         }
         $name = filter_var($request->get('name'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
         $decklist_id = intval(filter_var($request->get('decklist_id'), FILTER_SANITIZE_NUMBER_INT));
-        $description = trim($request->get('description'));
+        $description = filter_var(trim(($request->get('description'))), FILTER_SANITIZE_SPECIAL_CHARS);
         $tags = explode(',', filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES));
         $mwl_code = $request->get('format_casual') ? null : $request->get('mwl_code');
 
