@@ -17,22 +17,4 @@ $(function() {
   $('#version-popover').popover({
     html : true
   });
-
-  $('#update-log a').click(function (event) {
-    event.preventDefault();
-    let l = event.currentTarget;
-    if (l.text == '(expand)') {
-      l.text = '(shrink)';
-      $('#update-log tbody').css("max-height", "400px");
-    } else {
-      l.text = '(expand)';
-      $('#update-log tbody').css("max-height", "");
-    }
-    return false;
-  });
-
-  $('#close-updates').click(function () {
-    $('#update-log').hide();
-  });
-
 });

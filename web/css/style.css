@@ -256,16 +256,6 @@
     border-color: #16181B;
   }
 
-  /*** Update log */
-  #update-log {
-    border: 1px solid var(--nrdb-color--light-gray);
-    background-color: var(--nrdb-color--light-gray);
-  }
-  #update-log th,
-  #update-log tr {
-    border-bottom: 1px solid var(--nrdb-color--background);
-  }
-
   /*** Quick fixes */
   .table > tbody > tr.warning > td {
     background-color: #1f1e1b;
@@ -1681,58 +1671,6 @@ ul.rulings-list blockquote {
   .desktop-centered {
     text-align: center !important;
   }
-}
-
-/* Update log */
-#update-log {
-  margin-top: 40px;
-  padding: 0;
-  border: 1px solid var(--nrdb-color--border);
-  border-radius: 5px;
-  background: var(--nrdb-color--card);
-}
-
-#update-log table {
-  width: 100%;
-}
-
-#update-log tbody {
-  display: block;
-  width: 100%;
-  padding-left: 20px;
-  max-height: 120px;
-  overflow-y: scroll;
-  transition: max-height 1s;
-}
-
-#update-log th {
-  padding: 7px 5px 5px 5px;
-  border-bottom: 1px solid var(--nrdb-color--border);
-  text-align: center;
-}
-
-#update-log tr {
-  color: var(--nrdb-color--gray);
-  border-bottom: 1px solid var(--nrdb-color--border);
-  vertical-align: top;
-}
-
-#update-log tr:first-child {
-  color: inherit;
-}
-
-#update-log td {
-  padding-top: 8px;
-}
-
-#update-log .date {
-  font-weight: bold;
-  text-align: right;
-  padding-right: 1em;
-}
-
-#update-log ul {
-  list-style-type: '-  ';
 }
 
 /* Loading icon */
