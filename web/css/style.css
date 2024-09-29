@@ -2062,10 +2062,6 @@ code {
   color: var(--nrdb-color--btn);
 }
 
-#deck-builder #faction-filter.form-control {
-  background-color: var(--nrdb-color--card) !important;
-}
-
 .table-hover > tbody > tr:hover {
   background-color: var(--nrdb-color--border);
 }
