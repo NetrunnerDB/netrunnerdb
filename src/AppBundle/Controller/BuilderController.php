@@ -45,20 +45,36 @@ class BuilderController extends Controller
         ]);
 
         $identities = $entityManager->getRepository('AppBundle:Card')->findBy([
-            "side" => $side,
             "type" => $type,
         ], [
             "faction" => "ASC",
             "title"   => "ASC",
         ]);
+        $identities = $cardsData->select_only_latest_cards($identities);
+        // Sorting minifactions and neutrals like this because whatever PHP version this is can't do stable sorting
+        // Resulting array is [ normal factions ... mini factions ... neutral ]
+        $identities = array_merge(
+          array_filter($identities, function($identity) {
+            return !$identity->getFaction()->getIsNeutral() && !$identity->getFaction()->getIsMini();
+          }),
+          array_filter($identities, function($identity) {
+            return $identity->getFaction()->getIsMini();
+          }),
+          array_filter($identities, function($identity) {
+            return $identity->getFaction()->getIsNeutral();
+          }),
+        );
 
-        $factions = $entityManager->getRepository('AppBundle:Faction')->findBy([
-            "side" => $side,
-        ], [
+        $factions = $entityManager->getRepository('AppBundle:Faction')->findBy([], [
             "name" => "ASC",
         ]);
+        $corp_factions = array_filter($factions, function($faction) {
+          return $faction->getSide()->getCode() == "corp" && !$faction->getIsNeutral();
+        });
+        $runner_factions = array_filter($factions, function($faction) {
+          return $faction->getSide()->getCode() == "runner" && !$faction->getIsNeutral() && !$faction->getIsMini();
+        });
 
-        $identities = $cardsData->select_only_latest_cards($identities);
         $banned_cards = array();
         foreach ($identities as $id) {
             $i = $cardsData->get_mwl_info([$id], true /* active_only */);
@@ -75,7 +91,9 @@ class BuilderController extends Controller
                 'pagedescription' => "Choose your identity to start building a custom deck.",
                 "identities"      => $identities,
                 "banned_cards"    => $banned_cards,
-                "factions"        => $factions
+                "corp_factions"   => $corp_factions,
+                "runner_factions" => $runner_factions,
+                "side"            => $side,
             ],
 
             $response

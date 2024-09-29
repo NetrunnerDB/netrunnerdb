@@ -3,7 +3,7 @@
 {% block head %}
 <style>
   /* Hide unmatched identities */
-  .hidden-format, .hidden-misc {
+  .hidden-side, .hidden-faction, .hidden-format, .hidden-misc {
     display: none;
   }
   /* Overwrite Bootstrap to prevent hidden identities messing up borders */
@@ -19,6 +19,10 @@
     justify-content: flex-start;
     align-items: center;
   }
+  /* Identify selected options */
+  .active-setting {
+    text-decoration: underline;
+  }
 </style>
 <script src="{{ asset('/js/initbuild.js') }}"></script>
 {% endblock %}
@@ -32,7 +36,11 @@
 <div class="col-sm-8">
 <div class="panel panel-default">
   <!-- Default panel contents -->
-  <div class="panel-heading"><b>Choose your identity</b></div>
+  <div class="panel-heading" style="display: flex; justify-content: space-between;">
+    <b>Choose your identity</b>
+    {% set altSide = side == 'Corp' ? 'runner' : 'corp' %}
+    <a href="#" id="switch-side" value="{{ altSide }}">Switch to {{ altSide }} deck</a>
+  </div>
   <!-- ID filter -->
   <div class="panel-heading">
     <div style="display: flex; flex-wrap: wrap;">
@@ -46,34 +54,41 @@
           <a href="#" class="option-format" value="all">All</a>
         </div>
       </div>
-      <div style="flex-grow: 1;">
-        <select class="form-control" name="faction-filter" id="faction-filter">
-          <option value="all">All factions</option>
-          {% for faction in factions %}
-          <option value="{{ faction.code }}">
-            {{ faction.name }}
-          </option>
+      <div style="flex-grow: 1;" id="faction-options">
+        <div id="corp-faction-options" {% if side == "Runner" %}style="display: none;"{% endif %} >Faction |
+          {% for faction in (corp_factions) %}
+            <a href="#" class="option-faction" value="{{ faction.code }}">{{ faction.name }}</a> |
           {% endfor %}
-        </select>
+          <a href="#" class="option-faction" value="neutral-corp">Neutral</a> |
+          <a href="#" class="option-faction" value="all">All</a>
+        </div>
+        <div id="runner-faction-options" {% if side == "Corp" %}style="display: none;"{% endif %}>Faction |
+          {% for faction in (runner_factions) %}
+            <a href="#" class="option-faction" value="{{ faction.code }}">{{ faction.name }}</a> |
+          {% endfor %}
+          <a href="#" class="option-faction" value="mini">Mini faction</a> |
+          <a href="#" class="option-faction" value="neutral-runner">Neutral</a> |
+          <a href="#" class="option-faction" value="all">All</a>
+        </div>
       </div>
     </div>
   </div>
   <div class="panel-heading" id="panel-title-filter">
     <input type="text" class="form-control input-sm" id="title-filter" placeholder="Filter by name" tabindex="1">
   </div>
-  <!-- List group -->
+  <!-- List groups -->
   <div class="list-group">
     {% for identity in identities %}
-    {% set banned = identity.code in banned_cards|keys %}
-    {% set rotated = identity.pack.cycle.rotated %}
-    <a href="{{ path('deck_initbuild', {card_code:identity.code}) }}"
-       class="identity list-group-item faction-{{ identity.faction.code }} pack-{{ identity.pack.code }} {% if rotated %}rotated{% endif %} {% if banned %}banned{% endif %}"
-       data-code="{{ identity.code }}">
-      <svg class="typeIcon" aria-label="{{ identity.faction.name }}" data-icon-color="{{ identity.faction.code }}" style="transform:translateY(2px);margin-right:0.5em;"><use xlink:href="/images/icons.svg#faction-{{ identity.faction.code }}"></use></svg>
-      <span class="name">{{ identity.title(app.request.locale) }}</span>
-      <span class="small">({{ identity.pack.name }})</span>
-      <span style="margin-left: 4px;" class="legality-indicator {% if rotated %}legality-rotated{% endif %} {% if banned %}legality-banned{% endif %}"></span>
-    </a>
+      {% set banned = identity.code in banned_cards|keys %}
+      {% set rotated = identity.pack.cycle.rotated %}
+      <a href="{{ path('deck_initbuild', {card_code:identity.code}) }}"
+         class="identity list-group-item side-{{ identity.side.code }} faction-{{ identity.faction.code }} pack-{{ identity.pack.code }} {% if rotated %}rotated{% endif %} {% if banned %}banned{% endif %} {% if identity.faction.isMini %}mini-faction{% endif %}"
+         data-code="{{ identity.code }}">
+        <svg class="typeIcon" aria-label="{{ identity.faction.name }}" data-icon-color="{{ identity.faction.code }}" style="transform:translateY(2px);margin-right:0.5em;"><use xlink:href="/images/icons.svg#faction-{{ identity.faction.code }}"></use></svg>
+        <span class="name">{{ identity.title(app.request.locale) }}</span>
+        <span class="small">({{ identity.pack.name }})</span>
+        <span style="margin-left: 4px;" class="legality-indicator {% if rotated %}legality-rotated{% endif %} {% if banned %}legality-banned{% endif %}"></span>
+      </a>
     {% endfor %}
   </div>
 </div>
