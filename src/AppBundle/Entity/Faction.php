@@ -159,7 +159,7 @@ class Faction implements NormalizableInterface, TimestampableInterface, CodeName
      */
     public function getIsNeutral()
     {
-        return str_contains($this->code, 'neutral');
+        return strpos($this->code, 'neutral') !== false;
     }
 
     /**
