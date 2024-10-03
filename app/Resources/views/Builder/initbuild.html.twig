@@ -45,7 +45,7 @@
   <div class="panel-heading">
     <div style="display: flex; flex-wrap: wrap;">
       <div style="flex-grow: 1;" id="format-options">
-        <div>Format |
+        <div>Format:
           <a href="#" class="option-format" value="startup">Startup</a> |
           <a href="#" class="option-format" value="standard">Standard</a> |
           <a href="#" class="option-format" value="eternal">Eternal</a> |
@@ -55,16 +55,17 @@
         </div>
       </div>
       <div style="flex-grow: 1;" id="faction-options">
-        <div id="corp-faction-options" {% if side == "Runner" %}style="display: none;"{% endif %} >Faction |
+        <div id="corp-faction-options" {% if side == "Runner" %}style="display: none;"{% endif %} >
           {% for faction in (corp_factions) %}
-            <a href="#" class="option-faction" value="{{ faction.code }}">{{ faction.name }}</a> |
+            <a href="#" class="option-faction" value="{{ faction.code }}"><svg data-icon-color="{{ faction.code }}" class="typeIcon" aria-label="{{ faction.name }}"><use xlink:href="/images/icons.svg#faction-{{ faction.code }}"></use></svg> {{ faction.name }}</a> |
+
           {% endfor %}
           <a href="#" class="option-faction" value="neutral-corp">Neutral</a> |
           <a href="#" class="option-faction" value="all">All</a>
         </div>
-        <div id="runner-faction-options" {% if side == "Corp" %}style="display: none;"{% endif %}>Faction |
+        <div id="runner-faction-options" {% if side == "Corp" %}style="display: none;"{% endif %}>
           {% for faction in (runner_factions) %}
-            <a href="#" class="option-faction" value="{{ faction.code }}">{{ faction.name }}</a> |
+            <a href="#" class="option-faction" value="{{ faction.code }}"><svg data-icon-color="{{ faction.code }}" class="typeIcon" aria-label="{{ faction.name }}"><use xlink:href="/images/icons.svg#faction-{{ faction.code }}"></use></svg> {{ faction.name }}</a> |
           {% endfor %}
           <a href="#" class="option-faction" value="mini">Mini faction</a> |
           <a href="#" class="option-faction" value="neutral-runner">Neutral</a> |
