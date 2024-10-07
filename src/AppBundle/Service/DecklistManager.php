@@ -638,6 +638,9 @@ class DecklistManager
             unset($faction_code);
         }
 
+        // $ctes will hold the individual Common Table Expressions that make up the full decklist search query.
+        // While there will always be at least 1 CTE, there may be up to 4 depending on if packs and individual cards are specified.
+        $ctes = [];
         $joins = [];
         $wheres = [];
         $params = [];
@@ -647,35 +650,61 @@ class DecklistManager
         $group_by = '';
         $group_by_count = 0;
         $ors = [];
+
+        // If any cards are specified, they will be the latest printing IDs.
+        // We need to use those to get all of the card ids for every printing of those cards.
+        // Then, find all the decklist ids with all of those cards.
         if (count($cards_code)) {
+            $card_ids = [];
             $card_versions = $cardsData->get_versions_by_code($cards_code);
-            $versions = [];
             foreach ($card_versions as $card) {
-                $versions[$card->getTitle()][] = $card;
+                $card_ids[] = $card->getId();
             }
-            foreach (array_values($versions) as $cards) {
-                $ins = [];
-                foreach ($cards as $card) {
-                    $ins[] = '?';
-                    $params[] = $card->getId();
-                    $types[] = \PDO::PARAM_STR;
-                    $packs[] = $card->getPack()->getCode();
-                }
-                if (count($ins)) {
-                    $in =  '(' . implode(',', $ins) . ')';
-                    $joins[] = 'dls.card_id IN ' . $in;
-                }
-            }
+            $ctes[] = "
+                decklists_with_desired_cards AS (
+                    SELECT
+                        decklist_id
+                    FROM
+                        decklistslot
+                    WHERE
+                        card_id IN (?)
+                    GROUP BY
+                        decklist_id
+                    HAVING
+                        COUNT(*) = ?
+                )
+            ";
+            $params[] = array_unique($card_ids);
+            $types[] = Connection::PARAM_INT_ARRAY;
+            // Uses $cards_code because that is the number the user specified, not the number of printings.
+            $params[] = count($cards_code);
+            $types[] = \PDO::PARAM_INT;
         }
 
-        if (count($joins)) {
-            $join = ' JOIN decklistslot dls'
-                . ' ON dls.decklist_id=d.id'
-                . ' AND (' . implode(' OR ', $joins) . ')';
-            $group_by_count = count($joins);
-            $group_by = ' GROUP BY dls.decklist_id'
-                . " HAVING COUNT(DISTINCT dls.card_id) = $group_by_count";
+        // If packs are specified, things get complicated because we will be filtering OUT decklists that contain cards NOT IN any of the selected packs.
+        if (count($packs)) {
+            // First get the ids for all the unwanted cards.
+            $ctes[] = "
+                unwanted_cards AS (
+                    SELECT
+                        card.id AS card_id
+                    from
+                        card
+                        join pack on card.pack_id = pack.id
+                    WHERE
+                        pack.code NOT IN (?)
+                )";
+                // Next, get the decklist_id for every deck that contains any of those unwanted cards.
+                $ctes[] = "unwanted_decklists AS (
+                    SELECT DISTINCT decklist_id
+                    FROM decklistslot WHERE card_id IN (SELECT card_id FROM unwanted_cards)
+                )";
+            $params[] = array_unique($packs);
+            $types[] = Connection::PARAM_STR_ARRAY;
+            $joins[] = "left join unwanted_decklists AS ud ON d.id = ud.decklist_id";
+            $wheres[] = "ud.decklist_id IS NULL";
         }
+        $join = implode("\n", $joins);
 
         if (!empty($side_code)) {
             $wheres[] = 's.code=?';
@@ -696,11 +725,6 @@ class DecklistManager
             $wheres[] = 'd.name like ?';
             $params[] = '%' . $decklist_title . '%';
             $types[] = \PDO::PARAM_STR;
-        }
-        if (count($packs)) {
-            $wheres[] = 'not exists(select * from decklistslot join card on decklistslot.card_id=card.id join pack on card.pack_id = pack.id where decklistslot.decklist_id=d.id and pack.code not in (?))';
-            $params[] = array_unique($packs);
-            $types[] = Connection::PARAM_STR_ARRAY;
         }
         if (!empty($mwl_code)) {
             $wheres[] = 'exists(select * from legality join mwl on legality.mwl_id=mwl.id where legality.decklist_id=d.id and mwl.code=? and legality.is_legal=1)';
@@ -745,48 +769,51 @@ class DecklistManager
                 break;
         }
 
-        $baseQuery =
-            "SELECT
-                d.id,
-                d.uuid,
-                d.name,
-                d.prettyname,
-                d.date_creation,
-                d.user_id,
-                d.tournament_id,
-                t.description tournament,
-                r.name rotation,
-                $extra_select
-                u.username,
-                u.faction usercolor,
-                u.reputation,
-                u.donation,
-                c.code,
-                c.title identity,
-                c.image_url identity_url,
-                p.name lastpack,
-                d.nbvotes,
-                d.nbfavorites,
-                d.nbcomments
-                from decklist d
-                join user u on d.user_id=u.id
-                join side s on d.side_id=s.id
-                join card c on d.identity_id=c.id
-                join pack p on d.last_pack_id=p.id
-                join faction f on d.faction_id=f.id
-                $join
-                left join tournament t on d.tournament_id=t.id
-                left join rotation r on d.rotation_id=r.id
-                where $where
-                and d.moderation_status in (0,1)
-                $group_by
-                order by $order desc, d.name asc";
-        $rows = $dbh->executeQuery("$baseQuery limit $start, $limit",
+        $ctes[] =
+            "decklist_results AS (
+                SELECT
+                    d.id,
+                    d.uuid,
+                    d.name,
+                    d.prettyname,
+                    d.date_creation,
+                    d.user_id,
+                    d.tournament_id,
+                    t.description tournament,
+                    r.name rotation,
+                    $extra_select
+                    u.username,
+                    u.faction usercolor,
+                    u.reputation,
+                    u.donation,
+                    c.code,
+                    c.title identity,
+                    c.image_url identity_url,
+                    p.name lastpack,
+                    d.nbvotes,
+                    d.nbfavorites,
+                    d.nbcomments
+                    from decklist d
+                    join user u on d.user_id=u.id
+                    join side s on d.side_id=s.id
+                    join card c on d.identity_id=c.id
+                    join pack p on d.last_pack_id=p.id
+                    join faction f on d.faction_id=f.id
+                    $join
+                    left join tournament t on d.tournament_id=t.id
+                    left join rotation r on d.rotation_id=r.id
+                    where $where
+                    and d.moderation_status in (0,1)
+                )";
+
+        $baseQuery = "WITH " . implode(",\n", $ctes);
+        // This query isn't as simple as the ones above for the various decklist search entry points, so we can't use getLimitedQueryRowsWithCounts.
+        $rows = $dbh->executeQuery("$baseQuery SELECT * FROM decklist_results order by $order desc, name asc limit $start, $limit",
             $params,
             $types
         )->fetchAll(\PDO::FETCH_ASSOC);
 
-        $count = $dbh->executeQuery("SELECT COUNT(*) FROM ($baseQuery) AS t", $params, $types)->fetch(\PDO::FETCH_NUM)[0];
+        $count = $dbh->executeQuery("$baseQuery SELECT COUNT(*) FROM decklist_results", $params, $types)->fetch(\PDO::FETCH_NUM)[0];
 
         return [
             "count"     => $count,
