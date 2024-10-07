@@ -20,6 +20,20 @@ class DecklistManager
         $this->entityManager = $entityManager;
     }
 
+    private function getLimitedQueryRowsWithCounts(EntityManagerInterface $entityManager, string $baseQuery, int $start, int $limit, array $params) {
+
+        $dbh = $entityManager->getConnection();
+
+        $rows = $dbh->executeQuery("$baseQuery LIMIT $start, $limit", $params)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $count = $dbh->executeQuery("SELECT COUNT(*) FROM ($baseQuery) AS t", $params)->fetch(\PDO::FETCH_NUM)[0];
+
+        return [
+            "rows" => $rows,
+            "count" => $count
+        ];
+    }
+
     /**
      * returns the list of decklist favorited by user
      *
@@ -31,10 +45,9 @@ class DecklistManager
      */
     public function favorites(int $user_id, int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts(
+            $this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -64,19 +77,12 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where f.user_id=?
                 and d.moderation_status in (0,1)
-                order by date_creation desc
-                limit $start, $limit",
-            [
-                $user_id,
-            ]
-        )
-                    ->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by date_creation desc",
+            $start, $limit, [ $user_id ]);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -91,10 +97,8 @@ class DecklistManager
      */
     public function by_author(int $user_id, int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -123,18 +127,12 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where d.user_id=?
                 and d.moderation_status in (0,1,2)
-                order by date_creation desc
-                limit $start, $limit",
-            [
-                $user_id,
-            ]
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by date_creation desc",
+            $start, $limit, [ $user_id ]);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -145,10 +143,8 @@ class DecklistManager
      */
     public function popular(int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -178,15 +174,11 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
                 and d.moderation_status in (0,1)
-                order by 2*nbvotes/(1+nbjours*nbjours) DESC, nbvotes desc, nbcomments desc
-                limit $start, $limit"
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
-
+                order by 2*nbvotes/(1+nbjours*nbjours) DESC, nbvotes desc, nbcomments desc",
+            $start, $limit, []);
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -197,10 +189,8 @@ class DecklistManager
      */
     public function dotw(int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery("
-            SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
               d.id,
               d.uuid,
               d.name,
@@ -228,15 +218,12 @@ class DecklistManager
               left join tournament t on d.tournament_id=t.id
               left join rotation r on d.rotation_id=r.id
             where dotw > 0
-            order by dotw desc
-            limit $start, $limit"
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+            order by dotw desc",
+        $start, $limit, []);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -247,10 +234,8 @@ class DecklistManager
      */
     public function halloffame(int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -279,15 +264,12 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where nbvotes > 10
                 and d.moderation_status in (0,1)
-                order by nbvotes desc, date_creation desc
-                limit $start, $limit"
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by nbvotes desc, date_creation desc",
+            $start, $limit, []);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -298,10 +280,8 @@ class DecklistManager
      */
     public function hottopics(int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -331,15 +311,12 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where d.nbcomments > 1
                 and d.moderation_status in (0,1)
-                order by nbrecentcomments desc, date_creation desc
-                limit $start, $limit"
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by nbrecentcomments desc, date_creation desc",
+            $start, $limit, []);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -350,10 +327,8 @@ class DecklistManager
      */
     public function tournaments(int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -382,18 +357,16 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where d.tournament_id is not null
                 and d.moderation_status in (0,1)
-                order by date_creation desc
-                limit $start, $limit"
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by date_creation desc",
+            $start, $limit, []);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
+    // TODO(plural): Remove this function if truly unused.
     /**
      * returns the list of decklists of chosen faction
      * @param integer $limit
@@ -401,10 +374,8 @@ class DecklistManager
      */
     public function faction(string $faction_code, int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -434,21 +405,16 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where f.code=?
                 and d.moderation_status in (0,1)
-                order by date_creation desc
-                limit $start, $limit",
-            [
-                $faction_code,
-            ]
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by date_creation desc",
+            $start, $limit, []);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
+    // TODO(plural): Remove this function if truly unused.
     /**
      * returns the list of decklists of chosen datapack
      * @param integer $limit
@@ -456,10 +422,8 @@ class DecklistManager
      */
     public function lastpack(string $pack_code, int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -488,18 +452,12 @@ class DecklistManager
                 left join rotation r on d.rotation_id=r.id
                 where p.code=?
                 and d.moderation_status in (0,1)
-                order by date_creation desc
-                limit $start, $limit",
-            [
-                $pack_code,
-            ]
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by date_creation desc",
+            $start, $limit, [ $pack_code ]);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -510,12 +468,10 @@ class DecklistManager
      */
     public function recent(int $start = 0, int $limit = 30, bool $includeEmptyDesc = true)
     {
-        $dbh = $this->entityManager->getConnection();
-
         $additional_clause = $includeEmptyDesc ? "" : "and d.rawdescription!=''";
 
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -545,15 +501,12 @@ class DecklistManager
                 where d.date_creation > DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH)
                 and d.moderation_status in (0,1)
                 $additional_clause
-                order by date_creation desc
-                limit $start, $limit"
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by date_creation desc",
+            $start, $limit, []);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -564,10 +517,8 @@ class DecklistManager
      */
     public function trashed(int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -595,15 +546,12 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where d.moderation_status=2
-                order by date_creation desc
-                limit $start, $limit"
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by date_creation desc",
+            $start, $limit, []);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -614,10 +562,8 @@ class DecklistManager
      */
     public function restored(int $start = 0, int $limit = 30)
     {
-        $dbh = $this->entityManager->getConnection();
-
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts($this->entityManager,
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -645,15 +591,12 @@ class DecklistManager
                 left join tournament t on d.tournament_id=t.id
                 left join rotation r on d.rotation_id=r.id
                 where d.moderation_status=1
-                order by date_creation desc
-                limit $start, $limit"
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+                order by date_creation desc",
+            $start, $limit, []);
 
         return [
-            "count"     => $count,
-            "decklists" => $rows,
+            "count"     => $results['count'],
+            "decklists" => $results['rows'],
         ];
     }
 
@@ -687,7 +630,7 @@ class DecklistManager
         }
 
         if (!is_array($packs)) {
-            $packs = $dbh->executeQuery("SELECT id FROM pack")->fetchAll(\PDO::FETCH_COLUMN);
+            $packs = $dbh->executeQuery("SELECT code FROM pack")->fetchAll(\PDO::FETCH_COLUMN);
         }
 
         if ($faction_code === "corp" || $faction_code === "runner") {
@@ -716,7 +659,7 @@ class DecklistManager
                     $ins[] = '?';
                     $params[] = $card->getId();
                     $types[] = \PDO::PARAM_STR;
-                    $packs[] = $card->getPack()->getId();
+                    $packs[] = $card->getPack()->getCode();
                 }
                 if (count($ins)) {
                     $in =  '(' . implode(',', $ins) . ')';
@@ -754,7 +697,6 @@ class DecklistManager
             $params[] = '%' . $decklist_title . '%';
             $types[] = \PDO::PARAM_STR;
         }
-
         if (count($packs)) {
             $wheres[] = 'not exists(select * from decklistslot join card on decklistslot.card_id=card.id join pack on card.pack_id = pack.id where decklistslot.decklist_id=d.id and pack.code not in (?))';
             $params[] = array_unique($packs);
@@ -803,8 +745,8 @@ class DecklistManager
                 break;
         }
 
-        $rows = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $baseQuery =
+            "SELECT
                 d.id,
                 d.uuid,
                 d.name,
@@ -838,13 +780,13 @@ class DecklistManager
                 where $where
                 and d.moderation_status in (0,1)
                 $group_by
-                order by $order desc, d.name asc
-                limit $start, $limit",
+                order by $order desc, d.name asc";
+        $rows = $dbh->executeQuery("$baseQuery limit $start, $limit",
             $params,
             $types
         )->fetchAll(\PDO::FETCH_ASSOC);
 
-        $count = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+        $count = $dbh->executeQuery("SELECT COUNT(*) FROM ($baseQuery) AS t", $params, $types)->fetch(\PDO::FETCH_NUM)[0];
 
         return [
             "count"     => $count,
