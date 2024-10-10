@@ -679,6 +679,7 @@ class DecklistManager
             // Uses $cards_code because that is the number the user specified, not the number of printings.
             $params[] = count($cards_code);
             $types[] = \PDO::PARAM_INT;
+            $joins[] = "join decklists_with_desired_cards as dwdc ON d.id = dwdc.decklist_id";
         }
 
         // If packs are specified, things get complicated because we will be filtering OUT decklists that contain cards NOT IN any of the selected packs.
