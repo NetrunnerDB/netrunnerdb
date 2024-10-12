@@ -6,6 +6,8 @@ services:
         bind:
             $tempDir: '%kernel.project_dir%/var'
             $publicDir: '%kernel.project_dir%/web'
+            $cardImageUrl: '%card_image_url%'
+            $shortCache: '%short_cache%'
 
     logout.redirect:
         class: AppBundle\Controller\RedirectAfterLogout

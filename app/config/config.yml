@@ -70,7 +70,7 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
-        naming_strategy: doctrine.orm.naming_strategy.underscore
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         dql:
             string_functions:
@@ -123,7 +123,8 @@ stof_doctrine_extensions:
         default:
             timestampable: true
 
-fos_rest: ~
+fos_rest:
+    routing_loader: false
 
 nelmio_api_doc:
     sandbox:

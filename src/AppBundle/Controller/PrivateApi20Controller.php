@@ -13,14 +13,14 @@ use AppBundle\Service\Judge;
 use AppBundle\Service\RotationService;
 use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class PrivateApi20Controller extends FOSRestController
+class PrivateApi20Controller extends AbstractFOSRestController
 {
     private function prepareResponse(array $data)
     {
