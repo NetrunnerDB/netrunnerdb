@@ -2,33 +2,39 @@
 
 namespace AppBundle\Controller;
 
-use DateTime;
 use AppBundle\Behavior\Entity\NormalizableInterface;
 use AppBundle\Behavior\Entity\TimestampableInterface;
 use AppBundle\Entity\Deck;
 use AppBundle\Entity\Decklist;
+use DateTime;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\HttpFoundation\Request;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use FOS\RestBundle\Controller\FOSRestController;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Cache\ItemInterface;
 
-class PublicApi20Controller extends FOSRestController
+class PublicApi20Controller extends AbstractFOSRestController
 {
     /** @var EntityManagerInterface $entityManager */
     protected $entityManager;
     protected $cache;
+    protected $cardImageUrl;
+    protected $shortCache;
+    protected $logger;
 
-    public function __construct(EntityManagerInterface $entityManager, AdapterInterface $cache)
+    public function __construct(EntityManagerInterface $entityManager, AdapterInterface $cache, string $cardImageUrl, string $shortCache, LoggerInterface $logger)
     {
       $this->entityManager = $entityManager;
       $this->cache = $cache;
+      $this->logger = $logger;
+      $this->cardImageUrl = $cardImageUrl;
+      $this->shortCache = $shortCache;
     }
 
     private function getSingleEntityFromCache(string $cachePrefix, $entityFunction, Request $request, array $additionalTopLevelProperties = []) {
@@ -96,7 +102,7 @@ class PublicApi20Controller extends FOSRestController
       $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
       $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
       $response->setPublic();
-      $response->setMaxAge($this->getParameter('short_cache'));
+      $response->setMaxAge($this->shortCache);
 
       $response->setLastModified($dateUpdate);
       if ($response->isNotModified($request)) {
@@ -125,7 +131,7 @@ class PublicApi20Controller extends FOSRestController
       $response->headers->set('Content-Type', 'application/json; charset=UTF-8');
       $response->setEncodingOptions(JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
       $response->setPublic();
-      $response->setMaxAge($this->getParameter('short_cache'));
+      $response->setMaxAge($this->shortCache);
 
       $dateUpdate = array_reduce($entities, function ($carry, TimestampableInterface $item) {
         if (!$carry || ($item->getDateUpdate() > $carry)) {
@@ -367,7 +373,7 @@ class PublicApi20Controller extends FOSRestController
     {
       return $this->getSingleEntityFromCache("public-api-card-" . $card_code, function() use ($card_code) {
         return $this->entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $card_code]);
-      }, $request, ['imageUrlTemplate' => rtrim($this->getParameter('card_image_url'), '/') . '/large/{code}.jpg']);
+      }, $request, ['imageUrlTemplate' => rtrim($this->cardImageUrl, '/') . '/large/{code}.jpg']);
     }
 
     /**
@@ -385,7 +391,7 @@ class PublicApi20Controller extends FOSRestController
     {
       return $this->getFromCache("public-api-cards", function() {
         return $this->entityManager->getRepository('AppBundle:Card')->findAll();
-      }, $request, ['imageUrlTemplate' => rtrim($this->getParameter('card_image_url'), '/') . '/large/{code}.jpg']);
+      }, $request, ['imageUrlTemplate' => rtrim($this->cardImageUrl, '/') . '/large/{code}.jpg']);
     }
 
     /**
