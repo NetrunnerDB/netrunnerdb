@@ -44,5 +44,3 @@ parameters:
     images_path: ~
     card_image_url: 'https://assets.netrunnerdb.com/v1/'
     v3_api_url: 'https://api-preview.netrunnerdb.com/'
-    slack_webhook_url: ~
-    slack_webhook_channel: ~
