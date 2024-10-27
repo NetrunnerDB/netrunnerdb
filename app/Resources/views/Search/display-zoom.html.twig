@@ -10,23 +10,59 @@
 {% block main %}
 {% include '/Scripts/api.html.twig' %}
 <script type="text/javascript">
-    async function getPronouns() {
-        // Attempt to get card's pronouns
-        const printing = await fetchData(`${v3_api_url}/api/v3/public/printings/{{ card.code }}`);
-        if (printing.attributes.pronouns) {
-            $(".card-stats").append(`<br>Pronouns: ${printing.attributes.pronouns}`)
+
+    async function fetchAndDisplayPrintingsPronounsAndPronunciation() {
+        const [printing, card_sets] = await Promise.all(
+            [
+                // Get the printing including the card data for this printing.
+                fetchFullDataResponse(`${v3_api_url}/api/v3/public/printings/{{ card.code }}?include=card`),
+                // Fetch the card sets and cycles to build the previous printings display with set names and cycle icons.
+                fetchFullDataResponse(`${v3_api_url}/api/v3/public/card_sets?include=card_cycle`)
+            ]
+        );
+
+        if (printing.data.attributes.pronouns) {
+            $(".card-stats").append(`<br>Pronouns: ${printing.data.attributes.pronouns}`)
         }
-    }
-    async function getPronunciation() {
-        const card = await fetchData(`${v3_api_url}/api/v3/public/printings/{{ card.code }}/card`);
+        const card = printing.included[0];
         if (card.attributes.pronunciation_approximation && card.attributes.pronunciation_ipa) {
             $(".card-pronunciation").append(
                 `<div class="card-pronunciation-break"></div>Pronunciation: ${card.attributes.pronunciation_ipa}<br>(${card.attributes.pronunciation_approximation})`
             );
         }
+
+        const cardSetIdToName = new Map();
+        const cardSetNameToLegacyCode = new Map();
+        const cardSetIdToCycleId = new Map();
+        card_sets.data.forEach((c) => {
+            cardSetIdToName[c.id] = c.attributes.name;
+            cardSetNameToLegacyCode[c.attributes.name] = c.attributes.legacy_code;
+            cardSetIdToCycleId[c.id] = c.attributes.card_cycle_id;
+        });
+        const printingIdToCardSetId = new Map();
+        for (i = 0; i < printing.data.attributes.printing_ids.length; i++) {
+            printingIdToCardSetId[printing.data.attributes.printing_ids[i]] = printing.data.attributes.card_set_ids[i];
+        }
+
+        const cardCycleIdToLegacyCode = new Map();
+        card_sets.included.forEach((c) => {
+            cardCycleIdToLegacyCode[c.id] = c.attributes.legacy_code;
+        });
+
+        const printingVersionList = $('#printing_version_list');
+        printing.data.attributes.printing_ids.forEach((printing_id) => {
+            printingVersionList.append(`
+                <tr>
+                    <td>
+                        <a href="${Routing.generate('cards_zoom', {_locale: NRDB.locale, 'card_code': printing_id})}">
+                            <span class="icon icon-${cardCycleIdToLegacyCode[cardSetIdToCycleId[printingIdToCardSetId[printing_id]]]}"></span> ${cardSetIdToName[printingIdToCardSetId[printing_id]]}
+                        </a>
+                    </td>
+                </tr>
+            `);
+        });
     }
-    getPronouns();
-    getPronunciation();
+    fetchAndDisplayPrintingsPronounsAndPronunciation();
 </script>
 
 <div class="row">
@@ -201,16 +237,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for version in card.versions %}
-                        <tr>
-                            <td>
-                                <a href="{{ path('cards_zoom',{_locale:app.request.locale, 'card_code':version.code}) }}">
-                                    <span class="icon icon-{{ version.cycle_code }}"></span> {{ version.pack_name }}
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                    <tbody id="printing_version_list">
                     </tbody>
                 </table>
             </div>
