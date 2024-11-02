@@ -81,7 +81,7 @@ async function buildBanlistsView() {
   const [formats, cards, restrictions] = await Promise.all([
     fetchData(`{{ v3_api_url }}/api/v3/public/formats`).then(fs => fs.filter(f => desiredFormats.includes(f.id))),
     fetchCards(`?include=card_subtypes&filter[search]=in_restriction:true`, 250).then(splitBySide),
-    fetchData(`{{ v3_api_url }}/api/v3/public/restrictions?sort=-date_start`)
+    fetchData(`{{ v3_api_url }}/api/v3/public/restrictions?sort=-date_start&page[size]=100`)
   ]);
 
   // Remove the loading indicator
