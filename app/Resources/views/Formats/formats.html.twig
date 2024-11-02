@@ -33,7 +33,7 @@ async function buildFormatsView() {
   const [r1, r2, r3, r4, r5] = await Promise.all(
     [
       fetchJson('{{ v3_api_url }}/api/v3/public/snapshots?filter[active]=true'),
-      fetchJson('{{ v3_api_url }}/api/v3/public/restrictions'),
+      fetchJson('{{ v3_api_url }}/api/v3/public/restrictions?page[size]=100'),
       fetchJson('{{ v3_api_url }}/api/v3/public/card_cycles?sort=-date_release'),
       fetchJson('{{ v3_api_url }}/api/v3/public/card_sets?sort=-date_release'),
       fetchJson('{{ v3_api_url }}/api/v3/public/formats'),
