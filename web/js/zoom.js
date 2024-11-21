@@ -318,7 +318,7 @@ function write_review_open(event) {
     $('.review-form-text').on(
             'keyup',
             function () {
-                $('.review-form-preview').html(converter.makeHtml(escapeHtml($('.review-form-text').val())));
+                $('.review-form-preview').html(converter.makeHtml($('.review-form-text').val()));
             }
     );
 
