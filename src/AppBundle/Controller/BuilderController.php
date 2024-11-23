@@ -12,6 +12,7 @@ use AppBundle\Entity\User;
 use AppBundle\Service\CardsData;
 use AppBundle\Service\DeckManager;
 use AppBundle\Service\Judge;
+use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -630,11 +631,12 @@ class BuilderController extends Controller
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @param DeckManager            $deckManager
+     * @param TextProcessor          $textProcessor
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function saveAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
+    public function saveAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager, TextProcessor $textProcessor)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -674,7 +676,7 @@ class BuilderController extends Controller
         }
         $name = filter_var($request->get('name'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
         $decklist_id = intval(filter_var($request->get('decklist_id'), FILTER_SANITIZE_NUMBER_INT));
-        $description = trim($request->get('description'));
+        $description = $textProcessor->purify(trim($request->get('description')));
         $tags = explode(',', filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES));
         $mwl_code = $request->get('format_casual') ? null : $request->get('mwl_code');
 
