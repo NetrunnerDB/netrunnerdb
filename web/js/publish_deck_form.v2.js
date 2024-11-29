@@ -1,10 +1,13 @@
 function initialize_publish_deck_form_typeahead() {
   var converter = new Markdown.Converter();
   $('#publish-decklist-description-preview').html(
-    converter.makeHtml($('#publish-decklist-description').val()));
+      DOMPurify.sanitize(converter.makeHtml($('#publish-decklist-description').val()))
+  );
+
   $('#publish-decklist-description').on('keyup', function() {
     $('#publish-decklist-description-preview').html(
-        converter.makeHtml($('#publish-decklist-description').val()));
+      DOMPurify.sanitize(converter.makeHtml($('#publish-decklist-description').val()))
+    );
   });
 
   $('#publish-decklist-description').textcomplete([{

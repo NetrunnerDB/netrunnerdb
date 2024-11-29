@@ -41,7 +41,7 @@ function add_ruling(event) {
     $('#add-ruling-form-text').on(
             'keyup',
             function () {
-                $('#add-ruling-form-preview').html(converter.makeHtml($('#add-ruling-form-text').val()));
+                $('#add-ruling-form-preview').html(DOMPurify.sanitize(converter.makeHtml($('#add-ruling-form-text').val())));
             }
     );
 
@@ -105,7 +105,7 @@ function edit_ruling(event) {
     $('#edit-ruling-form-text').on(
             'keyup',
             function () {
-                $('#edit-ruling-form-preview').html(converter.makeHtml($('#edit-ruling-form-text').val()));
+                $('#edit-ruling-form-preview').html(DOMPurify.sanitize(converter.makeHtml($('#edit-ruling-form-text').val())));
             }
     );
 
@@ -175,7 +175,7 @@ function write_comment(event) {
     $('.comment-form-text').on(
             'keyup',
             function () {
-                $('.comment-form-preview').html(converter.makeHtml($('.comment-form-text').val()));
+                $('.comment-form-preview').html(DOMPurify.sanitize(converter.makeHtml($('.comment-form-text').val())));
             }
     );
 
@@ -318,7 +318,7 @@ function write_review_open(event) {
     $('.review-form-text').on(
             'keyup',
             function () {
-                $('.review-form-preview').html(converter.makeHtml(escapeHtml($('.review-form-text').val())));
+                $('.review-form-preview').html(DOMPurify.sanitize(converter.makeHtml($('.review-form-text').val())));
             }
     );
 

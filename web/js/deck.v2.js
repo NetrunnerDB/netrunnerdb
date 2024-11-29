@@ -462,7 +462,8 @@ $(function() {
   var converter = new Markdown.Converter();
   $('#description').on('keyup', function() {
     $('#description-preview').html(
-        converter.makeHtml(escapeHtml($('#description').val())));
+        DOMPurify.sanitize(converter.makeHtml($('#description').val()))
+    );
   });
 
   $('#description').textcomplete([{

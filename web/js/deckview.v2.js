@@ -57,7 +57,13 @@ $(function() {
   });
 
   var converter = new Markdown.Converter();
-  $('#description').html(converter.makeHtml(SelectedDeck.description ? SelectedDeck.description : '<i>No description.</i>'));
+  $('#description').html(
+    DOMPurify.sanitize(
+      converter.makeHtml(
+        SelectedDeck.description ? SelectedDeck.description : '<i>No description.</i>'
+      )
+    )
+  );
 
   $('.btn-actions').on({
     click: do_action_deck
