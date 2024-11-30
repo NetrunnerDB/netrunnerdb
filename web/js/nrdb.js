@@ -549,7 +549,7 @@ function check_ampere_agenda_limits() {
 
 function check_startup_constraints() {
     if(MWL && MWL['name'].includes("Startup Ban List 24.09")){
-        const five_threes = NRDB.data.cards.find({ 
+        const five_threes = NRDB.data.cards.find({
             indeck: { '$gt': 0 },
             type_code: 'agenda'
         }).filter(function (card) {
@@ -1112,7 +1112,17 @@ function build_plaintext(deck) {
                 lines.push($(line).text().trim());
                 break;
             default:
-                lines.push($(line).text().trim());
+              let lineText = $(line).text().trim().replace("x", "");
+              let infCount = (lineText.match(/●/g)||[]).length;
+              let allianceInfCount = (lineText.match(/○/g)||[]).length;
+              lineText = lineText.replaceAll(/[●○]/g, "");
+              if (infCount > 0) {
+                lineText += `(${infCount} influence)`;
+              }
+              if (allianceInfCount > 0) {
+                lineText += `(${allianceInfCount} discounted influence)`;
+              }
+              lines.push(lineText);
         }
     });
 
