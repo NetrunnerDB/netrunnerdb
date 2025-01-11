@@ -21,6 +21,58 @@
             ]
         );
 
+        // Have a single button to flip if there are 2 sides.
+        if (printing.data.attributes.num_extra_faces == 1) {
+            const container = document.getElementById('card_image_container');
+            const div = document.createElement('div');
+            container.appendChild(div);
+
+            const flipButton = document.createElement('button');
+            flipButton.classList.add('btn');
+            flipButton.classList.add('btn-secondary');
+            div.appendChild(flipButton);
+            flipButton.innerHTML = 'flip';
+            let showingFront = true;
+            flipButton.addEventListener("click", function() {
+                const img = document.getElementById('current_card_img');
+                if (showingFront) {
+                    // Flip to the back side
+                    img.src = printing.data.attributes.faces[0].images.nrdb_classic.large;
+                    showingFront = false;
+                } else {
+                    // Flip to the front side
+                    img.src = printing.data.attributes.images.nrdb_classic.large;
+                    showingFront = true;
+                }
+            });
+        } else if (printing.data.attributes.num_extra_faces > 1) {
+          // Make a list of face buttons for cards with more than 2 faces.
+          const container = document.getElementById('card_image_container');
+          const div = document.createElement('div');
+          container.appendChild(div);
+          // Create a button for each face.
+          const frontFaceButton = document.createElement('button');
+            frontFaceButton.classList.add('btn');
+            frontFaceButton.classList.add('btn-secondary');
+            div.appendChild(frontFaceButton);
+            frontFaceButton.innerHTML = 'Front';
+            frontFaceButton.addEventListener("click", function() {
+                const img = document.getElementById('current_card_img');
+                img.src = printing.data.attributes.images.nrdb_classic.large;
+            });
+            for (let i = 0; i < printing.data.attributes.num_extra_faces; i++) {
+
+                const button = document.createElement('button');
+                button.classList.add('btn');
+                button.classList.add('btn-secondary');
+                div.appendChild(button);
+                button.innerHTML = `Face ${i+1}`;
+                button.addEventListener("click", function() {
+                    const img = document.getElementById('current_card_img');
+                    img.src = printing.data.attributes.faces[i].images.nrdb_classic.large;
+                });
+            }
+        }
         if (printing.data.attributes.pronouns) {
             $(".card-stats").append(`<br>Pronouns: ${printing.data.attributes.pronouns}`)
         }
@@ -67,9 +119,9 @@
 
 <div class="row">
     <div class="col-sm-4">
-        <div class="card-image">
+        <div class="card-image" id="card_image_container">
             {% if card.imageUrl %}
-            <img data-src="{{ card_image_url }}{{ asset(card.large_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload card-image" style="margin:auto">
+            <img id="current_card_img" data-src="{{ card_image_url }}{{ asset(card.large_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload card-image" style="margin:auto">
             {% else %}
             <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
             {% endif %}
