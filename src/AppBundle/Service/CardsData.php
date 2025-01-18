@@ -145,7 +145,7 @@ class CardsData
         $non_standard_packs = ['draft', 'napd'];
         $startup_cycles = ['system-gateway', 'system-update-2021', 'liberation']; // Hardcoded Startup Codes
         $non_startup_cycles = [];
-        $non_eternal_packs = ['draft', 'napd', 'tdc'];
+        $non_eternal_packs = ['draft', 'napd', 'tdc', 'elev'];
         $cycles = [];
         foreach ($list_cycles as $cycle) {
             $packs = [];
