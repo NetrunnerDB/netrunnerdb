@@ -23,9 +23,7 @@
       </td>
       <td data-th="Faction">
          <div class="table-cell">
-            {% if card.faction_code[:7] != 'neutral' %}
                <svg class="typeIcon" data-icon-color="{{ card.faction_code }}" aria-label="{{ card.faction_code }}"><use xlink:href="/images/icons.svg#faction-{{ card.faction_code }}"></use></svg>
-            {% endif %}
          </div>
       </td>
       <td data-th="Cost">{{ card.cost }}{{ card.advancementcost }}</td>
