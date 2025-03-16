@@ -432,7 +432,7 @@ class SocialController extends Controller
         }
 
         $imagePath = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $decklist['identity_code']])->getMediumImagePath();
-        $image = "https://card-images.netrunnerdb.com/v1" . $imagePath;
+        $image = $this->getParameter('card_image_url') . '/'. $imagePath;
 
         return $this->render('/Decklist/decklist.html.twig', [
             'pagetitle'           => $decklist['name'],
