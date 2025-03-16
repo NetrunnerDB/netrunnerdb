@@ -2243,6 +2243,12 @@ table .table-cell {
   aspect-ratio: 3/4.19;
 }
 
+@media (prefers-reduced-motion) {
+  .card-image-flippable {
+    transition: none;
+  }
+}
+
 .card-image-flippable * {
   user-select: none;
 }
