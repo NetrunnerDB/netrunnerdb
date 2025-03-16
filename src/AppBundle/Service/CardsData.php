@@ -143,9 +143,9 @@ class CardsData
         /** @var Cycle[] $list_cycles */
         $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "DESC"]);
         $non_standard_packs = ['draft', 'napd'];
-        $startup_cycles = ['system-gateway', 'system-update-2021', 'borealis', 'liberation']; // Hardcoded Startup Codes
+        $startup_cycles = ['system-gateway', 'system-update-2021', 'liberation']; // Hardcoded Startup Codes
         $non_startup_cycles = [];
-        $non_eternal_packs = ['draft', 'napd', 'tdc'];
+        $non_eternal_packs = ['draft', 'napd', 'tdc', 'elev'];
         $cycles = [];
         foreach ($list_cycles as $cycle) {
             $packs = [];
@@ -267,7 +267,7 @@ class CardsData
                             $parameters[$i++] = $arg;
                         } elseif ($acronym) {
                             $cond = [];
-                            $cond[] = "(BINARY(c.title) like ?$i)";
+                            $cond[] = "(c.strippedTitle like ?$i)";
                             $parameters[$i++] = "%$arg%";
                             $like = implode('% ', str_split($arg));
                             $cond[] = "(REPLACE(c.title, '-', ' ') like ?$i)";
@@ -280,7 +280,7 @@ class CardsData
                                 $or[] = "not (" . implode ("or", $cond) . ")";
                             }
                         } else {
-                            $or[] = "(c.title " . ($operator == ":" ? "like" : "not like") . " ?$i)";
+                            $or[] = "(c.strippedTitle " . ($operator == ":" ? "like" : "not like") . " ?$i)";
                             $parameters[$i++] = "%$arg%";
                         }
                     }
@@ -729,7 +729,7 @@ class CardsData
                     $condition[0] = strtolower($condition[0]);
                     if ($condition[0] == "startup") {
                         // Add the valid cycles for startup and add them to the WHERE clause for the query.
-                        $cycles = ['system-gateway', 'system-update-2021', 'borealis', 'liberation']; // Hardcoded Startup Codes
+                        $cycles = ['system-gateway', 'system-update-2021', 'liberation']; // Hardcoded Startup Codes
                         $placeholders = array();
                         foreach($cycles as $cycle) {
                             array_push($placeholders, "?$i");

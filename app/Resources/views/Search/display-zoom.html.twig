@@ -8,13 +8,130 @@
 {% endblock %}
 
 {% block main %}
+{% include '/Scripts/api.html.twig' %}
+<script type="text/javascript">
+
+    async function fetchAndDisplayPrintingsPronounsAndPronunciation() {
+        const [printing, card_sets] = await Promise.all(
+            [
+                // Get the printing including the card data for this printing.
+                fetchFullDataResponse(`${v3_api_url}/api/v3/public/printings/{{ card.code }}?include=card`),
+                // Fetch the card sets and cycles to build the previous printings display with set names and cycle icons.
+                fetchFullDataResponse(`${v3_api_url}/api/v3/public/card_sets?include=card_cycle`)
+            ]
+        );
+
+        if (printing.data.attributes.num_extra_faces > 0) {
+            // Make a list of face buttons for cards with more than 1 face.
+            const container = document.getElementById('card_image_container');
+            const cardImageFlippable = document.querySelector('.card-image-flippable');
+            const buttonContainer = document.querySelector('.card-image-flippable-buttons');
+
+            // Create a button for each face.
+            const faceButtons = new Array();
+            for (let i = 0; i <= printing.data.attributes.num_extra_faces; i++) {
+                const button = document.createElement('button');
+                button.classList.add('btn');
+                button.classList.add(i == 0 ? 'btn-primary' : 'btn-secondary');
+
+                buttonContainer.appendChild(button);
+                let buttonText = '';
+                if (i == 0) {
+                    buttonText = 'Front';
+                } else if (printing.data.attributes.num_extra_faces == 1) {
+                    buttonText = 'Back';
+                } else {
+                    buttonText = `Face ${i + 1}`;
+                }
+                button.innerHTML = buttonText;
+                button.dataset.face = i;
+                // Use the main image for the first button and the face image for i - 1 (because we are combining the front face with the faces array)
+                let buttonImg = i == 0 ? printing.data.attributes.images.nrdb_classic.large : printing.data.attributes.faces[i-1].images.nrdb_classic.large;
+                button.dataset.img = buttonImg;
+
+                button.addEventListener("click", function(e) {
+                    const button = e.target;
+                    if (button.classList.contains('btn-primary')) {
+                        return;
+                    }
+
+                    // Set all buttons to secondary.
+                    document.querySelectorAll('.card-image-flippable-buttons button').forEach(_button => {
+                        _button.classList.remove('btn-primary');
+                        _button.classList.add('btn-secondary');
+                    });
+                    // Set the clicked button to primary.
+                    button.classList.add('btn-primary');
+                    button.classList.remove('btn-secondary');
+
+                    const frontCurrentlyVisible = !document.querySelector(".card-image-flippable").classList.contains("flipped");
+                    const cardImgElement = frontCurrentlyVisible ? 'alternate_card_img' : 'current_card_img';
+                    document.getElementById(cardImgElement).src = button.dataset.img;
+
+                    // Time to flip now that things are all set up!
+                    document.querySelector(".card-image-flippable").classList.toggle("flipped");
+                });
+            }
+        }
+        if (printing.data.attributes.pronouns) {
+            $(".card-stats").append(`<br>Pronouns: ${printing.data.attributes.pronouns}`)
+        }
+        const card = printing.included[0];
+        if (card.attributes.pronunciation_approximation && card.attributes.pronunciation_ipa) {
+            $(".card-pronunciation").append(
+                `<div class="card-pronunciation-break"></div>Pronunciation: ${card.attributes.pronunciation_ipa}<br>(${card.attributes.pronunciation_approximation})`
+            );
+        }
+
+        const cardSetIdToName = new Map();
+        const cardSetNameToLegacyCode = new Map();
+        const cardSetIdToCycleId = new Map();
+        card_sets.data.forEach((c) => {
+            cardSetIdToName[c.id] = c.attributes.name;
+            cardSetNameToLegacyCode[c.attributes.name] = c.attributes.legacy_code;
+            cardSetIdToCycleId[c.id] = c.attributes.card_cycle_id;
+        });
+        const printingIdToCardSetId = new Map();
+        for (i = 0; i < printing.data.attributes.printing_ids.length; i++) {
+            printingIdToCardSetId[printing.data.attributes.printing_ids[i]] = printing.data.attributes.card_set_ids[i];
+        }
+
+        const cardCycleIdToLegacyCode = new Map();
+        card_sets.included.forEach((c) => {
+            cardCycleIdToLegacyCode[c.id] = c.attributes.legacy_code;
+        });
+
+        const printingVersionList = $('#printing_version_list');
+        printing.data.attributes.printing_ids.forEach((printing_id) => {
+            printingVersionList.append(`
+                <tr>
+                    <td>
+                        <a href="${Routing.generate('cards_zoom', {_locale: NRDB.locale, 'card_code': printing_id})}">
+                            <span class="icon icon-${cardCycleIdToLegacyCode[cardSetIdToCycleId[printingIdToCardSetId[printing_id]]]}"></span> ${cardSetIdToName[printingIdToCardSetId[printing_id]]}
+                        </a>
+                    </td>
+                </tr>
+            `);
+        });
+    }
+    fetchAndDisplayPrintingsPronounsAndPronunciation();
+</script>
+
 <div class="row">
     <div class="col-sm-4">
-        <div class="card-image">
+        <div class="card-image" id="card_image_container">
             {% if card.imageUrl %}
-            <img data-src="{{ card_image_url }}{{ asset(card.large_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload card-image" style="margin:auto">
+                <div class="card-image-flippable">
+                    <div class="card-image card-image-flippable__front">
+                        <img id="current_card_img" data-src="{{ card_image_url }}{{ asset(card.large_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload card-image" style="margin:auto">
+                    </div>
+                    <div class="card-image card-image-flippable__back">
+                        <img id="alternate_card_img" src="" class="img-responsive">
+                    </div>
+                </div>
+                <div class="card-image-flippable-buttons"></div>
             {% else %}
-            <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
+                <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
             {% endif %}
         </div>
     </div>
@@ -87,13 +204,15 @@
                     </div>
                 {% endif %}
 
-                <div class="card-flavor">
-                    {% if card.code == "33084" %}
-                        {{ card.flavor|raw|escape|nl2br }}
-                    {% elseif card.flavor %}
-                        {{ card.flavor|raw|nl2br }}
-                    {% endif %}
-                </div>
+                {% if card.flavor|length > 0 %}
+                    <div class="card-flavor">
+                        {% if card.code == "33084" %}
+                            {{ card.flavor|raw|escape|nl2br }}
+                        {% elseif card.flavor %}
+                            {{ card.flavor|raw|nl2br }}
+                        {% endif %}
+                    </div>
+                {% endif %}
 
                 {% if card.illustrator %}
                     <div class="card-illustrator">
@@ -104,10 +223,13 @@
                                 join(', ') |
                                 raw
                             }}
-                            </a>
                         </small>
                     </div>
                 {% endif %}
+
+                <div class="card-pronunciation">
+
+                </div>
             </div>
         </div>
         <a href="{{ path('decklists_list', {type:'find',_locale:app.request.locale, 'cards[]':card.code}) }}">Decklists with this card</a>
@@ -175,16 +297,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for version in card.versions %}
-                        <tr>
-                            <td>
-                                <a href="{{ path('cards_zoom',{_locale:app.request.locale, 'card_code':version.code}) }}">
-                                    <span class="icon icon-{{ version.cycle_code }}"></span> {{ version.pack_name }}
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                    <tbody id="printing_version_list">
                     </tbody>
                 </table>
             </div>

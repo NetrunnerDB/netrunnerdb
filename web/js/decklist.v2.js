@@ -58,6 +58,7 @@ function setup_moderation(moderation_status, moderation_reason, is_moderator) {
             break;
         case 2: // MODERATION_TRASHED
             $('#btn-moderation-restore,#btn-moderation-absolve').parent().removeClass('disabled');
+            $('#btn-moderation-restore,#btn-moderation-delete').parent().removeClass('disabled');
             break;
         case 3: // MODERATION_DELETED
             $('#btn-moderation-restore').parent().removeClass('disabled');
@@ -109,7 +110,7 @@ function setup_comment_form() {
     $('#comment-form-text').on(
             'keyup',
             function () {
-                $('#comment-form-preview').html(converter.makeHtml($('#comment-form-text').val()));
+                $('#comment-form-preview').html(DOMPurify.sanitize(converter.makeHtml($('#comment-form-text').val())));
             }
     );
 
@@ -384,10 +385,12 @@ function edit_form() {
 
   var converter = new Markdown.Converter();
   $('#publish-decklist-description-preview').html(
-    converter.makeHtml($('#publish-decklist-description').val()));
+      DOMPurify.sanitize(converter.makeHtml($('#publish-decklist-description').val()))
+  );
   $('#publish-decklist-description').on('keyup', function() {
     $('#publish-decklist-description-preview').html(
-        converter.makeHtml($('#publish-decklist-description').val()));
+      DOMPurify.sanitize(converter.makeHtml($('#publish-decklist-description').val()))
+    );
   });
 
   $('#publish-decklist-description').textcomplete([{

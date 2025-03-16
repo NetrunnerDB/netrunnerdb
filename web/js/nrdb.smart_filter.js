@@ -26,7 +26,7 @@
       switch (type) {
       case "":
       case "_":
-        add_string_sf('title', operator, values);
+        add_string_sf('stripped_title', operator, values);
         break;
       case "x":
         add_string_sf('text', operator, values);

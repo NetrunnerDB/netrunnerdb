@@ -432,7 +432,7 @@ class SocialController extends Controller
         }
 
         $imagePath = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $decklist['identity_code']])->getMediumImagePath();
-        $image = "https://card-images.netrunnerdb.com/v1" . $imagePath;
+        $image = $this->getParameter('card_image_url') . '/'. $imagePath;
 
         return $this->render('/Decklist/decklist.html.twig', [
             'pagetitle'           => $decklist['name'],
@@ -1115,6 +1115,20 @@ class SocialController extends Controller
         ]));
     }
 
+    private function getLimitedQueryRowsWithCounts(EntityManagerInterface $entityManager, string $baseQuery, int $start, int $limit, array $params) {
+
+        $dbh = $entityManager->getConnection();
+
+        $rows = $dbh->executeQuery("$baseQuery LIMIT $start, $limit", $params)->fetchAll(\PDO::FETCH_ASSOC);
+
+        $count = $dbh->executeQuery("SELECT COUNT(*) FROM ($baseQuery) AS t", $params)->fetch(\PDO::FETCH_NUM)[0];
+
+        return [
+            "rows" => $rows,
+            "count" => $count
+        ];
+    }
+
     /**
      * @param int                    $page
      * @param Request                $request
@@ -1136,10 +1150,9 @@ class SocialController extends Controller
         }
         $start = ($page - 1) * $limit;
 
-        $dbh = $entityManager->getConnection();
-
-        $comments = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts(
+            $entityManager,
+            "SELECT
                c.id,
                c.text,
                c.date_creation,
@@ -1150,15 +1163,10 @@ class SocialController extends Controller
                from comment c
                join decklist d on c.decklist_id=d.id
                where c.user_id=?
-               order by date_creation desc
-               limit $start, $limit",
-            [
-                $user->getId(),
-            ]
-        )
-                        ->fetchAll(\PDO::FETCH_ASSOC);
-
-        $maxcount = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+               order by date_creation desc",
+            $start, $limit, [ $user->getId() ] );
+        $comments = $results['rows'];
+        $maxcount = $results['count'];
 
         // pagination : calcul de nbpages // currpage // prevpage // nextpage
         // à partir de $start, $limit, $count, $maxcount, $page
@@ -1218,8 +1226,9 @@ class SocialController extends Controller
 
         $dbh = $entityManager->getConnection();
 
-        $comments = $dbh->executeQuery(
-            "SELECT SQL_CALC_FOUND_ROWS
+        $results = $this->getLimitedQueryRowsWithCounts(
+            $entityManager,
+            "SELECT
                c.id,
                c.text,
                c.date_creation,
@@ -1232,12 +1241,11 @@ class SocialController extends Controller
                from comment c
                join decklist d on c.decklist_id=d.id
                join user u on c.user_id=u.id
-               order by date_creation desc
-               limit $start, $limit",
-            []
-        )->fetchAll(\PDO::FETCH_ASSOC);
-
-        $maxcount = $dbh->executeQuery("SELECT FOUND_ROWS()")->fetch(\PDO::FETCH_NUM)[0];
+               order by date_creation desc",
+            $start, $limit,
+            []);
+        $comments = $results['rows'];
+        $maxcount = $results['count'];
 
         // pagination : calcul de nbpages // currpage // prevpage // nextpage
         // à partir de $start, $limit, $count, $maxcount, $page

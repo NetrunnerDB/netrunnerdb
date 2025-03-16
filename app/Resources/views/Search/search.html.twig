@@ -9,29 +9,17 @@
   <div class="row">
     <div class="col-sm-3">
 
-      <ul class="nav nav-pills nav-stacked">
-        {% set linkurl = path('decklists_list', {type:'popular'}) %}
-        <li class="{% if url == linkurl %}active{% endif %}"><a
-          href="{{ linkurl }}">Popular</a></li> {% set linkurl =
-        path('decklists_list', {type:'recent'}) %}
-        <li class="{% if url == linkurl %}active{% endif %}"><a
-          href="{{ linkurl }}">Recent</a></li> {% set linkurl =
-        path('decklists_list', {type:'hottopics'}) %}
-        <li class="{% if url == linkurl %}active{% endif %}"><a
-          href="{{ linkurl }}">Hot topics</a></li> {% set linkurl =
-        path('decklists_list', {type:'halloffame'}) %}
-        <li class="{% if url == linkurl %}active{% endif %}"><a
-          href="{{ linkurl }}">Hall of Fame</a></li> {% if app.user %} {% set
-        linkurl = path('decklists_list', {type:'favorites'}) %}
-        <li class="{% if url == linkurl %}active{% endif %}"><a
-          href="{{ linkurl }}">My favorites</a></li> {% set linkurl =
-        path('decklists_list', {type:'mine'}) %}
-        <li class="{% if url == linkurl %}active{% endif %}"><a
-          href="{{ linkurl }}">My decklists</a></li> {% endif %} {% set
-        linkurl = path('decklists_searchform') %}
-        <li class="{% if url == linkurl %}active{% endif %}"><a
-          href="{{ linkurl }}"><span class="glyphicon glyphicon-search"></span>
-            Search</a></li>
+      <!-- Duplicated in decklists.html.twig -->
+      <ul class="nav nav-pills nav-stacked" id="side_nav" style="margin-bottom:2em">
+        {% set linkurl = path('decklists_searchform') %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+        {% set linkurl = path('decklists_list', {type:'popular'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Popular</a></li>
+        {% set linkurl = path('decklists_list', {type:'recent'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Recent</a></li>
+        {% set linkurl = path('decklists_list', {type:'dotw'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Decklists of the Week</a></li>
+        {% set linkurl = path('decklists_list', {type:'tournament'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Tournaments</a></li>
+        {% set linkurl = path('decklists_list', {type:'hottopics'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Hot topics</a></li>
+        {% set linkurl = path('decklists_list', {type:'halloffame'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">Hall of Fame</a></li>
+        {% set linkurl = path('decklists_list', {type:'mine'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">My decklists</a></li>
+        {% set linkurl = path('decklists_list', {type:'favorites'}) %}<li class="{% if url == linkurl %}active{% endif %}"><a href="{{ linkurl }}">My favorites</a></li>
       </ul>
 
     </div>

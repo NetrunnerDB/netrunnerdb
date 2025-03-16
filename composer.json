@@ -24,7 +24,7 @@
         "ext-zip": "*",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.7",
-        "ezyang/htmlpurifier": "^4.9",
+        "ezyang/htmlpurifier": "^4.18",
         "friendsofsymfony/jsrouting-bundle": "^2.1",
         "friendsofsymfony/oauth-server-bundle": "^1.5",
         "friendsofsymfony/rest-bundle": "^2.3",

@@ -53,6 +53,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
     <script src="{{ asset('/lib/bootstrap-toggle-checklist.js') }}"></script>
     <script src="{{ asset('/lib/jquery-persistence.js') }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js"></script>
@@ -132,7 +133,21 @@
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li><a href="{{ path('decks_list') }}">My Decks</a></li>
-              <li><a href="{{ path('decklists_list', {type:'popular'}) }}">Decklists</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Decklists <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="{{ path('decklists_list', {type:'search'}) }}">Search</a></li>
+                  <li><a href="{{ path('decklists_list', {type:'popular'}) }}">Popular</a></li>
+                  <li><a href="{{ path('decklists_list', {type:'recent'}) }}">Recent</a></li>
+                  <li><a href="{{ path('decklists_list', {type:'dotw'}) }}">Decklists of the Week</a></li>
+                  <li><a href="{{ path('decklists_list', {type:'tournament'}) }}">Tournaments</a></li>
+                  <li><a href="{{ path('decklists_list', {type:'hottopics'}) }}">Hot Topics</a></li>
+                  <li><a href="{{ path('decklists_list', {type:'halloffame'}) }}">Hall of Fame</a></li>
+                  <li class="divider"></li>
+                  <li><a href="{{ path('decklists_list', {type:'mine'}) }}">My Decklists</a></li>
+                  <li><a href="{{ path('decklists_list', {type:'favorites'}) }}">My Favorites</a></li>
+                </ul>
+              </li>
               <li><a href="{{ path('cards_sets') }}">Sets</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Factions <span class="caret"></span></a>
@@ -279,7 +294,7 @@
             </ul>
 
             <p>
-              Designed and built by <a href="//twitter.com/alsciende">@alsciende</a>. Maintained by <a href="http://nullsignal.games/">Null Signal Games</a>.
+              Designed and originally built by <a href="//twitter.com/alsciende">@alsciende</a>. Enhanced and maintained by <a href="http://nullsignal.games/">Null Signal Games</a>.
             </p>
 
             <p>
@@ -287,13 +302,7 @@
             </p>
 
             <p>
-              You may contribute by giving money on <a href="https://paypal.me/niseiproject">Paypal</a>. (Please add a note with your username so that we can add you to the <a href="{{ path('donators') }}">Donators</a> list.)
-            </p>
-            <p>
-              Alternatively, you can check out the Null Signal Games <a href="https://www.patreon.com/join/NullSignalGames">Patreon</a>.
-              <a href="https://www.patreon.com/join/NullSignalGames" class="patreon-button"><img src=" {{ asset('/become_a_patron_button.png') }} " height="40" alt="Become a Patron of Null Signal Games!"/></a>
-			</ul>
-
+              You can <a href="https://ko-fi.com/nullsignalgames">support Null Signal Games on Ko-Fi</a>. Please add a note with your username so that we can add you to the <a href="{{ path('donators') }}">Donators</a> list.
             </p>
 
             <p style="color: var(--nrdb-color--text);">

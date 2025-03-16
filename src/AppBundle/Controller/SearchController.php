@@ -146,7 +146,7 @@ class SearchController extends Controller
                 'view'             => 'card',
                 'sort'             => 'set',
                 'title'            => $card->getTitle(),
-                'image'            => "https://card-images.netrunnerdb.com/v1" . $card->getMediumImagePath(),
+                'image'            => $this->getParameter('card_image_url') . $card->getMediumImagePath(),
                 'meta'             => $meta,
                 'locale'           => $request->getLocale(),
             ]
@@ -518,7 +518,7 @@ class SearchController extends Controller
                     $standard_legal = "available";
 
                     // Startup legality is currently hard-coded since the DB doesn't know anything about it.
-                    $startupCycles = ['system-gateway' => true, 'system-update-2021' => true, 'borealis' => true, 'liberation' => true]; // Hardcoded Startup Codes
+                    $startupCycles = ['system-gateway' => true, 'system-update-2021' => true, 'liberation' => true]; // Hardcoded Startup Codes
                     $startup_legal = false;
 
                     $rotated_count = 0;
@@ -628,7 +628,7 @@ class SearchController extends Controller
             } else {
                 $title = $cards[0]["title"];
                 $description = $this->formatCardForEmbed($cards[0]);
-                $image = "https://card-images.netrunnerdb.com/v1" . $cards[0]["medium_image_path"];
+                $image = $this->getParameter('card_image_url') . $cards[0]["medium_image_path"];
             }
         }
         if (empty($title)) {

@@ -357,8 +357,14 @@ a:focus {
   font-size: 0.8em;
 }
 
+.card-pronunciation {
+  font-style: italic;
+  font-size: 0.8em;
+}
+
 .card-text::before,
 .card-flavor::before,
+.card-pronunciation-break::before,
 .card-illustrator::before {
   border-top: 1px solid var(--nrdb-color--border);
   width: 95%;
@@ -1537,6 +1543,7 @@ ul.rulings-list blockquote {
 #rotated:not(:empty),
 #limited:not(:empty),
 #out_of_faction_agendas:not(:empty),
+#startupvalidation:not(:empty),
 #ampere_agenda_limit:not(:empty) {
   color: var(--nrdb-color--error);
   display: list-item;
@@ -2055,10 +2062,6 @@ code {
   color: var(--nrdb-color--btn);
 }
 
-#deck-builder #faction-filter.form-control {
-  background-color: var(--nrdb-color--card) !important;
-}
-
 .table-hover > tbody > tr:hover {
   background-color: var(--nrdb-color--border);
 }
@@ -2231,4 +2234,47 @@ table .table-cell {
 
 .card-text abbr[class*="icon icon-"]:before {
   font-size: 16px;
+}
+
+.card-image-flippable {
+  transform-style: preserve-3d;
+  display: block;
+  transition: transform 420ms ease;
+  aspect-ratio: 3/4.19;
+}
+
+.card-image-flippable * {
+  user-select: none;
+}
+
+.card-image-flippable img {
+  width: inherit;
+  display: inline-block;
+}
+
+.card-image-flippable.flipped {
+  transform: rotateY(180deg) !important;
+}
+
+.card-image-flippable__front,
+.card-image-flippable__back {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.card-image-flippable__back {
+  transform: rotateY(180deg);
+}
+
+.card-image-flippable-buttons {
+  margin-top: 1em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
 }

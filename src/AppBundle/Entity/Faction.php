@@ -83,6 +83,7 @@ class Faction implements NormalizableInterface, TimestampableInterface, CodeName
                 'code' => $this->code,
                 'color' => $this->color,
                 'is_mini' => $this->isMini,
+                'is_neutral' => $this->getIsNeutral(),
                 'name' => $this->name,
                 'side_code' => $this->side ? $this->side->getCode() : null
         ];
@@ -151,6 +152,14 @@ class Faction implements NormalizableInterface, TimestampableInterface, CodeName
         $this->isMini = $isMini;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsNeutral()
+    {
+        return strpos($this->code, 'neutral') !== false;
     }
 
     /**

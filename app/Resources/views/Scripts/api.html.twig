@@ -10,6 +10,11 @@ async function fetchData(url) {
   return await fetchJson(url).then(json => json.data);
 }
 
+// Fetches the full response from a url (not accounting for pagination). Used when including other attributes.
+async function fetchFullDataResponse(url) {
+  return await fetchJson(url).then(json => json);
+}
+
 // Fetches all cards from the API (accounting for pagination)
 // Returns a list of cards
 async function fetchCards(flags='', pageLimit) {

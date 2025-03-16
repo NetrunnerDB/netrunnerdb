@@ -12,6 +12,7 @@ use AppBundle\Entity\User;
 use AppBundle\Service\CardsData;
 use AppBundle\Service\DeckManager;
 use AppBundle\Service\Judge;
+use AppBundle\Service\TextProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -45,20 +46,36 @@ class BuilderController extends Controller
         ]);
 
         $identities = $entityManager->getRepository('AppBundle:Card')->findBy([
-            "side" => $side,
             "type" => $type,
         ], [
             "faction" => "ASC",
             "title"   => "ASC",
         ]);
+        $identities = $cardsData->select_only_latest_cards($identities);
+        // Sorting minifactions and neutrals like this because whatever PHP version this is can't do stable sorting
+        // Resulting array is [ normal factions ... mini factions ... neutral ]
+        $identities = array_merge(
+          array_filter($identities, function($identity) {
+            return !$identity->getFaction()->getIsNeutral() && !$identity->getFaction()->getIsMini();
+          }),
+          array_filter($identities, function($identity) {
+            return $identity->getFaction()->getIsMini();
+          }),
+          array_filter($identities, function($identity) {
+            return $identity->getFaction()->getIsNeutral();
+          }),
+        );
 
-        $factions = $entityManager->getRepository('AppBundle:Faction')->findBy([
-            "side" => $side,
-        ], [
+        $factions = $entityManager->getRepository('AppBundle:Faction')->findBy([], [
             "name" => "ASC",
         ]);
+        $corp_factions = array_filter($factions, function($faction) {
+          return $faction->getSide()->getCode() == "corp" && !$faction->getIsNeutral();
+        });
+        $runner_factions = array_filter($factions, function($faction) {
+          return $faction->getSide()->getCode() == "runner" && !$faction->getIsNeutral() && !$faction->getIsMini();
+        });
 
-        $identities = $cardsData->select_only_latest_cards($identities);
         $banned_cards = array();
         foreach ($identities as $id) {
             $i = $cardsData->get_mwl_info([$id], true /* active_only */);
@@ -75,7 +92,9 @@ class BuilderController extends Controller
                 'pagedescription' => "Choose your identity to start building a custom deck.",
                 "identities"      => $identities,
                 "banned_cards"    => $banned_cards,
-                "factions"        => $factions
+                "corp_factions"   => $corp_factions,
+                "runner_factions" => $runner_factions,
+                "side"            => $side,
             ],
 
             $response
@@ -612,11 +631,12 @@ class BuilderController extends Controller
      * @param Request                $request
      * @param EntityManagerInterface $entityManager
      * @param DeckManager            $deckManager
+     * @param TextProcessor          $textProcessor
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      *
      * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
      */
-    public function saveAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager)
+    public function saveAction(Request $request, EntityManagerInterface $entityManager, DeckManager $deckManager, TextProcessor $textProcessor)
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -656,7 +676,7 @@ class BuilderController extends Controller
         }
         $name = filter_var($request->get('name'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
         $decklist_id = intval(filter_var($request->get('decklist_id'), FILTER_SANITIZE_NUMBER_INT));
-        $description = trim($request->get('description'));
+        $description = $textProcessor->purify(trim($request->get('description')));
         $tags = explode(',', filter_var($request->get('tags'), FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES));
         $mwl_code = $request->get('format_casual') ? null : $request->get('mwl_code');
 
@@ -1049,7 +1069,7 @@ class BuilderController extends Controller
         $description = "An unpublished decklist by " . $deck["user_name"] . ".";
 
         $identity = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $deck["identity_code"]]);
-        $image = "https://card-images.netrunnerdb.com/v1" . $identity->getMediumImagePath();
+        $image = $this->getParameter('card_image_url') . $identity->getMediumImagePath();
 
         return $this->render(
 

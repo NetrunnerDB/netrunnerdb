@@ -99,11 +99,13 @@ class DecklistsController extends Controller
                 $this->denyAccessUnlessGranted('ROLE_MODERATOR');
                 $result = $decklistManager->trashed($start, $limit);
                 $pagetitle = "Trashed decklists";
+                $pagedescription = '';
                 break;
             case 'restored':
                 $this->denyAccessUnlessGranted('ROLE_MODERATOR');
                 $result = $decklistManager->restored($start, $limit);
                 $pagetitle = "Restored decklists";
+                $pagedescription = '';
                 break;
             case 'popular':
             default:

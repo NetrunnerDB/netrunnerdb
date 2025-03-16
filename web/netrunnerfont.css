@@ -141,6 +141,9 @@
 .icon-liberation:before {
   content: "\e933";
 }
+.icon-elevation:before {
+  content: "\e934";
+}
 .icon-anarch:before {
   content: "\e91a";
 }

@@ -9,7 +9,7 @@ $(document).on('data.app', function() {
       return _.deburr(cardTitle).toLowerCase().trim();
     }
     var matchingCards = _.filter(latestCards, function (card) {
-      return regexp.test(normalizeTitle(card.title));
+      return regexp.test(normalizeTitle(card.stripped_title));
     });
     matchingCards.sort((card1, card2) => {
         var card1title = normalizeTitle(card1.title);
@@ -57,6 +57,11 @@ $(document).on('data.app', function() {
   });
 
   $('#allowed_packs').on('change', handle_checkbox_change);
+  $('#toggle_show_packs').on('click', function(event) {
+    event.preventDefault();
+    var hidden = $('#allowed_packs').is(":visible");
+    $(this).text(hidden ? "Show card packs" : "Hide card packs");
+  });
 
   let rotated_cycles = Array();
   rotated_cycles['draft'] = 1;
@@ -66,7 +71,6 @@ $(document).on('data.app', function() {
   var startup_cycles = Array(); // Hardcoded Startup Codes
   startup_cycles['system-gateway'] = 1;
   startup_cycles['system-update-2021'] = 1;
-  startup_cycles['borealis'] = 1;
   startup_cycles['liberation'] = 1;
   var nsg_cycles = Array(); // Hardcoded NSG Codes
   nsg_cycles['system-gateway'] = 1;
