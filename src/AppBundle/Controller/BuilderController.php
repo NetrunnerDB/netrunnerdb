@@ -1069,7 +1069,7 @@ class BuilderController extends Controller
         $description = "An unpublished decklist by " . $deck["user_name"] . ".";
 
         $identity = $entityManager->getRepository('AppBundle:Card')->findOneBy(['code' => $deck["identity_code"]]);
-        $image = "https://card-images.netrunnerdb.com/v1" . $identity->getMediumImagePath();
+        $image = $this->getParameter('card_image_url') . $identity->getMediumImagePath();
 
         return $this->render(
 

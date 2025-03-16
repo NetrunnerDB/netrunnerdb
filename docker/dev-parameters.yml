@@ -43,4 +43,4 @@ parameters:
     oauth_test_redirect_uri: ~
     images_path: ~
     v3_api_url: 'https://api.netrunnerdb.com'
-    card_image_url: 'https://card-images.netrunnerdb.com/v1'
+    card_image_url: 'https://card-images.netrunnerdb.com/v2'
