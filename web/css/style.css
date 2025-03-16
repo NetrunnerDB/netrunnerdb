@@ -2235,3 +2235,46 @@ table .table-cell {
 .card-text abbr[class*="icon icon-"]:before {
   font-size: 16px;
 }
+
+.card-image-flippable {
+  transform-style: preserve-3d;
+  display: block;
+  transition: transform 420ms ease;
+  aspect-ratio: 3/4.19;
+}
+
+.card-image-flippable * {
+  user-select: none;
+}
+
+.card-image-flippable img {
+  width: inherit;
+  display: inline-block;
+}
+
+.card-image-flippable.flipped {
+  transform: rotateY(180deg) !important;
+}
+
+.card-image-flippable__front,
+.card-image-flippable__back {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.card-image-flippable__back {
+  transform: rotateY(180deg);
+}
+
+.card-image-flippable-buttons {
+  margin-top: 1em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}

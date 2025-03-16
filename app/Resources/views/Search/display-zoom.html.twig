@@ -21,55 +21,55 @@
             ]
         );
 
-        // Have a single button to flip if there are 2 sides.
-        if (printing.data.attributes.num_extra_faces == 1) {
+        if (printing.data.attributes.num_extra_faces > 0) {
+            // Make a list of face buttons for cards with more than 1 face.
             const container = document.getElementById('card_image_container');
-            const div = document.createElement('div');
-            container.appendChild(div);
+            const cardImageFlippable = document.querySelector('.card-image-flippable');
+            const buttonContainer = document.querySelector('.card-image-flippable-buttons');
 
-            const flipButton = document.createElement('button');
-            flipButton.classList.add('btn');
-            flipButton.classList.add('btn-secondary');
-            div.appendChild(flipButton);
-            flipButton.innerHTML = 'flip';
-            let showingFront = true;
-            flipButton.addEventListener("click", function() {
-                const img = document.getElementById('current_card_img');
-                if (showingFront) {
-                    // Flip to the back side
-                    img.src = printing.data.attributes.faces[0].images.nrdb_classic.large;
-                    showingFront = false;
-                } else {
-                    // Flip to the front side
-                    img.src = printing.data.attributes.images.nrdb_classic.large;
-                    showingFront = true;
-                }
-            });
-        } else if (printing.data.attributes.num_extra_faces > 1) {
-          // Make a list of face buttons for cards with more than 2 faces.
-          const container = document.getElementById('card_image_container');
-          const div = document.createElement('div');
-          container.appendChild(div);
-          // Create a button for each face.
-          const frontFaceButton = document.createElement('button');
-            frontFaceButton.classList.add('btn');
-            frontFaceButton.classList.add('btn-secondary');
-            div.appendChild(frontFaceButton);
-            frontFaceButton.innerHTML = 'Front';
-            frontFaceButton.addEventListener("click", function() {
-                const img = document.getElementById('current_card_img');
-                img.src = printing.data.attributes.images.nrdb_classic.large;
-            });
-            for (let i = 0; i < printing.data.attributes.num_extra_faces; i++) {
-
+            // Create a button for each face.
+            const faceButtons = new Array();
+            for (let i = 0; i <= printing.data.attributes.num_extra_faces; i++) {
                 const button = document.createElement('button');
                 button.classList.add('btn');
-                button.classList.add('btn-secondary');
-                div.appendChild(button);
-                button.innerHTML = `Face ${i+1}`;
-                button.addEventListener("click", function() {
-                    const img = document.getElementById('current_card_img');
-                    img.src = printing.data.attributes.faces[i].images.nrdb_classic.large;
+                button.classList.add(i == 0 ? 'btn-primary' : 'btn-secondary');
+
+                buttonContainer.appendChild(button);
+                let buttonText = '';
+                if (i == 0) {
+                    buttonText = 'Front';
+                } else if (printing.data.attributes.num_extra_faces == 1) {
+                    buttonText = 'Back';
+                } else {
+                    buttonText = `Face ${i + 1}`;
+                }
+                button.innerHTML = buttonText;
+                button.dataset.face = i;
+                // Use the main image for the first button and the face image for i - 1 (because we are combining the front face with the faces array)
+                let buttonImg = i == 0 ? printing.data.attributes.images.nrdb_classic.large : printing.data.attributes.faces[i-1].images.nrdb_classic.large;
+                button.dataset.img = buttonImg;
+
+                button.addEventListener("click", function(e) {
+                    const button = e.target;
+                    if (button.classList.contains('btn-primary')) {
+                        return;
+                    }
+
+                    // Set all buttons to secondary.
+                    document.querySelectorAll('.card-image-flippable-buttons button').forEach(_button => {
+                        _button.classList.remove('btn-primary');
+                        _button.classList.add('btn-secondary');
+                    });
+                    // Set the clicked button to primary.
+                    button.classList.add('btn-primary');
+                    button.classList.remove('btn-secondary');
+
+                    const frontCurrentlyVisible = !document.querySelector(".card-image-flippable").classList.contains("flipped");
+                    const cardImgElement = frontCurrentlyVisible ? 'alternate_card_img' : 'current_card_img';
+                    document.getElementById(cardImgElement).src = button.dataset.img;
+
+                    // Time to flip now that things are all set up!
+                    document.querySelector(".card-image-flippable").classList.toggle("flipped");
                 });
             }
         }
@@ -121,9 +121,17 @@
     <div class="col-sm-4">
         <div class="card-image" id="card_image_container">
             {% if card.imageUrl %}
-            <img id="current_card_img" data-src="{{ card_image_url }}{{ asset(card.large_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload card-image" style="margin:auto">
+                <div class="card-image-flippable">
+                    <div class="card-image card-image-flippable__front">
+                        <img id="current_card_img" data-src="{{ card_image_url }}{{ asset(card.large_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload card-image" style="margin:auto">
+                    </div>
+                    <div class="card-image card-image-flippable__back">
+                        <img id="alternate_card_img" src="" class="img-responsive">
+                    </div>
+                </div>
+                <div class="card-image-flippable-buttons"></div>
             {% else %}
-            <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
+                <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
             {% endif %}
         </div>
     </div>
