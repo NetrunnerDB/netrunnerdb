@@ -3,7 +3,7 @@
 {% block title %}Rotation{% endblock %}
 
 {% block head %}
-<script src="{{ asset('/js/rotation.js') }}"></script>
+<script src="{{ asset('/js/rotation.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script type="text/javascript">
 var rotations = new Array();
 

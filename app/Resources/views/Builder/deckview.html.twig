@@ -2,11 +2,11 @@
 
 {% block head %}
 
-<script src="{{ asset('/js/nrdb.deck_gallery.js') }}"></script>
-<script src="{{ asset('/js/nrdb.draw_simulator.js') }}"></script>
-<script src="{{ asset('/js/nrdb.card_modal.js') }}"></script>
-<script src="{{ asset('/js/publish_deck_form.v2.js') }}"></script>
-<script src="{{ asset('/js/deckview.v2.js') }}"></script>
+<script src="{{ asset('/js/nrdb.deck_gallery.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/nrdb.draw_simulator.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/nrdb.card_modal.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/publish_deck_form.v2.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/deckview.v2.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script type="text/javascript">
 
 var Identity = null,

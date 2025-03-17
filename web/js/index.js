@@ -1,4 +1,7 @@
 $(document).on('data.app', function() {
+  if (Decklist == null) {
+    return;
+  }
   for (var i = 0; i < Decklist.cards.length; i++) {
     var slot = Decklist.cards[i];
     NRDB.data.cards.update({

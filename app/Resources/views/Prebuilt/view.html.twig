@@ -1,7 +1,7 @@
 {% extends '/layout.html.twig' %}
 
 {% block head %}
-<script src="{{ asset('/js/nrdb.card_modal.js') }}"></script>
+<script src="{{ asset('/js/nrdb.card_modal.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script type="text/javascript">
 
 var Identity = null,

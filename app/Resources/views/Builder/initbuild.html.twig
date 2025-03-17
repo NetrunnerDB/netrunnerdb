@@ -24,7 +24,7 @@
     text-decoration: underline;
   }
 </style>
-<script src="{{ asset('/js/initbuild.js') }}"></script>
+<script src="{{ asset('/js/initbuild.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 {% endblock %}
 
 {% block body %}
