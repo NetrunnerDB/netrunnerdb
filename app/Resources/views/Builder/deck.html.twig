@@ -2,13 +2,13 @@
 
 {% block head %}
 
-<script src="{{ asset('/js/nrdb.settings.js') }}"></script>
-<script src="{{ asset('/js/nrdb.draw_simulator.js') }}"></script>
-<script src="{{ asset('/js/nrdb.card_modal.js') }}"></script>
-<script src="{{ asset('/js/nrdb.smart_filter.js') }}"></script>
-<script src="{{ asset('/js/nrdb.suggestions.js') }}"></script>
-<script src="{{ asset('/js/nrdb.diff.js') }}"></script>
-<script src="{{ asset('/js/deck.v2.js') }}"></script>
+<script src="{{ asset('/js/nrdb.settings.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/nrdb.draw_simulator.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/nrdb.card_modal.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/nrdb.smart_filter.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/nrdb.suggestions.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/nrdb.diff.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/deck.v2.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script type="text/javascript">
 
 var Filters = {},

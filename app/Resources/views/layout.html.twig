@@ -22,10 +22,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css">
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
-    <link rel="stylesheet" href="{{ asset('/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('/latofonts.css') }}">
-    <link rel="stylesheet" href="{{ asset('/netrunnerfont.css') }}">
-    <link rel="preload" href="/images/icons.svg" as="image" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ asset('/css/style.css') }}?cachebuster={{ asset_fingerprint }}">
+    <link rel="stylesheet" href="{{ asset('/latofonts.css') }}?cachebuster={{ asset_fingerprint }}">
+    <link rel="stylesheet" href="{{ asset('/netrunnerfont.css') }}?cachebuster={{ asset_fingerprint }}">
+    <link rel="preload" href="/images/icons.svg?cachebuster={{ asset_fingerprint }}" as="image" type="image/svg+xml">
 
     {# Set the light/dark theme asap to reduce FOUC #}
     <script type="text/javascript">
@@ -36,15 +36,15 @@
       document.querySelector('html').setAttribute('data-theme', theme);
     </script>
 
-    <script src="{{ asset('/bundles/fosjsrouting/js/router.js') }}"></script>
-    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData","version": asset_version('')}) }}"></script>
+    <script src="{{ asset('/bundles/fosjsrouting/js/router.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData","version": asset_version('')}) }}?cachebuster={{ asset_fingerprint }}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lie/3.3.0/lie.polyfill.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/3.0.3/jquery.qtip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script src="/js/typeahead.jquery.min.js"></script>
+    <script src="/js/typeahead.jquery.min.js?cachebuster={{ asset_fingerprint }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.0.0/highcharts.min.js" async></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pagedown/1.0/Markdown.Converter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.textcomplete/1.8.5/jquery.textcomplete.min.js"></script>
@@ -54,8 +54,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.7.3/localforage.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
-    <script src="{{ asset('/lib/bootstrap-toggle-checklist.js') }}"></script>
-    <script src="{{ asset('/lib/jquery-persistence.js') }}"></script>
+    <script src="{{ asset('/lib/bootstrap-toggle-checklist.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+    <script src="{{ asset('/lib/jquery-persistence.js') }}?cachebuster={{ asset_fingerprint }}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js"></script>
     <script>
       window.addEventListener("load", function(){
@@ -100,14 +100,14 @@
       gtag('config', 'UA-131671930-1');
     </script>
     {% endif %}
-    <script src="{{ asset('/js/nrdb.js') }}"></script>
-    <script src="{{ asset('/js/nrdb.user.js') }}"></script>
-    <script src="{{ asset('/js/nrdb.data.js') }}"></script>
-    <script src="{{ asset('/js/nrdb.format.js') }}"></script>
-    <script src="{{ asset('/js/nrdb.tip.js') }}"></script>
-    <script src="{{ asset('/js/nrdb.ui.js') }}"></script>
-    <script src="{{ asset('/js/topnav.js') }}"></script>
-    <script src="{{ asset('/js/nrdb.theme.js') }}"></script>
+    <script src="{{ asset('/js/nrdb.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+    <script src="{{ asset('/js/nrdb.user.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+    <script src="{{ asset('/js/nrdb.data.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+    <script src="{{ asset('/js/nrdb.format.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+    <script src="{{ asset('/js/nrdb.tip.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+    <script src="{{ asset('/js/nrdb.ui.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+    <script src="{{ asset('/js/topnav.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+    <script src="{{ asset('/js/nrdb.theme.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 
     {% block head %}{% endblock %}
 
