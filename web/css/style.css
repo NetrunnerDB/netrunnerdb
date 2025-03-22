@@ -249,6 +249,16 @@
     background-color: #6e3737;
     border-color: #6e3737;
   }
+  .btn-neutral {
+    background-color: var(--nrdb-color--neutral-hover);
+    color: #fff
+  }
+  .btn-neutral:hover {
+    background-color: var(--nrdb-color--neutral-bg);
+  }
+  .btn-neutral:focus {
+    outline-color: var(--nrdb-color--neutral);
+  }
 
   /*** Faction banner */
   #navbar-factions {
