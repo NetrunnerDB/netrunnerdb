@@ -104,7 +104,7 @@ $(function() {
           let visible = true;
           // Startup
           if (format === 'startup') {
-            visible = ['sg', 'su21', 'tai', 'rwr'].some(p => $(this).hasClass('pack-' + p)); // Hardcoded Startup Codes
+            visible = STARTUP_PACKS.keys().some(p => $(this).hasClass('pack-' + p));
           }
           // Standard
           else if (format === 'standard') {

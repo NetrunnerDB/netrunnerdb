@@ -2,6 +2,8 @@
 
 {% block head %}
 
+{% include '/Scripts/nsg_formats.html.twig' %}
+
 <script src="{{ asset('/js/nrdb.settings.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script src="{{ asset('/js/nrdb.draw_simulator.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script src="{{ asset('/js/nrdb.card_modal.js') }}?cachebuster={{ asset_fingerprint }}"></script>

@@ -1,6 +1,8 @@
 {% extends '/layout.html.twig' %}
 
 {% block head %}
+{% include '/Scripts/nsg_formats.html.twig' %}
+
 <script src="{{ asset('/js/search.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script src="{{ asset('/js/decklists.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 {% endblock %}

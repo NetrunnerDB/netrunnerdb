@@ -68,28 +68,14 @@ $(document).on('data.app', function() {
   rotated_cycles['napd'] = 1;
   NRDB.data.cycles.find( { "rotated": true } ).forEach(function(cycle) { rotated_cycles[cycle.code] = 1; });
 
-  var startup_cycles = Array(); // Hardcoded Startup Codes
-  startup_cycles['system-gateway'] = 1;
-  startup_cycles['system-update-2021'] = 1;
-  startup_cycles['liberation'] = 1;
-  var nsg_cycles = Array(); // Hardcoded NSG Codes
-  nsg_cycles['system-gateway'] = 1;
-  nsg_cycles['system-update-2021'] = 1;
-  nsg_cycles['ashes'] = 1;
-  nsg_cycles['borealis'] = 1;
-  nsg_cycles['liberation'] = 1;
   var rotated_packs = Array();
-  var startup_packs = Array();
-  var nsg_packs = Array();
   NRDB.data.packs.find().forEach(function(pack) {
     if (rotated_cycles[pack.cycle.code]) { rotated_packs[pack.code] = 1; }
-    if (startup_cycles[pack.cycle.code]) { startup_packs[pack.code] = 1; }
-    if (nsg_cycles[pack.cycle.code]) { nsg_packs[pack.code] = 1; }
   });
 
   $('#select_startup').on('click', function (event) {
     $('#allowed_packs').find('input[type="checkbox"]').each(function() {
-      $(this).prop('checked', Boolean(startup_cycles[this.value] || startup_packs[this.value]));
+      $(this).prop('checked', Boolean(STARTUP_CYCLES.has(this.value) || STARTUP_PACKS.has(this.value)));
     });
     handle_checkbox_change();
     return false;
@@ -97,7 +83,7 @@ $(document).on('data.app', function() {
 
   $('#select_nsg').on('click', function (event) {
     $('#allowed_packs').find('input[type="checkbox"]').each(function() {
-      $(this).prop('checked', Boolean(nsg_cycles[this.value] || nsg_packs[this.value]));
+      $(this).prop('checked', Boolean(NSG_ONLY_CYCLES.has(this.value) || NSG_ONLY_PACKS.has(this.value)));
     });
     handle_checkbox_change();
     return false;
