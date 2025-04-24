@@ -143,9 +143,9 @@ class CardsData
         /** @var Cycle[] $list_cycles */
         $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "DESC"]);
         $non_standard_packs = ['draft', 'napd'];
-        $startup_cycles = ['system-gateway', 'system-update-2021', 'liberation']; // Hardcoded Startup Codes
+        $startup_cycles = ['elevation', 'liberation', 'system-gateway']; // Hardcoded Startup Codes
         $non_startup_cycles = [];
-        $non_eternal_packs = ['draft', 'napd', 'tdc', 'elev'];
+        $non_eternal_packs = ['draft', 'napd', 'tdc'];
         $cycles = [];
         foreach ($list_cycles as $cycle) {
             $packs = [];
