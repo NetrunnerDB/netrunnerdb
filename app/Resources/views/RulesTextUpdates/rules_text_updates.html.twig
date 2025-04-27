@@ -1,0 +1,25 @@
+{% extends '/layout.html.twig' %}
+
+{% block title %}Rules Text Updates{% endblock %}
+
+{% block head %}
+<style>
+	.break{
+	    display:block;
+	    margin:0 0 .8em;
+	}
+	del { background-color: var(--nrdb-color--anarch) }
+	ins { background-color: var(--nrdb-color--shaper) }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<div class="container" id="banlists">
+  <h1>{{ block('title') }}</h1>
+
+  {% include '/RulesTextUpdates/2025_03_24_elevation_release.html.twig' %}
+
+</div>
+
+{% endblock %}

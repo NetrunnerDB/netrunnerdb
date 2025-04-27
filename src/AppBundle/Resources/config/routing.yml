@@ -849,6 +849,12 @@ rotation:
     defaults:
         _controller: AppBundle:Rotation:get
 
+rules_text_updates:
+    path: /{_locale}/rules_text_updates
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:RulesTextUpdates:get
+
 illustrators:
     path: /{_locale}/illustrators
     methods: [GET]
