@@ -83,6 +83,15 @@ decks_list:
     requirements:
         _locale: \w\w
 
+decks_list_complementary:
+    path: /{_locale}/decks/complementary/{side}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Export:listComplementaryDecks
+        _locale: en
+    requirements:
+        _locale: \w\w
+
 deck_publish:
     path: /deck/can_publish/{deck_uuid}
     methods: [GET]
@@ -171,6 +180,15 @@ deck_export_text:
         _controller: AppBundle:Builder:textExport
     requirements:
         deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
+deck_export_tournament:
+    path: /deck/export/tournament/{deck_uuid}/{second_deck_uuid}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Export:tournamentSheet
+    requirements:
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+        second_deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 deck_copy:
     path: /{_locale}/deck/copy/{decklist_uuid}

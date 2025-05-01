@@ -1,0 +1,404 @@
+/* CSS Variables for consistent styling */
+:root {
+    --primary-color: #13100e;
+    --secondary-color: #333;
+    --border-color: #ddd;
+    --input-border: #999;
+    --bg-light: #f2f2f2;
+    --bg-dark: #333;
+    --font-header: 'Orbitron', sans-serif;
+    --font-body: 'Crimson Pro', serif;
+    --spacing-xs: 1px;
+    --spacing-sm: 2px;
+    --spacing-md: 3px;
+    --spacing-lg: 5px;
+    --font-size-xs: 8px;
+    --font-size-sm: 10px;
+    --font-size-md: 12px;
+    --font-size-lg: 14px;
+    --font-size-xl: 18px;
+    --row-height-sm: 12px;
+    --row-height-md: 14px;
+    --row-height-lg: 18px;
+}
+
+/* Base styles */
+body {
+    font-family: var(--font-body);
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: var(--primary-color);
+    font-size: var(--font-size-md);
+}
+
+/* Container for all content */
+.container {
+    width: 7.5in; /* Letter width minus margins */
+    max-height: 10in; /* Letter height minus margins */
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Table-based layouts */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--spacing-md);
+}
+
+th, td {
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    text-align: left;
+}
+
+/* Header styling */
+.header-table {
+    margin-bottom: var(--spacing-md);
+}
+
+.logo-cell {
+    width: 45px;
+    vertical-align: middle;
+}
+
+.logo-container {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.logo-container img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+
+.title-cell {
+    vertical-align: middle;
+}
+
+h1 {
+    font-family: var(--font-header);
+    font-weight: 900;
+    font-size: var(--font-size-xl);
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1;
+}
+
+.subtitle {
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-xs);
+}
+
+/* Player info styling */
+.player-info-table {
+    margin-bottom: var(--spacing-md);
+    border-collapse: collapse;
+}
+
+.player-info-table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: none;
+}
+
+.player-info-table label {
+    font-weight: 600;
+    display: inline-block;
+    width: 50px;
+    font-size: var(--font-size-md);
+}
+
+.player-info-table input {
+    border: none;
+    border-bottom: 1px solid var(--input-border);
+    padding: 0;
+    width: calc(100% - 55px);
+    font-family: var(--font-body);
+    font-size: var(--font-size-md);
+    height: var(--row-height-lg);
+    line-height: 1.1;
+}
+
+/* Deck title styling - further optimized */
+.deck-title-row {
+    background-color: var(--bg-dark);
+    color: white;
+}
+
+.deck-title-row td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.deck-header {
+    background-color: transparent;
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    text-align: left;
+    font-weight: bold;
+    font-family: var(--font-header);
+    font-size: var(--font-size-md);
+    text-transform: uppercase;
+    margin: 0;
+    display: inline-block;
+    width: auto;
+    margin-right: var(--spacing-md);
+}
+
+.deck-title-row label {
+    color: white;
+    font-weight: normal;
+    margin-left: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    display: inline-block;
+    width: auto;
+}
+
+.deck-title-row input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+    width: calc(100% - 120px);
+    font-size: var(--font-size-sm);
+    height: var(--row-height-md);
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Card list styling */
+.deck-info-table {
+    margin-bottom: var(--spacing-xs);
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.deck-info-table th {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-align: left;
+    background-color: var(--bg-dark);
+    color: white;
+}
+
+.deck-info-table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    height: var(--row-height-sm);
+    line-height: 1.1;
+    border: 1px solid var(--border-color);
+}
+
+.deck-info-table input {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-xs);
+    height: var(--row-height-sm);
+    line-height: 1.1;
+    width: 100%;
+}
+
+.qty-col {
+    width: 25px;
+    text-align: center;
+}
+
+.inf-col {
+    width: 25px;
+    text-align: center;
+}
+
+.card-list-table {
+    border-collapse: collapse;
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.card-list-table th {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-md);
+    height: var(--row-height-lg);
+    font-weight: 600;
+    background-color: var(--bg-dark);
+    color: white;
+}
+
+.card-list-table td {
+    padding: 0 var(--spacing-sm);
+    font-size: var(--font-size-md);
+    height: var(--row-height-lg);
+    line-height: 1;
+    border: 1px solid var(--border-color);
+}
+
+.card-list-table input {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: var(--font-size-md);
+    height: var(--row-height-lg);
+    width: 100%;
+    line-height: 1;
+    font-family: var(--font-body);
+}
+
+.card-list-table tr:nth-child(even) {
+    background-color: var(--bg-light);
+}
+
+.totals-row th {
+    font-weight: bold;
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    text-align: center;
+    position: relative;
+}
+
+.totals-row th::before {
+    content: "←";
+    position: absolute;
+    left: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+}
+
+.totals-row th::after {
+    content: "→";
+    position: absolute;
+    right: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+}
+
+/* Media consent styling */
+.media-consent-table {
+    margin-top: var(--spacing-md);
+    border-collapse: collapse;
+}
+
+.consent-question {
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.consent-options-cell {
+    width: 40px;
+    vertical-align: top;
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.consent-option {
+    margin-bottom: var(--spacing-xs);
+    display: block;
+    font-size: var(--font-size-sm);
+}
+
+.consent-option input[type="checkbox"] {
+    vertical-align: middle;
+    transform: scale(1.2);
+}
+
+.consent-option label {
+    vertical-align: middle;
+}
+
+.signature-cell {
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.signature-table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.signature-table td {
+    border: none;
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.signature-table input {
+    border: none;
+    width: 100%;
+    font-size: var(--font-size-sm);
+    height: var(--row-height-lg);
+}
+
+.signature-line {
+    border-top: 1px solid var(--input-border);
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    padding-top: var(--spacing-xs);
+    color: #666;
+    font-size: var(--font-size-xs);
+}
+
+/* Print-specific styles */
+@media print {
+    @page {
+        size: letter;
+        margin: 0.5in;
+    }
+    
+    body {
+        width: 7.5in;
+        height: 10in;
+        margin: 0;
+        padding: 0;
+        font-size: var(--font-size-sm);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .container {
+        width: 100%;
+        height: 100%;
+        page-break-inside: avoid;
+    }
+    
+    /* Ensure no page breaks within sections */
+    table {
+        page-break-inside: avoid;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    /* Adjust spacing for print */
+    .top-section-table, .decks-section-table {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    /* Ensure consistent font rendering */
+    * {
+        font-family: var(--font-body);
+    }
+    
+    h1, .deck-header {
+        font-family: var(--font-header);
+    }
+    
+    /* Force background colors to print */
+    .deck-title-row, .card-list-table th, .deck-info-table th {
+        background-color: var(--bg-dark) !important;
+        color: white !important;
+    }
+    
+    .card-list-table tr:nth-child(even), .totals-row th {
+        background-color: var(--bg-light) !important;
+    }
+}

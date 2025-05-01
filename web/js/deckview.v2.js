@@ -45,6 +45,7 @@ function do_action_deck(event) {
     case 'btn-display-bbcode': export_bbcode(); break;
     case 'btn-display-markdown': export_markdown(); break;
     case 'btn-display-jintekinet': export_jintekinet(); break;
+    case 'btn-export-tournament-sheet': open_decklist_modal(SelectedDeck.uuid, SelectedDeck.side_name.charAt(0).toUpperCase() + SelectedDeck.side_name.slice(1)); break;
   }
 }
 

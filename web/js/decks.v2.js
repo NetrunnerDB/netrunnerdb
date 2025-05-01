@@ -269,6 +269,7 @@ function do_action_deck(event) {
     case 'btn-delete': confirm_delete(deck); break;
     case 'btn-download-text': location.href=Routing.generate('deck_export_text', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
     case 'btn-download-octgn': location.href=Routing.generate('deck_export_octgn', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
+    case 'btn-export-tournament-sheet': open_decklist_modal(deck.uuid, deck.side); break;
     case 'btn-export-bbcode': export_bbcode(deck); break;
     case 'btn-export-markdown': export_markdown(deck); break;
     case 'btn-export-plaintext': export_plaintext(deck); break;
