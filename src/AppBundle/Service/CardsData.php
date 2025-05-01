@@ -138,12 +138,16 @@ class CardsData
         return $packs;
     }
 
+    public function startupCyclesList() {
+        return ['elevation', 'liberation', 'system-gateway'];
+    }
+
     public function allsetsdata()
     {
         /** @var Cycle[] $list_cycles */
         $list_cycles = $this->entityManager->getRepository(Cycle::class)->findBy([], ["position" => "DESC"]);
         $non_standard_packs = ['draft', 'napd'];
-        $startup_cycles = ['elevation', 'liberation', 'system-gateway']; // Hardcoded Startup Codes
+        $startup_cycles = $this->startupCyclesList();
         $non_startup_cycles = [];
         $non_eternal_packs = ['draft', 'napd', 'tdc'];
         $cycles = [];
@@ -729,7 +733,7 @@ class CardsData
                     $condition[0] = strtolower($condition[0]);
                     if ($condition[0] == "startup") {
                         // Add the valid cycles for startup and add them to the WHERE clause for the query.
-                        $cycles = ['system-gateway', 'system-update-2021', 'liberation']; // Hardcoded Startup Codes
+                        $cycles = $this->startupCyclesList();
                         $placeholders = array();
                         foreach($cycles as $cycle) {
                             array_push($placeholders, "?$i");

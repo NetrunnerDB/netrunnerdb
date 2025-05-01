@@ -518,7 +518,6 @@ class SearchController extends Controller
                     $standard_legal = "available";
 
                     // Startup legality is currently hard-coded since the DB doesn't know anything about it.
-                    $startupCycles = ['elevation' => true, 'liberation' => true, 'system-gateway' => true]; // Hardcoded Startup Codes
                     $startup_legal = false;
 
                     $rotated_count = 0;
@@ -541,7 +540,7 @@ class SearchController extends Controller
                             ++$rotated_count;
                         }
                         // Any printing of this card in a valid Startup cycle means the card is Startup legal.
-                        if (array_key_exists($v['cycle_code'], $startupCycles) && date("Y-m-d") >= $pack->getDateRelease()->format("Y-m-d")) {
+                        if (in_array($v['cycle_code'], $cardsData->startupCyclesList()) && date("Y-m-d") >= $pack->getDateRelease()->format("Y-m-d")) {
                           $startup_legal = true;
                         }
                     }
