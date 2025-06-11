@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netrunner Tournament Sheet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link href="{{ asset('/css/tournament_sheet.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Top section with logo, title, and player info -->
+        <table class="top-section-table" style="margin-bottom: var(--spacing-lg);">
+            <tr>
+                <td style="width: 40%; border: none;">
+                    <table class="header-table" style="margin-bottom: 0;">
+                        <tr>
+                            <td class="logo-cell" style="border: none;">
+                                <div class="logo-container">
+                                    <img src="{{ asset('/images/nsg-logo.png') }}" alt="Null Signal Games Logo">
+                                </div>
+                            </td>
+                            <td class="title-cell" style="border: none;">
+                                <h1>DECKLISTS</h1>
+                                <div class="subtitle">Visit nullsignal.games/organizers for policies, ban lists, and more!</div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                
+                <td style="width: 60%; border: none;">
+                    <table class="player-info-table">
+                        <tr>
+                            <td colspan="2" style="border: none;">
+                                <label for="player-name">Name:</label>
+                                <input type="text" id="player-name" value="">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="border: none;">
+                                <label for="player-pronouns">Pronouns:</label>
+                                <input type="text" id="player-pronouns" value="">
+                            </td>
+                        </tr>
+                        <tr class="side-by-side">
+                            <td style="width: 40%; border: none;">
+                                <label for="event-date">Date:</label>
+                                <input type="text" id="event-date" value="">
+                            </td>
+                            <td style="border: none;">
+                                <label for="event-name">Event:</label>
+                                <input type="text" id="event-name" value="">
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        
+        <!-- Middle section with Corp and Runner decks -->
+        <table class="decks-section-table" style="margin-bottom: var(--spacing-lg);">
+            <tr>
+                <!-- Corp deck -->
+                <td style="width: 50%; vertical-align: top; padding: 0;">
+                    <table class="deck-section-table" style="margin-bottom: 0;">
+                        <tr class="deck-title-row">
+                            <td>
+                                <span class="deck-header">CORP DECK</span>
+                                <label for="corp-deck-name">Deck Name:</label>
+                                <input type="text" id="corp-deck-name" value="{{ corp_deck.name }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0;">
+                                <table class="card-list-table" style="width: 100%; margin-bottom: var(--spacing-xs);">
+                                    <tr>
+                                        <th class="qty-col">Min</th>
+                                        <th>Identity</th>
+                                        <th class="inf-col">Max</th>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="corp-min-deck" value="{{ corp_identity.minimumDeckSize }}"></td>
+                                        <td><input type="text" id="corp-identity" value="{{ corp_identity.title }}"></td>
+                                        <td><input type="text" id="corp-max-inf" value="{{ corp_identity.influenceLimit }}"></td>
+                                    </tr>
+                                </table>
+                                
+                                <table class="card-list-table">
+                                    <tr>
+                                        <th class="qty-col">Qty</th>
+                                        <th>Card Name</th>
+                                        <th class="inf-col">Inf</th>
+                                    </tr>
+                                    {% set total_cards = 0 %}
+                                    {% set total_influence = 0 %}
+                                    {% set total_count = 0 %}
+                                    {% for type, cards in corp_cards %}
+                                        {% for card in cards %}
+                                            <tr>
+                                                <td><input type="text" value="{{ card.quantity }}"></td>
+                                                <td><input type="text" value="{{ card.name }}"></td>
+                                                <td><input type="text" value="{% if card.faction_code != corp_identity.faction.code %}{{ card.influence * card.quantity }}{% endif %}"></td>
+                                            </tr>
+                                            {% set total_cards = total_cards + card.quantity %}
+                                            {% set total_influence = total_influence + (card.faction_code != corp_identity.faction.code ? card.influence * card.quantity : 0) %}
+                                            {% set total_count = total_count + 1 %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                    <!-- Fill remaining rows up to 30 -->
+                                    {% for i in range(1, 30 - total_count) %}
+                                        <tr><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                                    {% endfor %}
+                                    <!-- Totals row -->
+                                    <tr class="totals-row">
+                                        <td><input type="text" value="{{ total_cards }}"></td>
+                                        <th>Totals</th>
+                                        <td><input type="text" value="{{ total_influence }}"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                
+                <!-- Runner deck -->
+                <td style="width: 50%; vertical-align: top; padding: 0;">
+                    <table class="deck-section-table" style="margin-bottom: 0;">
+                        <tr class="deck-title-row">
+                            <td>
+                                <span class="deck-header">RUNNER DECK</span>
+                                <label for="runner-deck-name">Deck Name:</label>
+                                <input type="text" id="runner-deck-name" value="{{ runner_deck.name }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0;">
+                                <table class="card-list-table" style="width: 100%; margin-bottom: var(--spacing-xs);">
+                                    <tr>
+                                        <th class="qty-col">Min</th>
+                                        <th>Identity</th>
+                                        <th class="inf-col">Max</th>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" id="runner-min-deck" value="{{ runner_identity.minimumDeckSize }}"></td>
+                                        <td><input type="text" id="runner-identity" value="{{ runner_identity.title }}"></td>
+                                        <td><input type="text" id="runner-max-inf" value="{{ runner_identity.influenceLimit }}"></td>
+                                    </tr>
+                                </table>
+                                
+                                <table class="card-list-table">
+                                    <tr>
+                                        <th class="qty-col">Qty</th>
+                                        <th>Card Name</th>
+                                        <th class="inf-col">Inf</th>
+                                    </tr>
+                                    {% set total_cards = 0 %}
+                                    {% set total_influence = 0 %}
+                                    {% set total_count = 0 %}
+                                    {% for type, cards in runner_cards %}
+                                        {% for card in cards %}
+                                            <tr>
+                                                <td><input type="text" value="{{ card.quantity }}"></td>
+                                                <td><input type="text" value="{{ card.name }}"></td>
+                                                <td><input type="text" value="{% if card.faction_code != runner_identity.faction.code %}{{ card.influence }}{% endif %}"></td>
+                                            </tr>
+                                            {% set total_cards = total_cards + card.quantity %}
+                                            {% set total_influence = total_influence + (card.faction_code != runner_identity.faction.code ? card.influence * card.quantity : 0) %}
+                                            {% set total_count = total_count + 1 %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                    <!-- Fill remaining rows up to 30 -->
+                                    {% for i in range(1, 30 - total_count) %}
+                                        <tr><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+                                    {% endfor %}
+                                    <!-- Totals row -->
+                                    <tr class="totals-row">
+                                        <td><input type="text" value="{{ total_cards }}"></td>
+                                        <th>Totals</th>
+                                        <td><input type="text" value="{{ total_influence }}"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        
+        <!-- Media consent section -->
+        <table class="media-consent-table">
+            <tr>
+                <td class="consent-question" colspan="2">
+                    Do you consent to Null Signal Games using your name and/or likeness in promotional material?
+                </td>
+            </tr>
+            <tr>
+                <td class="consent-options-cell">
+                    <div class="consent-option">
+                        <input type="checkbox" id="consent-yes">
+                        <label for="consent-yes">Yes</label>
+                    </div>
+                    <div class="consent-option">
+                        <input type="checkbox" id="consent-no">
+                        <label for="consent-no">No</label>
+                    </div>
+                </td>
+                <td class="signature-cell">
+                    <table class="signature-table">
+                        <tr>
+                            <td style="width: 50%;">
+                                <input type="text">
+                                <span class="signature-line">Preferred Alias</span>
+                            </td>
+                            <td style="width: 50%;">
+                                <input type="text">
+                                <span class="signature-line">Signature</span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
