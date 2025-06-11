@@ -516,9 +516,7 @@ class SearchController extends Controller
                     }
                     $cardinfo['versions'] = [];
                     $standard_legal = "available";
-
-                    // Startup legality is currently hard-coded since the DB doesn't know anything about it.
-                    $startup_legal = false;
+                    $startup_legal = "unavailable";
 
                     $rotated_count = 0;
 
@@ -528,7 +526,7 @@ class SearchController extends Controller
                         // The 2 tutorial-only identity cards are invalid for startup and standard formats.
                         if ($v['code'] == '30077' || $v['code'] == '30076') {
                             $standard_legal = "unavailable";
-                            $startup_legal = false;
+                            $startup_legal = "unavailable";
                             continue;
                         }
                         // Draft and terminal directive campaign cards are not legal in standard.
@@ -541,7 +539,22 @@ class SearchController extends Controller
                         }
                         // Any printing of this card in a valid Startup cycle means the card is Startup legal.
                         if (in_array($v['cycle_code'], $cardsData->startupCyclesList()) && date("Y-m-d") >= $pack->getDateRelease()->format("Y-m-d")) {
-                          $startup_legal = true;
+                            $startup_legal = "available";
+                        }
+                        // Check if card is banned in startup.
+                        if ($startup_legal == "available" ) {
+                            foreach($cardsData->get_mwl_info($cardVersions) as $mwl) {
+                            // This check makes the assumption that the
+                            // latest startup MWL is the active one.
+                            // Additionally it assumes that the list provided
+                            // by get_mwl_info is sorted in the right order.
+                                if(strpos($mwl["mwl_name"], "Startup") !== false) {
+                                    if($mwl["legality"] == "banned") {
+                                        $startup_legal = "banned";
+                                    }
+                                    break;
+                                }
+                            }
                         }
                     }
 
@@ -557,7 +570,7 @@ class SearchController extends Controller
                     $cardinfo['reviews'] = $cardsData->get_reviews($cardVersions);
                     $cardinfo['rulings'] = $cardsData->get_rulings($cardVersions);
                     $cardinfo['mwl_info'] = $cardsData->get_mwl_info($cardVersions);
-                    $cardinfo['startup_legality'] = $startup_legal ? 'available' : 'unavailable';
+                    $cardinfo['startup_legality'] = $startup_legal;
                     $cardinfo['standard_legality'] = $standard_legal;
                 }
                 if ($view == "rulings") {
@@ -566,7 +579,6 @@ class SearchController extends Controller
                 }
                 $cards[] = $cardinfo;
             }
-
             $first += 1;
 
             // if we have maps we display a navigation/pagination band
