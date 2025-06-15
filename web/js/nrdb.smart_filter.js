@@ -2,16 +2,16 @@
   var SmartFilterQuery = [];
 
   smart_filter.get_query = function(FilterQuery) {
-        var query = _.extend(FilterQuery, SmartFilterQuery);
-        if (!SmartFilterQuery.text) {
-            delete query.text;
-        }
-        return query;
+      var query = SmartFilterQuery.slice();
+      query.push(FilterQuery);
+      // Wrap the query with an $and operator
+      query = {"$and" : query};
+      return query;
   };
 
   smart_filter.handler = function (value, callback) {
     var conditions = filterSyntax(value);
-    SmartFilterQuery = {};
+    SmartFilterQuery = [];
 
     for (var i = 0; i < conditions.length; i++) {
       var condition = conditions[i];
@@ -83,30 +83,40 @@
   };
 
   function add_integer_sf(key, operator, values) {
+    var tmp_array = [];
+    var op = "$or";
     for (var j = 0; j < values.length; j++) {
-      values[j] = parseInt(values[j], 10);
+      value = parseInt(values[j], 10);
+      switch (operator) {
+      case ":":
+        tmp_array.push({
+          [key]: {'$eq': value}
+        });
+        break;
+      case "<":
+        tmp_array.push({
+          [key]: {'$lt': value}
+        });
+        break;
+      case ">":
+        tmp_array.push({
+          [key]: {'$gt': value}
+        });
+        break;
+      case "!":
+        tmp_array.push({
+          [key]: {'$ne': value}
+        });
+        op = "$and";
+        break;
+      }
     }
-    switch (operator) {
-    case ":":
-      SmartFilterQuery[key] = {
-        '$eq' : values
-      };
-      break;
-    case "<":
-      SmartFilterQuery[key] = {
-        '$lt' : values
-      };
-      break;
-    case ">":
-      SmartFilterQuery[key] = {
-        '$gt' : values
-      };
-      break;
-    case "!":
-      SmartFilterQuery[key] = {
-        '$ne' : values
-      };
-      break;
+    if(values.length > 1) {
+      // Create a wrapping OR around the conditions
+      SmartFilterQuery.push({[op]: tmp_array});
+    }
+    else {
+      SmartFilterQuery.push({[key]: tmp_array[0][key]});
     }
   }
   function add_string_sf(key, operator, values) {
@@ -116,15 +126,15 @@
     }
     switch (operator) {
     case ":":
-      SmartFilterQuery[key] = {
+      SmartFilterQuery.push({[key]: {
         '$in' : values
-      };
+      }});
       break;
     case "!":
-      SmartFilterQuery[key] = {
+      SmartFilterQuery.push({[key]: {
         '$nee': null,
         '$nin' : values
-      };
+      }});
       break;
     }
   }
@@ -132,40 +142,40 @@
     var condition = {}, value = parseInt(values.shift());
     switch (operator) {
     case ":":
-      SmartFilterQuery[key] = !!value;
+      SmartFilterQuery.push({[key]: !!value});
       break;
     case "!":
-      SmartFilterQuery[key] = {
+      SmartFilterQuery.push({[key]: {
         '$ne': !!value
-      };
+      }});
       break;
     }
   }
   function filterSyntax(query) {
-    // renvoie une liste de conditions (array)
-    // chaque condition est un tableau à n>1 éléments
-    // le premier est le type de condition (0 ou 1 caractère)
-    // les suivants sont les arguments, en OR
+    /* Returns a list of conditions (array)
+       Each condition is an array with n>1 elements
+       The first is the condition type (0 or 1 character)
+       The following are the arguments, in OR */
 
     query = query.replace(/^\s*(.*?)\s*$/, "$1").replace('/\s+/', ' ');
 
     var list = [];
     var cond = null;
-    // l'automate a 3 états :
-    // 1:recherche de type
-    // 2:recherche d'argument principal
-    // 3:recherche d'argument supplémentaire
-    // 4:erreur de parsing, on recherche la prochaine condition
-    // s'il tombe sur un argument alors qu'il est en recherche de type, alors le
-    // type est vide
+    /* The automaton has three states:
+       1: type search
+       2: main argument search
+       3: additional argument search
+       4: parsing error, we search for the next condition
+       If it encounters an argument while searching for a type, then the
+       type is empty */
     var etat = 1;
     while (query != "") {
       if (etat == 1) {
         if (cond !== null && etat !== 4 && cond.length > 2) {
           list.push(cond);
         }
-        // on commence par rechercher un type de condition
-        if (query.match(/^(\w)([:<>!])(.*)/)) { // jeton "condition:"
+        // we start by looking for a type of condition
+        if (query.match(/^(\w)([:<>!])(.*)/)) { // token "condition:"
           cond = [ RegExp.$1.toLowerCase(), RegExp.$2 ];
           query = RegExp.$3;
         } else {
@@ -173,8 +183,8 @@
         }
         etat = 2;
       } else {
-        if (   query.match(/^"([^"]*)"(.*)/) // jeton "texte libre entre guillements"
-          || query.match(/^([^\s]+)(.*)/) // jeton "texte autorisé sans guillements"
+        if (   query.match(/^"([^"]*)"(.*)/) // token "text with quotes"
+          || query.match(/^([^\s|]+)(.*)/) // token text-without-quotes
         ) {
           if ((etat === 2 && cond.length === 2) || etat === 3) {
             cond.push(RegExp.$1);
@@ -185,7 +195,7 @@
             query = RegExp.$2;
             etat = 4;
           }
-        } else if (query.match(/^\|(.*)/)) { // jeton "|"
+        } else if (query.match(/^\|(.*)/)) { // token "|"
           if ((cond[1] === ':' || cond[1] === '!')
               && ((etat === 2 && cond.length > 2) || etat === 3)) {
             query = RegExp.$1;
@@ -195,7 +205,7 @@
             query = RegExp.$1;
             etat = 4;
           }
-        } else if (query.match(/^ (.*)/)) { // jeton " "
+        } else if (query.match(/^ (.*)/)) { // token " "
           query = RegExp.$1;
           etat = 1;
         } else {
