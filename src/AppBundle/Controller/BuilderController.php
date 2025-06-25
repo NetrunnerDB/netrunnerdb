@@ -1323,4 +1323,37 @@ class BuilderController extends Controller
 
         return new Response('');
     }
+
+    /**
+     * @param Deck $deck
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
+     */
+    public function printAndPlayAction(Deck $deck)
+    {
+        $response = new Response();
+        $response->setPublic();
+        $response->setMaxAge($this->getParameter('long_cache'));
+        //$list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
+
+        $decklist = "";
+        dump($deck);
+        foreach($deck->getSlots() as $slot) {
+            $decklist .= strval($slot->getQuantity()) . " " . $slot->getCard()->getTitle() . PHP_EOL;
+        }
+        dump($decklist);
+        return $this->render(
+
+            '/Builder/printandplay.html.twig',
+            [
+                'pagetitle' => "Import a deck",
+                'pagedescription' => "Import a deck from outside of NetrunnerDB.",
+                'decklist' => $decklist,
+            ],
+            $response
+        );
+    }
 }

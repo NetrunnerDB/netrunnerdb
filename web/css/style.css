@@ -2295,3 +2295,20 @@ table .table-cell {
   flex-wrap: wrap;
   gap: 4px;
 }
+
+#pnp-container {
+  margin-top: 2em;
+}
+
+.pnp-image {
+  float: left;
+  height: 300px;
+  margin-right: 0.5em;
+  margin-bottom: 1em;
+}
+
+.list-group--pnp {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  max-height:615px;
+}

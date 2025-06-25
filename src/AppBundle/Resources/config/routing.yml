@@ -225,6 +225,16 @@ decklist_new:
     requirements:
         _locale: \w\w
 
+deck_print:
+    path: /{_locale}/deck/print/{deck_uuid}
+    methods: [GET]
+    defaults:
+        _controller: AppBundle:Builder:printAndPlay
+        _locale: en
+    requirements:
+        _locale: \w\w
+        deck_uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+
 decklists_searchform:
     path: /{_locale}/decklists/search
     methods: [GET]

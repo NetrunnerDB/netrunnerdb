@@ -1,0 +1,73 @@
+{% extends '/layout.html.twig' %}
+
+{% block head %}
+
+{% include '/Scripts/nsg_formats.html.twig' %}
+<script src="{{ asset('/js/directimport.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/nrdb.fuzzy_search.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/string_score/0.1.22/string_score.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
+<script src="{{ asset('/js/pnp.js') }} "></script>
+<script type="text/javascript">
+
+var CardDB, CardNames;
+
+Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
+  if (document.querySelector('#text-area').value.trim() != '') {
+    do_import_pnp();
+  }
+});
+
+</script>
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+<div class="row">
+
+<div class="col-md-5">
+<form role="form">
+  <div class="form-group">
+    <label for="content">Paste deck here</label>
+    <textarea class="form-control" id="text-area" name="content" rows="30">
+    {%- if decklist is not empty -%}
+       {{- decklist |trim -}}
+    {%- endif -%}
+    </textarea>
+  </div>
+  <button id="btn-import" type="button" class="btn btn-default" disabled="disabled" onclick="do_import_pnp()">Import</button>
+</form>
+</div>
+
+<div class="col-md-5">
+  <div class="form-group">
+    <label for="">Import result here</label>
+    <ul class="list-group list-group--pnp" id="analyzed">
+    </ul>
+  </div>
+  <input type="hidden" name="content">
+  <button id="btn-save" class="btn btn-success" disabled="disabled" onclick="pnp.do_print()">Print</button>
+</div>
+
+<div class="col-md-2">
+<form role="form">
+  <div class="form-group">
+    <label for="">Statistics</label>
+    <div id="stats"></div>
+  </div>
+</form>
+</div>
+
+
+
+</div> <!-- .row -->
+
+<div id="pnp-container" class="row"></div>
+
+</div> <!-- .container -->
+
+
+{% endblock %}
