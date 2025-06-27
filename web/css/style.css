@@ -2288,6 +2288,7 @@ table .table-cell {
 
 .card-image-flippable-buttons {
   margin-top: 1em;
+  margin-bottom: 1em;
   display: flex;
   flex-direction: row;
   align-items: center;
