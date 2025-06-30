@@ -10,6 +10,37 @@
 {% block main %}
 {% include '/Scripts/api.html.twig' %}
 <script type="text/javascript">
+    function set_primary_button(button) {
+        // Set all buttons to secondary.
+        document.querySelectorAll('.card-image-flippable-buttons button').forEach(_button => {
+            _button.classList.remove('btn-primary');
+            _button.classList.add('btn-secondary');
+        });
+        // Set the clicked button to primary.
+        button.classList.add('btn-primary');
+        button.classList.remove('btn-secondary');
+    }
+
+    function change_narrative_switchable() {
+        const buttonContainer = document.querySelector('.card-image-flippable-buttons');
+        document.querySelectorAll('.card-image-container').forEach(container => {
+            // Move button container to the other image container.
+            if (container.classList.contains('card-image-container--visible')) {
+                container.classList.remove('card-image-container--visible');
+            } else {
+                container.classList.add('card-image-container--visible');
+                container.append(buttonContainer);
+            }
+        });
+        // Switch narrative container.
+        document.querySelectorAll('.narrative-switchable').forEach(switchable => {
+            if(switchable.style.display === "none") {
+                switchable.style.display = "block";
+            } else {
+                switchable.style.display = "none";
+            }
+        });
+    }
 
     async function fetchAndDisplayPrintingsPronounsAndPronunciation() {
         const [printing, card_sets] = await Promise.all(
@@ -21,20 +52,21 @@
             ]
         );
 
-        if (printing.data.attributes.num_extra_faces > 0) {
-            // Make a list of face buttons for cards with more than 1 face.
-            const container = document.getElementById('card_image_container');
-            const cardImageFlippable = document.querySelector('.card-image-flippable');
-            const buttonContainer = document.querySelector('.card-image-flippable-buttons');
+        // Make a list of face buttons for cards with more than 1 face.
+        const cardImageFlippable = document.querySelector('.card-image-flippable');
+        const buttonContainer = document.querySelector('.card-image-flippable-buttons');
+        const narrative_image = printing.data.attributes.images.nrdb_classic.narrative;
 
-            // Create a button for each face.
-            const faceButtons = new Array();
+        if (printing.data.attributes.num_extra_faces > 0 ||
+            narrative_image != null) {
+            // Create a button for each face (including front when there is narrative
+            // but no extra faces).
             for (let i = 0; i <= printing.data.attributes.num_extra_faces; i++) {
                 const button = document.createElement('button');
                 button.classList.add('btn');
                 button.classList.add(i == 0 ? 'btn-primary' : 'btn-secondary');
-
                 buttonContainer.appendChild(button);
+
                 let buttonText = '';
                 if (i == 0) {
                     buttonText = 'Front';
@@ -55,26 +87,49 @@
                         return;
                     }
 
-                    // Set all buttons to secondary.
-                    document.querySelectorAll('.card-image-flippable-buttons button').forEach(_button => {
-                        _button.classList.remove('btn-primary');
-                        _button.classList.add('btn-secondary');
-                    });
-                    // Set the clicked button to primary.
-                    button.classList.add('btn-primary');
-                    button.classList.remove('btn-secondary');
+                    set_primary_button(button);
 
-                    const frontCurrentlyVisible = !document.querySelector(".card-image-flippable").classList.contains("flipped");
-                    const cardImgElement = frontCurrentlyVisible ? 'alternate_card_img' : 'current_card_img';
-                    document.getElementById(cardImgElement).src = button.dataset.img;
+                    if (printing.data.attributes.num_extra_faces > 0) {
+                        const frontCurrentlyVisible = !document.querySelector(".card-image-flippable").classList.contains("flipped");
+                        const cardImgElement = frontCurrentlyVisible ? 'alternate_card_img' : 'current_card_img';
+                        document.getElementById(cardImgElement).src = button.dataset.img;
 
-                    // Time to flip now that things are all set up!
-                    document.querySelector(".card-image-flippable").classList.toggle("flipped");
+                        // Time to flip now that things are all set up!
+                        document.querySelector(".card-image-flippable").classList.toggle("flipped");
+                    }
+                    // Switch back if we're currently on narrative view.
+                    if (narrative_image
+                        && document.querySelector("#card-image-container--narrative")
+                                   .classList.contains("card-image-container--visible")) {
+                        change_narrative_switchable();
+                    }
                 });
             }
         }
+
+
+        if (narrative_image) {
+            // Narrative switcher button
+            const narrativeButton = document.querySelector('#narrative-switch-button');
+            document.querySelector('#card-image-narrative').src = narrative_image;
+            document.querySelector('#narrative-text').innerHTML = printing.data.attributes.narrative_text;
+            narrativeButton.addEventListener("click", e => {
+                const button = e.target;
+                if (button.classList.contains('btn-primary')) {
+                    return;
+                }
+
+                set_primary_button(button);
+                change_narrative_switchable();
+            });
+            narrativeButton.style.display = "block";  // Unhide button
+            buttonContainer.append(narrativeButton);
+        }
+
         if (printing.data.attributes.pronouns) {
-            $(".card-stats").append(`<br>Pronouns: ${printing.data.attributes.pronouns}`)
+            $(".card-pronouns").each((_, p) => {
+                p.innerHTML = `Pronouns: ${printing.data.attributes.pronouns}`
+            });
         }
         const card = printing.included[0];
         if (card.attributes.pronunciation_approximation && card.attributes.pronunciation_ipa) {
@@ -117,9 +172,9 @@
     fetchAndDisplayPrintingsPronounsAndPronunciation();
 </script>
 
-<div class="row">
+<div class="row narrative-switchable">
     <div class="col-sm-4">
-        <div class="card-image" id="card_image_container">
+        <div class="card-image card-image-container card-image-container--visible">
             {% if card.imageUrl %}
                 <div class="card-image-flippable">
                     <div class="card-image card-image-flippable__front">
@@ -129,7 +184,9 @@
                         <img id="alternate_card_img" src="" class="img-responsive">
                     </div>
                 </div>
-                <div class="card-image-flippable-buttons"></div>
+                <div class="card-image-flippable-buttons">
+                    <button class="btn btn-secondary" id="narrative-switch-button" style="display:none">Narrative</button>
+                </div>
             {% else %}
                 <div class="no-image" style="margin:auto"><div class="no-image-text">No image</div></div>
             {% endif %}
@@ -187,6 +244,7 @@
                             Trash: {{ card.trash }}
                         {% endif %}
                     {% endif %}
+                    <p class="card-pronouns"></p>
                 </div>
 
                 {% if card.type_code != "identity" and card.faction_cost_dots|length > 0 %}
@@ -300,6 +358,36 @@
                     <tbody id="printing_version_list">
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row narrative-switchable" style="display:none">
+    <div class="col-sm-6">
+        <div class="card-image card-image-container" id="card-image-container--narrative">
+                <div class="card-image" id="card-image-narrative-back">
+                  <img id="card-image-narrative" alt="{{ card.title }} narrative back" class="img-responsive card-image" style="margin:auto;width:100%">
+                </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title card-title" style="display: flex; justify-content: space-between">
+                    <span class="card-title">
+                        {{ card.title }}
+                    </span>
+                </h3>
+            </div>
+
+            <div class="panel-body card-panel">
+                <p class="card-pronouns"></p>
+                <div class="card-text border-{{ card.faction_code }}">
+                  <p id="narrative-text"></p>
+                </div>
+
             </div>
         </div>
     </div>
