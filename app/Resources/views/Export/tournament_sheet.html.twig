@@ -100,7 +100,7 @@
                                             <tr>
                                                 <td><input type="text" value="{{ card.quantity }}"></td>
                                                 <td><input type="text" value="{{ card.name }}"></td>
-                                                <td><input type="text" value="{% if card.faction_code != corp_identity.faction.code %}{{ card.influence * card.quantity }}{% endif %}"></td>
+                                                <td><input type="text" value="{% if card.faction_code != corp_identity.faction.code and card.influence * card.quantity > 0 %}{{ card.influence * card.quantity }}{% endif %}"></td>
                                             </tr>
                                             {% set total_cards = total_cards + card.quantity %}
                                             {% set total_influence = total_influence + (card.faction_code != corp_identity.faction.code ? card.influence * card.quantity : 0) %}
@@ -162,7 +162,7 @@
                                             <tr>
                                                 <td><input type="text" value="{{ card.quantity }}"></td>
                                                 <td><input type="text" value="{{ card.name }}"></td>
-                                                <td><input type="text" value="{% if card.faction_code != runner_identity.faction.code %}{{ card.influence }}{% endif %}"></td>
+                                                <td><input type="text" value="{% if card.faction_code != runner_identity.faction.code and card.influence * card.quantity > 0 %}{{ card.influence * card.quantity }}{% endif %}"></td>
                                             </tr>
                                             {% set total_cards = total_cards + card.quantity %}
                                             {% set total_influence = total_influence + (card.faction_code != runner_identity.faction.code ? card.influence * card.quantity : 0) %}
