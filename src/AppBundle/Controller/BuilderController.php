@@ -1332,7 +1332,7 @@ class BuilderController extends Controller
      *
      * @ParamConverter("deck", class="AppBundle:Deck", options={"mapping": {"deck_uuid": "uuid"}})
      */
-    public function printAndPlayAction(Deck $deck)
+    public function printAndPlayAction(?Deck $deck = null)
     {
         $response = new Response();
         $response->setPublic();
@@ -1340,11 +1340,11 @@ class BuilderController extends Controller
         //$list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
 
         $decklist = "";
-        dump($deck);
-        foreach($deck->getSlots() as $slot) {
-            $decklist .= strval($slot->getQuantity()) . " " . $slot->getCard()->getTitle() . PHP_EOL;
+        if($deck) {
+            foreach($deck->getSlots() as $slot) {
+                $decklist .= strval($slot->getQuantity()) . " " . $slot->getCard()->getTitle() . PHP_EOL;
+            }
         }
-        dump($decklist);
         return $this->render(
 
             '/Builder/printandplay.html.twig',

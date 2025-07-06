@@ -2302,13 +2302,24 @@ table .table-cell {
 
 .pnp-image {
   float: left;
-  height: 300px;
+  height: 200px;
   margin-right: 0.5em;
   margin-bottom: 1em;
 }
 
-.list-group--pnp {
-  overflow-y: auto;
-  scrollbar-width: thin;
-  max-height:615px;
+.list-group-label {
+  margin-top:0.5em;
+}
+
+/* Hide number input up/down arrows*/
+.pnp-number-input::-webkit-inner-spin-button,
+.pnp-number-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.pnp-number-input {
+  width: 2.5em !important;
+  padding: 0.5em;
+  text-align: right;
 }
