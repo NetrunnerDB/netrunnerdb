@@ -12,7 +12,10 @@
     'buttons-behavior': 'cumulative',
     'sort-order': 'type',
     'check-rotation': true,
-    'card-limits': 'legal'
+    'card-limits': 'legal',
+
+    'pnp-cut-marks': 'None',
+    'pnp-page-format': 'Letter',
   };
 
   settings.load = function load() {

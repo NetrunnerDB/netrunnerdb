@@ -3,6 +3,7 @@
 {% block head %}
 
 {% include '/Scripts/nsg_formats.html.twig' %}
+<script src="{{ asset('/js/nrdb.settings.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script src="{{ asset('/js/nrdb.fuzzy_search.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/string_score/0.1.22/string_score.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
@@ -49,18 +50,42 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
       </div>
     </form>
   </div>
+
+  <div class="col-md-4">
+    <label>Settings</label>
+    <form id="settings">
+      <div class="form-group">
+        <label>
+          Cut marks
+          <select class="form-control" name="pnp-cut-marks" data-persistence>
+            <option>None</option>
+            <option>Lines</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-group">
+        <label>
+          Page type
+          <select class="form-control" name="pnp-page-format" data-persistence>
+            <option>Letter</option>
+            <option>A4</option>
+          </select>
+        </label>
+      </div>
+    </form>
+  </div>
 </div> <!-- .row -->
 
 <div class="row">
   <div class="col-md-4">
+    <button id="btn-print" class="pull-right btn btn-success" disabled="disabled" onclick="do_print()">Print</button>
     <div class="form-group">
       <label for=""></label>
       <ul class="list-group list-group--pnp" id="analyzed"></ul>
     </div>
     <input type="hidden" name="content">
-    <button id="btn-print" class="btn btn-success" disabled="disabled" onclick="pnp.do_print()">Print</button>
   </div>
-  <div class="col-md-8" id="pnp-container"></div>
+  <div class="col-md-8" id="preview-container"></div>
 </div> <!-- .row -->
 
 </div> <!-- .container -->

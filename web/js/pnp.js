@@ -15,6 +15,58 @@
 // Potential enhancements:
 // Card preview are interactable to add or remove cards or select printings.
 // Card preview is laid out in 3 wide format with dividers every 3 rows as if they are on a print page.
+// Save user preferences.
+
+$(document).on('data.app', function() {
+  $('#btn-import').prop('disabled', false);
+  $('#analyzed').on({
+    click: click_option
+  }, 'ul.dropdown-menu a');
+  $('#analyzed').on({
+    click: click_trash
+  }, 'a.glyphicon-trash');
+  $('#analyzed').on({
+    change: on_number_change,
+  }, 'input.pnp-number-input');
+});
+
+function click_option(event) {
+  var code = $(this).data('code');
+  var elem = $(this).closest('li.list-group-item');
+  var index = elem.children("input")[0].name;
+  imported_cards.select_card(index, code);
+  update_imported_list();
+  preview_cards();
+}
+
+function click_trash(event) {
+  var elem = $(this).closest('li.list-group-item');
+  if(elem[0].classList.contains('text-danger')) {
+    imported_cards.remove_error(elem[0].textContent.trim());
+  } else {
+    let index = elem.children("input")[0].name;
+    imported_cards.remove(index);
+  }
+  $(this).closest('li.list-group-item').remove();
+  update_imported_list();
+  preview_cards();
+  update_stats();
+}
+
+function on_number_change(event) {
+  var elem = $(this).closest('li.list-group-item');
+  var data_elem = elem.children("input")[0];
+  var index = data_elem.name;
+  var value = event.target.value;
+
+  value = value < 1? 1: value;
+  var [code, _] = data_elem.value.split(':');
+  data_elem.value = `${code}:${value}`;
+  imported_cards.change_qty(index, value);
+  update_imported_list();
+  preview_cards();
+  update_stats();
+}
 
 var imported_cards = {};
 (function(imported_card) {
@@ -77,58 +129,6 @@ var imported_cards = {};
     imported_cards.errors = imported_cards.errors.filter(item => item !== error);
   }
 }) (imported_cards);
-
-
-$(document).on('data.app', function() {
-  $('#btn-import').prop('disabled', false);
-  $('#analyzed').on({
-    click: click_option
-  }, 'ul.dropdown-menu a');
-  $('#analyzed').on({
-    click: click_trash
-  }, 'a.glyphicon-trash');
-  $('#analyzed').on({
-    change: on_number_change,
-  }, 'input.pnp-number-input');
-});
-
-function click_option(event) {
-  var code = $(this).data('code');
-  var elem = $(this).closest('li.list-group-item');
-  var index = elem.children("input")[0].name;
-  imported_cards.select_card(index, code);
-  update_imported_list();
-  preview_cards();
-}
-
-function click_trash(event) {
-  var elem = $(this).closest('li.list-group-item');
-  if(elem[0].classList.contains('text-danger')) {
-    imported_cards.remove_error(elem[0].textContent.trim());
-  } else {
-    let index = elem.children("input")[0].name;
-    imported_cards.remove(index);
-  }
-  $(this).closest('li.list-group-item').remove();
-  update_imported_list();
-  preview_cards();
-  update_stats();
-}
-
-function on_number_change(event) {
-  var elem = $(this).closest('li.list-group-item');
-  var data_elem = elem.children("input")[0];
-  var index = data_elem.name;
-  var value = event.target.value;
-
-  value = value < 1? 1: value;
-  var [code, _] = data_elem.value.split(':');
-  data_elem.value = `${code}:${value}`;
-  imported_cards.change_qty(index, value);
-  update_imported_list();
-  preview_cards();
-  update_stats();
-}
 
 function filter_for_nsg(cards) {
   return cards.filter(card => {
@@ -317,11 +317,21 @@ function retrieve_cards() {
 
 function preview_cards() {
   var cards = retrieve_cards();
-  $("#pnp-container").empty();
+  var curr_index = 0;
+  $("#preview-container").empty();
   for(let code in cards) {
     for(let i = 0; i < cards[code].qty; i++) {
-      $("#pnp-container").append(
+      // Draw a divider every 9 cards (to represent a new page).
+      if(curr_index >= 9 && curr_index % 9 == 0) {
+        $("#preview-container").append(
+          '<hr style="display:inline-block;width:100%">'
+        );
+      }
+
+      $("#preview-container").append(
         `<img class="img-responsive card-image pnp-image" src=${cards[code].image_url}></img>`);
+
+      curr_index++;
     }
   }
 }
@@ -332,13 +342,37 @@ function do_import_pnp() {
   preview_cards();
 }
 
+function print_button_busy() {
+  var elem = $("#btn-print");
+  elem[0].dataset.original_html = elem.html();
+  elem.prop("disabled", true);
+  elem.html('<span class="glyphicon glyphicon-refresh spinning"></span> Printing...');
+}
+
+function print_button_done() {
+  var elem = $("#btn-print");
+  elem.prop("disabled", false);
+  elem.html(elem[0].dataset.original_html);
+}
+
+function do_print() {
+  print_button_busy();
+  var pnp = new PNP(NRDB.settings.getItem("pnp-cut-marks"),
+                    NRDB.settings.getItem("pnp-page-format"));
+  pnp.print(print_button_done);
+}
+
 class PNP {
-  constructor () {
+  constructor (cutlines, format) {
+    this.settings = {
+      cutlines: cutlines,
+      format: format,
+    }
+
     const { jsPDF } = window.jspdf;
-    this.FORMAT = "letter";
     this.doc = new jsPDF({
       unit: "mm",
-      format: this.FORMAT,
+      format: this.settings.format,
     });
     /* 2.5in x 3.5in */
     this.CARD_WIDTH = 63.5;  // mm
@@ -347,9 +381,10 @@ class PNP {
     this.page_height = this.doc.internal.pageSize.getHeight();
     this.MARGIN_LEFT = (this.page_width - this.CARD_WIDTH*3)/2;
     this.MARGIN_TOP = (this.page_height - this.CARD_HEIGHT*3)/2;
+
   }
 
-  draw_cut_lines(){
+  draw_cutlines(){
     for(let p = 1; p <= this.doc.getNumberOfPages(); p++) {
       this.doc.setPage(p);
       // Draw 4 horizontal and 4 vertical cutlines.
@@ -366,36 +401,41 @@ class PNP {
     }
   }
 
-  do_print(){
-    var cards = retrieve_cards();
+  print(done_callback){
+    setTimeout(() => {
+      var cards = retrieve_cards();
 
-    var cur_index = 0;
-    for(let code in cards) {
-      for(let i = 0; i < cards[code].qty; i++) {
-        if (cur_index == 9) {
-          cur_index = 0;
-          // Make a new page every 9 cards.
-          this.doc.addPage(this.FORMAT);
+      var cur_index = 0;
+      for(let code in cards) {
+        for(let i = 0; i < cards[code].qty; i++) {
+          if (cur_index == 9) {
+            cur_index = 0;
+            // Make a new page every 9 cards.
+            this.doc.addPage(this.settings.format);
+          }
+
+          // Setup the cards in a 3x3 grid
+          let row = Math.floor(cur_index / 3);
+          let col = cur_index % 3;
+
+          const img = new Image();
+          img.src = cards[code].image_url;
+          this.doc.addImage(img, "JPEG",
+                       this.MARGIN_LEFT + (this.CARD_WIDTH)*col,
+                       this.MARGIN_TOP + (this.CARD_HEIGHT)*row,
+                       this.CARD_WIDTH, this.CARD_HEIGHT);
+
+          cur_index += 1;
         }
-
-        // Setup the cards in a 3x3 grid
-        let row = Math.floor(cur_index / 3);
-        let col = cur_index % 3;
-
-        const img = new Image();
-        img.src = cards[code].image_url;
-        this.doc.addImage(img, "JPEG",
-                     this.MARGIN_LEFT + (this.CARD_WIDTH)*col,
-                     this.MARGIN_TOP + (this.CARD_HEIGHT)*row,
-                     this.CARD_WIDTH, this.CARD_HEIGHT);
-
-        cur_index += 1;
       }
-    }
 
-    this.draw_cut_lines();
-    this.doc.save();
+      if(this.settings.cutlines) {
+        this.draw_cutlines();
+      }
+      this.doc.save();
+      if(done_callback) {
+        done_callback();
+      }
+    }, 0);
   }
 }
-
-var pnp = new PNP();

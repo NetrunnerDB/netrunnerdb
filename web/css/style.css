@@ -2302,7 +2302,7 @@ table .table-cell {
 
 .pnp-image {
   float: left;
-  height: 200px;
+  width: 30%;
   margin-right: 0.5em;
   margin-bottom: 1em;
 }
@@ -2322,4 +2322,19 @@ table .table-cell {
   width: 2.5em !important;
   padding: 0.5em;
   text-align: right;
+}
+
+.glyphicon.spinning {
+    animation: spin 1s infinite linear;
+    -webkit-animation: spin2 1s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1) rotate(360deg); }
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
 }
