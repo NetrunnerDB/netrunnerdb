@@ -12,12 +12,6 @@
 
 var CardDB, CardNames;
 
-Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
-  if (document.querySelector('#pnp-text-area').value.trim() != '') {
-    do_import_pnp();
-  }
-});
-
 </script>
 
 {% endblock %}
@@ -28,7 +22,7 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
 
 <div class="row">
 
-  <div class="col-md-4">
+  <div class="col-md-5">
     <form role="form">
       <div class="form-group">
         <label for="content">Paste deck here</label>
@@ -77,15 +71,18 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
 </div> <!-- .row -->
 
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-5">
     <button id="btn-print" class="pull-right btn btn-success" disabled="disabled" onclick="do_print()">Print</button>
+
+    <input type="text" placeholder="Card Search" class="form-control" name="q" id="pnp-card-search">
+
     <div class="form-group">
       <label for=""></label>
       <ul class="list-group list-group--pnp" id="analyzed"></ul>
     </div>
     <input type="hidden" name="content">
   </div>
-  <div class="col-md-8" id="preview-container"></div>
+  <div class="col-md-7" id="preview-container"></div>
 </div> <!-- .row -->
 
 </div> <!-- .container -->

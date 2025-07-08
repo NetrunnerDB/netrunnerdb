@@ -1,23 +1,18 @@
 // LIA TODO: Make sure double sided cards are accounted for.
-// LIA TODO: Warn user that we're limited to NSG cards
-// LIA TODO: Don't default to uprising booster printings
-// LIA TODO: Allow printing selection for exact matches
-// LIA TODO: Hover to see printing
-// LIA TODO: options - cut lines, cut marks, bleed, A4
-// LIA TODO: click to remove cards from list.
-// LIA TODO: Fixup print stats.
 // LIA TODO: decklist view..?
-// LIA TODO: fixup card ordering
-// LIA TODO: FIx card option select in a small card list
-// LIA TODO: Fix selection without number
-// LIA TODO: Get trash buttons working.
+// LIA TODO: Card search bar
+// LIA TODO: Clear list button
 //
 // Potential enhancements:
 // Card preview are interactable to add or remove cards or select printings.
 // Card preview is laid out in 3 wide format with dividers every 3 rows as if they are on a print page.
 // Save user preferences.
+// Hover to see printing
+// Options: Bleed, cut marks (not line)
+// Imported list sorting options
+// Drag to reorder imported list.
 
-$(document).on('data.app', function() {
+Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
   $('#btn-import').prop('disabled', false);
   $('#analyzed').on({
     click: click_option
@@ -28,6 +23,71 @@ $(document).on('data.app', function() {
   $('#analyzed').on({
     change: on_number_change,
   }, 'input.pnp-number-input');
+
+  // LIA TODO: Refactor this duplicate typeahead code from topnav.js and deck.v2.js
+  var card_pool = filter_for_nsg(NRDB.data.cards.find());
+
+  function findMatches(q, cb) {
+    if (q.match(/^\w:/)) { return; }
+
+    var regexp = new RegExp(q, 'i');
+    function normalizeTitle(cardTitle) {
+      return _.deburr(cardTitle).toLowerCase().trim();
+    }
+    var matchingCards = _.filter(card_pool, function (card) {
+      return regexp.test(normalizeTitle(card.stripped_title));
+    });
+    matchingCards.sort((card1, card2) => {
+        var card1title = normalizeTitle(card1.stripped_title);
+        var card2title = normalizeTitle(card2.stripped_title);
+        var normalizedQuery = normalizeTitle(q);
+        if(card1title.startsWith(normalizedQuery) && !card2title.startsWith(normalizedQuery)) {
+            return -1;
+        }
+        if(card2title.startsWith(normalizedQuery) && !card1title.startsWith(normalizedQuery)) {
+            return 1;
+        }
+        return card1.title < card2.title ? -1 : 1;
+    });
+    cb(matchingCards);
+    return matchingCards;
+  }
+
+  $('#pnp-card-search').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 2
+  }, {
+    display: function(card) { return card.title + ' (' + card.pack.name + ')'; },
+    source: findMatches
+  });
+  $('#pnp-card-search').on('typeahead:selected typeahead:autocomplete', function(event, data) {
+    imported_cards.add_card(data, 1, {prepend: true});
+    update_imported_list();
+    preview_cards();
+    update_stats();
+    setTimeout(() => {$('#pnp-card-search').typeahead("val", "");}, 10);
+  });
+
+  $('#pnp-card-search').keypress(function(event) {
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == '13'){
+      match = findMatches($(event.target).typeahead("val"), (_) => {})[0];
+      if(!match) {
+        return;
+      }
+      imported_cards.add_card(match, 1, {prepend: true});
+      update_imported_list();
+      preview_cards();
+      update_stats();
+      $('#pnp-card-search').typeahead("val", "");
+    }
+  });
+
+
+  if (document.querySelector('#pnp-text-area').value.trim() != '') {
+    do_import_pnp();
+  }
 });
 
 function click_option(event) {
@@ -71,9 +131,9 @@ function on_number_change(event) {
 var imported_cards = {};
 (function(imported_card) {
   /*
-  cards = {index : card};
-  card = {
-      index: int,
+  entries = [entry, ...];
+  entry = {
+      index: int,  // index != cards[index]. Use get_card(index).
       qty: int,
       fuzzy: true|false,
       options: [],  // For matches, list of different printings, for fuzzied,
@@ -81,49 +141,70 @@ var imported_cards = {};
       selected_option: options[0],
   };
   */
-  imported_cards.cards = {};
+  imported_cards.entries = [];
+  imported_cards.errors = [];
   imported_cards.curr_index = 0;
 
-  imported_cards.insert = function(card){
-    card.index = imported_cards.curr_index;
-    imported_cards.cards[imported_cards.curr_index++] = card;
+  imported_cards.prepend = function(entry){
+    entry.index = imported_cards.curr_index++;
+    imported_cards.entries.unshift(entry);
+  }
+
+  imported_cards.append = function(entry){
+    entry.index = imported_cards.curr_index++;
+    imported_cards.entries.push(entry);
+  }
+
+  imported_cards.add_card = function(card, qty, {fuzzy=false, prepend=false} = {}) {
+    // Directly add a card as a new entry, assuming no options.
+    entry = {
+      qty: qty,
+      fuzzy: fuzzy,
+      options: [card],
+      selected_option: card
+    }
+    if(prepend) {
+      imported_cards.prepend(entry);
+    } else {
+      imported_cards.append(entry);
+    }
   }
 
   imported_cards.get_matches = function() {
-    return Object.values(imported_cards.cards).filter((card) => {
-      return !card.fuzzy;
+    return imported_cards.entries.filter((entry) => {
+      return !entry.fuzzy;
     });
   }
 
   imported_cards.get_fuzzies = function() {
-    return Object.values(imported_cards.cards).filter((card) => {
-      return card.fuzzy;
+    return imported_cards.entries.filter((entry) => {
+      return entry.fuzzy;
     });
   }
 
   imported_cards.remove = function(index) {
-    delete imported_cards.cards[index];
+    imported_cards.entries = imported_cards.entries.filter(item => item.index != index);
   }
 
-  imported_cards.get_card = function(index) {
-    return imported_cards.cards[index];
+  imported_cards.get_entry = function(index) {
+    return imported_cards.entries.filter((entry) => {
+        return entry.index == index;
+    })[0];
   }
 
   imported_cards.select_card = function(index, code) {
-    var selection = imported_cards.cards[index].options.filter((card) => {
-     return card.code == code;
+    var selection = imported_cards.get_entry(index).options.filter((entry) => {
+     return entry.code == code;
     }) [0];
     if(selection) {
-      imported_cards.cards[index].selected_option = selection;
+      imported_cards.get_entry(index).selected_option = selection;
     }
     // else: don't do anything.
   }
 
   imported_cards.change_qty = function(index, qty) {
-    imported_cards.cards[index].qty = qty;
+    imported_cards.get_entry(index).qty = qty;
   }
-
-  imported_cards.errors = [];
 
   imported_cards.remove_error = function(error) {
     imported_cards.errors = imported_cards.errors.filter(item => item !== error);
@@ -165,7 +246,7 @@ function build_one_line(imported_line) {
   var elem = $(`<li class="list-group-item form-inline"><a class="pull-right glyphicon glyphicon-trash"></a></li>`);
   elem.append(`<input class="pnp-data" type="hidden" name="${index}" value="${card.code}:${qty_int}">`);
   elem.append(`<input type="number" class="form-control pnp-number-input" placeholder="${qty_int}">`);
-  elem.append('x ');
+  elem.append(' x ');
   var a = $(`<a class="card" data-code="${card.code}" href="javascript:void(0)">${card.title} </a>`);
   if(imported_line.fuzzy) {
     a[0].classList.add("text-warning");
@@ -225,13 +306,13 @@ function update_imported_list() {
 function import_one_line(line) {
   var qty = null;
   var name = null;
-  if(line.match(/^(\d+)x?\s*(.*)/)) {
+  if(line.match(/^(\d*)x?\s*(.*)/)) {
     qty = Number(RegExp.$1);
     name = RegExp.$2;
   } else {
     return null;  // Should be impossible...
   }
-  if(qty == null) {
+  if(qty == null || qty == 0) {
     qty = 1;
   }
   var result = find_by_title(name, false);  // Case insensitive
@@ -264,7 +345,13 @@ function import_cards() {
     if(imported_line == null) {
       imported_cards.errors.push(lines[i]);
     } else {
-      imported_cards.insert(imported_line);
+      // if imported list is not empty, we add to the top of the list
+      // so that it feels more responsive for user.
+      if($.trim($("#analyzed").html()) == '') {
+        imported_cards.append(imported_line);
+      } else {
+        imported_cards.prepend(imported_line);
+      }
     }
   }
   update_imported_list();
@@ -299,19 +386,42 @@ function update_stats() {
 }
 
 function retrieve_cards() {
-  let cards = {};
-  $("#analyzed > .list-group-item > input.pnp-data").each((_, e) => {
-    let [code, qty] = e.value.split(":");
-    qty = Number(qty);
-    if(code in cards) {
-      cards[code].qty += qty;
-    } else {
-      let card = this.find_by_code(code);
-      cards[code] = {
-        qty: qty,
-        image_url: card.imageUrl};
+  /* Retrieve cards for printing in imported list order.
+   * cards = [{ qty: int, image_url: string }, ...]
+   * */
+  let cards = [];
+  //$("#analyzed > .list-group-item > input.pnp-data").each((_, e) => {
+  //  let [code, qty] = e.value.split(":");
+  //  qty = Number(qty);
+  //  if(code in cards) {
+  //    cards[code].qty += qty;
+  //  } else {
+  //    let card = this.find_by_code(code);
+  //    cards[code] = {
+  //      qty: qty,
+  //      image_url: card.imageUrl};
+  //  }
+  //});
+
+  var fuzzies = imported_cards.get_fuzzies();
+  if(fuzzies.length > 0) {
+    for(let card of fuzzies) {
+      cards.push({
+        qty: card.qty,
+        image_url: card.selected_option.imageUrl,
+      });
     }
-  });
+  }
+
+  var matches = imported_cards.get_matches();
+  if(matches.length > 0) {
+    for(let card of matches) {
+      cards.push({
+        qty: card.qty,
+        image_url: card.selected_option.imageUrl,
+      });
+    }
+  }
   return cards;
 }
 
@@ -363,9 +473,9 @@ function do_print() {
 }
 
 class PNP {
-  constructor (cutlines, format) {
+  constructor (cutmarks, format) {
     this.settings = {
-      cutlines: cutlines,
+      cutmarks: cutmarks,
       format: format,
     }
 
@@ -429,7 +539,7 @@ class PNP {
         }
       }
 
-      if(this.settings.cutlines) {
+      if(this.settings.cutmarks == "Lines") {
         this.draw_cutlines();
       }
       this.doc.save();
