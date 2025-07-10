@@ -1,16 +1,27 @@
-// LIA TODO: Make sure double sided cards are accounted for.
 // LIA TODO: decklist view..?
-// LIA TODO: Card search bar
 // LIA TODO: Clear list button
 //
 // Potential enhancements:
 // Card preview are interactable to add or remove cards or select printings.
-// Card preview is laid out in 3 wide format with dividers every 3 rows as if they are on a print page.
-// Save user preferences.
-// Hover to see printing
+// Hover over card names to see printing. Hover over card preview to select printing.
 // Options: Bleed, cut marks (not line)
 // Imported list sorting options
 // Drag to reorder imported list.
+// Deselect specific sets from print (for users who own sets and only care about printing certain sets).
+
+/* {code: [side2_url, side3_url, ...]
+ * Does not include front side.
+ *
+ * Umm, I was going to populate this by making an API call but I literally cannot
+ * find a query that would let me search for identities printed >=2019-03-18 (downfall).
+ * So I'm hardcoding this until that is figured out
+ * - Lia
+ * */
+var multi_side_cards = {
+  "26066" : ["https://card-images.netrunnerdb.com/v2/large/26066-0.jpg"], // Hoshiko
+  "26120" : ["https://card-images.netrunnerdb.com/v2/large/26120-0.jpg"], // Earth Station
+  "35057" : ["https://card-images.netrunnerdb.com/v2/large/35057-0.jpg"], // Nebula
+};
 
 Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
   $('#btn-import').prop('disabled', false);
@@ -361,14 +372,13 @@ function import_cards() {
 
 function update_stats() {
   var deck = {}, size = 0, types = {};
-  $('#analyzed input[type="hidden"]').each(function (index, element) {
-    var card = $(element).val().split(':');
-    var code = card[0], qty = parseInt(card[1], 10);
+  var cards = retrieve_cards();
+  for (card of cards) {
+    var code = card.data.code, qty = card.qty;
     deck[code] = qty;
-    var record = NRDB.data.cards.findById(code);
-    types[record.type.name] = types[record.type.name] || 0;
-    types[record.type.name] += qty;
-  });
+    types[card.data.type.name] = types[card.data.type.name] || 0;
+    types[card.data.type.name] += qty;
+  }
   var html = '';
   $.each(types, function (key, value) {
     size+=value;
@@ -387,7 +397,7 @@ function update_stats() {
 
 function retrieve_cards() {
   /* Retrieve cards for printing in imported list order.
-   * cards = [{ qty: int, image_url: string }, ...]
+   * cards = [{ data: card db entry, qty: int, image_url: string }, ...]
    * */
   let cards = [];
   //$("#analyzed > .list-group-item > input.pnp-data").each((_, e) => {
@@ -405,21 +415,43 @@ function retrieve_cards() {
 
   var fuzzies = imported_cards.get_fuzzies();
   if(fuzzies.length > 0) {
-    for(let card of fuzzies) {
+    for(let entry of fuzzies) {
       cards.push({
-        qty: card.qty,
-        image_url: card.selected_option.imageUrl,
+        data: entry.selected_option,
+        qty: entry.qty,
+        image_url: entry.selected_option.imageUrl,
       });
+
+      if(entry.selected_option.code in multi_side_cards) {
+        for(side_url of multi_side_cards[entry.selected_option.code]) {
+          cards.push({
+            data: entry.selected_option,
+            qty: entry.qty,
+            image_url: side_url
+          });
+        }
+      }
     }
   }
 
   var matches = imported_cards.get_matches();
   if(matches.length > 0) {
-    for(let card of matches) {
+    for(let entry of matches) {
       cards.push({
-        qty: card.qty,
-        image_url: card.selected_option.imageUrl,
+        data: entry.selected_option,
+        qty: entry.qty,
+        image_url: entry.selected_option.imageUrl,
       });
+
+      if(entry.selected_option.code in multi_side_cards) {
+        for(side_url of multi_side_cards[entry.selected_option.code]) {
+          cards.push({
+            data: entry.selected_option,
+            qty: entry.qty,
+            image_url: side_url
+          });
+        }
+      }
     }
   }
   return cards;
