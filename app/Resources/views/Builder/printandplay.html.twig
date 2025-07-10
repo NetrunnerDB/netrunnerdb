@@ -19,14 +19,18 @@ var CardDB, CardNames;
 {% block body %}
 
 <div class="container">
-
+<div class="alert alert-info lazy-alert" id="pnp-alert" role="alert" style="display:none">
+  We only support printing NSG cards, which includes every standard sets. For non-NSG cards please check out other community made websites!
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" onClick="NRDB.settings.persist_dismiss('#pnp-alert')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
 <div class="row">
 
   <div class="col-md-5">
     <form role="form">
       <div class="form-group">
-        <label for="content">Paste deck here</label>
-        <textarea class="form-control" id="pnp-text-area" name="content" rows="10">
+        <textarea placeholder="Paste deck here and click import" class="form-control" id="pnp-text-area" name="content" rows="10">
         {%- if decklist is not empty -%}
            {{- decklist |trim -}}
         {%- endif -%}
@@ -39,14 +43,12 @@ var CardDB, CardNames;
   <div class="col-md-2">
     <form role="form">
       <div class="form-group">
-        <label for="">Statistics</label>
         <div id="stats"></div>
       </div>
     </form>
   </div>
 
   <div class="col-md-4">
-    <label>Settings</label>
     <form id="settings">
       <div class="form-group">
         <label>

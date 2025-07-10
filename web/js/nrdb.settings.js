@@ -60,6 +60,29 @@
 
   $(function () {
     settings.load();
+    settings.dismiss_alerts();
+    $(".lazy-alert").css("display", "block");
   });
+
+  settings.persist_dismiss = function(selector) {
+    /* Permanently dismiss an alert. Call with selector to id to alert.
+     * Remember to add "lazy-alert" to class to prevent alerts from loading
+     * in before being deleted by persisted dismiss */
+    var dismissed = [];
+    if(localStorage.dismissed_alerts) {
+      dismissed = JSON.parse(localStorage.dismissed_alerts);
+    }
+    dismissed.push(selector);
+    localStorage.dismissed_alerts = JSON.stringify(dismissed);
+  }
+  settings.dismiss_alerts = function() {
+    if(!localStorage.dismissed_alerts) {
+      return;
+    }
+    var dismissed = JSON.parse(localStorage.dismissed_alerts);
+    for(id of dismissed) {
+      $(id).remove();
+    }
+  }
 
 })(NRDB.settings = {}, jQuery);
