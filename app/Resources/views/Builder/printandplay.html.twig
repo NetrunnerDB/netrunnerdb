@@ -32,7 +32,7 @@ var CardDB, CardNames;
         {%- endif -%}
         </textarea>
       </div>
-      <button id="btn-import" type="button" class="btn btn-default" disabled="disabled" onclick="do_import_pnp()">Import</button>
+      <button id="btn-import" type="button" class="btn btn-default" disabled="disabled" onclick="do_import_pnp()" style="margin-bottom:2em">Import</button>
     </form>
   </div>
 
@@ -72,7 +72,6 @@ var CardDB, CardNames;
 
 <div class="row">
   <div class="col-md-5">
-    <button id="btn-print" class="pull-right btn btn-success" disabled="disabled" onclick="do_print()">Print</button>
 
     <input type="text" placeholder="Card Search" class="form-control" name="q" id="pnp-card-search">
 
@@ -82,7 +81,12 @@ var CardDB, CardNames;
     </div>
     <input type="hidden" name="content">
   </div>
-  <div class="col-md-7" id="preview-container"></div>
+  <div class="col-md-7">
+    <div class="row">
+      <button id="btn-print" class="btn btn-success" disabled="disabled" onclick="do_print()" style="margin-bottom:2em">Print</button>
+    </div>
+    <div class="row" id="preview-container"></div>
+  </div>
 </div> <!-- .row -->
 
 </div> <!-- .container -->
