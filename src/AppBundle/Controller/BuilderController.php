@@ -1337,7 +1337,6 @@ class BuilderController extends Controller
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('long_cache'));
-        //$list_mwl = $entityManager->getRepository('AppBundle:Mwl')->findBy([], ['dateStart' => 'DESC']);
 
         $decklist = "";
         if($deck) {
@@ -1349,8 +1348,8 @@ class BuilderController extends Controller
 
             '/Builder/printandplay.html.twig',
             [
-                'pagetitle' => "Import a deck",
-                'pagedescription' => "Import a deck from outside of NetrunnerDB.",
+                'pagetitle' => "Print and Play",
+                'pagedescription' => "Print any NSG cards",
                 'decklist' => $decklist,
             ],
             $response

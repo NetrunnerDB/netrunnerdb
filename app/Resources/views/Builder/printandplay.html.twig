@@ -2,7 +2,6 @@
 
 {% block head %}
 
-{% include '/Scripts/nsg_formats.html.twig' %}
 <script src="{{ asset('/js/nrdb.settings.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script src="{{ asset('/js/nrdb.fuzzy_search.js') }}?cachebuster={{ asset_fingerprint }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/string_score/0.1.22/string_score.js"></script>
@@ -26,7 +25,6 @@ var CardDB, CardNames;
   </button>
 </div>
 <div class="row">
-
   <div class="col-md-5">
     <form role="form">
       <div class="form-group">

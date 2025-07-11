@@ -1,6 +1,3 @@
-// LIA TODO: decklist view..?
-// LIA TODO: Clear list button
-//
 // Potential enhancements:
 // Card preview are interactable to add or remove cards or select printings.
 // Hover over card names to see printing. Hover over card preview to select printing.
@@ -8,11 +5,13 @@
 // Imported list sorting options
 // Drag to reorder imported list.
 // Deselect specific sets from print (for users who own sets and only care about printing certain sets).
+// Clear list button.
+// Decklist view...?
 
 /* {code: [side2_url, side3_url, ...]
  * Does not include front side.
  *
- * Umm, I was going to populate this by making an API call but I literally cannot
+ * Umm, I was going to populate this by making an APIv3 call but I literally cannot
  * find a query that would let me search for identities printed >=2019-03-18 (downfall).
  * So I'm hardcoding this until that is figured out
  * - Lia
@@ -35,9 +34,9 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
     change: on_number_change,
   }, 'input.pnp-number-input');
 
-  // LIA TODO: Refactor this duplicate typeahead code from topnav.js and deck.v2.js
+  /* Typeahead for card search box.
+   * LIA TODO: Refactor this duplicate typeahead code from topnav.js and deck.v2.js */
   var card_pool = filter_for_nsg(NRDB.data.cards.find());
-
   function findMatches(q, cb) {
     if (q.match(/^\w:/)) { return; }
 
@@ -63,7 +62,6 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
     cb(matchingCards);
     return matchingCards;
   }
-
   $('#pnp-card-search').typeahead({
     hint: true,
     highlight: true,
@@ -79,7 +77,6 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
     update_stats();
     setTimeout(() => {$('#pnp-card-search').typeahead("val", "");}, 10);
   });
-
   $('#pnp-card-search').keypress(function(event) {
     var keycode = (event.keyCode ? event.keyCode : event.which);
     if(keycode == '13'){
@@ -96,10 +93,17 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
   });
 
 
+  // For routes with a deck code, automatically import it.
   if (document.querySelector('#pnp-text-area').value.trim() != '') {
     do_import_pnp();
   }
 });
+
+function do_import_pnp() {
+  import_cards();
+  update_stats();
+  preview_cards();
+}
 
 function click_option(event) {
   var code = $(this).data('code');
@@ -125,6 +129,7 @@ function click_trash(event) {
 }
 
 function on_number_change(event) {
+  /* Number input for card entries */
   var elem = $(this).closest('li.list-group-item');
   var data_elem = elem.children("input")[0];
   var index = data_elem.name;
@@ -231,10 +236,6 @@ function filter_for_nsg(cards) {
   });
 }
 
-function find_by_code (code) {
-  return NRDB.data.cards.findOne({code : { "$eq": code }});
-}
-
 function find_by_title (title, case_sensitive = true) {
   // Sort: newest first.
   var ret;
@@ -249,17 +250,18 @@ function find_by_title (title, case_sensitive = true) {
   return ret;
 }
 
-function build_one_line(imported_line) {
-  var card = imported_line.selected_option;
-  var options = imported_line.options;
-  var qty_int = imported_line.qty;
-  var index = imported_line.index;
+function build_one_line(imported_entry) {
+  /* Build one line for imported list from an entry from imported_cards. */
+  var card = imported_entry.selected_option;
+  var options = imported_entry.options;
+  var qty_int = imported_entry.qty;
+  var index = imported_entry.index;
   var elem = $(`<li class="list-group-item form-inline"><a class="pull-right glyphicon glyphicon-trash"></a></li>`);
   elem.append(`<input class="pnp-data" type="hidden" name="${index}" value="${card.code}:${qty_int}">`);
   elem.append(`<input type="number" class="form-control pnp-number-input" placeholder="${qty_int}">`);
   elem.append(' x ');
   var a = $(`<a class="card" data-code="${card.code}" href="javascript:void(0)">${card.title} </a>`);
-  if(imported_line.fuzzy) {
+  if(imported_entry.fuzzy) {
     a[0].classList.add("text-warning");
   }
   if(options.length > 1) {
@@ -279,6 +281,7 @@ function build_one_line(imported_line) {
 }
 
 function update_imported_list() {
+  /* Build the entire imported list */
   $('#analyzed').empty();
   var label_elem = $("<label class='list-group-label'></label>");
   if(imported_cards.errors.length > 0) {
@@ -315,6 +318,7 @@ function update_imported_list() {
 }
 
 function import_one_line(line) {
+  /* Parse one line from the import textarea */
   var qty = null;
   var name = null;
   if(line.match(/^(\d*)x?\s*(.*)/)) {
@@ -347,25 +351,27 @@ function import_one_line(line) {
 }
 
 function import_cards() {
+  /* Parse the entire import textarea, creating imported_cards entries */
   var errors = [];
   var content = $('textarea[name="content"]').val();
   var lines = content.split(/[\r\n]+/);
   for(let i = 0; i < lines.length; i++) {
-    var imported_line = import_one_line(lines[i]);
+    var imported_entry = import_one_line(lines[i]);
 
-    if(imported_line == null) {
+    if(imported_entry == null) {
       imported_cards.errors.push(lines[i]);
     } else {
       // if imported list is not empty, we add to the top of the list
       // so that it feels more responsive for user.
       if($.trim($("#analyzed").html()) == '') {
-        imported_cards.append(imported_line);
+        imported_cards.append(imported_entry);
       } else {
-        imported_cards.prepend(imported_line);
+        imported_cards.prepend(imported_entry);
       }
     }
   }
   update_imported_list();
+  // Clear the imported textarea.
   $('#pnp-text-area').val("");
 }
 
@@ -397,21 +403,10 @@ function update_stats() {
 
 function retrieve_cards() {
   /* Retrieve cards for printing in imported list order.
+   * Returns:
    * cards = [{ data: card db entry, qty: int, image_url: string }, ...]
    * */
   let cards = [];
-  //$("#analyzed > .list-group-item > input.pnp-data").each((_, e) => {
-  //  let [code, qty] = e.value.split(":");
-  //  qty = Number(qty);
-  //  if(code in cards) {
-  //    cards[code].qty += qty;
-  //  } else {
-  //    let card = this.find_by_code(code);
-  //    cards[code] = {
-  //      qty: qty,
-  //      image_url: card.imageUrl};
-  //  }
-  //});
 
   var fuzzies = imported_cards.get_fuzzies();
   if(fuzzies.length > 0) {
@@ -458,6 +453,7 @@ function retrieve_cards() {
 }
 
 function preview_cards() {
+  /* Build the print preview images area */
   var cards = retrieve_cards();
   var curr_index = 0;
   $("#preview-container").empty();
@@ -476,12 +472,6 @@ function preview_cards() {
       curr_index++;
     }
   }
-}
-
-function do_import_pnp() {
-  import_cards();
-  update_stats();
-  preview_cards();
 }
 
 function print_button_busy() {
@@ -543,7 +533,9 @@ class PNP {
     }
   }
 
-  print(done_callback){
+  print(done_callback = null){
+    /* setTimeout is a little trick to get print button spinner to work.
+     * See https://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful */
     setTimeout(() => {
       var cards = retrieve_cards();
 
