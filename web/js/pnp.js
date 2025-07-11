@@ -133,7 +133,7 @@ function on_number_change(event) {
   var elem = $(this).closest('li.list-group-item');
   var data_elem = elem.children("input")[0];
   var index = data_elem.name;
-  var value = event.target.value;
+  var value = Number(event.target.value);
 
   value = value < 1? 1: value;
   var [code, _] = data_elem.value.split(':');
