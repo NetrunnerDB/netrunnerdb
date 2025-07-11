@@ -2341,3 +2341,16 @@ table .table-cell {
   transform: translateY(-50%);
   padding: inherit;
 }
+
+.btn-pnp {
+  background-color: var(--nrdb-color--neutral);
+  color: #fff
+}
+.btn-pnp:hover {
+  background-color: var(--nrdb-color--neutral-bg);
+  color: #fff
+}
+.btn-pnp:focus {
+  outline-color: var(--nrdb-color--neutral);
+  color: #fff
+}
