@@ -44,3 +44,4 @@ parameters:
     images_path: ~
     card_image_url: 'https://card-images.netrunnerdb.com/v2'
     v3_api_url: 'https://api-preview.netrunnerdb.com/'
+    asset_fingerprint: '12345'
