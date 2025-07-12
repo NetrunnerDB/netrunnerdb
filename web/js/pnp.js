@@ -19,6 +19,7 @@
 var multi_side_cards = {
   "26066" : ["https://card-images.netrunnerdb.com/v2/large/26066-0.jpg"], // Hoshiko
   "26120" : ["https://card-images.netrunnerdb.com/v2/large/26120-0.jpg"], // Earth Station
+  "35023" : ["https://card-images.netrunnerdb.com/v2/large/35023-0.jpg"], // Dewi
   "35057" : ["https://card-images.netrunnerdb.com/v2/large/35057-0.jpg"], // Nebula
 };
 
@@ -92,7 +93,6 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
     }
   });
 
-
   // For routes with a deck code, automatically import it.
   if (document.querySelector('#pnp-text-area').value.trim() != '') {
     do_import_pnp();
@@ -146,17 +146,19 @@ function on_number_change(event) {
 
 var imported_cards = {};
 (function(imported_card) {
-  /*
-  entries = [entry, ...];
-  entry = {
-      index: int,  // index != cards[index]. Use get_card(index).
-      qty: int,
-      fuzzy: true|false,
-      options: [],  // For matches, list of different printings, for fuzzied,
-                    // list of other options
-      selected_option: options[0],
-  };
-  */
+  /* Object that contains every imported line entries.
+   *
+   * Relevant data structures:
+   * entries = [entry, ...];
+   * entry = {
+   *     index: int,  // index != cards[index]. Use get_card(index).
+   *     qty: int,
+   *     fuzzy: true|false,
+   *     options: [],  // For matches, list of different printings, for fuzzied,
+   *                   // list of other options
+   *     selected_option: options[0],
+   *};
+   * */
   imported_cards.entries = [];
   imported_cards.errors = [];
   imported_cards.curr_index = 0;
@@ -513,7 +515,6 @@ class PNP {
     this.page_height = this.doc.internal.pageSize.getHeight();
     this.MARGIN_LEFT = (this.page_width - this.CARD_WIDTH*3)/2;
     this.MARGIN_TOP = (this.page_height - this.CARD_HEIGHT*3)/2;
-
   }
 
   draw_cutlines(){
