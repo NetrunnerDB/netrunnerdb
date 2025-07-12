@@ -624,6 +624,7 @@ class SearchController extends Controller
 
         $searchbar = $this->renderView('/Search/searchbar.html.twig', [
             "q"            => $q,
+            "card"         => $card,
             "view"         => $view,
             "sort"         => $sort,
             "sort_options" => self::SORT_OPTIONS,
