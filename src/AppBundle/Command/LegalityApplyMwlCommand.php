@@ -67,37 +67,46 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
             $output->writeln("<info>Applying legality for MWL $mwlCode...</info>");
 
             // Find all decklists that do not have a legality present for the given MWL.
-            $countDql = "SELECT COUNT(d)
-                FROM AppBundle:Decklist d
-                WHERE NOT EXISTS (
-                    SELECT l
-                    FROM AppBundle:Legality l
-                    WHERE l.decklist=d AND l.mwl=?1
-                )
-                ORDER BY d.id DESC";
-            $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $mwl);
-            $count = $countQuery->getSingleResult()[1];
+            $countSql = "SELECT COUNT(id) FROM decklist WHERE id NOT IN (SELECT decklist_id FROM legality WHERE mwl_id = ?)";
+
+            // $countDql = "SELECT COUNT(d) FROM AppBundle:Decklist d WHERE d NOT IN (SELECT l.decklist.id FROM AppBundle:Legality l WHERE l.mwl_id = ?1)";
+
+            // SELECT COUNT(d)
+            //     FROM AppBundle:Decklist d
+            //     WHERE d.id NOT IN (
+            //         SELECT l
+            //         FROM AppBundle:Legality l
+            //         WHERE l.decklist=d AND l.mwl=?1
+            //     )
+            //     ORDER BY d.id DESC";
+            // $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $mwl);
+            $count = $this->entityManager->getConnection()->executeQuery($countSql, [$mwl->getId()])->fetchColumn(0);
             $output->writeln("<comment>Found $count decklists to analyze</comment>");
 
             if (!$count) {
                 continue;
             }
 
+
+            $fetchDql = "SELECT id FROM decklist WHERE id NOT IN (SELECT decklist_id FROM legality WHERE mwl_id = ?)";
+            $rows = $this->entityManager->getConnection()->executeQuery($fetchDql, [$mwl->getId()])->fetchAll();
+
+            if (empty($rows)) {
+                $output->writeln("Decklist id fetch returned no results");
+                continue;
+            }
             $progress = new ProgressBar($output, $count);
-            $progress->setRedrawFrequency(10);
+            $batchSize = 100;
+            $progress->setRedrawFrequency($batchSize);
             $progress->start();
 
             $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
-            $batchSize = 100;
             $i = 0;
-
-            $fetchDql = str_replace('COUNT(d)', 'd', $countDql);
-            $fetchQuery = $this->entityManager->createQuery($fetchDql)->setParameter(1, $mwlCode);
-            $iterableResult = $fetchQuery->iterate();
-            foreach ($iterableResult as $row) {
+            foreach ($rows as $row) {
+                $decklist = $this->entityManager->getRepository('AppBundle:Decklist')->find($row['id']);
                 $mwl = $this->entityManager->getRepository('AppBundle:Mwl')->findOneBy(['code' => $mwlCode]);
                 $legality = new Legality();
-                $legality->setDecklist($row[0]);
+                $legality->setDecklist($decklist);
                 $legality->setMwl($mwl);
                 $this->judge->computeLegality($legality);
                 $this->entityManager->persist($legality);
