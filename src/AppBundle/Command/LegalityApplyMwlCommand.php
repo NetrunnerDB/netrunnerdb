@@ -68,18 +68,6 @@ class LegalityApplyMwlCommand extends ContainerAwareCommand
 
             // Find all decklists that do not have a legality present for the given MWL.
             $countSql = "SELECT COUNT(id) FROM decklist WHERE id NOT IN (SELECT decklist_id FROM legality WHERE mwl_id = ?)";
-
-            // $countDql = "SELECT COUNT(d) FROM AppBundle:Decklist d WHERE d NOT IN (SELECT l.decklist.id FROM AppBundle:Legality l WHERE l.mwl_id = ?1)";
-
-            // SELECT COUNT(d)
-            //     FROM AppBundle:Decklist d
-            //     WHERE d.id NOT IN (
-            //         SELECT l
-            //         FROM AppBundle:Legality l
-            //         WHERE l.decklist=d AND l.mwl=?1
-            //     )
-            //     ORDER BY d.id DESC";
-            // $countQuery = $this->entityManager->createQuery($countDql)->setParameter(1, $mwl);
             $count = $this->entityManager->getConnection()->executeQuery($countSql, [$mwl->getId()])->fetchColumn(0);
             $output->writeln("<comment>Found $count decklists to analyze</comment>");
 
