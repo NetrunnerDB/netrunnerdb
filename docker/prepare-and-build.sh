@@ -45,4 +45,9 @@ else
   ln -s "${CARDS_PATH}" netrunner-cards-json
 fi
 
-docker-compose build
+if command -v docker compose >/dev/null 2>&1
+then
+  docker compose build
+else
+  docker-compose build
+fi
