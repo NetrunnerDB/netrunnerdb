@@ -802,7 +802,7 @@ class CardsData
                 $qb->orderBy('c.side', 'DESC')->addOrderBy('c.type')->addOrderBy('c.faction');
                 break;
             case 'cost':
-                $qb->orderBy('c.type')->addOrderBy('c.cost')->addOrderBy('c.advancementCost');
+                $qb->orderBy('c.side', 'DESC')->addOrderBy('c.cost')->addOrderBy('c.advancementCost')->addOrderBy('c.type');
                 break;
             case 'strength':
                 $qb->orderBy('c.type')->addOrderBy('c.strength')->addOrderBy('c.agendaPoints')->addOrderBy('c.trashCost');
