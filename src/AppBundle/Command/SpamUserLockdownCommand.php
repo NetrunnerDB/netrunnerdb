@@ -6,6 +6,7 @@ use AppBundle\Entity\Review;
 use AppBundle\Entity\Reviewcomment;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -120,8 +121,8 @@ class SpamUserLockdownCommand extends ContainerAwareCommand
         $this->entityManager->flush();
 
         // Reset the password and change the email address for the account.
-        $user->setEmail($user->getEmail() . "-was-a-damn-dirty-spammer");
-        $user->setPassword('do not be a damn dirty spammer');
+        $user->setEmail($user->getEmail() . "-was-a-damn-dirty-spammer-" . $user->getUsername());
+        $user->setPassword(Uuid::uuid4()->toString());
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
