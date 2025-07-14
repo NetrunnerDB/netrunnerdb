@@ -2295,3 +2295,62 @@ table .table-cell {
   flex-wrap: wrap;
   gap: 4px;
 }
+
+.pnp-image {
+  width: 30%;
+  margin-right: 0.5em;
+  margin-bottom: 1em;
+  display:inline;
+}
+
+.list-group-label {
+  margin-top:0.5em;
+}
+
+/* Hide number input up/down arrows*/
+.pnp-number-input::-webkit-inner-spin-button,
+.pnp-number-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.pnp-number-input {
+  width: 2.5em !important;
+  padding: 0.5em;
+  text-align: right;
+}
+
+/* Printing spinner */
+.glyphicon.spinning {
+  animation: spin 1s infinite linear;
+  -webkit-animation: spin2 1s infinite linear;
+}
+@keyframes spin {
+  from { transform: scale(1) rotate(0deg); }
+  to { transform: scale(1) rotate(360deg); }
+}
+@-webkit-keyframes spin2 {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+
+.list-group-item > a.glyphicon-trash {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  padding: inherit;
+}
+
+.btn-pnp {
+  background-color: var(--nrdb-color--neutral);
+  color: #fff
+}
+.btn-pnp:hover {
+  background-color: var(--nrdb-color--neutral-bg);
+  color: #fff
+}
+.btn-pnp:focus {
+  outline-color: var(--nrdb-color--neutral);
+  color: #fff
+}

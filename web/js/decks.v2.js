@@ -274,6 +274,7 @@ function do_action_deck(event) {
     case 'btn-export-markdown': export_markdown(deck); break;
     case 'btn-export-plaintext': export_plaintext(deck); break;
     case 'btn-export-jintekinet': export_jintekinet(deck); break;
+    case 'btn-pnp': location.href = Routing.generate('deck_print', {deck_uuid:deck.uuid,_locale:NRDB.locale}); break;
   }
   return false;
 }

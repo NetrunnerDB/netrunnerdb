@@ -24,7 +24,6 @@ $(document).on('data.app', function() {
   make_strength_graph();
 });
 
-
 function do_action_deck(event) {
   var action_id = $(this).attr('id');
   if(!action_id || !SelectedDeck) return;
@@ -46,6 +45,7 @@ function do_action_deck(event) {
     case 'btn-display-markdown': export_markdown(); break;
     case 'btn-display-jintekinet': export_jintekinet(); break;
     case 'btn-export-tournament-sheet': open_decklist_modal(SelectedDeck.uuid, SelectedDeck.side_name.charAt(0).toUpperCase() + SelectedDeck.side_name.slice(1)); break;
+    case 'btn-pnp': location.href = Routing.generate('deck_print', {deck_uuid:SelectedDeck.uuid,_locale:NRDB.locale}); break;
   }
 }
 

@@ -1,0 +1,95 @@
+{% extends '/layout.html.twig' %}
+
+{% block head %}
+
+<script src="{{ asset('/js/nrdb.settings.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="{{ asset('/js/nrdb.fuzzy_search.js') }}?cachebuster={{ asset_fingerprint }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/string_score/0.1.22/string_score.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
+<script src="{{ asset('/js/pnp.js') }} "></script>
+<script type="text/javascript">
+
+var CardDB, CardNames;
+
+</script>
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+<div class="alert alert-info lazy-alert" id="pnp-alert" role="alert" style="display:none">
+  We only support printing NSG cards, which includes every standard set. For non-NSG cards please check out other community made websites!
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" onClick="NRDB.settings.persist_dismiss('#pnp-alert')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="row">
+  <div class="col-md-5">
+    <form role="form">
+      <div class="form-group">
+        <textarea placeholder="Paste deck here and click import" class="form-control" id="pnp-text-area" name="content" rows="10">
+        {%- if decklist is not empty -%}
+           {{- decklist |trim -}}
+        {%- endif -%}
+        </textarea>
+      </div>
+      <button id="btn-import" type="button" class="btn btn-default" disabled onclick="do_import_pnp()" style="margin-bottom:2em">Import</button>
+    </form>
+  </div>
+
+  <div class="col-md-2">
+    <form role="form">
+      <div class="form-group">
+        <div id="stats"></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-md-4">
+    <form id="settings">
+      <div class="form-group">
+        <label>
+          Cut marks
+          <select class="form-control" name="pnp-cut-marks" data-persistence>
+            <option>None</option>
+            <option>Lines</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-group">
+        <label>
+          Page type
+          <select class="form-control" name="pnp-page-format" data-persistence>
+            <option>Letter</option>
+            <option>A4</option>
+          </select>
+        </label>
+      </div>
+    </form>
+  </div>
+</div> <!-- .row -->
+
+<div class="row">
+  <div class="col-md-5">
+
+    <input type="text" placeholder="Card Search" class="form-control" name="q" id="pnp-card-search">
+
+    <div class="form-group">
+      <label for=""></label>
+      <ul class="list-group list-group--pnp" id="analyzed"></ul>
+    </div>
+    <input type="hidden" name="content">
+  </div>
+  <div class="col-md-7">
+    <div class="row">
+      <button id="btn-print" class="btn btn-success" disabled="disabled" onclick="do_print()" style="margin-bottom:2em">Print</button>
+    </div>
+    <div class="row" id="preview-container"></div>
+  </div>
+</div> <!-- .row -->
+
+</div> <!-- .container -->
+
+
+{% endblock %}
