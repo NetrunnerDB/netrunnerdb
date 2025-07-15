@@ -95,12 +95,12 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
 
   // For routes with a deck code, automatically import it.
   if (document.querySelector('#pnp-text-area').value.trim() != '') {
-    do_import_pnp();
+    do_import_pnp(/* first_time */ true);
   }
 });
 
-function do_import_pnp() {
-  import_cards();
+function do_import_pnp(first_time=false) {
+  import_cards(first_time);
   update_stats();
   preview_cards();
 }
@@ -227,6 +227,21 @@ var imported_cards = {};
   imported_cards.remove_error = function(error) {
     imported_cards.errors = imported_cards.errors.filter(item => item !== error);
   }
+
+  imported_cards.sort_by_type = function() {
+    /* Sort by type, prioritizing identities */
+    imported_cards.entries.sort((e1, e2) => {
+      o1 = e1.selected_option;
+      o2 = e2.selected_option;
+      if(o1.type.code == o2.type.code) {
+        return o1.title === o2.title? 0: o1.title > o2.title? 1 : -1;
+      }
+      else if(o1.type.code == "identity") return -1;
+      else if(o2.type.code == "identity") return 1;
+      else return o1.type.code > o2.type.code? 1 : -1;
+    });
+  }
+
 }) (imported_cards);
 
 function filter_for_nsg(cards) {
@@ -352,7 +367,7 @@ function import_one_line(line) {
   return ret;
 }
 
-function import_cards() {
+function import_cards(first_time=false) {
   /* Parse the entire import textarea, creating imported_cards entries */
   var errors = [];
   var content = $('textarea[name="content"]').val();
@@ -365,12 +380,11 @@ function import_cards() {
     } else {
       // if imported list is not empty, we add to the top of the list
       // so that it feels more responsive for user.
-      if($.trim($("#analyzed").html()) == '') {
-        imported_cards.append(imported_entry);
-      } else {
-        imported_cards.prepend(imported_entry);
-      }
+      imported_cards.prepend(imported_entry);
     }
+  }
+  if(first_time) {
+    imported_cards.sort_by_type();
   }
   update_imported_list();
   // Clear the imported textarea.
