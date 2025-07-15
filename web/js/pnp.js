@@ -1,11 +1,10 @@
 // Potential enhancements:
 // Card preview are interactable to add or remove cards or select printings.
 // Hover over card names to see printing. Hover over card preview to select printing.
-// Options: Bleed, cut marks (not line)
+// Options: Bleed
 // Imported list sorting options
 // Drag to reorder imported list.
 // Deselect specific sets from print (for users who own sets and only care about printing certain sets).
-// Clear list button.
 // Decklist view...?
 
 /* {code: [side2_url, side3_url, ...]
@@ -101,6 +100,16 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
 
 function do_import_pnp(first_time=false) {
   import_cards(first_time);
+  update_stats();
+  preview_cards();
+}
+
+function do_clear() {
+  if(!window.confirm("Are you sure you want to clear all cards?")) {
+    return;
+  }
+  imported_cards.clear_all();
+  update_imported_list();
   update_stats();
   preview_cards();
 }
@@ -240,6 +249,11 @@ var imported_cards = {};
       else if(o2.type.code == "identity") return 1;
       else return o1.type.code > o2.type.code? 1 : -1;
     });
+  }
+  
+  imported_cards.clear_all = function() {
+    imported_cards.entries = [];
+    imported_cards.errors = [];
   }
 
 }) (imported_cards);
