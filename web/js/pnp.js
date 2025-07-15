@@ -548,6 +548,36 @@ class PNP {
     }
   }
 
+  draw_cutmarks(padding) {
+    /* Draw non-invasive cutmarks, padding is space between mark and cards*/
+    for(let p = 1; p <= this.doc.getNumberOfPages(); p++) {
+      this.doc.setPage(p);
+      // 4 by 4 card intersection points, including corners. We will
+      // only be draw marks on corner and edge points.
+      for(let row = 0; row < 4; row++) {
+        for(let col = 0; col < 4; col++) {
+          if(row == 0) {
+            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col, 0,
+                          this.MARGIN_LEFT + this.CARD_WIDTH*col, this.MARGIN_TOP - padding);
+          }
+          if(col == 0) {
+            this.doc.line(0, this.MARGIN_TOP + this.CARD_HEIGHT*row,
+                          this.MARGIN_LEFT - padding, this.MARGIN_TOP + this.CARD_HEIGHT*row);
+          }
+          if(row == 3) {
+            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col, this.MARGIN_TOP + this.CARD_HEIGHT*row + padding,
+                          this.MARGIN_LEFT + this.CARD_WIDTH*col, this.page_height);
+          }
+          if(col == 3) {
+            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col + padding, this.MARGIN_TOP + this.CARD_HEIGHT*row,
+                          this.page_width, this.MARGIN_TOP + this.CARD_HEIGHT*row);
+          }
+        }
+      }
+    }
+
+  }
+
   print(done_callback = null){
     /* setTimeout is a little trick to get print button spinner to work.
      * See https://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful */
@@ -578,8 +608,13 @@ class PNP {
         }
       }
 
-      if(this.settings.cutmarks == "Lines") {
-        this.draw_cutlines();
+      switch(this.settings.cutmarks) {
+        case "Lines":
+          this.draw_cutlines();
+          break;
+        case "Marks":
+          this.draw_cutmarks(1);
+          break;
       }
       this.doc.save();
       if(done_callback) {
