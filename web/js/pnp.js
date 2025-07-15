@@ -1,11 +1,10 @@
 // Potential enhancements:
 // Card preview are interactable to add or remove cards or select printings.
 // Hover over card names to see printing. Hover over card preview to select printing.
-// Options: Bleed, cut marks (not line)
+// Options: Bleed
 // Imported list sorting options
 // Drag to reorder imported list.
 // Deselect specific sets from print (for users who own sets and only care about printing certain sets).
-// Clear list button.
 // Decklist view...?
 
 /* {code: [side2_url, side3_url, ...]
@@ -95,12 +94,22 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
 
   // For routes with a deck code, automatically import it.
   if (document.querySelector('#pnp-text-area').value.trim() != '') {
-    do_import_pnp();
+    do_import_pnp(/* first_time */ true);
   }
 });
 
-function do_import_pnp() {
-  import_cards();
+function do_import_pnp(first_time=false) {
+  import_cards(first_time);
+  update_stats();
+  preview_cards();
+}
+
+function do_clear() {
+  if(!window.confirm("Are you sure you want to clear all cards?")) {
+    return;
+  }
+  imported_cards.clear_all();
+  update_imported_list();
   update_stats();
   preview_cards();
 }
@@ -227,6 +236,26 @@ var imported_cards = {};
   imported_cards.remove_error = function(error) {
     imported_cards.errors = imported_cards.errors.filter(item => item !== error);
   }
+
+  imported_cards.sort_by_type = function() {
+    /* Sort by type, prioritizing identities */
+    imported_cards.entries.sort((e1, e2) => {
+      o1 = e1.selected_option;
+      o2 = e2.selected_option;
+      if(o1.type.code == o2.type.code) {
+        return o1.title === o2.title? 0: o1.title > o2.title? 1 : -1;
+      }
+      else if(o1.type.code == "identity") return -1;
+      else if(o2.type.code == "identity") return 1;
+      else return o1.type.code > o2.type.code? 1 : -1;
+    });
+  }
+  
+  imported_cards.clear_all = function() {
+    imported_cards.entries = [];
+    imported_cards.errors = [];
+  }
+
 }) (imported_cards);
 
 function filter_for_nsg(cards) {
@@ -352,7 +381,7 @@ function import_one_line(line) {
   return ret;
 }
 
-function import_cards() {
+function import_cards(first_time=false) {
   /* Parse the entire import textarea, creating imported_cards entries */
   var errors = [];
   var content = $('textarea[name="content"]').val();
@@ -365,12 +394,11 @@ function import_cards() {
     } else {
       // if imported list is not empty, we add to the top of the list
       // so that it feels more responsive for user.
-      if($.trim($("#analyzed").html()) == '') {
-        imported_cards.append(imported_entry);
-      } else {
-        imported_cards.prepend(imported_entry);
-      }
+      imported_cards.prepend(imported_entry);
     }
+  }
+  if(first_time) {
+    imported_cards.sort_by_type();
   }
   update_imported_list();
   // Clear the imported textarea.
@@ -534,6 +562,36 @@ class PNP {
     }
   }
 
+  draw_cutmarks(padding) {
+    /* Draw non-invasive cutmarks, padding is space between mark and cards*/
+    for(let p = 1; p <= this.doc.getNumberOfPages(); p++) {
+      this.doc.setPage(p);
+      // 4 by 4 card intersection points, including corners. We will
+      // only be draw marks on corner and edge points.
+      for(let row = 0; row < 4; row++) {
+        for(let col = 0; col < 4; col++) {
+          if(row == 0) {
+            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col, 0,
+                          this.MARGIN_LEFT + this.CARD_WIDTH*col, this.MARGIN_TOP - padding);
+          }
+          if(col == 0) {
+            this.doc.line(0, this.MARGIN_TOP + this.CARD_HEIGHT*row,
+                          this.MARGIN_LEFT - padding, this.MARGIN_TOP + this.CARD_HEIGHT*row);
+          }
+          if(row == 3) {
+            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col, this.MARGIN_TOP + this.CARD_HEIGHT*row + padding,
+                          this.MARGIN_LEFT + this.CARD_WIDTH*col, this.page_height);
+          }
+          if(col == 3) {
+            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col + padding, this.MARGIN_TOP + this.CARD_HEIGHT*row,
+                          this.page_width, this.MARGIN_TOP + this.CARD_HEIGHT*row);
+          }
+        }
+      }
+    }
+
+  }
+
   print(done_callback = null){
     /* setTimeout is a little trick to get print button spinner to work.
      * See https://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful */
@@ -564,8 +622,13 @@ class PNP {
         }
       }
 
-      if(this.settings.cutmarks == "Lines") {
-        this.draw_cutlines();
+      switch(this.settings.cutmarks) {
+        case "Lines":
+          this.draw_cutlines();
+          break;
+        case "Marks":
+          this.draw_cutmarks(1);
+          break;
       }
       this.doc.save();
       if(done_callback) {

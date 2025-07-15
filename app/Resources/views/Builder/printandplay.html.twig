@@ -54,6 +54,7 @@ var CardDB, CardNames;
           <select class="form-control" name="pnp-cut-marks" data-persistence>
             <option>None</option>
             <option>Lines</option>
+            <option>Marks</option>
           </select>
         </label>
       </div>
@@ -83,7 +84,8 @@ var CardDB, CardNames;
   </div>
   <div class="col-md-7">
     <div class="row">
-      <button id="btn-print" class="btn btn-success" disabled="disabled" onclick="do_print()" style="margin-bottom:2em">Print</button>
+      <button id="btn-print" class="btn btn-success" disabled onclick="do_print()" style="margin-bottom:2em">Print</button>
+      <button id="btn-clear" class="btn btn-danger" onclick="do_clear()" style="margin-left:0.8em;margin-bottom:2em">Clear</button>
     </div>
     <div class="row" id="preview-container"></div>
   </div>
