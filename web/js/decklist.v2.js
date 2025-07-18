@@ -275,6 +275,9 @@ function do_action_decklist(event) {
         case 'btn-download-octgn':
             location.href = Routing.generate('decklist_octgn_export', {decklist_uuid: Decklist.uuid});
             break;
+        case 'btn-pnp':
+            location.href = Routing.generate('decklist_print', {decklist_uuid: Decklist.uuid});
+            break;
     }
 }
 
@@ -308,6 +311,7 @@ $(function () {
     $(document).on('click', '#btn-moderation-trash', moderation_trash);
     $(document).on('click', '#btn-moderation-restore', moderation_restore);
     $(document).on('click', '#btn-moderation-delete', moderation_delete);
+    $(document).on('click', '#btn-pnp', do_action_decklist);
 
     $('div.collapse').each(function (index, element) {
         $(element).on('show.bs.collapse', function (event) {

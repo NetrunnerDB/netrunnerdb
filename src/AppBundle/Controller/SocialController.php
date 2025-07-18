@@ -1361,4 +1361,34 @@ class SocialController extends Controller
 
         return new JsonResponse(['success' => true]);
     }
+
+    /**
+     * @param Decklist $decklist
+     * @return Response
+     *
+     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
+     *
+     * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
+     */
+    public function printAndPlayAction(Decklist $decklist)
+    {
+        $response = new Response();
+        $response->setPublic();
+        $response->setMaxAge($this->getParameter('long_cache'));
+
+        $copied = "";
+        foreach($decklist->getSlots() as $slot) {
+            $copied .= strval($slot->getQuantity()) . " " . $slot->getCard()->getTitle() . PHP_EOL;
+        }
+        return $this->render(
+
+            '/Builder/printandplay.html.twig',
+            [
+                'pagetitle' => "Print and Play",
+                'pagedescription' => "Print any NSG cards",
+                'decklist' => $copied,
+            ],
+            $response
+        );
+    }
 }
