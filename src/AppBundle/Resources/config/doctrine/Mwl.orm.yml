@@ -1,6 +1,7 @@
 AppBundle\Entity\Mwl:
     type: entity
     table: mwl
+    repositoryClass: AppBundle\Repository\MWLRepository
     oneToMany:
         legalities:
             targetEntity: Legality

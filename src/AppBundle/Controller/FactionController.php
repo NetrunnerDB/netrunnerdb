@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Card;
 use AppBundle\Service\CardsData;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -35,75 +36,70 @@ class FactionController extends Controller
         $banned_cards = array();
 
         foreach ($factions as $faction) {
+            $identities = $entityManager->getRepository(Card::class)->findByFaction($faction);
+            $identitiesGroupsByName = CardsData::groupCardsByTitle($identities);
 
-            // build the list of identites for the faction
-
-            $qb = $entityManager->createQueryBuilder();
-            $qb->select('c')
-               ->from('AppBundle:Card', 'c')
-               ->join('c.pack', 'p')
-               ->where('c.faction=:faction')
-               ->setParameter('faction', $faction)
-               ->andWhere('c.type=:type')
-               ->andWhere('p.dateRelease is not null')
-               ->setParameter('type', $entityManager->getRepository('AppBundle:Type')->findOneBy(['code' => 'identity']));
-
-            $identities = $qb->getQuery()->getResult();
-
-            $uniqueIdentities = [];
-            foreach ($identities as $card) {
-                $title = $card->getTitle();
-                if (!isset($uniqueIdentities[$title])) {
-                    $uniqueIdentities[$title] = [];
-                }
-                $uniqueIdentities[$title][] = $card;
-            }
-
-            $nb_decklists_per_id = 3;
-
-            // build the list of the top $nb_decklists_per_id decklists per id
+            // build the list of the top $decklists_per_id decklists per id
             // also, compute the total points of those decks per id
-
-            $decklists = [];
-            foreach (array_values($uniqueIdentities) as $identities) {
+            $decklists_per_id = 3;
+            $identitiesWithDeckLists = [];
+            foreach (array_values($identitiesGroupsByName) as $identitiesGroup) {
                 $qb = $entityManager->createQueryBuilder();
                 $qb->select('d, (d.nbvotes/(1+DATE_DIFF(CURRENT_TIMESTAMP(),d.dateCreation)/10)) as points')
-                   ->from('AppBundle:Decklist', 'd')
-                   ->where('d.identity in (:identities)')
-                   ->setParameter('identities', $identities)
-                   ->orderBy('points', 'DESC')
-                   ->setMaxResults($nb_decklists_per_id);
+                    ->from('AppBundle:Decklist', 'd')
+                    ->where('d.identity in (:identities)')
+                    ->setParameter('identities', $identitiesGroup)
+                    ->orderBy('points', 'DESC')
+                    ->setMaxResults($decklists_per_id);
                 $results = $qb->getQuery()->getResult();
 
-                $points = 0;
-                $list = [];
-                foreach ($results as $row) {
-                    $list[] = $row[0];
-                    $points += intval($row['points']);
-                }
+                $bannedIdentities = $cardsData->getBannedCardCodesInArray($identitiesGroup);
+                $isIdentityBanned = count($bannedIdentities) > 0;
 
-                $identity = $cardsData->select_only_latest_cards($identities);
+                $latestVersionOfIdentity = CardsData::getLatestVersionForEachCards($identitiesGroup)[0];
 
-                $i = $cardsData->get_mwl_info([$identity[0]], true /* active_only */);
-                if (count($i) > 0 && $i[array_keys($i)[0]]['active'] && $i[array_keys($i)[0]]['deck_limit'] === 0) {
-                    $banned_cards[$identity[0]->getCode()] = true;
-                }
+                $list = array_map(function ($row) {
+                    return $row[0];
+                }, $results);
 
-                $decklists[] = [
-                    'identity'  => $identity[0],
-                    'points'    => $points,
+                $identitiesWithDeckLists[] = [
+                    'identity'  => $latestVersionOfIdentity,
+                    'isBanned' => $isIdentityBanned,
+                    'isRotated' => $latestVersionOfIdentity->getPack()->getCycle()->getRotated(),
                     'decklists' => $list,
                 ];
             }
 
-            // Sort the identities alphabetically.
-            usort($decklists, function ($a, $b) {
+            // Banned identities go to the end
+            // then rotated then alphabetically
+            $getStatus = function($card) {
+                $statusOrder = [
+                    'normal'  => 0,
+                    'banned'  => 1,
+                    'rotated' => 2,
+                ];
+                if ($card['isBanned']) {
+                    return $statusOrder['banned'];
+                } elseif ($card['isRotated']) {
+                    return $statusOrder['rotated'];
+                }
+                return $statusOrder['normal'];
+            };
+            
+            // Sort the list by identity alphabetically.
+            usort($identitiesWithDeckLists, function ($a, $b) {
+                $statusA = $getStatus($a);
+                $statusB = $getStatus($b) ?? 999;
+
+                if ($statusA < $statusB) return -1;
+                if ($statusA > $statusB) return 1;
+
                 return strcasecmp($a['identity']->getTitle(), $b['identity']->getTitle());
             });
 
             $result[] = [
-                'faction'   => $faction,
-                'decklists' => $decklists,
+                'faction'         => $faction,
+                'decklists' => $identitiesWithDeckLists,
             ];
         }
 
@@ -111,7 +107,6 @@ class FactionController extends Controller
             "pagetitle"       => "Faction Page: $faction_name",
             "pagedescription" => "Explore all $faction_name identities and recent decklists.",
             "results"         => $result,
-            "banned_cards"    => $banned_cards,
         ], $response);
     }
 }
