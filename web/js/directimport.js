@@ -48,7 +48,11 @@ function getCardRowForLine(line, lineNumber) {
 		return `<a class="card" data-code="${cards[0].code}" data-qty="${qty}" href="#">${cards[0].title}</a>`;
 	} else {
 		return `
-      ${qty}x <a class="card dropdown-toggle text-warning" data-toggle="dropdown" data-code="${cards[0].code}" href="#"><span class="title">${cards[0].title}</span> <span class="caret"></span></a>
+      ${qty}x <a class="card dropdown-toggle text-warning" data-toggle="dropdown" data-code="${
+			cards[0].code
+		}" href="#"><span class="title">${
+			cards[0].title
+		}</span> <span class="caret"></span></a>
       <ul class="dropdown-menu">
         ${cards
 			.map(
@@ -61,7 +65,7 @@ function getCardRowForLine(line, lineNumber) {
 	}
 }
 function clickOption() {
-	const name = $(this).data('title');
+	const name = $(this).data("title");
 	const code = $(this).data("code");
 	const row = $(this).closest("li.list-group-item").find("a.card");
 	row.data("code", code);
