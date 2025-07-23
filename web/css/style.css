@@ -2315,6 +2315,10 @@ table .table-cell {
 }
 
 .pnp-number-input {
+  -moz-appearance:textfield; /* Firefox */
+}
+
+.pnp-number-input {
   width: 2.5em !important;
   padding: 0.5em;
   text-align: right;
