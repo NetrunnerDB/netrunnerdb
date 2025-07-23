@@ -55,6 +55,31 @@ function getCardRowForLine(line, lineNumber) {
 		}</span> <span class="caret"></span></a>
       <ul class="dropdown-menu">
         ${cards
+			.toSorted((a, b) => {
+				// Keep cards with the same name as the first card at the top
+				const aHasSameTitle = a.title === cards[0].title;
+				const bHasSameTitle = b.title === cards[0].title;
+
+				if (aHasSameTitle && !bHasSameTitle) return -1;
+				if (!aHasSameTitle && bHasSameTitle) return 1;
+
+				// If same title, sort by pack release date reversed
+				if (a.title === b.title) {
+					const aPackReleaseDate = moment(
+						a.pack.date_release,
+						"YYYY-MM-DD"
+					);
+					const bPackReleaseDate = moment(
+						b.pack.date_release,
+						"YYYY-MM-DD"
+					);
+
+					return aPackReleaseDate.isAfter(bPackReleaseDate) ? -1 : 1;
+				}
+
+				// Else sort by title
+				return a.title.localeCompare(b.title);
+			})
 			.map(
 				(card) =>
 					`<li><a href="#" data-code="${card.code}" data-title="${card.title}">${card.title} (${card.pack.cycle.name})</a></li>`
