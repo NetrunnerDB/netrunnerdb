@@ -69,27 +69,11 @@ class FactionController extends Controller
                     'decklists' => $list,
                 ];
             }
-
-            // Banned identities go to the end
-            // then rotated then alphabetically
-            $getStatus = function($card) {
-                $statusOrder = [
-                    'normal'  => 0,
-                    'banned'  => 1,
-                    'rotated' => 2,
-                ];
-                if ($card['isBanned']) {
-                    return $statusOrder['banned'];
-                } elseif ($card['isRotated']) {
-                    return $statusOrder['rotated'];
-                }
-                return $statusOrder['normal'];
-            };
             
             // Sort the list by identity alphabetically.
             usort($identitiesWithDeckLists, function ($a, $b) {
-                $statusA = $getStatus($a);
-                $statusB = $getStatus($b) ?? 999;
+                $statusA = $this->getStatus($a);
+                $statusB = $this->getStatus($b) ?? 999;
 
                 if ($statusA < $statusB) return -1;
                 if ($statusA > $statusB) return 1;
@@ -98,7 +82,7 @@ class FactionController extends Controller
             });
 
             $result[] = [
-                'faction'         => $faction,
+                'faction'   => $faction,
                 'decklists' => $identitiesWithDeckLists,
             ];
         }
@@ -108,5 +92,19 @@ class FactionController extends Controller
             "pagedescription" => "Explore all $faction_name identities and recent decklists.",
             "results"         => $result,
         ], $response);
+    }
+
+    private function getStatus($card) {
+        $statusOrder = [
+            'normal'  => 0,
+            'banned'  => 1,
+            'rotated' => 2,
+        ];
+        if ($card['isBanned']) {
+            return $statusOrder['banned'];
+        } elseif ($card['isRotated']) {
+            return $statusOrder['rotated'];
+        }
+        return $statusOrder['normal'];
     }
 }
