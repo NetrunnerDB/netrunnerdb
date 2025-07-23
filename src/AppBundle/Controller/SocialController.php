@@ -1366,8 +1366,6 @@ class SocialController extends Controller
      * @param Decklist $decklist
      * @return Response
      *
-     * @IsGranted("IS_AUTHENTICATED_REMEMBERED")
-     *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
     public function printAndPlayAction(Decklist $decklist)
