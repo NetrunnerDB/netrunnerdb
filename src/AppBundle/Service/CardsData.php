@@ -1063,6 +1063,20 @@ class CardsData
         ));
     }
 
+    public function getBannedCardCodesInArray(array $cards)
+    {
+        $bannedCardCodes = $this->entityManager->getRepository(Mwl::class)->getBannedCardCodes();
+        $bannedCardCodesInOriginalArray = [];
+
+        foreach ($cards as $card) {
+            if (in_array($card->getCode(), $bannedCardCodes)) {
+                $bannedCardCodesInOriginalArray[] = $card->getCode();
+            }
+        }
+
+        return $bannedCardCodesInOriginalArray;
+    }
+
     public function get_mwl_info(array $cards, bool $active_only = false)
     {
         $response = [];
@@ -1084,7 +1098,7 @@ class CardsData
                     $universal_faction_cost = $card_mwl['universal_faction_cost'] ?? $card_mwl['global_penalty'] ?? 0;
                     $legality = 'legal';
                     if ($is_restricted) {
-                       $legality = 'restricted';
+                        $legality = 'restricted';
                     } elseif (!is_null($deck_limit) && $deck_limit == 0) {
                         $legality = 'banned';
                     } elseif ($universal_faction_cost == 1) {
@@ -1100,7 +1114,7 @@ class CardsData
                         'universal_faction_cost' => $universal_faction_cost,
                         'legality'               => $legality,
                     ];
-                  } else {
+                } else {
                     // Ensure that every card has MWL status for every MWL, not just the ones that specify it directly.
                     $response[$mwl->getName()] = [
                         'mwl_name'               => $mwl->getName(),
@@ -1286,5 +1300,34 @@ class CardsData
         }
 
         return $cardAliases;
+    }
+
+        
+    static public function getLatestVersionForEachCards(array $matchingCards)
+    {
+        $latestCardByTitle = [];
+        foreach ($matchingCards as $card) {
+            $title = $card->getTitle();
+
+            if (!isset($latestCardByTitle[$title]) || $card->getCode() > $latestCardByTitle[$title]->getCode()) {
+                $latestCardByTitle[$title] = $card;
+            }
+        }
+
+        return array_values($latestCardByTitle);
+    }
+
+    static public function groupCardsByTitle(array $matchingCards)
+    {
+        $cardsByTitle = [];
+        foreach ($matchingCards as $card) {
+            $title = $card->getTitle();
+            if (!isset($cardsByTitle[$title])) {
+                $cardsByTitle[$title] = [];
+            }
+            $cardsByTitle[$title][] = $card;
+        }
+
+        return $cardsByTitle;
     }
 }

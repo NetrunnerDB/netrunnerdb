@@ -252,4 +252,14 @@ class Mwl implements NormalizableInterface, TimestampableInterface
 
         return $this;
     }
+
+    public function getBannedCardCodes(): array {
+        $bannedCardCodes = [];
+        foreach ($this->cards as $code => $detail) {
+            if (isset($detail['deck_limit']) && $detail['deck_limit'] == 0) {
+                $bannedCardCodes[] = $code;
+            }
+        }
+        return $bannedCardCodes;
+    }
 }
