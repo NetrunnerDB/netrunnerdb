@@ -519,72 +519,119 @@ function print_button_done() {
 
 function do_print() {
   print_button_busy();
+  var bleed = 0;
+  switch (NRDB.settings.getItem("pnp-bleed")) {
+    case "Narrow":
+      bleed = 3;
+      break;
+    case "Wide":
+      bleed = 6;
+      break;
+  }
   var pnp = new PNP(NRDB.settings.getItem("pnp-cut-marks"),
-                    NRDB.settings.getItem("pnp-page-format"));
+                    NRDB.settings.getItem("pnp-page-format"),
+                    bleed);
   pnp.print(print_button_done);
 }
 
 class PNP {
-  constructor (cutmarks, format) {
+  constructor (cutmarks, format, bleed) {
     this.settings = {
       cutmarks: cutmarks,
       format: format,
+      bleed: bleed,  // mm
     }
-
     const { jsPDF } = window.jspdf;
     this.doc = new jsPDF({
       unit: "mm",
       format: this.settings.format,
     });
-    /* 2.5in x 3.5in */
+
+    /* 1/4in or 6.35mm */
+    this.MIN_MARGIN = 6.35;
+    /* Default 2.5in x 3.5in (this may be scaled to fit bleed) */
     this.CARD_WIDTH = 63.5;  // mm
     this.CARD_HEIGHT = 88.9;  // mm
+
     this.page_width = this.doc.internal.pageSize.getWidth();
     this.page_height = this.doc.internal.pageSize.getHeight();
-    this.MARGIN_LEFT = (this.page_width - this.CARD_WIDTH*3)/2;
-    this.MARGIN_TOP = (this.page_height - this.CARD_HEIGHT*3)/2;
+
+    /* Need to scale down cards when using bleed to stay within margin */
+    if(this.settings.bleed > 0) {
+      let scale_width = ((this.page_width - this.MIN_MARGIN*2 - this.settings.bleed*2)/3)/this.CARD_WIDTH;
+      let scale_height = ((this.page_height - this.MIN_MARGIN*2 - this.settings.bleed*2)/3)/this.CARD_HEIGHT;
+      let scale = Math.min(scale_width, scale_height);
+      this.CARD_WIDTH *= scale;
+      this.CARD_HEIGHT *= scale;
+    }
+    this.MARGIN_LEFT = (this.page_width - (this.CARD_WIDTH*3 + this.settings.bleed*2))/2;
+    this.MARGIN_TOP = (this.page_height - (this.CARD_HEIGHT*3 + this.settings.bleed*2))/2;
   }
 
   draw_cutlines(){
+    /* With bleed this draws the line in the middle of the bleed gutter. This is
+     * different behavior than cut marks */
     for(let p = 1; p <= this.doc.getNumberOfPages(); p++) {
       this.doc.setPage(p);
       // Draw 4 horizontal and 4 vertical cutlines.
       for(let i = 0; i < 4; i++) {
         // Horizontal
-        this.doc.line(0, this.MARGIN_TOP + this.CARD_HEIGHT*i,
-                      this.page_width, this.MARGIN_TOP + this.CARD_HEIGHT*i);
+        let y = this.MARGIN_TOP + this.CARD_HEIGHT*i + (this.settings.bleed*i) - this.settings.bleed/2;
+        this.doc.line(0, y,
+                      this.page_width, y);
       }
       for(let i = 0; i < 4; i++) {
         // Vertical
-        this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*i, 0,
-                      this.MARGIN_LEFT + this.CARD_WIDTH*i, this.page_height);
+        let x = this.MARGIN_LEFT + this.CARD_WIDTH*i + (this.settings.bleed*i) - this.settings.bleed/2;
+        this.doc.line(x, 0,
+                      x, this.page_height);
       }
     }
   }
 
   draw_cutmarks(padding) {
-    /* Draw non-invasive cutmarks, padding is space between mark and cards*/
+    /* Draw non-invasive cutmarks, padding is space between mark and cards.
+     * With bleed this draws marks on each edge of cards, unlike how cut lines
+     * are drawn with bleed. */
     for(let p = 1; p <= this.doc.getNumberOfPages(); p++) {
       this.doc.setPage(p);
       // 4 by 4 card intersection points, including corners. We will
       // only be draw marks on corner and edge points.
       for(let row = 0; row < 4; row++) {
         for(let col = 0; col < 4; col++) {
+          let x = this.MARGIN_LEFT + this.CARD_WIDTH*col + this.settings.bleed*Math.min(2, col);
+          let y = this.MARGIN_TOP + this.CARD_HEIGHT*row + this.settings.bleed*Math.min(2, row);
           if(row == 0) {
-            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col, 0,
-                          this.MARGIN_LEFT + this.CARD_WIDTH*col, this.MARGIN_TOP - padding);
+            this.doc.line(x, 0,
+                          x, this.MARGIN_TOP - padding);
+            if(col == 1 || col == 2) {
+              this.doc.line(x - this.settings.bleed, 0,
+                            x - this.settings.bleed, this.MARGIN_TOP - padding);
+            }
           }
           if(col == 0) {
-            this.doc.line(0, this.MARGIN_TOP + this.CARD_HEIGHT*row,
-                          this.MARGIN_LEFT - padding, this.MARGIN_TOP + this.CARD_HEIGHT*row);
+            this.doc.line(0, y,
+                          this.MARGIN_LEFT - padding, y);
+            if(row == 1 || row == 2) {
+              this.doc.line(0, y - this.settings.bleed,
+                            this.MARGIN_LEFT - padding, y - this.settings.bleed);
+            }
           }
           if(row == 3) {
-            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col, this.MARGIN_TOP + this.CARD_HEIGHT*row + padding,
-                          this.MARGIN_LEFT + this.CARD_WIDTH*col, this.page_height);
+            this.doc.line(x, this.MARGIN_TOP + this.CARD_HEIGHT*row + this.settings.bleed*2 + padding,
+                          x, this.page_height);
+            if(col == 1 || col == 2) {
+              this.doc.line(x - this.settings.bleed, this.MARGIN_TOP + this.CARD_HEIGHT*row + this.settings.bleed*2 + padding,
+                            x - this.settings.bleed, this.page_height);
+            }
           }
           if(col == 3) {
-            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col + padding, this.MARGIN_TOP + this.CARD_HEIGHT*row,
-                          this.page_width, this.MARGIN_TOP + this.CARD_HEIGHT*row);
+            this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col + this.settings.bleed*2 + padding, y,
+                          this.page_width, y);
+            if(row == 1 || row == 2) {
+              this.doc.line(this.MARGIN_LEFT + this.CARD_WIDTH*col + this.settings.bleed*2 + padding, y - this.settings.bleed,
+                            this.page_width, y - this.settings.bleed);
+            }
           }
         }
       }
@@ -614,8 +661,8 @@ class PNP {
           const img = new Image();
           img.src = cards[code].image_url;
           this.doc.addImage(img, "JPEG",
-                       this.MARGIN_LEFT + (this.CARD_WIDTH)*col,
-                       this.MARGIN_TOP + (this.CARD_HEIGHT)*row,
+                       this.MARGIN_LEFT + this.CARD_WIDTH*col + this.settings.bleed*(col),
+                       this.MARGIN_TOP + this.CARD_HEIGHT*row + this.settings.bleed*(row),
                        this.CARD_WIDTH, this.CARD_HEIGHT);
 
           cur_index += 1;
@@ -627,7 +674,7 @@ class PNP {
           this.draw_cutlines();
           break;
         case "Marks":
-          this.draw_cutmarks(1);
+          this.draw_cutmarks(/*padding*/ 2);
           break;
       }
       this.doc.save();
