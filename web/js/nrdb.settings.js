@@ -16,6 +16,7 @@
 
     'pnp-cut-marks': 'None',
     'pnp-page-format': 'Letter',
+    'pnp-bleed': 'None',
   };
 
   settings.load = function load() {
