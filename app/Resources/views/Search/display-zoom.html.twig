@@ -321,16 +321,16 @@
                                   {% endif %}
                                 {% endfor %}
                             > Standard Card Pool</th>
+                            <a id="mwl-history" href="">(show history)</a>
                         </tr>
                         <tr>
-                            <th>
-                                <span
+                            <th
                                   {% for mwl_info in card.mwl_info %}
                                     {% if mwl_info.active %}
                                       class="legality-{{ mwl_info.legality }}"
                                     {% endif %}
-                                  {% endfor %}> Standard Ban List</span>
-                                  <a id="mwl-history" href="">(show history)</a>
+                                  {% endfor %}> Eternal Card Pool
+                                  
                             </th>
                         </tr>
                     </thead>

@@ -37,6 +37,7 @@
   --nrdb-color--banned: #B66;
   --nrdb-color--rotated: #558DEC;
   --nrdb-color--restricted: #8E80FF;
+  --nrdb-color--eternal-points: orange; 
   --nrdb-color--unverified: #8F8F8F;
   --nrdb-color--code: #c7254e;
   --nrdb-color--code-bg: #f9f2f4;
@@ -145,6 +146,8 @@
   --nrdb-color--banned: #7F4554;
   --nrdb-color--rotated: #37435E;
   --nrdb-color--restricted: #674B76;
+    --nrdb-color--eternal-points: #C6B460; 
+
   --nrdb-color--unverified: #494949;
   --nrdb-color--code: inherit;
   --nrdb-color--code-bg: var(--nrdb-color--border);
@@ -1633,6 +1636,32 @@ ul.rulings-list blockquote {
 .legality-restricted:before {
   content: "RESTRICTED";
   background-color: var(--nrdb-color--restricted);
+}
+
+.legality-eternal-0-points:before {
+  content: "0 POINTS";
+  background-color: var(--nrdb-color--legal);
+}
+
+.legality-eternal-1-point:before {
+  content: "1 POINT";
+  background-color: var(nrdb-color--eternal-points);
+}
+
+.legality-eternal-2-points:before {
+  content: "2 POINTS";
+  background-color: var(nrdb-color--eternal-points);
+}
+
+.legality-eternal-3-points:before {
+  content: "3 POINTS";
+  background-color: var(nrdb-color--eternal-points);
+}
+
+
+.legality-eternal-4-points:before {
+  content: "4 POINTS";
+  background-color: var(nrdb-color--eternal-points);
 }
 
 .legality-1-inf:before {
