@@ -1643,7 +1643,7 @@ ul.rulings-list blockquote {
   background-color: var(--nrdb-color--legal);
 }
 
-.legality-eternal-1-point:before {
+.legality-eternal-1-points:before {
   content: "1 POINT";
   background-color: var(nrdb-color--eternal-points);
 }
