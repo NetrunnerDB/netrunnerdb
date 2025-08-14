@@ -1581,7 +1581,12 @@ ul.rulings-list blockquote {
 .legality-added:before,
 .legality-restricted:before,
 .legality-1-inf:before,
-.legality-3-inf:before {
+.legality-3-inf:before,
+.legality-eternal-0-points:before,
+.legality-eternal-1-points:before,
+.legality-eternal-2-points:before,
+.legality-eternal-3-points:before,
+.legality-eternal-4-points:before {
   display: inline-block;
   min-width: 7.5em;
   border-radius: 100px;
@@ -1645,23 +1650,23 @@ ul.rulings-list blockquote {
 
 .legality-eternal-1-points:before {
   content: "1 POINT";
-  background-color: var(nrdb-color--eternal-points);
+  background-color: var(--nrdb-color--eternal-points);
 }
 
 .legality-eternal-2-points:before {
   content: "2 POINTS";
-  background-color: var(nrdb-color--eternal-points);
+  background-color: var(--nrdb-color--eternal-points);
 }
 
 .legality-eternal-3-points:before {
   content: "3 POINTS";
-  background-color: var(nrdb-color--eternal-points);
+  background-color: var(--nrdb-color--eternal-points);
 }
 
 
 .legality-eternal-4-points:before {
   content: "4 POINTS";
-  background-color: var(nrdb-color--eternal-points);
+  background-color: var(--nrdb-color--eternal-points);
 }
 
 .legality-1-inf:before {
