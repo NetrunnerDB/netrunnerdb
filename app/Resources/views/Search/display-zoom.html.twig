@@ -62,8 +62,6 @@
             const pointsCost = pointsData.data.attributes.verdicts.points[cardId] || 0;
             document.getElementById("eternal-card-pool").className = `legality-eternal-${pointsCost}-points`;
         }
-        // remove the loading spinner after the fact
-        document.getElementById("eternal-loading").remove();
     }
 
     async function fetchAndDisplayPrintingsPronounsAndPronunciation() {
@@ -360,7 +358,6 @@
                 </table>
 
                 <div id="eternal-card-pool">
-                    <span id="eternal-loading" class="loading-icon fa fa-spinner fa-spin fa-2x"></span>
                     Eternal Card Pool
                 </div>
 

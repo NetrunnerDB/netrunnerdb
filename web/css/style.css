@@ -37,7 +37,7 @@
   --nrdb-color--banned: #B66;
   --nrdb-color--rotated: #558DEC;
   --nrdb-color--restricted: #8E80FF;
-  --nrdb-color--eternal-points: orange; 
+  --nrdb-color--eternal-points: #B85C00; 
   --nrdb-color--unverified: #8F8F8F;
   --nrdb-color--code: #c7254e;
   --nrdb-color--code-bg: #f9f2f4;
@@ -146,7 +146,7 @@
   --nrdb-color--banned: #7F4554;
   --nrdb-color--rotated: #37435E;
   --nrdb-color--restricted: #674B76;
-    --nrdb-color--eternal-points: #C6B460; 
+    --nrdb-color--eternal-points: #B85C00; 
 
   --nrdb-color--unverified: #494949;
   --nrdb-color--code: inherit;
