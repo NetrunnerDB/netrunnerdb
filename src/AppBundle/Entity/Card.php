@@ -1052,7 +1052,7 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getXLargeImagePath()
     {
-        if($this->pack->getDateRelease() > new \DateTime('2019-03-01')  // New than Ashes
+        if ($this->pack->getDateRelease() > new \DateTime('2019-03-01')  // Newer than Ashes
            && $this->pack->getCode() != 'mor'
            && $this->pack->getCode() != 'su21'
            && $this->pack->getCode() != 'sm') {
@@ -1067,7 +1067,7 @@ class Card implements NormalizableInterface, TimestampableInterface
      */
     public function getLargestImagePath() {
         $xl = $this->getXLargeImagePath();
-        if($xl) {
+        if ($xl) {
             return $xl;
         } else {
             return $this->getLargeImagePath();

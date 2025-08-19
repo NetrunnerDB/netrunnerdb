@@ -191,7 +191,7 @@
         });
         _.each(data.cards.find(), function (card) {
             /* Update image_url to use xlarge if available */
-            if(data.filter_for_nsg(card)) {
+            if (data.filter_for_nsg(card)) {
               data.cards.updateById(card.code, {
                 imageUrl: `https://card-images.netrunnerdb.com/v2/xlarge/${card.code}.webp`,
               });

@@ -79,7 +79,7 @@
                 button.dataset.face = i;
                 // Use the main image for the first button and the face image for i - 1 (because we are combining the front face with the faces array)
                 let buttonImg = null;
-                if(printing.data.attributes.images.nrdb_classic.xlarge) {
+                if (printing.data.attributes.images.nrdb_classic.xlarge) {
                   buttonImg = i == 0 ? printing.data.attributes.images.nrdb_classic.xlarge : printing.data.attributes.faces[i-1].images.nrdb_classic.xlarge;
                 } else {
                   buttonImg = i == 0 ? printing.data.attributes.images.nrdb_classic.large : printing.data.attributes.faces[i-1].images.nrdb_classic.large;
