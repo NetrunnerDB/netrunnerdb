@@ -16,10 +16,10 @@
  * - Lia
  * */
 var multi_side_cards = {
-  "26066" : ["https://card-images.netrunnerdb.com/v2/large/26066-0.jpg"], // Hoshiko
-  "26120" : ["https://card-images.netrunnerdb.com/v2/large/26120-0.jpg"], // Earth Station
-  "35023" : ["https://card-images.netrunnerdb.com/v2/large/35023-0.jpg"], // Dewi
-  "35057" : ["https://card-images.netrunnerdb.com/v2/large/35057-0.jpg"], // Nebula
+  "26066" : ["https://card-images.netrunnerdb.com/v2/xlarge/26066-0.webp"], // Hoshiko
+  "26120" : ["https://card-images.netrunnerdb.com/v2/xlarge/26120-0.webp"], // Earth Station
+  "35023" : ["https://card-images.netrunnerdb.com/v2/xlarge/35023-0.webp"], // Dewi
+  "35057" : ["https://card-images.netrunnerdb.com/v2/xlarge/35057-0.webp"], // Nebula
 };
 
 Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
@@ -260,10 +260,7 @@ var imported_cards = {};
 
 function filter_for_nsg(cards) {
   return cards.filter(card => {
-    return new Date(card.pack.date_release) >= new Date('2019-03-18')  // Downfall
-        && card.pack.name != "Magnum Opus Reprint"
-        && card.pack.name != "System Update 2021"
-        && card.pack.name != "Salvaged Memories"
+    return NRDB.data.filter_for_nsg(card);
   });
 }
 

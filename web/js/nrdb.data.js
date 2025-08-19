@@ -189,6 +189,14 @@
                 pack: data.packs.findById(card.pack_code)
             });
         });
+        _.each(data.cards.find(), function (card) {
+            /* Update image_url to use xlarge if available */
+            if(data.filter_for_nsg(card)) {
+              data.cards.updateById(card.code, {
+                imageUrl: `https://card-images.netrunnerdb.com/v2/xlarge/${card.code}.webp`,
+              });
+            }
+        });
 
         data.isLoaded = true;
 
@@ -213,5 +221,12 @@
     $(function () {
         data.load();
     });
+
+    data.filter_for_nsg = function filter_for_nsg(card) {
+      return new Date(card.pack.date_release) >= new Date('2019-03-18')  // Downfall
+        && card.pack.name != "Magnum Opus Reprint"
+        && card.pack.name != "System Update 2021"
+        && card.pack.name != "Salvaged Memories"
+    }
 
 })(NRDB.data = {}, jQuery);
