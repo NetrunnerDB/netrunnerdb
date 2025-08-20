@@ -42,6 +42,24 @@
         });
     }
 
+    async function retrieveEternalPoints(printing) {
+        // retrieves the latest Eternal points list 
+        // and then checks if the card is banned, or in any of the points fields 
+        // if not, it's worth 0 points. 
+        const points = printing.data.attributes.restrictions.points;
+
+        const formatInfo = await fetchFullDataResponse(`${v3_api_url}/api/v3/public/formats/eternal`);
+        const latestPointsCode = formatInfo.data.attributes.active_restriction_id;
+        
+        if (printing.data.attributes.restrictions.banned.includes(latestPointsCode)){
+            document.getElementById("eternal-card-pool").className = "legality-banned";
+        }
+        else {
+            const pointsCost = points[latestPointsCode] ?? 0;
+            document.getElementById("eternal-card-pool").className = `legality-eternal-${pointsCost}-points`;
+        }
+    }
+
     async function fetchAndDisplayPrintingsPronounsAndPronunciation() {
         const [printing, card_sets] = await Promise.all(
             [
@@ -52,6 +70,8 @@
             ]
         );
 
+        // Piggyback off this fetch to update eternal points as needed
+        retrieveEternalPoints(printing);
         // Make a list of face buttons for cards with more than 1 face.
         const cardImageFlippable = document.querySelector('.card-image-flippable');
         const buttonContainer = document.querySelector('.card-image-flippable-buttons');
@@ -304,36 +324,24 @@
             </div>
 
             <div class="panel-body">
+                
+                <div class="legality-{{ card.startup_legality }}"> Startup Card Pool</div>
+
+                <div
+                    {% for mwl_info in card.mwl_info %}
+                        {% if mwl_info.active %}
+                            {% if card.standard_legality == 'available' %}
+                                class="legality-{{ mwl_info.legality }}"
+                            {% else %}
+                                class="legality-{{ card.standard_legality }}"
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                > 
+                    Standard Card Pool
+                    <a id="mwl-history" href="">(show history)</a>
+                </div>
                 <table>
-                    <thead>
-                        <tr>
-                            <th class="legality-{{ card.startup_legality }}"> Startup Card Pool</th>
-                        </tr>
-                        <tr>
-                            <th
-                                {% for mwl_info in card.mwl_info %}
-                                  {% if mwl_info.active %}
-                                    {% if card.standard_legality == 'available' %}
-                                      class="legality-{{ mwl_info.legality }}"
-                                    {% else %}
-                                      class="legality-{{ card.standard_legality }}"
-                                    {% endif %}
-                                  {% endif %}
-                                {% endfor %}
-                            > Standard Card Pool</th>
-                        </tr>
-                        <tr>
-                            <th>
-                                <span
-                                  {% for mwl_info in card.mwl_info %}
-                                    {% if mwl_info.active %}
-                                      class="legality-{{ mwl_info.legality }}"
-                                    {% endif %}
-                                  {% endfor %}> Standard Ban List</span>
-                                  <a id="mwl-history" href="">(show history)</a>
-                            </th>
-                        </tr>
-                    </thead>
                     <tbody>
                         <tr class="card-mwl-inactive" style="display:none; height: 10px;"></tr>
                         {% for mwl_info in card.mwl_info %}
@@ -345,6 +353,12 @@
                         {% endfor %}
                     </tbody>
                 </table>
+
+                <div id="eternal-card-pool", class="legality-eternal-loading">
+                    Eternal Card Pool
+                </div>
+
+                
             </div>
             <div class="panel-body">
                 <table>
