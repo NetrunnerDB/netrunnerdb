@@ -1368,15 +1368,17 @@ class SocialController extends Controller
      *
      * @ParamConverter("decklist", class="AppBundle:Decklist", options={"mapping": {"decklist_uuid": "uuid"}})
      */
-    public function printAndPlayAction(Decklist $decklist)
+    public function printAndPlayAction(?Decklist $decklist = null)
     {
         $response = new Response();
         $response->setPublic();
         $response->setMaxAge($this->getParameter('long_cache'));
 
         $copied = "";
-        foreach($decklist->getSlots() as $slot) {
-            $copied .= strval($slot->getQuantity()) . " " . $slot->getCard()->getTitle() . PHP_EOL;
+        if($decklist) {
+            foreach($decklist->getSlots() as $slot) {
+                $copied .= strval($slot->getQuantity()) . " " . $slot->getCard()->getTitle() . PHP_EOL;
+            }
         }
         return $this->render(
 

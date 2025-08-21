@@ -229,7 +229,7 @@ print:
     path: /{_locale}/print/
     methods: [GET]
     defaults:
-        _controller: AppBundle:Builder:printAndPlay
+        _controller: AppBundle:Social:printAndPlay
         _locale: en
     requirements:
         _locale: \w\w
