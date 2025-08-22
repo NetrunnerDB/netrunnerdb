@@ -98,7 +98,12 @@
                 button.innerHTML = buttonText;
                 button.dataset.face = i;
                 // Use the main image for the first button and the face image for i - 1 (because we are combining the front face with the faces array)
-                let buttonImg = i == 0 ? printing.data.attributes.images.nrdb_classic.large : printing.data.attributes.faces[i-1].images.nrdb_classic.large;
+                let buttonImg = null;
+                if (printing.data.attributes.images.nrdb_classic.xlarge) {
+                  buttonImg = i == 0 ? printing.data.attributes.images.nrdb_classic.xlarge : printing.data.attributes.faces[i-1].images.nrdb_classic.xlarge;
+                } else {
+                  buttonImg = i == 0 ? printing.data.attributes.images.nrdb_classic.large : printing.data.attributes.faces[i-1].images.nrdb_classic.large;
+                }
                 button.dataset.img = buttonImg;
 
                 button.addEventListener("click", function(e) {
@@ -198,7 +203,7 @@
             {% if card.imageUrl %}
                 <div class="card-image-flippable">
                     <div class="card-image card-image-flippable__front">
-                        <img id="current_card_img" data-src="{{ card_image_url }}{{ asset(card.large_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload card-image" style="margin:auto">
+                        <img id="current_card_img" data-src="{{ card_image_url }}{{ asset(card.largest_image_path) }}" alt="{{ card.title }}" class="img-responsive lazyload card-image" style="margin:auto">
                     </div>
                     <div class="card-image card-image-flippable__back">
                         <img id="alternate_card_img" src="" class="img-responsive">

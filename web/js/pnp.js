@@ -16,10 +16,10 @@
  * - Lia
  * */
 var multi_side_cards = {
-  "26066" : ["https://card-images.netrunnerdb.com/v2/large/26066-0.jpg"], // Hoshiko
-  "26120" : ["https://card-images.netrunnerdb.com/v2/large/26120-0.jpg"], // Earth Station
-  "35023" : ["https://card-images.netrunnerdb.com/v2/large/35023-0.jpg"], // Dewi
-  "35057" : ["https://card-images.netrunnerdb.com/v2/large/35057-0.jpg"], // Nebula
+  "26066" : ["https://card-images.netrunnerdb.com/v2/xlarge/26066-0.webp"], // Hoshiko
+  "26120" : ["https://card-images.netrunnerdb.com/v2/xlarge/26120-0.webp"], // Earth Station
+  "35023" : ["https://card-images.netrunnerdb.com/v2/xlarge/35023-0.webp"], // Dewi
+  "35057" : ["https://card-images.netrunnerdb.com/v2/xlarge/35057-0.webp"], // Nebula
 };
 
 Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
@@ -260,10 +260,7 @@ var imported_cards = {};
 
 function filter_for_nsg(cards) {
   return cards.filter(card => {
-    return new Date(card.pack.date_release) >= new Date('2019-03-18')  // Downfall
-        && card.pack.name != "Magnum Opus Reprint"
-        && card.pack.name != "System Update 2021"
-        && card.pack.name != "Salvaged Memories"
+    return NRDB.data.filter_for_nsg(card);
   });
 }
 
@@ -640,47 +637,54 @@ class PNP {
   }
 
   print(done_callback = null){
-    /* setTimeout is a little trick to get print button spinner to work.
-     * See https://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful */
-    setTimeout(() => {
-      var cards = retrieve_cards();
+    var cards = retrieve_cards();
+    var index = 0;
+    var count = 0;
+    var that = this;
+    $("#print-progress")[0].style.display = "block";
+    var progress_bar = $("#print-progress-bar")[0];
+    progress_bar.style.width = '0%';
 
-      var cur_index = 0;
-      for(let code in cards) {
-        for(let i = 0; i < cards[code].qty; i++) {
-          if (cur_index == 9) {
-            cur_index = 0;
-            // Make a new page every 9 cards.
-            this.doc.addPage(this.settings.format);
-          }
-
-          // Setup the cards in a 3x3 grid
-          let row = Math.floor(cur_index / 3);
-          let col = cur_index % 3;
-
-          const img = new Image();
-          img.src = cards[code].image_url;
-          this.doc.addImage(img, "JPEG",
-                       this.MARGIN_LEFT + this.CARD_WIDTH*col + this.settings.bleed*(col),
-                       this.MARGIN_TOP + this.CARD_HEIGHT*row + this.settings.bleed*(row),
-                       this.CARD_WIDTH, this.CARD_HEIGHT);
-
-          cur_index += 1;
+    function draw_next_image() {
+      for(let i = 0; i < cards[index].qty; i++ ){
+        if (count == 9) {
+          count = 0;
+          that.doc.addPage(that.settings.format);
         }
-      }
+        // Setup the cards in a 3x3 grid
+        let row = Math.floor(count / 3);
+        let col = count % 3;
 
-      switch(this.settings.cutmarks) {
-        case "Lines":
-          this.draw_cutlines();
-          break;
-        case "Marks":
-          this.draw_cutmarks(/*padding*/ 2);
-          break;
+        const img = new Image();
+        img.src = cards[index].image_url;
+        that.doc.addImage(img, "WEBP",
+                     that.MARGIN_LEFT + that.CARD_WIDTH*col + that.settings.bleed*(col),
+                     that.MARGIN_TOP + that.CARD_HEIGHT*row + that.settings.bleed*(row),
+                     that.CARD_WIDTH, that.CARD_HEIGHT, '', 'FAST');
+
+        count++;
       }
-      this.doc.save();
-      if(done_callback) {
-        done_callback();
+      index++;
+      let new_progress = (index/cards.length)*100;
+      progress_bar.style.width = `${new_progress}%`;
+      progress_bar.setAttribute('aria-valuenow', new_progress);
+      if (index < cards.length) {
+        setTimeout(draw_next_image, 0);
+      } else {
+        /* Done */
+        switch(that.settings.cutmarks) {
+          case "Lines":
+            that.draw_cutlines();
+            break;
+          case "Marks":
+            that.draw_cutmarks(/*padding*/ 2);
+            break;
+        }
+        that.doc.save();
+        $("#print-progress")[0].style.display = "none";
+        print_button_done();
       }
-    }, 0);
+    }
+    draw_next_image();
   }
 }

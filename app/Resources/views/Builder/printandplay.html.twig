@@ -97,6 +97,14 @@ var CardDB, CardNames;
       <button id="btn-print" class="btn btn-success" disabled onclick="do_print()" style="margin-bottom:2em">Print</button>
       <button id="btn-clear" class="btn btn-danger" onclick="do_clear()" style="margin-left:0.8em;margin-bottom:2em">Clear</button>
     </div>
+
+    <div class="row">
+      <div id="print-progress" class="progress" style="width: 93%; display:none;">
+        <div id="print-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+        </div>
+      </div>
+    </div>
+
     <div class="row" id="preview-container"></div>
   </div>
 </div> <!-- .row -->

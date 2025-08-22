@@ -869,6 +869,8 @@ class CardsData
             "small_image_path"  => $card->getSmallImagePath(),
             "medium_image_path" => $card->getMediumImagePath(),
             "large_image_path"  => $card->getLargeImagePath(),
+            "xlarge_image_path"  => $card->getXLargeImagePath(),
+            "largest_image_path"  => $card->getLargestImagePath(),
         ];
 
         // setting the card cost to X if the cost is null and the card is not of a costless type
