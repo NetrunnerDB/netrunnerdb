@@ -191,7 +191,7 @@
         });
         _.each(data.cards.find(), function (card) {
             /* Update image_url to use xlarge if available */
-            if (data.filter_for_nsg(card)) {
+            if (data.filter_card_for_nsg(card)) {
               data.cards.updateById(card.code, {
                 imageUrl: `https://card-images.netrunnerdb.com/v2/xlarge/${card.code}.webp`,
               });
@@ -222,11 +222,19 @@
         data.load();
     });
 
-    data.filter_for_nsg = function filter_for_nsg(card) {
-      return new Date(card.pack.date_release) >= new Date('2019-03-18')  // Downfall
-        && card.pack.name != "Magnum Opus Reprint"
-        && card.pack.name != "System Update 2021"
-        && card.pack.name != "Salvaged Memories"
+    data.filter_cycle_for_nsg = function filter_cycle_for_nsg(cycle) {
+      return cycle.position >= 26  // Ashes
+        && cycle.name != "Magnum Opus Reprint"
+        && cycle.name != "System Update 2021"
+        && cycle.name != "Salvaged Memories"
+    }
+
+    data.filter_pack_for_nsg = function filter_pack_for_nsg(pack) {
+      return data.filter_cycle_for_nsg(pack.cycle);
+    }
+
+    data.filter_card_for_nsg = function filter_card_for_nsg(card) {
+      return data.filter_cycle_for_nsg(card.pack.cycle);
     }
 
 })(NRDB.data = {}, jQuery);

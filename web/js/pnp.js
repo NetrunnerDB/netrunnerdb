@@ -73,8 +73,6 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
   $('#pnp-card-search').on('typeahead:selected typeahead:autocomplete', function(event, data) {
     imported_cards.add_card(data, 1, {prepend: true});
     update_imported_list();
-    preview_cards();
-    update_stats();
     setTimeout(() => {$('#pnp-card-search').typeahead("val", "");}, 10);
   });
   $('#pnp-card-search').keypress(function(event) {
@@ -86,11 +84,12 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
       }
       imported_cards.add_card(match, 1, {prepend: true});
       update_imported_list();
-      preview_cards();
-      update_stats();
       $('#pnp-card-search').typeahead("val", "");
     }
   });
+
+  var initial_packs = JSON.parse(localStorage.getItem('pnp_packs'));
+  populate_packs(initial_packs);
 
   // For routes with a deck code, automatically import it.
   if (document.querySelector('#pnp-text-area').value.trim() != '') {
@@ -100,8 +99,6 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
 
 function do_import_pnp(first_time=false) {
   import_cards(first_time);
-  update_stats();
-  preview_cards();
 }
 
 function do_clear() {
@@ -110,8 +107,6 @@ function do_clear() {
   }
   imported_cards.clear_all();
   update_imported_list();
-  update_stats();
-  preview_cards();
 }
 
 function click_option(event) {
@@ -133,8 +128,6 @@ function click_trash(event) {
   }
   $(this).closest('li.list-group-item').remove();
   update_imported_list();
-  preview_cards();
-  update_stats();
 }
 
 function on_number_change(event) {
@@ -149,8 +142,6 @@ function on_number_change(event) {
   data_elem.value = `${code}:${value}`;
   imported_cards.change_qty(index, value);
   update_imported_list();
-  preview_cards();
-  update_stats();
 }
 
 var imported_cards = {};
@@ -160,9 +151,10 @@ var imported_cards = {};
    * Relevant data structures:
    * entries = [entry, ...];
    * entry = {
-   *     index: int,  // index != cards[index]. Use get_card(index).
+   *     index: int,
    *     qty: int,
    *     fuzzy: true|false,
+   *     enabled: true|false,
    *     options: [],  // For matches, list of different printings, for fuzzied,
    *                   // list of other options
    *     selected_option: options[0],
@@ -171,6 +163,7 @@ var imported_cards = {};
   imported_cards.entries = [];
   imported_cards.errors = [];
   imported_cards.curr_index = 0;
+  imported_cards.packs = [];
 
   imported_cards.prepend = function(entry){
     entry.index = imported_cards.curr_index++;
@@ -182,13 +175,14 @@ var imported_cards = {};
     imported_cards.entries.push(entry);
   }
 
-  imported_cards.add_card = function(card, qty, {fuzzy=false, prepend=false} = {}) {
-    // Directly add a card as a new entry, assuming no options.
+  imported_cards.add_entry = function(options, qty, {fuzzy=false, prepend=false} = {}) {
+    let enabled = imported_cards.packs.indexOf(options[0].pack_code) > -1;
     entry = {
       qty: qty,
       fuzzy: fuzzy,
-      options: [card],
-      selected_option: card
+      enabled: enabled,
+      options: options,
+      selected_option: options[0]
     }
     if(prepend) {
       imported_cards.prepend(entry);
@@ -196,16 +190,20 @@ var imported_cards = {};
       imported_cards.append(entry);
     }
   }
+  imported_cards.add_card = function(card, qty, {fuzzy=false, prepend=false} = {}) {
+    // Directly add a card without options.
+    imported_cards.add_entry([card], qty, {fuzzy:fuzzy, prepend:prepend});
+  }
 
   imported_cards.get_matches = function() {
     return imported_cards.entries.filter((entry) => {
-      return !entry.fuzzy;
+      return entry.enabled? !entry.fuzzy : false;
     });
   }
 
   imported_cards.get_fuzzies = function() {
     return imported_cards.entries.filter((entry) => {
-      return entry.fuzzy;
+      return entry.enabled? entry.fuzzy : false;
     });
   }
 
@@ -256,11 +254,40 @@ var imported_cards = {};
     imported_cards.errors = [];
   }
 
+  imported_cards.refresh_packs = function() {
+    for (let entry of imported_cards.entries) {
+      if (imported_cards.packs.indexOf(entry.selected_option.pack_code) > -1) {
+        entry.enabled = true;
+      } else {
+        entry.enabled = false;
+      }
+    }
+    update_imported_list();
+  }
+
+  imported_cards.update_packs = function(packs) {
+    imported_cards.packs = packs;
+    imported_cards.refresh_packs();
+  }
+
+  imported_cards.get_disabled = function() {
+    return imported_cards.entries.filter((entry) => {
+      return !entry.enabled;
+    });
+  }
+
+  imported_cards.count_disabled = function() {
+    var count = 0;
+    for (let entry of imported_cards.get_disabled()) {
+      count += entry.qty;
+    }
+    return count;
+  }
 }) (imported_cards);
 
 function filter_for_nsg(cards) {
   return cards.filter(card => {
-    return NRDB.data.filter_for_nsg(card);
+    return NRDB.data.filter_card_for_nsg(card);
   });
 }
 
@@ -284,12 +311,16 @@ function build_one_line(imported_entry) {
   var options = imported_entry.options;
   var qty_int = imported_entry.qty;
   var index = imported_entry.index;
+  var strikethrough = !imported_entry.enabled;
   var elem = $(`<li class="list-group-item form-inline"><a class="pull-right glyphicon glyphicon-trash"></a></li>`);
   elem.append(`<input class="pnp-data" type="hidden" name="${index}" value="${card.code}:${qty_int}">`);
   elem.append(`<input type="number" class="form-control pnp-number-input" placeholder="${qty_int}">`);
   elem.append(' x ');
-  var a = $(`<a class="card" data-code="${card.code}" href="javascript:void(0)">${card.title} </a>`);
-  if(imported_entry.fuzzy) {
+  var a = $(`<a class="card" data-code="${card.code}" href="javascript:void(0)">` + 
+            `${strikethrough? '<s>' : ''}${card.title}${strikethrough? '</s>' : ''} </a>`);
+  if(!imported_entry.enabled) {
+    a[0].classList.add("text-muted");
+  } else if(imported_entry.fuzzy) {
     a[0].classList.add("text-warning");
   }
   if(options.length > 1) {
@@ -325,6 +356,17 @@ function update_imported_list() {
       )
     }
   }
+
+  var disabled = imported_cards.get_disabled();
+  if(disabled.length > 0){
+    let e = label_elem.clone();
+    e.html("Disabled by collection settings");
+    $('#analyzed').append(e);
+    for(let l of disabled) {
+      $('#analyzed').append(build_one_line(l));
+    }
+  }
+
   var fuzzies = imported_cards.get_fuzzies();
   if(fuzzies.length > 0){
     let e = label_elem.clone();
@@ -343,6 +385,9 @@ function update_imported_list() {
       $('#analyzed').append(build_one_line(l));
     }
   }
+
+  preview_cards();
+  update_stats();
 }
 
 function import_one_line(line) {
@@ -359,23 +404,21 @@ function import_one_line(line) {
     qty = 1;
   }
   var result = find_by_title(name, false);  // Case insensitive
-  var ret = {
-      index: null,
-      qty: qty,
-      fuzzy: false,
-      options: result,
-      selected_option: result[0],
-  };
-  if(!result || !result.length) {
+  if (result && result.length) {
+    imported_cards.add_entry(result, qty, {prepend: true});
+  } else {
     result = NRDB.fuzzy_search.lookup(name);
-    if(!result || !result.cards || !result.cards.length) return null;
+    if (!result || !result.cards || !result.cards.length) {
+      imported_cards.errors.push(line);
+      return;
+    }
     let options = filter_for_nsg(result.cards);
-    if(!options || !options.length) return null;
-    ret.fuzzy = true;
-    ret.options = options;
-    ret.selected_option = options[0];
+    if(!options || !options.length) {
+      imported_cards.errors.push(line);
+      return;
+    }
+    imported_cards.add_entry(options, qty, {fuzzy: true, prepend: true});
   }
-  return ret;
 }
 
 function import_cards(first_time=false) {
@@ -384,15 +427,7 @@ function import_cards(first_time=false) {
   var content = $('textarea[name="content"]').val();
   var lines = content.split(/[\r\n]+/);
   for(let i = 0; i < lines.length; i++) {
-    var imported_entry = import_one_line(lines[i]);
-
-    if(imported_entry == null) {
-      imported_cards.errors.push(lines[i]);
-    } else {
-      // if imported list is not empty, we add to the top of the list
-      // so that it feels more responsive for user.
-      imported_cards.prepend(imported_entry);
-    }
+    import_one_line(lines[i]);
   }
   if(first_time) {
     imported_cards.sort_by_type();
@@ -418,7 +453,11 @@ function update_stats() {
     key = key == "Identity"? "Identities" : key + 's';
     html += value+' '+key+'<br>';
   });
-  html = Math.ceil(size/9) + ' Pages<hr style="width:7em;margin-left:0;">' + html;
+  html = '<hr style="width:7em;margin-left:0;">' + html;
+  if(imported_cards.get_disabled().length) {
+    html = '<br>(' + imported_cards.count_disabled() + ' Disabled Cards)' + html;
+  }
+  html = Math.ceil(size/9) + ' Pages' + html;
   html = size+' Cards<br>'+html;
   $('#stats').html(html);
   if($('#analyzed li').length > 0) {
@@ -499,6 +538,58 @@ function preview_cards() {
       curr_index++;
     }
   }
+}
+
+function populate_packs(initial_packs = null) {
+  /* Code lifted from deck.v2.js create_collection_tab (with minor changes) */
+  $('#pack_code').empty();
+  var f = function(pack, $container) {
+    var is_checked = true;
+    if(initial_packs && initial_packs.length > 0) {
+      is_checked = initial_packs.indexOf(pack.code) > -1;
+    }
+    return $container.addClass("checkbox").append('<label><input type="checkbox" name="' + pack.code + '"' + (is_checked ? ' checked="checked"' : '')+ '>' + pack.name + '</label>');
+  };
+  _.sortBy(NRDB.data.cycles.find().filter((cycle) => { return NRDB.data.filter_cycle_for_nsg(cycle) }), 'position').reverse().forEach(function (cycle) {
+    var packs = _.sortBy(NRDB.data.packs.find({cycle_code:cycle.code}), 'position').reverse();
+    if(cycle.size === 1) {
+      if(packs.length) {
+        var $div = f(packs[0], $('<div></div>'));
+        $('#pack_code').append($div);
+      }
+    } else {
+      var $list = $('<ul class="checkbox checklist-items"></ul>');
+      packs.forEach(function (pack) {
+        var $li = f(pack, $('<li></li>'));
+        $list.append($li);
+      });
+
+      var $group = $('<div class="checkbox"></div>');
+      var $toggle = $('<div class="checkbox" data-toggle="checklist"><label><input type="checkbox" name="' + cycle.code + '">' + cycle.name + '</label></div>');
+      $group.append($toggle);
+      $group.append($list);
+      $('#pack_code').append($group);
+      $toggle.checklist();
+    }
+  });
+  handle_pack_update();
+  $('#pack_code').on('change', handle_pack_update);
+}
+
+function handle_pack_update() {
+  /* Code lifted from deck.v2.js update_collection_packs (with minor changes) */
+  var div = $('#pack_code')
+  var arr = [];
+  div.find("input[type=checkbox]").each(function(index, elt) {
+    var name = $(elt).attr('name');
+
+    if (name && $(elt).prop('checked')) {
+      arr.push(name);
+    }
+
+  });
+  localStorage.setItem('pnp_packs', JSON.stringify(arr));
+  imported_cards.update_packs(arr);
 }
 
 function print_button_busy() {
