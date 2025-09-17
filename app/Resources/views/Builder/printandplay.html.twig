@@ -25,10 +25,10 @@ var CardDB, CardNames;
   </button>
 </div>
 <div class="row">
-  <div class="col-md-5">
+  <div class="col-md-4">
     <form role="form">
       <div class="form-group">
-        <textarea placeholder="Paste deck here and click import" class="form-control" id="pnp-text-area" name="content" rows="10">
+        <textarea placeholder="Paste deck here and click import" class="form-control" id="pnp-text-area" name="content" rows="15">
         {%- if decklist is not empty -%}
            {{- decklist |trim -}}
         {%- endif -%}
@@ -46,7 +46,7 @@ var CardDB, CardNames;
     </form>
   </div>
 
-  <div class="col-md-4">
+  <div class="col-md-2">
     <form id="settings">
       <div class="form-group">
         <label>
@@ -79,10 +79,16 @@ var CardDB, CardNames;
       </div>
     </form>
   </div>
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">Collection</div>
+      <div class="panel-body" id="pack_code" style="overflow-y:scroll;max-height:17em"></div>
+    </div>
+  </div>
 </div> <!-- .row -->
 
 <div class="row">
-  <div class="col-md-5">
+  <div class="col-md-4">
 
     <input type="text" placeholder="Card Search" class="form-control" name="q" id="pnp-card-search">
 
@@ -92,7 +98,7 @@ var CardDB, CardNames;
     </div>
     <input type="hidden" name="content">
   </div>
-  <div class="col-md-7">
+  <div class="col-md-8">
     <div class="row">
       <button id="btn-print" class="btn btn-success" disabled onclick="do_print()" style="margin-bottom:2em">Print</button>
       <button id="btn-clear" class="btn btn-danger" onclick="do_clear()" style="margin-left:0.8em;margin-bottom:2em">Clear</button>
