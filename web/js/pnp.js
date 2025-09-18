@@ -22,6 +22,27 @@ var multi_side_cards = {
   "35057" : ["https://card-images.netrunnerdb.com/v2/xlarge/35057-0.webp"], // Nebula
 };
 
+var basic_action_cards = [
+  {
+    data: {
+      title: "Basic Actions - Runner",
+      type: { name: "Basic Action" },
+      code: "basicactionsrunner"
+    },
+    qty: 1,
+    image_url: "https://card-images.netrunnerdb.com/v2/xlarge/runner_basic_actions.webp"
+  },
+  {
+    data: {
+      title: "Basic Actions - Corp",
+      type: { name: "Basic Action" },
+      code: "basicactionscorp"
+    },
+    qty: 1,
+    image_url: "https://card-images.netrunnerdb.com/v2/xlarge/corp_basic_actions.webp"
+  }
+];
+
 Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
   $('#btn-import').prop('disabled', false);
   $('#analyzed').on({
@@ -90,6 +111,10 @@ Promise.all([NRDB.data.promise, NRDB.ui.promise]).then( () => {
 
   var initial_packs = JSON.parse(localStorage.getItem('pnp_packs'));
   populate_packs(initial_packs);
+
+  $('input[name="pnp-basic-actions"]').on('change', function() {
+    update_imported_list();
+  });
 
   // For routes with a deck code, automatically import it.
   if (document.querySelector('#pnp-text-area').value.trim() != '') {
@@ -460,7 +485,7 @@ function update_stats() {
   html = Math.ceil(size/9) + ' Pages' + html;
   html = size+' Cards<br>'+html;
   $('#stats').html(html);
-  if($('#analyzed li').length > 0) {
+  if($('#analyzed li').length > 0 || $('input[name="pnp-basic-actions"]').is(':checked')) {
     $('#btn-print').prop('disabled', false);
   } else {
     $('#btn-print').prop('disabled', true);
@@ -515,6 +540,11 @@ function retrieve_cards() {
       }
     }
   }
+
+  if($('input[name="pnp-basic-actions"]').is(':checked')) {
+    cards = cards.concat(basic_action_cards);
+  }
+
   return cards;
 }
 
